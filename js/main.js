@@ -283,8 +283,19 @@ function initProjects() {
     const projectsGrid = document.getElementById('projects-grid');
     const filterBtns = document.querySelectorAll('.filter-btn');
     
+    // Check if PROJECTS is defined
+    if (typeof PROJECTS === 'undefined') {
+        console.error('PROJECTS data not loaded');
+        if (projectsGrid) {
+            projectsGrid.innerHTML = '<p class="error-message">Projects data is loading...</p>';
+        }
+        return;
+    }
+    
     // Render projects
     function renderProjects(filter = 'all') {
+        if (!projectsGrid) return;
+        
         projectsGrid.innerHTML = '';
         
         const filteredProjects = filter === 'all' 
