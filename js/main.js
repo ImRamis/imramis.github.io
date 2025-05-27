@@ -127,7 +127,7 @@ function initTerminal() {
     const terminal = document.getElementById('terminal-output');
     const commands = [
         { cmd: '$ whoami', output: 'Muhammad Ramis - OSCP Certified Professional' },
-        { cmd: '$ cat skills.txt', output: 'Penetration Testing | Full-Stack Development | DevSecOps' },
+        { cmd: '$ cat skills.txt', output: 'Penetration Testing | Senior Software Engineer | Full-Stack Development | DevSecOps' },
         { cmd: '$ ls certifications/', output: 'OSCP ✓ | OSCP+ ✓ | MSc Cybersecurity ✓ | CREST (In Progress)' },
         { cmd: '$ grep experience cv.txt', output: '5+ Years | Laravel | Django | React | Blockchain | Security' },
         { cmd: '$ echo $LOCATION', output: 'Leeds, West Yorkshire, UK' }

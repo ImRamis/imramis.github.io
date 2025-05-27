@@ -1,6 +1,6 @@
 # Muhammad Ramis - Portfolio
 
-Personal portfolio showcasing cybersecurity expertise and full-stack development experience.
+Personal portfolio showcasing cybersecurity expertise and Senior Software Engineer experience.
 
 ## Live Site
 [https://imramis.github.io](https://imramis.github.io)

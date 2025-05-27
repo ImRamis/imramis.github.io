@@ -3,7 +3,7 @@
 const CONFIG = {
     // Personal Information
     name: 'Muhammad Ramis',
-    title: 'OSCP-Certified Cybersecurity Professional & Full-Stack Developer',
+    title: 'OSCP-Certified Cybersecurity Professional & Senior Software Engineer',
     email: 'mramis1@outlook.com',
     phone: '07789 399 920',
     location: 'Leeds, West Yorkshire, UK',
@@ -22,8 +22,9 @@ const CONFIG = {
     // Typed.js Strings (Hero Section)
     typedStrings: [
         'OSCP-Certified Penetration Tester',
+        'Senior Software Engineer',
         'Full-Stack Developer',
-        'Sheffield University Graduate',
+        'University of Sheffield Graduate',
         'Laravel & Django Expert',
         'Cybersecurity Specialist',
         'Blockchain Developer',
@@ -41,7 +42,7 @@ const CONFIG = {
     // Site Settings
     siteUrl: 'https://imramis.github.io',
     siteName: 'Muhammad Ramis - Portfolio',
-    siteDescription: 'OSCP-certified cybersecurity specialist and full-stack developer with 5+ years experience. Sheffield University MSc graduate seeking opportunities in the UK.',
+    siteDescription: 'OSCP-certified cybersecurity specialist and senior software engineer with 5+ years experience. University of Sheffield  MSc graduate seeking opportunities in the UK.',
     
     // Default Theme
     defaultTheme: 'monochrome',
@@ -64,7 +65,7 @@ const CONFIG = {
         },
         { 
             cmd: '$ cat skills.txt', 
-            output: 'Penetration Testing | Full-Stack Development | DevSecOps' 
+            output: 'Penetration Testing | Senior Software Engineer | Full-Stack Development | DevSecOps' 
         },
         { 
             cmd: '$ ls certifications/', 
