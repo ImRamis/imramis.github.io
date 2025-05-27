@@ -668,9 +668,217 @@
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Add Matrix Rain Effect */
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.1;
+            overflow: hidden;
+        }
+
+        .matrix-char {
+            position: absolute;
+            color: #0ea5e9;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            animation: matrixFall linear infinite;
+            text-shadow: 0 0 5px #0ea5e9;
+        }
+
+        @keyframes matrixFall {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Glitch Effect for Title */
+        .glitch {
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 0.5s infinite;
+            color: #ff0000;
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 0.5s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(-2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, -2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(-2px, 2px); }
+        }
+
+        /* Cyberpunk Grid */
+        .cyber-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Floating Icons */
+        .floating-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .floating-icon {
+            position: absolute;
+            color: rgba(14, 165, 233, 0.3);
+            animation: float linear infinite;
+            font-size: 20px;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Hack Terminal Effect */
+        .terminal-window {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #30363d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-btn.red { background: #ff5f56; }
+        .terminal-btn.yellow { background: #ffbd2e; }
+        .terminal-btn.green { background: #27ca3f; }
+
+        .terminal-title {
+            margin-left: 15px;
+            color: #8b949e;
+            font-size: 12px;
+        }
+
+        .terminal-content {
+            color: #0ea5e9;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .terminal-prompt {
+            color: #7c3aed;
+        }
+
+        .terminal-command {
+            color: #0ea5e9;
+        }
+
+        .terminal-output {
+            color: #10b981;
+        }
+
+        /* Pulse Effect for Important Elements */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(14, 165, 233, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+            }
         }
     </style>
 </head>
@@ -700,9 +908,13 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div class="cyber-grid"></div>
+        <div class="matrix-rain" id="matrix-rain"></div>
+        <div class="floating-icons" id="floating-icons"></div>
+        
         <div class="hero-content">
-            <div class="hero-subtitle" data-aos="fade-up">Welcome to my portfolio</div>
-            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">I am Muhammad Ramis</h1>
+            <div class="hero-subtitle" data-aos="fade-up">Welcome to my digital domain</div>
+            <h1 class="hero-title glitch" data-text="I am Muhammad Ramis" data-aos="fade-up" data-aos-delay="200">I am Muhammad Ramis</h1>
             <div class="hero-typed" data-aos="fade-up" data-aos-delay="400">
                 <span id="typed-text"></span><span class="typed-cursor">|</span>
             </div>
@@ -710,12 +922,32 @@
                 OSCP-certified cybersecurity specialist with 5+ years of software engineering experience. 
                 Passionate about securing digital infrastructures and advancing through cutting-edge penetration testing techniques.
             </p>
+            
+            <div class="terminal-window" data-aos="fade-up" data-aos-delay="700">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn red"></div>
+                        <div class="terminal-btn yellow"></div>
+                        <div class="terminal-btn green"></div>
+                    </div>
+                    <div class="terminal-title">ramis@cybersec:~$</div>
+                </div>
+                <div class="terminal-content">
+                    <div><span class="terminal-prompt">ramis@cybersec:~$</span> <span class="terminal-command">whoami</span></div>
+                    <div class="terminal-output">OSCP-Certified Penetration Tester | Sheffield MSc Student</div>
+                    <div><span class="terminal-prompt">ramis@cybersec:~$</span> <span class="terminal-command">cat skills.txt</span></div>
+                    <div class="terminal-output">Python | Burp Suite | Metasploit | OWASP | Cloud Security</div>
+                    <div><span class="terminal-prompt">ramis@cybersec:~$</span> <span class="terminal-command">echo $STATUS</span></div>
+                    <div class="terminal-output">Ready for UK Cybersecurity Opportunities</div>
+                </div>
+            </div>
+            
             <div class="cta-buttons" data-aos="fade-up" data-aos-delay="800">
-                <a href="#contact" class="btn btn-primary">
+                <a href="#contact" class="btn btn-primary pulse">
                     <i class="fas fa-envelope"></i> Get In Touch
                 </a>
                 <a href="#about" class="btn btn-outline">
-                    <i class="fas fa-user"></i> Learn More
+                    <i class="fas fa-user-secret"></i> Explore Profile
                 </a>
             </div>
         </div>
@@ -1033,7 +1265,7 @@
     
     <!-- AOS Animation -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
+    
     <!-- Typed.js -->
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 
@@ -1117,16 +1349,22 @@
         document.addEventListener('DOMContentLoaded', function() {
             new Typed('#typed-text', {
                 strings: [
-                    'Software Engineer',
-                    'Penetration Tester', 
+                    'Senior Software Engineer',
+                    'OSCP-Certified Penetration Tester', 
                     'Cybersecurity Specialist',
-                    'OSCP-Certified Professional',
-                    'Security Researcher',
-                    'Ethical Hacker'
+                    'Application Security Engineer',
+                    'Full Stack Developer',
+                    'DevSecOps Engineer',
+                    'Security Automation Expert',
+                    'Ethical Hacker',
+                    'Cloud Security Engineer',
+                    'Sheffield MSc Student',
+                    'Bug Hunter',
+                    'Security Consultant'
                 ],
-                typeSpeed: 100,
-                backSpeed: 50,
-                backDelay: 2000,
+                typeSpeed: 80,
+                backSpeed: 40,
+                backDelay: 1500,
                 startDelay: 1000,
                 loop: true,
                 showCursor: false
@@ -1157,16 +1395,58 @@
             }
         });
 
-        // Add some interactive elements
-        document.querySelectorAll('.skill-category, .cert-card, .timeline-content').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px) scale(1.02)';
-            });
+        // Matrix Rain Effect
+        function createMatrixRain() {
+            const matrixContainer = document.getElementById('matrix-rain');
+            const chars = '01010110110100101110011010101110100101110010101101101001011100110101011101001011100101011011010010111001101010111010010111001010110110100101110011010101110100101110010101101101001011100110101011101001011100101011011';
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-        });
+            function createChar() {
+                const char = document.createElement('div');
+                char.className = 'matrix-char';
+                char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                char.style.left = Math.random() * 100 + '%';
+                char.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                char.style.opacity = Math.random() * 0.5 + 0.2;
+                matrixContainer.appendChild(char);
+                
+                setTimeout(() => {
+                    if (char.parentNode) {
+                        char.parentNode.removeChild(char);
+                    }
+                }, 5000);
+            }
+            
+            setInterval(createChar, 200);
+        }
+
+        // Floating Icons Effect
+        function createFloatingIcons() {
+            const container = document.getElementById('floating-icons');
+            const icons = ['fas fa-shield-alt', 'fas fa-lock', 'fas fa-key', 'fas fa-bug', 'fas fa-search', 'fas fa-code', 'fas fa-server', 'fas fa-wifi', 'fas fa-database', 'fas fa-terminal'];
+            
+            function createIcon() {
+                const icon = document.createElement('i');
+                icon.className = 'floating-icon ' + icons[Math.floor(Math.random() * icons.length)];
+                icon.style.left = Math.random() * 100 + '%';
+                icon.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                icon.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                container.appendChild(icon);
+                
+                setTimeout(() => {
+                    if (icon.parentNode) {
+                        icon.parentNode.removeChild(icon);
+                    }
+                }, 20000);
+            }
+            
+            setInterval(createIcon, 3000);
+        }
+
+        // Initialize effects
+        setTimeout(() => {
+            createMatrixRain();
+            createFloatingIcons();
+        }, 2000);
     </script>
 </body>
 </html>
