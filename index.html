@@ -795,6 +795,8 @@
             border-radius: 12px;
             font-size: 0.8rem;
             font-weight: 500;
+            display: inline-block;
+            margin: 0.1rem;
         }
 
         .carousel-controls {
@@ -1373,6 +1375,9 @@
             transform: rotate(90deg);
             color: #ff0000;
         }
+        .timeline-text { 
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -1797,7 +1802,7 @@
                         <div class="timeline-date">Sep 2024 - Present</div>
                         <div class="timeline-role">MSc Student & OSCP Graduate</div>
                         <div class="timeline-company">University of Sheffield</div>
-                        <p>Completing MSc in Cybersecurity and Artificial Intelligence with Merit classification expected. Achieved OSCP and OSCP+ certifications. Pursuing CREST certification for UK market readiness.</p>
+                        <p  class="timeline-text">Completing MSc in Cybersecurity and Artificial Intelligence with Merit classification expected. Achieved OSCP and OSCP+ certifications. Pursuing CREST certification for UK market readiness.</p>
                         <div style="margin-top: 1rem;">
                             <span class="tech-badge">MSc Cybersecurity & AI</span>
                             <span class="tech-badge">OSCP Certified</span>
@@ -1812,7 +1817,7 @@
                         <div class="timeline-date">Apr 2022 - Jun 2024</div>
                         <div class="timeline-role">Senior Software Engineer</div>
                         <div class="timeline-company">Sorvox Groups, Pakistan</div>
-                        <p>Led security assessments and infrastructure hardening. Enhanced Linux cluster security achieving 25% improvement in system availability. Implemented DevSecOps practices and security testing environments.</p>
+                        <p  class="timeline-text">Led security assessments and infrastructure hardening. Enhanced Linux cluster security achieving 25% improvement in system availability. Implemented DevSecOps practices and security testing environments.</p>
                         <div style="margin-top: 1rem;">
                             <span class="tech-badge">Security Assessment</span>
                             <span class="tech-badge">Infrastructure Security</span>
@@ -1827,7 +1832,7 @@
                         <div class="timeline-date">Oct 2020 - Mar 2022</div>
                         <div class="timeline-role">Senior Software Engineer</div>
                         <div class="timeline-company">Apricart E-Stores, Pakistan</div>
-                        <p>Led secure payment gateway integrations with JS Bank ensuring PCI DSS compliance. Improved API security and developed monitoring systems. Achieved Employee of the Month recognition.</p>
+                        <p  class="timeline-text">Led secure payment gateway integrations with JS Bank ensuring PCI DSS compliance. Improved API security and developed monitoring systems. Achieved Employee of the Month recognition.</p>
                         <div style="margin-top: 1rem;">
                             <span class="tech-badge">Payment Security</span>
                             <span class="tech-badge">PCI DSS Compliance</span>
@@ -1842,7 +1847,7 @@
                         <div class="timeline-date">Dec 2019 - Aug 2020</div>
                         <div class="timeline-role">Full Stack Developer</div>
                         <div class="timeline-company">Creative Drop DMCC, UAE</div>
-                        <p>Developed secure CMS backends with integrated security measures. Implemented JWT and OAuth authentication systems. Automated DNS management with security-focused scripting.</p>
+                        <p  class="timeline-text">Developed secure CMS backends with integrated security measures. Implemented JWT and OAuth authentication systems. Automated DNS management with security-focused scripting.</p>
                         <div style="margin-top: 1rem;">
                             <span class="tech-badge">Secure Development</span>
                             <span class="tech-badge">Authentication Systems</span>
@@ -1857,7 +1862,7 @@
                         <div class="timeline-date">Jan 2019 - Aug 2020</div>
                         <div class="timeline-role">Software Engineer</div>
                         <div class="timeline-company">Chatcloud.co, Pakistan</div>
-                        <p>Implemented security measures for backend systems across Microsoft and Linux platforms. Developed scalable microservices with key-based authentication. Enhanced infrastructure security through clustering.</p>
+                        <p class="timeline-text">Implemented security measures for backend systems across Microsoft and Linux platforms. Developed scalable microservices with key-based authentication. Enhanced infrastructure security through clustering.</p>
                         <div style="margin-top: 1rem;">
                             <span class="tech-badge">Microservices Security</span>
                             <span class="tech-badge">Platform Security</span>
@@ -1889,8 +1894,10 @@
                         <div class="project-card" data-tooltip="Automated penetration testing framework reducing manual testing time by 40%">
                             <div class="project-title">
                                 <i class="fas fa-robot"></i>
+                                <span class="project-type">Security Research</span></br>
+                            </div>
+                            <div class="project-title">
                                 Advanced Penetration Testing Automation
-                                <span class="project-type">Security Research</span>
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Custom automation framework following PTES methodology with integrated payload generation and report automation covering 20+ assessment types.
@@ -1906,8 +1913,10 @@
                         <div class="project-card" data-tooltip="Comprehensive enterprise security implementation with zero incidents over 24 months">
                             <div class="project-title">
                                 <i class="fas fa-building"></i>
+                                <span class="project-type">Professional</span></br>
+                            </div>
+                            <div class="project-title">
                                 Enterprise Application Security Implementation
-                                <span class="project-type">Professional</span>
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Implemented OWASP Top 10 mitigation strategies, secure payment processing, and real-time threat monitoring achieving PCI DSS compliance.
@@ -1923,8 +1932,10 @@
                         <div class="project-card" data-tooltip="Critical vulnerability research resulting in 100% threat neutralization">
                             <div class="project-title">
                                 <i class="fas fa-bug"></i>
-                                Critical CMS Vulnerability Research & IDPS
                                 <span class="project-type">Research</span>
+                            </div>
+                            <div class="project-title">
+                                Critical CMS Vulnerability Research & IDPS
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Identified and neutralized active SQL injection and XSS exploitation attempts. Deployed comprehensive IDPS with custom rule sets.
@@ -1949,8 +1960,10 @@
                         <div class="project-card" data-tooltip="Security research project for disabled accessibility with remote computer control">
                             <div class="project-title">
                                 <i class="fas fa-mobile-alt"></i>
-                                Mobile Application for Disabled People
                                 <span class="project-type">University Research</span>
+                            </div>
+                            <div class="project-title">
+                                Mobile Application for Disabled People
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Remote access application allowing disabled users to control computers through mobile devices with real-time display capabilities and security considerations.
@@ -1966,8 +1979,10 @@
                         <div class="project-card" data-tooltip="Innovative drag-and-drop mobile app development platform">
                             <div class="project-title">
                                 <i class="fas fa-mobile"></i>
-                                SCAPLEON IDE - Mobile App Builder
                                 <span class="project-type">Technology Entrepreneurship</span>
+                            </div>
+                            <div class="project-title">
+                                SCAPLEON IDE - Mobile App Builder
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 WYSIWYG hybrid mobile application creator using Cordova frameworks with drag-and-drop capabilities and real-time preview.
@@ -1983,8 +1998,10 @@
                         <div class="project-card" data-tooltip="Advanced AI algorithm implementations with interactive visualizations">
                             <div class="project-title">
                                 <i class="fas fa-brain"></i>
-                                AI Algorithm Interactive Simulators
                                 <span class="project-type">Artificial Intelligence</span>
+                            </div>
+                            <div class="project-title">
+                                AI Algorithm Interactive Simulators
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Created interactive simulators for Ant Colony, Hill Climbing, A*, and Dijkstra's algorithms with maze generation and pathfinding visualizations.
@@ -2009,8 +2026,10 @@
                         <div class="project-card" data-tooltip="Complete streaming platform with advanced security and payment integration">
                             <div class="project-title">
                                 <i class="fas fa-video"></i>
-                                Streamrolla - Secure Video Platform
                                 <span class="project-type">Enterprise</span>
+                            </div>
+                            <div class="project-title">
+                                Streamrolla - Secure Video Platform
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Full-stack streaming platform with secure payment integration, user management, and advanced analytics achieving 20% delivery improvement.
@@ -2026,8 +2045,10 @@
                         <div class="project-card" data-tooltip="Custom hosting platform with ICANN integration and domain management">
                             <div class="project-title">
                                 <i class="fas fa-server"></i>
-                                HostSorvox - Hosting Platform
                                 <span class="project-type">Business</span>
+                            </div>
+                            <div class="project-title">
+                                HostSorvox - Hosting Platform
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Custom cloud hosting platform with domain lifecycle management, ICANN membership integration, and OWASP security protocols.
@@ -2043,8 +2064,10 @@
                         <div class="project-card" data-tooltip="AI-powered lead generation platform with real-time communication">
                             <div class="project-title">
                                 <i class="fas fa-comments"></i>
-                                ChatCloud - AI Chat Solutions
                                 <span class="project-type">Leadership</span>
+                            </div>
+                            <div class="project-title">
+                                ChatCloud - AI Chat Solutions
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Lead generation platform combining human and AI chat solutions with microservices architecture and Twilio integration.
@@ -2069,8 +2092,10 @@
                         <div class="project-card" data-tooltip="Classic games implemented in pure assembly language with graphics programming">
                             <div class="project-title">
                                 <i class="fas fa-th"></i>
-                                Assembly Language Game Collection
                                 <span class="project-type">Personal</span>
+                            </div>
+                            <div class="project-title">
+                                Assembly Language Game Collection
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Complete implementations of Brick Breaker, Tic-Tac-Toe, Snake, and Hangman using 8086 assembly with video and graphics interrupts.
@@ -2086,8 +2111,10 @@
                         <div class="project-card" data-tooltip="Real-time networking games with AI opponents and multiplayer support">
                             <div class="project-title">
                                 <i class="fas fa-network-wired"></i>
-                                Networked Gaming with AI
                                 <span class="project-type">Personal</span>
+                            </div>
+                            <div class="project-title">
+                                Networked Gaming with AI
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Developed networked versions of classic games including 2D fighting game (Street Fighter style), Pacman clone, and Snake with AI opponents.
@@ -2103,8 +2130,10 @@
                         <div class="project-card" data-tooltip="E-commerce marketplace for video games with secure transaction processing">
                             <div class="project-title">
                                 <i class="fas fa-shopping-cart"></i>
-                                ChalKhareed - Gaming Marketplace
                                 <span class="project-type">University</span>
+                            </div>
+                            <div class="project-title">
+                                ChalKhareed - Gaming Marketplace
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
                                 Secure e-commerce platform for video game marketplace with integrated payment processing, user management, and transaction security.
