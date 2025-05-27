@@ -1607,14 +1607,14 @@
             
             <div class="stat-card" data-tooltip="Comprehensive security assessments across web applications, networks, and infrastructure">
                 <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
-                <div class="stat-number">100+</div>
+                <div class="stat-number">5+</div>
                 <div class="stat-label">Security Assessments Completed</div>
                 <div class="stat-description">Vulnerability assessments and penetration testing engagements</div>
             </div>
             
-            <div class="stat-card" data-tooltip="OSCP courses completed including PEN-200, PEN-210, PEN-300, SOC-200, WEB-200">
+            <div class="stat-card" data-tooltip="OSCP courses including PEN-200, PEN-210, PEN-300, SOC-200, WEB-200">
                 <div class="stat-icon"><i class="fas fa-certificate"></i></div>
-                <div class="stat-number">5</div>
+                <div class="stat-number">1/5</div>
                 <div class="stat-label">OSCP Courses Completed</div>
                 <div class="stat-description">Advanced penetration testing and security training</div>
             </div>
@@ -2524,46 +2524,49 @@
 
         // Enhanced custom tooltips with rich content
         function initCustomTooltips() {
-            const tooltip = document.getElementById('custom-tooltip');
-            const elementsWithTooltips = document.querySelectorAll('[data-tooltip]');
+    const tooltip = document.getElementById('custom-tooltip');
+    const elementsWithTooltips = document.querySelectorAll('[data-tooltip]');
 
-            elementsWithTooltips.forEach(element => {
-                element.addEventListener('mouseenter', (e) => {
-                    const text = e.target.getAttribute('data-tooltip');
-                    if (text) {
-                        tooltip.innerHTML = text;
-                        tooltip.classList.add('show');
-                        updateTooltipPosition(e);
-                    }
-                });
-
-                element.addEventListener('mousemove', updateTooltipPosition);
-
-                element.addEventListener('mouseleave', () => {
-                    tooltip.classList.remove('show');
-                });
-            });
-
-            function updateTooltipPosition(e) {
-                const rect = tooltip.getBoundingClientRect();
-                const x = e.clientX;
-                const y = e.clientY;
-                
-                let tooltipX = x + 15;
-                let tooltipY = y - rect.height - 15;
-                
-                // Keep tooltip on screen
-                if (tooltipX + rect.width > window.innerWidth) {
-                    tooltipX = x - rect.width - 15;
-                }
-                if (tooltipY < 0) {
-                    tooltipY = y + 15;
-                }
-                
-                tooltip.style.left = tooltipX + 'px';
-                tooltip.style.top = tooltipY + 'px';
+    elementsWithTooltips.forEach(element => {
+        element.addEventListener('mouseenter', (e) => {
+            const text = e.target.getAttribute('data-tooltip');
+            if (text) {
+                tooltip.innerHTML = text;
+                tooltip.classList.add('show');
+                updateTooltipPosition(e);
             }
+        });
+
+        element.addEventListener('mousemove', updateTooltipPosition);
+
+        element.addEventListener('mouseleave', () => {
+            tooltip.classList.remove('show');
+        });
+    });
+
+    function updateTooltipPosition(e) {
+        const rect = tooltip.getBoundingClientRect();
+        const x = e.pageX;
+        const y = e.pageY;
+
+
+    let tooltipX = x - rect.width / 2;
+    let tooltipY = y - rect.height - 15;
+
+        // Keep tooltip on screen
+        if (tooltipX + rect.width > document.documentElement.scrollWidth) {
+            tooltipX = x - rect.width - 15;
         }
+        if (tooltipY < window.scrollY) {
+            tooltipY = y + 15;
+        }
+
+        tooltip.style.left = tooltipX + 'px';
+        tooltip.style.top = tooltipY + 'px';
+        tooltip.style.position = 'absolute';  // Ensure it's not fixed
+    }
+}
+
 
         // Floating terminal commands animation
         function createFloatingCommands() {
