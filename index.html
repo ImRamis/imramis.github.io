@@ -9,24 +9,89 @@
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iIzBmMTcyYSIvPgo8dGV4dCB4PSIxNiIgeT0iMjEiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMwZWE1ZTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPk1SPC90ZXh0Pgo8L3N2Zz4K">
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iMjAiIGZpbGw9IiMwZjE3MmEiLz4KPHR5eHQgeD0iOTAiIHk9IjEwNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjcwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzBlYTVlOSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+TVI8L3RleHQ+Cjwvc3ZnPgo=">
 
+    <!-- GDPR Compliance & Privacy Modal -->
+    <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+
+    
+    
     <!-- Google Analytics (Your actual ID) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-GKD7JXRS66');
-    </script>
-    
-    <!-- Microsoft Clarity (Your actual ID) -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "rpwqh3rock");
-    </script>
-    
+<script>
+window.addEventListener("load", function(){
+  window.cookieconsent.initialise({
+    palette: {
+      popup: { background: "#000" },
+      button: { background: "#0ea5e9" }
+    },
+    theme: "classic",
+    position: "bottom",
+    type: "opt-in",
+    content: {
+      message: "This site uses cookies to enhance experience and track usage via Analytics and Clarity.",
+      dismiss: "Decline",
+      allow: "Accept",
+      link: "Privacy Policy",
+      href: "#",
+      policy: "Privacy Policy"
+    },
+    onInitialise: function (status) {
+      if (this.hasConsented()) enableAnalytics();
+    },
+    onStatusChange: function(status, chosenBefore) {
+      if (this.hasConsented()) enableAnalytics();
+    }
+  });
+
+  function enableAnalytics() {
+    // Google Analytics
+    const ga = document.createElement("script");
+    ga.src = "https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66";
+    ga.async = true;
+    document.head.appendChild(ga);
+    ga.onload = () => {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-GKD7JXRS66");
+    };
+
+    // Microsoft Clarity
+    const clarity = document.createElement("script");
+    clarity.innerHTML = `(function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "rpwqh3rock");`;
+    document.head.appendChild(clarity);
+  }
+
+  // Privacy Policy Modal
+  const modalHTML = `
+  <div id="privacyModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;overflow:auto;">
+    <div style="background:#fff;color:#000;margin:5% auto;padding:20px;width:90%;max-width:700px;border-radius:10px;position:relative;">
+      <h2>Privacy Policy</h2>
+      <p><strong>1. Introduction:</strong> This personal portfolio site is designed to showcase my professional background. I respect your privacy and comply with GDPR and similar data protection laws.</p>
+      <p><strong>2. Data Collected:</strong> Non-personal data like IP addresses, browser information, and user interactions are collected via Google Analytics and Microsoft Clarity, upon user consent.</p>
+      <p><strong>3. Purpose:</strong> Data is used solely for improving the website’s performance and user experience.</p>
+      <p><strong>4. Sharing:</strong> Data is shared with Google and Microsoft under their respective privacy terms. No personal identifiers like names or emails are collected.</p>
+      <p><strong>5. Rights:</strong> Users can request deletion of data, refuse consent, or withdraw consent anytime via the cookie settings.</p>
+      <p><strong>6. Cookies:</strong> Cookies are used to store preferences and enable analytics tracking after consent. No cookies are set without user permission.</p>
+      <p><strong>7. Contact:</strong> For inquiries, contact me at mramis1@outlook.com.</p>
+      <button onclick="document.getElementById('privacyModal').style.display='none'" style="margin-top:20px;padding:10px 20px;background:#0ea5e9;color:#fff;border:none;border-radius:5px;">Close</button>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+  // Make modal open when cookie banner "Privacy Policy" link is clicked
+  document.addEventListener("click", function(e){
+    if (e.target && e.target.classList.contains("cc-link")) {
+      e.preventDefault();
+      document.getElementById("privacyModal").style.display = "block";
+    }
+  });
+});
+</script>    
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
