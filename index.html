@@ -1070,7 +1070,36 @@
             background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
             transition: left 0.5s ease;
         }
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.7;
+            overflow: hidden;
+        }
 
+        .matrix-char {
+            position: absolute;
+            color: var(--primary-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            animation: matrixFall linear infinite;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        @keyframes matrixFall {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
         .stat-card:hover::before {
             left: 100%;
         }
@@ -1228,7 +1257,17 @@
             gap: 1rem;
             margin-top: 2rem;
         }
-
+        .mouse-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
         .social-link {
             width: 50px;
             height: 50px;
@@ -1449,6 +1488,9 @@
     <section id="home" class="hero">
         <div class="hero-background"></div>
         <div class="terminal-commands" id="terminal-commands"></div>
+
+
+        <div class="matrix-rain" id="matrix-rain"></div>
         
         <div class="hero-content">
             <div class="professional-badges" data-aos="fade-up">
@@ -2257,6 +2299,9 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 
+        <!-- Google Analytics (Your actual ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66"></script>
+    
     <script>
         // Global variables
         let currentSlide = 0;
@@ -2272,6 +2317,56 @@
                 }, 500);
             }, 2000);
         });
+        // Analytics Event Tracking
+        function trackEvent(action, category, label) {
+            // Google Analytics 4 event tracking
+            if (typeof gtag !== 'undefined') {
+                gtag('event', action, {
+                    'event_category': category,
+                    'event_label': label
+                });
+            }
+            
+            // Microsoft Clarity custom events
+            if (typeof clarity !== 'undefined') {
+                clarity('set', action, label);
+            }
+        }
+                // Track user interactions
+        function setupAnalytics() {
+            // Track button clicks
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    trackEvent('button_click', 'engagement', e.target.textContent);
+                });
+            });
+            
+            // Track section views
+            const sections = document.querySelectorAll('section[id]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        trackEvent('section_view', 'navigation', entry.target.id);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            sections.forEach(section => observer.observe(section));
+            
+            // Track contact link clicks
+            document.querySelectorAll('a[href^="mailto:"], a[href^="tel:"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    trackEvent('contact_click', 'conversion', e.target.href);
+                });
+            });
+            
+            // Track external link clicks
+            document.querySelectorAll('a[target="_blank"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    trackEvent('external_link', 'engagement', e.target.href);
+                });
+            });
+        }
 
         function initializePortfolio() {
             // Initialize AOS
@@ -2577,7 +2672,7 @@ const commands = [
 
     // Create a denser stream of commands by decreasing interval and launching multiple per tick
     setInterval(() => {
-        for (let i = 0; i < 2; i++) {  // Increase multiplier to raise density
+        for (let i = 0; i < 1; i++) {  // Increase multiplier to raise density
             createCommand();
         }
     }, 1000);
@@ -2697,12 +2792,33 @@ const commands = [
                 navbar.style.borderBottom = `1px solid ${primaryColor}`;
             }
         });
+  function enableAnalytics() {
+    // Google Analytics
+    const ga = document.createElement("script");
+    ga.src = "https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66";
+    ga.async = true;
+    document.head.appendChild(ga);
+    ga.onload = () => {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-GKD7JXRS66");
+    };
 
+    // Microsoft Clarity
+    const clarity = document.createElement("script");
+    clarity.innerHTML = `(function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "rpwqh3rock");`;
+    document.head.appendChild(clarity);
+  }
         // Enhanced analytics tracking
         function trackUserInteraction(action, element) {
             if (sessionStorage.getItem('gdpr-accepted')) {
                 console.log(`User interaction: ${action} on ${element}`);
-                // Here you would send to your analytics service
+                enableAnalytics();
             }
         }
 
@@ -2831,7 +2947,6 @@ const commands = [
         // Error handling for production
         window.addEventListener('error', (e) => {
             console.error('Portfolio error:', e.error);
-            // In production, you might want to send this to an error tracking service
         });
 
         // Service Worker registration for PWA capabilities (if needed)
@@ -2846,7 +2961,29 @@ const commands = [
                     });
             });
         }
-
+        // Mouse Trail Effect
+        function createMouseTrail() {
+            const trail = [];
+            const trailLength = 20;
+            
+            for (let i = 0; i < trailLength; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'mouse-trail';
+                document.body.appendChild(dot);
+                trail.push(dot);
+            }
+            
+            document.addEventListener('mousemove', (e) => {
+                trail.forEach((dot, index) => {
+                    setTimeout(() => {
+                        dot.style.left = e.clientX + 'px';
+                        dot.style.top = e.clientY + 'px';
+                        dot.style.opacity = (trailLength - index) / trailLength;
+                        dot.style.transform = `scale(${(trailLength - index) / trailLength})`;
+                    }, index * 50);
+                });
+            });
+        }
         // Final initialization log
         setTimeout(() => {
             console.log('🚀 Portfolio fully loaded and optimized!');
@@ -2856,6 +2993,37 @@ const commands = [
             console.log('🔒 Specializations: Penetration testing, vulnerability assessment, secure development');
             console.log('📧 Contact: mramis1@outlook.com');
         }, 4000);
+        // Matrix Rain Effect
+        function createMatrixRain() {
+            const matrixContainer = document.getElementById('matrix-rain');
+            const chars = '01010110110100101110011010101110100101110010101101101001011100110101011101001011100101011011010010111001101010111010010111001010110110100101110011010101110100101110010101101101001011100110101011101001011100101011011';
+            
+            function createChar() {
+                const char = document.createElement('div');
+                char.className = 'matrix-char';
+                char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                char.style.left = Math.random() * 100 + '%';
+                char.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                char.style.opacity = Math.random() * 0.5 + 0.2;
+                matrixContainer.appendChild(char);
+                
+                setTimeout(() => {
+                    if (char.parentNode) {
+                        char.parentNode.removeChild(char);
+                    }
+                }, 5000);
+            }
+            
+            setInterval(createChar, 200);
+        }
+        setTimeout(() => {
+            createMatrixRain();
+//            createCodeRain();
+//            createFloatingIcons();
+//            createFloatingCubes();
+            createMouseTrail();
+            setupAnalytics();
+        }, 2000);
     </script>
 </body>
 </html>
