@@ -15,7 +15,7 @@ const PROJECTS = [
         type: 'Professional',
         description: 'Full-stack e-commerce solution with PCI DSS compliance and advanced payment integration.',
         technologies: ['Laravel', 'React', 'Stripe API', 'AWS', 'Redis'],
-        achievements: ['Zero security incidents', '$2M+ processed monthly'],
+        achievements: ['Zero security incidents', '30% increase in conversion rate'],
         icon: 'fa-shopping-cart'
     },
     {
