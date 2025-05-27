@@ -382,6 +382,7 @@
         }
 
         .hero-background {
+            display:none;
             position: absolute;
             top: 0;
             left: 0;
@@ -841,7 +842,7 @@
             overflow: hidden;
         }
 
-        .cert-card::before {
+/*         .cert-card::before {
             content: '';
             position: absolute;
             top: -50%;
@@ -854,7 +855,7 @@
             transition: opacity 0.3s ease;
         }
 
-        .cert-card:hover::before {
+        .cert-card:hover::before { */
             opacity: 0.1;
         }
 
@@ -957,7 +958,8 @@
             margin-bottom: 1rem;
         }
 
-        .cert-status.verified {
+        .cert-status.verified a {
+            text-decoration: none;
             color: #10b981;
         }
 
@@ -1451,7 +1453,7 @@
         <div class="hero-content">
             <div class="professional-badges" data-aos="fade-up">
                 <div class="badge" data-tooltip="Completed April 2025 - Advanced penetration testing certification"><i class="fas fa-certificate"></i> OSCP Certified</div>
-                <div class="badge" data-tooltip="University of Sheffield MSc in Cybersecurity & AI - Graduating 2025"><i class="fas fa-graduation-cap"></i> Sheffield Graduate</div>
+                <div class="badge" data-tooltip="University of Sheffield MSc in Cybersecurity & AI - Graduating 2025 - Russell Group University - Top 100 University"><i class="fas fa-graduation-cap"></i> Sheffield Graduate - Russell Group</div>
                 <div class="badge" data-tooltip="Currently pursuing CREST certification - UK penetration testing standard"><i class="fas fa-shield-alt"></i> CREST In Progress</div>
                 <div class="badge" data-tooltip="5+ years software engineering with recent cybersecurity focus"><i class="fas fa-code"></i> 5+ Years Experience</div>
             </div>
@@ -1606,7 +1608,7 @@
         </div>
 
         <div class="certifications-grid" data-aos="fade-up" data-aos-delay="400">
-            <div class="cert-card featured" data-tooltip="Advanced penetration testing certification - Credential ID: 140250238">
+            <div class="cert-card featured" data-tooltip="penetration testing certification - Credential ID: 140250238">
                 <div class="cert-badge">
                     <i class="fas fa-shield-alt"></i>
                 </div>
@@ -1614,7 +1616,7 @@
                 <div class="cert-full-name">Offensive Security Certified Professional</div>
                 <div class="cert-org">Offensive Security</div>
                 <div class="cert-date">April 2025</div>
-                <div class="cert-status verified">✓ Verified</div>
+                <div class="cert-status verified"><a href="https://credentials.offsec.com/5185a463-88bf-4ad2-8546-2555585d8cc4#acc.fFbVLAta" target="_blank">✓ Verified</a></div>
                 <div class="cert-description">
                     Advanced penetration testing, privilege escalation, Active Directory attacks, and manual exploitation techniques
                 </div>
@@ -1628,7 +1630,7 @@
                 <div class="cert-full-name">OSCP+ Advanced Certification</div>
                 <div class="cert-org">Offensive Security</div>
                 <div class="cert-date">April 2025</div>
-                <div class="cert-status verified">✓ Verified</div>
+                <div class="cert-status verified"><a target="_blank" href="https://credentials.offsec.com/559e642d-824b-4657-bdd9-8b315e1845f7#acc.MxVIzcvH">✓ Verified</a></div>
                 <div class="cert-description">
                     Cloud enumeration, password spray attacks, advanced exploitation techniques, and enterprise security testing
                 </div>
@@ -1893,10 +1895,10 @@
                     <div class="projects-grid">
                         <div class="project-card" data-tooltip="Automated penetration testing framework reducing manual testing time by 40%">
                             <div class="project-title">
-                                <i class="fas fa-robot"></i>
                                 <span class="project-type">Security Research</span></br>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-robot"></i>
                                 Advanced Penetration Testing Automation
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -1912,10 +1914,10 @@
 
                         <div class="project-card" data-tooltip="Comprehensive enterprise security implementation with zero incidents over 24 months">
                             <div class="project-title">
-                                <i class="fas fa-building"></i>
                                 <span class="project-type">Professional</span></br>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-building"></i>
                                 Enterprise Application Security Implementation
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -1931,10 +1933,10 @@
 
                         <div class="project-card" data-tooltip="Critical vulnerability research resulting in 100% threat neutralization">
                             <div class="project-title">
-                                <i class="fas fa-bug"></i>
                                 <span class="project-type">Research</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-bug"></i>
                                 Critical CMS Vulnerability Research & IDPS
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -1959,10 +1961,10 @@
                     <div class="projects-grid">
                         <div class="project-card" data-tooltip="Security research project for disabled accessibility with remote computer control">
                             <div class="project-title">
-                                <i class="fas fa-mobile-alt"></i>
                                 <span class="project-type">University Research</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-mobile-alt"></i>
                                 Mobile Application for Disabled People
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -1978,10 +1980,10 @@
 
                         <div class="project-card" data-tooltip="Innovative drag-and-drop mobile app development platform">
                             <div class="project-title">
-                                <i class="fas fa-mobile"></i>
                                 <span class="project-type">Technology Entrepreneurship</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-mobile"></i>
                                 SCAPLEON IDE - Mobile App Builder
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -1997,10 +1999,10 @@
 
                         <div class="project-card" data-tooltip="Advanced AI algorithm implementations with interactive visualizations">
                             <div class="project-title">
-                                <i class="fas fa-brain"></i>
                                 <span class="project-type">Artificial Intelligence</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-brain"></i>
                                 AI Algorithm Interactive Simulators
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -2025,10 +2027,10 @@
                     <div class="projects-grid">
                         <div class="project-card" data-tooltip="Complete streaming platform with advanced security and payment integration">
                             <div class="project-title">
-                                <i class="fas fa-video"></i>
                                 <span class="project-type">Enterprise</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-video"></i>
                                 Streamrolla - Secure Video Platform
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -2044,10 +2046,10 @@
 
                         <div class="project-card" data-tooltip="Custom hosting platform with ICANN integration and domain management">
                             <div class="project-title">
-                                <i class="fas fa-server"></i>
                                 <span class="project-type">Business</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-server"></i>
                                 HostSorvox - Hosting Platform
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -2063,10 +2065,10 @@
 
                         <div class="project-card" data-tooltip="AI-powered lead generation platform with real-time communication">
                             <div class="project-title">
-                                <i class="fas fa-comments"></i>
                                 <span class="project-type">Leadership</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-comments"></i>
                                 ChatCloud - AI Chat Solutions
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -2091,10 +2093,10 @@
                     <div class="projects-grid">
                         <div class="project-card" data-tooltip="Classic games implemented in pure assembly language with graphics programming">
                             <div class="project-title">
-                                <i class="fas fa-th"></i>
                                 <span class="project-type">Personal</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-th"></i>
                                 Assembly Language Game Collection
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -2110,10 +2112,10 @@
 
                         <div class="project-card" data-tooltip="Real-time networking games with AI opponents and multiplayer support">
                             <div class="project-title">
-                                <i class="fas fa-network-wired"></i>
                                 <span class="project-type">Personal</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-network-wired"></i>
                                 Networked Gaming with AI
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
@@ -2129,10 +2131,10 @@
 
                         <div class="project-card" data-tooltip="E-commerce marketplace for video games with secure transaction processing">
                             <div class="project-title">
-                                <i class="fas fa-shopping-cart"></i>
                                 <span class="project-type">University</span>
                             </div>
                             <div class="project-title">
+                                <i class="fas fa-shopping-cart"></i>
                                 ChalKhareed - Gaming Marketplace
                             </div>
                             <p style="color: #94a3b8; margin-bottom: 1rem;">
