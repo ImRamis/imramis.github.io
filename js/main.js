@@ -2,23 +2,23 @@
 
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize theme manager
     const themeManager = new ThemeManager();
     
-    // Initialize loading screen
     initLoading();
     
-    // Initialize all components
     setTimeout(() => {
         initNavigation();
         initScrollProgress();
         initTypedText();
         initTerminal();
         initParticles();
+        initMatrixRain();
         initAnimations();
         initProjects();
         initContactForm();
         initAnalytics();
+        renderExperience();
+        renderCertifications();
     }, 1000);
 });
 
@@ -39,21 +39,18 @@ function initNavigation() {
     const mobileToggle = document.getElementById('mobile-toggle');
     const navLinks = document.getElementById('nav-links');
     
-    // Mobile menu toggle
-    mobileToggle.addEventListener('click', () => {
+    mobileToggle?.addEventListener('click', () => {
         navLinks.classList.toggle('active');
         mobileToggle.classList.toggle('active');
     });
     
-    // Close mobile menu on link click
-    navLinks.querySelectorAll('a').forEach(link => {
+    navLinks?.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             navLinks.classList.remove('active');
             mobileToggle.classList.remove('active');
         });
     });
     
-    // Navbar scroll effect
     let lastScroll = 0;
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
@@ -64,7 +61,6 @@ function initNavigation() {
             navbar.classList.remove('scrolled');
         }
         
-        // Hide/show navbar on scroll
         if (currentScroll > lastScroll && currentScroll > 500) {
             navbar.style.transform = 'translateY(-100%)';
         } else {
@@ -76,16 +72,11 @@ function initNavigation() {
     
     // Active section highlighting
     const sections = document.querySelectorAll('section[id]');
-    const observerOptions = {
-        threshold: 0.3,
-        rootMargin: '-100px 0px -100px 0px'
-    };
-    
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const id = entry.target.getAttribute('id');
-                navLinks.querySelectorAll('a').forEach(link => {
+                navLinks?.querySelectorAll('a').forEach(link => {
                     link.classList.remove('active');
                     if (link.getAttribute('href') === `#${id}`) {
                         link.classList.add('active');
@@ -93,7 +84,7 @@ function initNavigation() {
                 });
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.3, rootMargin: '-100px 0px -100px 0px' });
     
     sections.forEach(section => observer.observe(section));
 }
@@ -106,14 +97,32 @@ function initScrollProgress() {
         const winScroll = document.documentElement.scrollTop;
         const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (winScroll / height) * 100;
-        progressBar.style.width = scrolled + '%';
+        if (progressBar) progressBar.style.width = scrolled + '%';
+        
+        // Track scroll depth
+        if (typeof gtag !== 'undefined') {
+            const scrollPercentage = Math.round(scrolled);
+            if (scrollPercentage % 25 === 0) { // Track at 25%, 50%, 75%, 100%
+                gtag('event', 'scroll_depth', {
+                    event_category: 'engagement',
+                    event_label: `${scrollPercentage}%`
+                });
+            }
+        }
     });
 }
 
 // Typed Text Effect
 function initTypedText() {
     new Typed('#typed-text', {
-        strings: CONFIG.typedStrings,
+        strings: [
+            'OSCP Certified Penetration Tester',
+            'MSc Cybersecurity & AI Student',
+            'Senior Software Engineer',
+            'Full-Stack Developer',
+            'Security Researcher',
+            'DevSecOps Engineer'
+        ],
         typeSpeed: 60,
         backSpeed: 30,
         backDelay: 2000,
@@ -122,83 +131,94 @@ function initTypedText() {
     });
 }
 
-// Terminal Animation
+// Terminal Animation with typing effect
 function initTerminal() {
     const terminal = document.getElementById('terminal-output');
+    if (!terminal) return;
+    
     const commands = [
         { cmd: '$ whoami', output: 'Muhammad Ramis - OSCP Certified Professional' },
-        { cmd: '$ cat skills.txt', output: 'Penetration Testing | Senior Software Engineer | Full-Stack Development | DevSecOps' },
-        { cmd: '$ ls certifications/', output: 'OSCP ✓ | OSCP+ ✓ | MSc Cybersecurity ✓ | CREST (In Progress)' },
-        { cmd: '$ grep experience cv.txt', output: '5+ Years | Laravel | Django | React | Blockchain | Security' },
-        { cmd: '$ echo $LOCATION', output: 'Leeds, West Yorkshire, UK' }
+        { cmd: '$ cat education.txt', output: 'MSc Cybersecurity & AI - University of Sheffield (Russell Group)' },
+        { cmd: '$ ls certifications/', output: 'OSCP.cert  PEN-200.training  CREST.pending' },
+        { cmd: '$ grep experience cv.txt', output: '5+ Years | Senior Software Engineer | Penetration Testing | DevSecOps' },
+        { cmd: '$ echo $SKILLS', output: 'Laravel | Django | React | Python | Burp Suite | Metasploit' }
     ];
     
     let currentCommand = 0;
+    let currentChar = 0;
+    let isTyping = false;
+    let currentLine = null;
     
-    function typeCommand() {
-        if (currentCommand >= commands.length) {
-            currentCommand = 0;
-            terminal.innerHTML = '';
+    function typeCharacter() {
+        if (!isTyping) return;
+        
+        const command = commands[currentCommand];
+        
+        if (currentChar === 0) {
+            currentLine = document.createElement('div');
+            currentLine.className = 'terminal-line';
+            const span = document.createElement('span');
+            span.className = 'typing';
+            span.style.color = '#666';
+            currentLine.appendChild(span);
+            terminal.appendChild(currentLine);
         }
         
-        const { cmd, output } = commands[currentCommand];
-        const commandLine = document.createElement('div');
-        commandLine.className = 'terminal-line';
-        commandLine.innerHTML = `<span style="color: #666;">${cmd}</span>`;
-        terminal.appendChild(commandLine);
+        const typingSpan = currentLine.querySelector('.typing');
         
-        setTimeout(() => {
-            const outputLine = document.createElement('div');
-            outputLine.className = 'terminal-output';
-            outputLine.textContent = output;
-            terminal.appendChild(outputLine);
+        if (currentChar < command.cmd.length) {
+            typingSpan.textContent = command.cmd.substring(0, currentChar + 1);
+            currentChar++;
+            setTimeout(typeCharacter, 50);
+        } else {
+            typingSpan.classList.remove('typing');
             
-            currentCommand++;
-            setTimeout(typeCommand, 2000);
-        }, 500);
+            setTimeout(() => {
+                const outputLine = document.createElement('div');
+                outputLine.className = 'terminal-output-line';
+                outputLine.style.color = '#00ff00';
+                outputLine.textContent = command.output;
+                terminal.appendChild(outputLine);
+                
+                currentCommand = (currentCommand + 1) % commands.length;
+                currentChar = 0;
+                
+                if (currentCommand === 0) {
+                    setTimeout(() => {
+                        terminal.innerHTML = '';
+                        isTyping = true;
+                        typeCharacter();
+                    }, 3000);
+                } else {
+                    setTimeout(() => {
+                        isTyping = true;
+                        typeCharacter();
+                    }, 1500);
+                }
+            }, 300);
+            
+            isTyping = false;
+        }
     }
     
-    setTimeout(typeCommand, 1000);
+    // Start typing
+    isTyping = true;
+    typeCharacter();
 }
 
 // Particles.js
 function initParticles() {
-    const theme = document.body.getAttribute('data-theme');
-    const themeColors = {
-        monochrome: '#000000',
-        red: '#dc2626',
-        blue: '#0ea5e9',
-        green: '#059669',
-        purple: '#7c3aed'
-    };
-    
     particlesJS('particles-js', {
         particles: {
-            number: {
-                value: 50,
-                density: {
-                    enable: true,
-                    value_area: 800
-                }
-            },
-            color: {
-                value: themeColors[theme] || '#000000'
-            },
-            shape: {
-                type: 'circle'
-            },
-            opacity: {
-                value: 0.5,
-                random: false
-            },
-            size: {
-                value: 3,
-                random: true
-            },
+            number: { value: 50, density: { enable: true, value_area: 800 } },
+            color: { value: '#00ff00' },
+            shape: { type: 'circle' },
+            opacity: { value: 0.5, random: false },
+            size: { value: 3, random: true },
             line_linked: {
                 enable: true,
                 distance: 150,
-                color: themeColors[theme] || '#000000',
+                color: '#00ff00',
                 opacity: 0.4,
                 width: 1
             },
@@ -215,14 +235,8 @@ function initParticles() {
         interactivity: {
             detect_on: 'canvas',
             events: {
-                onhover: {
-                    enable: true,
-                    mode: 'grab'
-                },
-                onclick: {
-                    enable: true,
-                    mode: 'push'
-                },
+                onhover: { enable: true, mode: 'grab' },
+                onclick: { enable: true, mode: 'push' },
                 resize: true
             }
         },
@@ -233,6 +247,8 @@ function initParticles() {
 // Matrix Rain Effect
 function initMatrixRain() {
     const matrix = document.getElementById('matrix-rain');
+    if (!matrix) return;
+    
     const chars = '01';
     
     function createChar() {
@@ -244,9 +260,7 @@ function initMatrixRain() {
         char.style.fontSize = (Math.random() * 10 + 10) + 'px';
         matrix.appendChild(char);
         
-        setTimeout(() => {
-            char.remove();
-        }, 5000);
+        setTimeout(() => char.remove(), 5000);
     }
     
     setInterval(createChar, 200);
@@ -254,7 +268,6 @@ function initMatrixRain() {
 
 // Animations
 function initAnimations() {
-    // Intersection Observer for fade-in animations
     const animatedElements = document.querySelectorAll('.fade-in-up, .slide-in-left, .slide-in-right');
     
     const animationObserver = new IntersectionObserver((entries) => {
@@ -264,18 +277,12 @@ function initAnimations() {
                 entry.target.style.transform = 'translateY(0)';
             }
         });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     
     animatedElements.forEach(el => {
         el.style.opacity = '0';
         animationObserver.observe(el);
     });
-    
-    // Initialize matrix rain
-    initMatrixRain();
 }
 
 // Projects
@@ -283,19 +290,9 @@ function initProjects() {
     const projectsGrid = document.getElementById('projects-grid');
     const filterBtns = document.querySelectorAll('.filter-btn');
     
-    // Check if PROJECTS is defined
-    if (typeof PROJECTS === 'undefined') {
-        console.error('PROJECTS data not loaded');
-        if (projectsGrid) {
-            projectsGrid.innerHTML = '<p class="error-message">Projects data is loading...</p>';
-        }
-        return;
-    }
+    if (!projectsGrid || typeof PROJECTS === 'undefined') return;
     
-    // Render projects
     function renderProjects(filter = 'all') {
-        if (!projectsGrid) return;
-        
         projectsGrid.innerHTML = '';
         
         const filteredProjects = filter === 'all' 
@@ -322,11 +319,9 @@ function initProjects() {
             projectsGrid.appendChild(projectCard);
         });
         
-        // Re-initialize animations for new elements
         initAnimations();
     }
     
-    // Filter functionality
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             filterBtns.forEach(b => b.classList.remove('active'));
@@ -335,7 +330,6 @@ function initProjects() {
         });
     });
     
-    // Initial render
     renderProjects();
 }
 
@@ -343,75 +337,69 @@ function initProjects() {
 function initContactForm() {
     const form = document.getElementById('contact-form');
     
-    form.addEventListener('submit', (e) => {
+    form?.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        // Get form data
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
         
-        // Create mailto link
         const subject = encodeURIComponent(data.subject);
         const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\n\nMessage:\n${data.message}`);
-        const mailtoLink = `mailto:${CONFIG.email}?subject=${subject}&body=${body}`;
+        const mailtoLink = `mailto:mramis1@outlook.com?subject=${subject}&body=${body}`;
         
-        // Open email client
         window.location.href = mailtoLink;
         
-        // Show success message
-        form.innerHTML = `
-            <div class="success-message">
-                <i class="fas fa-check-circle"></i>
-                <h3>Thank you for your message!</h3>
-                <p>I'll get back to you as soon as possible.</p>
-            </div>
-        `;
+        // Track contact form submission
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'contact_form', {
+                event_category: 'conversion',
+                event_label: 'Email Contact'
+            });
+        }
     });
 }
 
 // Analytics
 function initAnalytics() {
-    // Track page views
-    if (typeof gtag !== 'undefined') {
-        gtag('event', 'page_view', {
-            page_title: document.title,
-            page_location: window.location.href,
-            page_path: window.location.pathname
-        });
-    }
-    
-    // Track important interactions
-    document.querySelectorAll('.btn-primary').forEach(btn => {
-        btn.addEventListener('click', () => {
-            gtag('event', 'click', {
-                event_category: 'engagement',
-                event_label: btn.textContent.trim()
-            });
-        });
-    });
-    
     // Track CV downloads
     document.querySelectorAll('[href*="CV.pdf"]').forEach(link => {
         link.addEventListener('click', () => {
-            gtag('event', 'download', {
-                event_category: 'conversion',
-                event_label: 'CV Download'
-            });
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'download', {
+                    event_category: 'conversion',
+                    event_label: 'CV Download'
+                });
+            }
         });
     });
     
     // Track social links
-    document.querySelectorAll('.social-links a').forEach(link => {
+    document.querySelectorAll('.social-links a, .social-link').forEach(link => {
         link.addEventListener('click', () => {
-            gtag('event', 'click', {
-                event_category: 'social',
-                event_label: link.getAttribute('aria-label')
-            });
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'social_click', {
+                    event_category: 'social',
+                    event_label: link.getAttribute('aria-label') || 'Social Link'
+                });
+            }
         });
+    });
+    
+    // Track time on page
+    let startTime = Date.now();
+    window.addEventListener('beforeunload', () => {
+        const timeSpent = Math.round((Date.now() - startTime) / 1000);
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'timing_complete', {
+                event_category: 'engagement',
+                name: 'time_on_page',
+                value: timeSpent
+            });
+        }
     });
 }
 
-// Smooth scrolling for all anchor links
+// Smooth scrolling
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -424,24 +412,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
-
-// Performance optimization
-if ('IntersectionObserver' in window) {
-    // Lazy load images
-    const images = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.add('loaded');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-}
 
 // Error handling
 window.addEventListener('error', (e) => {
