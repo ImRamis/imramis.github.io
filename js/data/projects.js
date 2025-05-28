@@ -57,7 +57,7 @@ const PROJECTS = [
     },
     {
         title: 'Blockchain Supply Chain',
-        category: 'development',
+        category: 'enterprise',
         type: 'Blockchain Solution',
         description: 'IBM Hyperledger-based supply chain tracking solution developed during Crypto Chicks Hackathon.',
         technologies: ['Blockchain', 'IBM Hyperledger', 'Docker', 'Smart Contracts'],
@@ -92,3 +92,52 @@ const PROJECTS = [
         icon: 'fa-plug'
     }
 ];
+
+// Function to initialize projects
+function initProjects() {
+    const projectsGrid = document.getElementById('projects-grid');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    if (!projectsGrid) return;
+    
+    function renderProjects(filter = 'all') {
+        projectsGrid.innerHTML = '';
+        
+        const filteredProjects = filter === 'all' 
+            ? PROJECTS 
+            : PROJECTS.filter(p => p.category === filter);
+        
+        filteredProjects.forEach(project => {
+            const projectCard = document.createElement('div');
+            projectCard.className = 'project-card fade-in-up';
+            projectCard.innerHTML = `
+                <div class="project-header">
+                    <i class="fas ${project.icon}"></i>
+                    <span class="project-type">${project.type}</span>
+                </div>
+                <h3 class="project-title">${project.title}</h3>
+                <p class="project-description">${project.description}</p>
+                <div class="project-tech">
+                    ${project.technologies.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                </div>
+                <div class="project-achievements">
+                    ${project.achievements.map(a => `<div class="achievement"><i class="fas fa-check"></i> ${a}</div>`).join('')}
+                </div>
+            `;
+            projectsGrid.appendChild(projectCard);
+        });
+    }
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderProjects(btn.getAttribute('data-filter'));
+        });
+    });
+    
+    renderProjects();
+}
+
+// Make function available globally
+window.initProjects = initProjects;
