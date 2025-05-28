@@ -1,5 +1,10 @@
 /* css/themes.css - Theme Specific Styles */
 
+
+a {
+    color: white;
+}
+
 /* Dark Theme (Default) */
 body[data-theme="dark"] {
     --bg-primary: #0a0a0a;
@@ -30,6 +35,8 @@ body[data-theme="dark"] .matrix-char {
     color: var(--accent-color);
     text-shadow: 0 0 5px var(--accent-color);
 }
+
+
 
 body[data-theme="dark"] .glitch {
     text-shadow: 
