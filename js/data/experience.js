@@ -165,3 +165,6 @@ function renderExperience() {
         timeline.appendChild(timelineItem);
     });
 }
+
+// Make function available globally
+window.renderExperience = renderExperience;

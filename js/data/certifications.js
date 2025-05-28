@@ -3,7 +3,7 @@
 const CERTIFICATIONS = [
     {
         id: 1,
-        name: 'OSCP & OSCP+',
+        name: 'OSCP',
         fullName: 'Offensive Security Certified Professional',
         organization: 'Offensive Security',
         date: 'April 2025',
@@ -261,3 +261,6 @@ function renderCertifications() {
     awardsSection.appendChild(awardsGrid);
     certGrid.appendChild(awardsSection);
 }
+
+// Make function available globally
+window.renderCertifications = renderCertifications;
