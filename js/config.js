@@ -3,7 +3,7 @@
 const CONFIG = {
     // Personal Information
     name: 'Muhammad Ramis',
-    title: 'OSCP-Certified Cybersecurity Professional & Senior Software Engineer',
+    title: 'OSCP Certified Penetration Tester | MSc Cybersecurity & AI',
     email: 'mramis1@outlook.com',
     phone: '07789 399 920',
     location: 'Leeds, West Yorkshire, UK',
@@ -12,6 +12,7 @@ const CONFIG = {
     social: {
         linkedin: 'https://linkedin.com/in/imramis',
         github: 'https://github.com/imRamis',
+        stackoverflow: 'https://stackoverflow.com/users/16912003/ramis',
         tryhackme: 'https://tryhackme.com/p/mriramis',
         hackthebox: 'https://ctf.hackthebox.com/user/profile/744664'
     },
@@ -19,33 +20,18 @@ const CONFIG = {
     // CV Download Link
     cvLink: 'assets/Muhammad_Ramis_CV.pdf',
     
-    // Typed.js Strings (Hero Section)
-    typedStrings: [
-        'OSCP-Certified Penetration Tester',
-        'Senior Software Engineer',
-        'Full-Stack Developer',
-        'University of Sheffield Graduate',
-        'Laravel & Django Expert',
-        'Cybersecurity Specialist',
-        'Blockchain Developer',
-        'Payment Systems Expert',
-        'DevSecOps Engineer',
-        'Security Researcher',
-        'Enterprise Architecture Specialist',
-        'Cloud Security Professional',
-        'Digital Forensics Analyst'
-    ],
-    
     // Analytics
     googleAnalyticsId: 'G-GKD7JXRS66',
+    microsoftClarityId: 'rpwqh3rock',
     
     // Site Settings
     siteUrl: 'https://imramis.github.io',
     siteName: 'Muhammad Ramis - Portfolio',
-    siteDescription: 'OSCP-certified cybersecurity specialist and senior software engineer with 5+ years experience. University of Sheffield  MSc graduate seeking opportunities in the UK.',
+    siteDescription: 'OSCP-certified penetration tester pursuing MSc in Cybersecurity and AI at University of Sheffield. Senior software engineer with 5+ years experience in security testing and full-stack development.',
     
     // Default Theme
-    defaultTheme: 'monochrome',
+    defaultTheme: 'dark',
+    defaultAccentColor: '#00ff00',
     
     // Animation Settings
     animationSpeed: {
@@ -54,39 +40,13 @@ const CONFIG = {
         slow: 1000
     },
     
-    // Particle.js Density
-    particleDensity: 50,
+    // Particle.js Settings
+    particleCount: 50,
+    particleDensity: 800,
     
-    // Terminal Commands (for hero section animation)
-    terminalCommands: [
-        { 
-            cmd: '$ whoami', 
-            output: 'Muhammad Ramis - OSCP Certified Professional' 
-        },
-        { 
-            cmd: '$ cat skills.txt', 
-            output: 'Penetration Testing | Senior Software Engineer | Full-Stack Development | DevSecOps' 
-        },
-        { 
-            cmd: '$ ls certifications/', 
-            output: 'OSCP ✓ | OSCP+ ✓ | MSc Cybersecurity ✓ | CREST (In Progress)' 
-        },
-        { 
-            cmd: '$ grep experience cv.txt', 
-            output: '5+ Years | Laravel | Django | React | Blockchain | Security' 
-        },
-        { 
-            cmd: '$ echo $LOCATION', 
-            output: 'Leeds, West Yorkshire, UK - Available for immediate start' 
-        },
-        {
-            cmd: '$ sudo show-achievements',
-            output: 'Employee of Month | Hackathon Winner | 25% Security Improvement'
-        }
-    ],
-    
-    // Contact Form Settings
-    contactFormEndpoint: null, // Using mailto for now
+    // Terminal Settings
+    terminalTypingSpeed: 50,
+    terminalLineDelay: 1500,
     
     // Feature Flags
     features: {
@@ -95,6 +55,33 @@ const CONFIG = {
         terminalAnimation: true,
         smoothScroll: true,
         lazyLoading: true,
-        analytics: true
+        analytics: true,
+        cookieConsent: true
+    },
+    
+    // SEO Settings
+    seo: {
+        keywords: [
+            'penetration tester',
+            'OSCP certified',
+            'cybersecurity',
+            'senior software engineer',
+            'University of Sheffield',
+            'MSc Cybersecurity AI',
+            'Laravel developer',
+            'Django developer',
+            'security researcher',
+            'DevSecOps',
+            'Leeds UK'
+        ],
+        author: 'Muhammad Ramis',
+        ogImage: 'https://imramis.github.io/images/og-image.jpg'
+    },
+    
+    // Performance Settings
+    performance: {
+        imageLoadDelay: 100,
+        scrollThrottle: 16,
+        resizeDebounce: 250
     }
 };

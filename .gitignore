@@ -1,19 +1,85 @@
-# OS files
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Editor files
+# IDE files
 .vscode/
 .idea/
-*.swp
-*.swo
+*.sublime-project
+*.sublime-workspace
 
-# Logs
-*.log
-
-# Dependencies (if you add any)
+# Dependencies
 node_modules/
+bower_components/
 
-# Build files (if you add build process)
+# Build files
 dist/
 build/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+.sass-cache/
+
+# Local environment
+.env
+.env.local
+.env.*.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
+
+# Compressed files
+*.zip
+*.rar
+*.7z
+
+# Image sources
+*.psd
+*.ai
+*.sketch
+
+# Video files
+*.mp4
+*.mov
+*.avi
+
+# Documentation builds
+docs/_build/
+site/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Miscellaneous
+*.map
+.cache/
