@@ -3,289 +3,1164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
     <!-- SEO Meta Tags -->
-    <title>Muhammad Ramis | OSCP Cybersecurity Professional | Senior Software Engineer | University of Sheffield Graduate</title>
-    <meta name="description" content="OSCP-certified cybersecurity specialist and Senior Software Engineer with 5+ years experience. University of Sheffield MSc graduate seeking opportunities in the UK. Expert in penetration testing, secure development, and enterprise architectures.">
-    <meta name="keywords" content="resume, portfolio, cv, cybersecurity UK, penetration testing, OSCP certified, University of Sheffield, Senior Software Engineer, Laravel, Django, blockchain, secure development, Leeds cybersecurity">
+    <title>Muhammad Ramis - OSCP Certified Penetration Tester & Senior Software Engineer</title>
+    <meta name="description" content="OSCP-certified penetration tester and senior software engineer with MSc in Cybersecurity and AI from University of Sheffield. 5+ years experience in security testing, full-stack development, and DevSecOps.">
+    <meta name="keywords" content="penetration tester, OSCP, cybersecurity, senior software engineer, University of Sheffield, Laravel, Django, security testing, Leeds UK">
     <meta name="author" content="Muhammad Ramis">
-    <meta property="og:title" content="Muhammad Ramis - OSCP Certified Cybersecurity Professional & Developer">
-    <meta property="og:description" content="University of Sheffield MSc graduate with OSCP certification and extensive development experience across multiple tech stacks.">
-    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Muhammad Ramis - OSCP Certified Penetration Tester">
+    <meta property="og:description" content="OSCP-certified penetration tester pursuing MSc in Cybersecurity and AI at University of Sheffield">
+    <meta property="og:image" content="https://imramis.github.io/images/og-image.jpg">
     <meta property="og:url" content="https://imramis.github.io">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Muhammad Ramis - OSCP Certified Penetration Tester">
+    <meta name="twitter:description" content="OSCP-certified penetration tester pursuing MSc in Cybersecurity and AI">
+    <meta name="twitter:image" content="https://imramis.github.io/images/twitter-card.jpg">
+    
+    <!-- Canonical URL -->
     <link rel="canonical" href="https://imramis.github.io">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     
-    <!-- External CSS -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/themes.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    
-    <!-- Font Awesome -->
+    <!-- External Resources -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Inline CSS for reliability -->
+    <style>
+        /* CSS Variables - Monochrome Theme Default */
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --accent-color: #ffffff;
+            --border-color: #333333;
+            --success: #00ff00;
+            --error: #ff3333;
+            --warning: #ffaa00;
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #111111;
+            border-top: 3px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 20px;
+        }
+
+        .nav-brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-link {
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .brand-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--text-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 80px 0;
+        }
+
+        .particles-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .matrix-char {
+            position: absolute;
+            color: #00ff00;
+            opacity: 0.1;
+            font-family: 'JetBrains Mono', monospace;
+            animation: matrix-fall linear infinite;
+        }
+
+        @keyframes matrix-fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        .hero-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .hero-name {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .typed-wrapper {
+            margin-bottom: 2rem;
+        }
+
+        .typed-text {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Terminal Window */
+        .terminal-window {
+            background: #000000;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: #1a1a1a;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .terminal-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .terminal-control.close {
+            background: #ff5f56;
+        }
+
+        .terminal-control.minimize {
+            background: #ffbd2e;
+        }
+
+        .terminal-control.maximize {
+            background: #27c93f;
+        }
+
+        .terminal-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #888;
+        }
+
+        .terminal-body {
+            padding: 1rem;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        .terminal-output {
+            color: #00ff00;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            white-space: pre-wrap;
+        }
+
+        .terminal-output .typing {
+            display: inline-block;
+            vertical-align: bottom;
+        }
+
+        .terminal-output .typing::after {
+            content: '▊';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Buttons */
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-primary);
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            transform: translateY(-3px);
+        }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--text-primary);
+            z-index: 10000;
+            transition: width 0.1s ease;
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--text-primary);
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .skill-category h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .skill-category ul {
+            list-style: none;
+        }
+
+        .skill-category li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            border-color: var(--text-primary);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            width: 45%;
+        }
+
+        .timeline-item.left {
+            left: 0;
+        }
+
+        .timeline-item.right {
+            left: 55%;
+        }
+
+        .timeline-content {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            top: 2rem;
+        }
+
+        .timeline-item.left .timeline-dot {
+            right: -60px;
+        }
+
+        .timeline-item.right .timeline-dot {
+            left: -60px;
+        }
+
+        .timeline-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-company {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .timeline-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag,
+        .skill-tag {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Certifications */
+        .cert-section {
+            margin-bottom: 3rem;
+        }
+
+        .cert-section-title {
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cert-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .cert-card {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .cert-card:hover {
+            border-color: var(--text-primary);
+            transform: translateY(-5px);
+        }
+
+        .cert-badge {
+            width: 60px;
+            height: 60px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Projects */
+        .project-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .project-card:hover {
+            border-color: var(--text-primary);
+            transform: translateY(-5px);
+        }
+
+        /* Contact */
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .contact-details {
+            margin: 2rem 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .contact-item i {
+            color: var(--text-primary);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 8px;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Theme Selector */
+        .theme-selector-wrapper {
+            position: relative;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--text-primary);
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem;
+            display: none;
+            z-index: 100;
+        }
+
+        .theme-dropdown.show {
+            display: block;
+        }
+
+        .theme-option {
+            background: transparent;
+            border: none;
+            padding: 0.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .theme-option:hover {
+            color: var(--text-secondary);
+        }
+
+        .color-picker {
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .color-picker input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Cookie Consent */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .cookie-consent.show {
+            transform: translateY(0);
+        }
+
+        .cookie-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .cookie-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Tooltips */
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]:hover::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                flex-direction: column;
+                padding: 2rem;
+                transform: translateX(-100%);
+                transition: var(--transition);
+            }
+            
+            .nav-links.active {
+                transform: translateX(0);
+            }
+            
+            .nav-toggle {
+                display: flex;
+            }
+            
+            .hero-name {
+                font-size: 2.5rem;
+            }
+            
+            .typed-text {
+                font-size: 1.125rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                width: calc(100% - 60px);
+                left: 60px !important;
+            }
+            
+            .timeline-dot {
+                left: -40px !important;
+            }
+            
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom Theme Support */
+        body[data-theme="custom"] {
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --border-color: #333333;
+        }
+    </style>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Muhammad Ramis",
+        "jobTitle": "Penetration Tester & Senior Software Engineer",
+        "alumniOf": {
+            "@type": "EducationalOrganization",
+            "name": "University of Sheffield"
+        },
+        "sameAs": [
+            "https://linkedin.com/in/imramis",
+            "https://github.com/imRamis",
+            "https://stackoverflow.com/users/16912003/ramis"
+        ]
+    }
+    </script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-GKD7JXRS66', {
+            'page_path': window.location.pathname,
+            'anonymize_ip': true
+        });
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "rpwqh3rock");
+    </script>
 </head>
 <body data-theme="monochrome">
-    <!-- Loading Screen -->
-    <div class="loading" id="loading">
-        <div class="loader-container">
-            <div class="cyber-loader"></div>
-            <div class="loading-text">Initializing Security Portfolio...</div>
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-consent" class="cookie-consent">
+        <div class="cookie-content">
+            <p>This site uses cookies for analytics to improve user experience. Data is processed by Google Analytics, Microsoft Clarity, and GitHub Pages.</p>
+            <div class="cookie-buttons">
+                <button onclick="acceptCookies()" class="btn btn-primary">Accept</button>
+                <button onclick="declineCookies()" class="btn btn-secondary">Decline</button>
+                <a href="#privacy" class="privacy-link">Privacy Policy</a>
+            </div>
         </div>
     </div>
 
-    <!-- Progress Bar -->
-    <div class="scroll-progress" id="scroll-progress"></div>
-
-    <!-- Theme Selector -->
-    <div class="theme-selector" id="theme-selector">
-        <button class="theme-btn monochrome active" data-theme="monochrome" aria-label="Black & White Theme">
-            <i class="fas fa-adjust"></i>
-        </button>
-        <button class="theme-btn red" data-theme="red" aria-label="Red Theme">
-            <i class="fas fa-circle"></i>
-        </button>
-        <button class="theme-btn blue" data-theme="blue" aria-label="Blue Theme">
-            <i class="fas fa-circle"></i>
-        </button>
-        <button class="theme-btn green" data-theme="green" aria-label="Green Theme">
-            <i class="fas fa-circle"></i>
-        </button>
-        <button class="theme-btn purple" data-theme="purple" aria-label="Purple Theme">
-            <i class="fas fa-circle"></i>
-        </button>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-screen">
+        <div class="loader">
+            <div class="loader-inner"></div>
+        </div>
+        <div class="loading-text">Initializing Security Protocols...</div>
     </div>
 
+    <!-- Scroll Progress -->
+    <div id="scroll-progress" class="scroll-progress"></div>
+
     <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="#home" class="logo">MR</a>
-            <button class="mobile-toggle" id="mobile-toggle">
+    <nav id="navbar" class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="#home" class="brand-link">
+                    <span class="brand-name">Muhammad Ramis</span>
+                    <span class="brand-title">OSCP | MSc Cybersecurity & AI</span>
+                </a>
+            </div>
+            <div class="nav-toggle" id="mobile-toggle">
                 <span></span>
                 <span></span>
                 <span></span>
-            </button>
+            </div>
             <ul class="nav-links" id="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#certifications">Certifications</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#home" data-tooltip="Home"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                <li><a href="#about" data-tooltip="About"><i class="fas fa-user"></i> <span>About</span></a></li>
+                <li><a href="#experience" data-tooltip="Experience"><i class="fas fa-briefcase"></i> <span>Experience</span></a></li>
+                <li><a href="#certifications" data-tooltip="Certifications"><i class="fas fa-certificate"></i> <span>Certifications</span></a></li>
+                <li><a href="#projects" data-tooltip="Projects"><i class="fas fa-code"></i> <span>Projects</span></a></li>
+                <li><a href="#contact" data-tooltip="Contact"><i class="fas fa-envelope"></i> <span>Contact</span></a></li>
             </ul>
+            <div class="theme-selector-wrapper">
+                <button class="theme-toggle" id="theme-toggle" data-tooltip="Theme">
+                    <i class="fas fa-palette"></i>
+                </button>
+                <div class="theme-dropdown" id="theme-dropdown">
+                    <button class="theme-option" data-theme="monochrome" data-tooltip="Monochrome">
+                        <i class="fas fa-adjust"></i>
+                    </button>
+                    <button class="theme-option" data-theme="hacker" data-tooltip="Hacker Green">
+                        <i class="fas fa-terminal"></i>
+                    </button>
+                    <div class="color-picker">
+                        <input type="color" id="accent-color" value="#00ff00" data-tooltip="Custom Color">
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-background">
-            <div id="particles-js"></div>
-            <div class="matrix-rain" id="matrix-rain"></div>
-        </div>
-        
-        <div class="hero-content">
-            <div class="hero-badges">
-                <span class="badge"><i class="fas fa-shield-alt"></i> OSCP Certified</span>
-                <span class="badge"><i class="fas fa-code"></i> Senior Software Engineer - Team Lead</span>
-                <span class="badge"><i class="fas fa-graduation-cap"></i> University of Sheffield MSc</span>
-                <span class="badge"><i class="fas fa-building"></i> 5+ Years Experience</span>
-            </div>
-            
-            <h1 class="hero-title">Muhammad Ramis</h1>
-            <div class="hero-subtitle">
-                <span id="typed-text"></span><span class="cursor">|</span>
-            </div>
-            
-            <div class="hero-location">
-                <i class="fas fa-map-marker-alt"></i> Leeds, West Yorkshire, UK
-                <span class="separator">•</span>
-                <i class="fas fa-check-circle"></i> Available for Immediate Start
-            </div>
-            
-            <div class="hero-cta">
-                <a href="#contact" class="btn btn-primary">
-                    <i class="fas fa-envelope"></i> Get in Touch
-                </a>
-                <button class="btn btn-secondary" onclick="window.open('assets/Muhammad_Ramis_CV.pdf')">
-                    <i class="fas fa-download"></i> Download CV
-                </button>
-            </div>
-            
-            <div class="hero-terminal">
-                <div class="terminal-header">
-                    <span class="terminal-title">ramis@cybersec:~$</span>
+    <section id="home" class="hero-section">
+        <div id="particles-js" class="particles-bg"></div>
+        <div id="matrix-rain" class="matrix-rain"></div>
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1 class="hero-name glitch" data-text="Muhammad Ramis">Muhammad Ramis</h1>
+                <div class="typed-wrapper">
+                    <span id="typed-text" class="typed-text"></span>
                 </div>
-                <div class="terminal-body" id="terminal-output"></div>
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-controls">
+                            <span class="terminal-control close"></span>
+                            <span class="terminal-control minimize"></span>
+                            <span class="terminal-control maximize"></span>
+                        </div>
+                        <div class="terminal-title">terminal@ramis:~</div>
+                    </div>
+                    <div class="terminal-body">
+                        <div id="terminal-output" class="terminal-output"></div>
+                    </div>
+                </div>
+                <div class="hero-cta">
+                    <a href="assets/Muhammad_Ramis_CV.pdf" class="btn btn-primary" download>
+                        <i class="fas fa-download"></i> Download CV
+                    </a>
+                    <a href="#contact" class="btn btn-secondary">
+                        <i class="fas fa-envelope"></i> Get In Touch
+                    </a>
+                </div>
+                <div class="social-links">
+                    <a href="https://linkedin.com/in/imramis" target="_blank" rel="noopener" aria-label="LinkedIn" data-tooltip="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/imRamis" target="_blank" rel="noopener" aria-label="GitHub" data-tooltip="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://stackoverflow.com/users/16912003/ramis" target="_blank" rel="noopener" aria-label="Stack Overflow" data-tooltip="Stack Overflow">
+                        <i class="fab fa-stack-overflow"></i>
+                    </a>
+                    <a href="https://tryhackme.com/p/mriramis" target="_blank" rel="noopener" aria-label="TryHackMe" data-tooltip="TryHackMe">
+                        <i class="fas fa-flag"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
             </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="section">
+    <section id="about" class="about-section">
         <div class="container">
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
                 <div class="about-text">
                     <p class="lead">
-                        I'm an <strong>OSCP-certified cybersecurity professional</strong> and <strong>experienced software engineer</strong> 
-                        with a unique blend of offensive security expertise and software engineering excellence.
+                        OSCP-certified penetration tester pursuing an MSc in Cybersecurity and AI at the University of Sheffield (Russell Group, World Top 100). 
+                        With 5+ years of experience in security testing and software engineering, I specialize in identifying vulnerabilities across 
+                        web applications, cloud environments, and enterprise systems.
                     </p>
-                    <p>
-                        Recently graduating from the <strong>University of Sheffield</strong> with an MSc in Cybersecurity and AI, 
-                        I bring <strong>5+ years of development experience</strong> across enterprise applications, payment systems, 
-                        and blockchain technologies, combined with advanced penetration testing skills.
-                    </p>
-                    <p>
-                        My background spans from low-level programming in Assembly and C to modern frameworks like Laravel, Django, 
-                        and React, giving me deep insights into both building and breaking systems. This dual expertise makes me 
-                        particularly effective at <strong>secure architecture design</strong>, <strong>DevSecOps implementation</strong>, 
-                        and <strong>comprehensive security assessments</strong>.
-                    </p>
+                    <div class="skills-grid">
+                        <div class="skill-category">
+                            <h3><i class="fas fa-shield-alt"></i> Security Testing</h3>
+                            <ul>
+                                <li>Network & Web Vulnerability Assessment</li>
+                                <li>Active Directory Exploitation</li>
+                                <li>Cloud Infrastructure Testing</li>
+                                <li>Wireless Network Testing</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h3><i class="fas fa-code"></i> Development</h3>
+                            <ul>
+                                <li>Laravel & Django Frameworks</li>
+                                <li>React & Modern JavaScript</li>
+                                <li>Secure API Development</li>
+                                <li>DevSecOps Implementation</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h3><i class="fas fa-tools"></i> Tools & Tech</h3>
+                            <ul>
+                                <li>Burp Suite, Metasploit, Nmap</li>
+                                <li>Docker, Kubernetes, AWS</li>
+                                <li>Python, Bash, PowerShell</li>
+                                <li>IDA Pro, Ghidra, GDB</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                
                 <div class="about-stats">
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
-                        <div class="stat-value">OSCP+</div>
-                        <div class="stat-label">Advanced Certifications</div>
+                        <div class="stat-number">5+</div>
+                        <div class="stat-label">Years Experience</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-code"></i></div>
-                        <div class="stat-value">15+</div>
-                        <div class="stat-label">Technologies Mastered</div>
+                        <div class="stat-number">OSCP</div>
+                        <div class="stat-label">Certified Apr 2025</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
-                        <div class="stat-value">25+</div>
-                        <div class="stat-label">Projects Delivered</div>
+                        <div class="stat-number">MSc</div>
+                        <div class="stat-label">Cybersecurity & AI</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-lock"></i></div>
-                        <div class="stat-value">0</div>
-                        <div class="stat-label">Security Incidents</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="section section-alt">
-        <div class="container">
-            <h2 class="section-title">Technical Expertise</h2>
-            
-            <div class="skills-grid">
-                <!-- Cybersecurity Skills -->
-                <div class="skill-category">
-                    <h3 class="category-title">
-                        <i class="fas fa-shield-alt"></i> Cybersecurity & Penetration Testing
-                    </h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag expert">Web Application Security</span>
-                        <span class="skill-tag expert">Network Penetration Testing</span>
-                        <span class="skill-tag advanced">Active Directory Exploitation</span>
-                        <span class="skill-tag expert">OWASP Top 10</span>
-                        <span class="skill-tag advanced">Cloud Security (AWS/Azure)</span>
-                        <span class="skill-tag intermediate">Wireless Security</span>
-                        <span class="skill-tag expert">Vulnerability Assessment</span>
-                        <span class="skill-tag advanced">Security Code Review</span>
-                    </div>
-                </div>
-
-                <!-- Development Languages -->
-                <div class="skill-category">
-                    <h3 class="category-title">
-                        <i class="fas fa-code"></i> Programming Languages
-                    </h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag expert">Python</span>
-                        <span class="skill-tag expert">PHP</span>
-                        <span class="skill-tag expert">JavaScript/TypeScript</span>
-                        <span class="skill-tag advanced">Go</span>
-                        <span class="skill-tag advanced">C#/.NET</span>
-                        <span class="skill-tag intermediate">Java</span>
-                        <span class="skill-tag advanced">SQL</span>
-                        <span class="skill-tag intermediate">Solidity</span>
-                        <span class="skill-tag advanced">Bash/PowerShell</span>
-                        <span class="skill-tag intermediate">Assembly (x86)</span>
-                    </div>
-                </div>
-
-                <!-- Frameworks & Technologies -->
-                <div class="skill-category">
-                    <h3 class="category-title">
-                        <i class="fas fa-layer-group"></i> Frameworks & Technologies
-                    </h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag expert">Laravel</span>
-                        <span class="skill-tag advanced">Django/Flask</span>
-                        <span class="skill-tag expert">React/Next.js</span>
-                        <span class="skill-tag advanced">Node.js/Express</span>
-                        <span class="skill-tag advanced">Entity Framework</span>
-                        <span class="skill-tag expert">CodeIgniter</span>
-                        <span class="skill-tag advanced">Vue.js</span>
-                        <span class="skill-tag intermediate">Angular</span>
-                        <span class="skill-tag advanced">FastAPI</span>
-                        <span class="skill-tag expert">RESTful APIs</span>
-                        <span class="skill-tag advanced">GraphQL</span>
-                        <span class="skill-tag advanced">Microservices</span>
-                    </div>
-                </div>
-
-                <!-- E-commerce & CMS -->
-                <div class="skill-category">
-                    <h3 class="category-title">
-                        <i class="fas fa-shopping-cart"></i> E-commerce & CMS
-                    </h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag expert">Magento 2</span>
-                        <span class="skill-tag expert">WordPress/WooCommerce</span>
-                        <span class="skill-tag advanced">Shopify</span>
-                        <span class="skill-tag expert">Payment Gateway Integration</span>
-                        <span class="skill-tag advanced">Stripe/PayPal APIs</span>
-                        <span class="skill-tag expert">PCI DSS Compliance</span>
-                        <span class="skill-tag advanced">Custom CMS Development</span>
-                        <span class="skill-tag intermediate">PrestaShop</span>
-                    </div>
-                </div>
-
-                <!-- DevOps & Infrastructure -->
-                <div class="skill-category">
-                    <h3 class="category-title">
-                        <i class="fas fa-server"></i> DevOps & Infrastructure
-                    </h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag expert">Linux Administration</span>
-                        <span class="skill-tag advanced">Docker/Kubernetes</span>
-                        <span class="skill-tag advanced">CI/CD Pipelines</span>
-                        <span class="skill-tag expert">AWS</span>
-                        <span class="skill-tag intermediate">Azure</span>
-                        <span class="skill-tag advanced">Nginx/Apache</span>
-                        <span class="skill-tag expert">Git/GitHub</span>
-                        <span class="skill-tag advanced">Infrastructure as Code</span>
-                        <span class="skill-tag intermediate">Terraform</span>
-                    </div>
-                </div>
-
-                <!-- Blockchain & Emerging Tech -->
-                <div class="skill-category">
-                    <h3 class="category-title">
-                        <i class="fas fa-link"></i> Blockchain & Emerging Technologies
-                    </h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag advanced">Ethereum/Smart Contracts</span>
-                        <span class="skill-tag intermediate">Web3.js</span>
-                        <span class="skill-tag intermediate">DeFi Protocols</span>
-                        <span class="skill-tag advanced">Blockchain Security</span>
-                        <span class="skill-tag intermediate">IPFS</span>
-                        <span class="skill-tag beginner">Machine Learning/AI</span>
-                        <span class="skill-tag intermediate">IoT Security</span>
+                        <div class="stat-number">25%</div>
+                        <div class="stat-label">Security Improvement</div>
                     </div>
                 </div>
             </div>
@@ -293,108 +1168,97 @@
     </section>
 
     <!-- Experience Section -->
-    <section id="experience" class="section">
+    <section id="experience" class="experience-section">
         <div class="container">
             <h2 class="section-title">Professional Experience</h2>
-            <div class="timeline" id="experience-timeline">
-                <!-- Timeline items will be loaded from experience.js -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="section section-alt">
-        <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
-            <div class="projects-filter">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="security">Security</button>
-                <button class="filter-btn" data-filter="development">Development</button>
-                <button class="filter-btn" data-filter="blockchain">Blockchain</button>
-                <button class="filter-btn" data-filter="enterprise">Enterprise</button>
-            </div>
-            <div class="projects-grid" id="projects-grid">
-                <!-- Projects will be loaded from projects.js -->
+            <div id="experience-timeline" class="timeline">
+                <!-- Timeline items will be rendered by JavaScript -->
             </div>
         </div>
     </section>
 
     <!-- Certifications Section -->
-    <section id="certifications" class="section">
+    <section id="certifications" class="certifications-section">
         <div class="container">
             <h2 class="section-title">Certifications & Education</h2>
-            <div class="certifications-grid" id="certifications-grid">
-                <!-- Certifications will be loaded from certifications.js -->
+            <div id="certifications-grid" class="certifications-grid">
+                <!-- Certification items will be rendered by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="project-filters">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="security">Security</button>
+                <button class="filter-btn" data-filter="development">Development</button>
+                <button class="filter-btn" data-filter="enterprise">Enterprise</button>
+            </div>
+            <div id="projects-grid" class="projects-grid">
+                <!-- Project cards will be rendered by JavaScript -->
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="section section-alt">
+    <section id="contact" class="contact-section">
         <div class="container">
-            <h2 class="section-title">Get in Touch</h2>
-            <p class="section-subtitle">Available for cybersecurity and development opportunities in the UK</p>
-            
-            <div class="contact-grid">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
                 <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <h3>Email</h3>
+                    <h3>Let's Connect</h3>
+                    <p>I'm currently seeking penetration testing opportunities in the UK. Feel free to reach out!</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
                             <a href="mailto:mramis1@outlook.com">mramis1@outlook.com</a>
                         </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <div>
-                            <h3>Phone</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
                             <a href="tel:+447789399920">07789 399 920</a>
                         </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <h3>Location</h3>
-                            <p>Leeds, West Yorkshire, UK</p>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Leeds, West Yorkshire, UK</span>
                         </div>
+                    </div>
+                    <div class="social-links" style="justify-content: flex-start;">
+                        <a href="https://linkedin.com/in/imramis" target="_blank" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://github.com/imRamis" target="_blank" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://stackoverflow.com/users/16912003/ramis" target="_blank" class="social-link">
+                            <i class="fab fa-stack-overflow"></i>
+                        </a>
                     </div>
                 </div>
-                
-                <div class="contact-form">
-                    <form id="contact-form">
-                        <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="Your Name" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="Your Email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" id="subject" name="subject" placeholder="Subject" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
-                        </div>
+                <div class="contact-form-wrapper">
+                    <form id="contact-form" class="contact-form">
+                        <input type="text" name="name" placeholder="Your Name" required>
+                        <input type="email" name="email" placeholder="Your Email" required>
+                        <input type="text" name="subject" placeholder="Subject" required>
+                        <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i> Send Message
                         </button>
                     </form>
                 </div>
             </div>
-            
-            <div class="social-links">
-                <a href="https://linkedin.com/in/imramis" target="_blank" aria-label="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://github.com/imRamis" target="_blank" aria-label="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://tryhackme.com/p/mriramis" target="_blank" aria-label="TryHackMe">
-                    <i class="fas fa-flag"></i>
-                </a>
-                <a href="https://ctf.hackthebox.com/user/profile/744664" target="_blank" aria-label="HackTheBox">
-                    <i class="fas fa-cube"></i>
-                </a>
-            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Section -->
+    <section id="privacy" class="privacy-section">
+        <div class="container">
+            <h2>Privacy Policy</h2>
+            <p>This website uses Google Analytics and Microsoft Clarity to understand visitor behavior. These services may collect anonymous data about your visit. 
+            As this site is hosted on GitHub Pages, please refer to <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank">GitHub's Privacy Statement</a> 
+            for information about how GitHub handles visitor data.</p>
         </div>
     </section>
 
@@ -402,28 +1266,322 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 Muhammad Ramis. All rights reserved.</p>
-            <p>OSCP Certified • University of Sheffield Graduate • Senior Software Engineer</p>
         </div>
     </footer>
 
     <!-- External Scripts -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-    <script src="js/config.js"></script>
-    <script src="js/theme.js"></script>
-    <script src="js/animations.js"></script>
-    <script src="js/data/experience.js"></script>
-    <script src="js/data/projects.js"></script>
-    <script src="js/data/certifications.js"></script>
-    <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
-    <!-- Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66"></script>
+    <!-- Configuration and Main Scripts -->
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-GKD7JXRS66');
+        // Configuration
+        const CONFIG = {
+            name: 'Muhammad Ramis',
+            title: 'OSCP Certified Penetration Tester | MSc Cybersecurity & AI',
+            email: 'mramis1@outlook.com',
+            phone: '07789 399 920',
+            location: 'Leeds, West Yorkshire, UK',
+            cvLink: 'assets/Muhammad_Ramis_CV.pdf',
+            defaultTheme: 'monochrome',
+            particleCount: 50
+        };
+
+        // Theme Manager
+        class ThemeManager {
+            constructor() {
+                this.currentTheme = 'monochrome';
+                this.customColor = '#00ff00';
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.applyTheme('monochrome');
+            }
+            
+            applyTheme(theme) {
+                if (theme === 'monochrome') {
+                    document.documentElement.style.setProperty('--bg-primary', '#000000');
+                    document.documentElement.style.setProperty('--bg-secondary', '#111111');
+                    document.documentElement.style.setProperty('--text-primary', '#ffffff');
+                    document.documentElement.style.setProperty('--text-secondary', '#cccccc');
+                    document.documentElement.style.setProperty('--accent-color', '#ffffff');
+                    document.documentElement.style.setProperty('--border-color', '#333333');
+                } else if (theme === 'hacker') {
+                    document.documentElement.style.setProperty('--bg-primary', '#000000');
+                    document.documentElement.style.setProperty('--bg-secondary', '#0a0a0a');
+                    document.documentElement.style.setProperty('--text-primary', '#00ff00');
+                    document.documentElement.style.setProperty('--text-secondary', '#00cc00');
+                    document.documentElement.style.setProperty('--accent-color', '#00ff00');
+                    document.documentElement.style.setProperty('--border-color', '#003300');
+                } else if (theme === 'custom') {
+                    document.documentElement.style.setProperty('--accent-color', this.customColor);
+                }
+                
+                document.body.setAttribute('data-theme', theme);
+                this.currentTheme = theme;
+                this.updateParticleColor();
+            }
+            
+            updateParticleColor() {
+                if (window.pJSDom && window.pJSDom[0]) {
+                    const color = this.currentTheme === 'hacker' ? '#00ff00' : '#ffffff';
+                    window.pJSDom[0].pJS.particles.color.value = color;
+                    window.pJSDom[0].pJS.particles.line_linked.color = color;
+                    window.pJSDom[0].pJS.fn.particlesRefresh();
+                }
+            }
+            
+            setupEventListeners() {
+                const themeToggle = document.getElementById('theme-toggle');
+                const themeDropdown = document.getElementById('theme-dropdown');
+                
+                themeToggle?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    themeDropdown.classList.toggle('show');
+                });
+                
+                document.addEventListener('click', () => {
+                    themeDropdown?.classList.remove('show');
+                });
+                
+                document.querySelectorAll('.theme-option').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const theme = btn.getAttribute('data-theme');
+                        this.applyTheme(theme);
+                    });
+                });
+                
+                const colorPicker = document.getElementById('accent-color');
+                colorPicker?.addEventListener('input', (e) => {
+                    this.customColor = e.target.value;
+                    document.documentElement.style.setProperty('--accent-color', this.customColor);
+                    this.applyTheme('custom');
+                });
+            }
+        }
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeManager = new ThemeManager();
+            
+            // Loading
+            setTimeout(() => {
+                const loading = document.getElementById('loading');
+                loading.style.opacity = '0';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 500);
+            }, 1500);
+            
+            // Navigation
+            const mobileToggle = document.getElementById('mobile-toggle');
+            const navLinks = document.getElementById('nav-links');
+            
+            mobileToggle?.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+            
+            // Scroll Progress
+            window.addEventListener('scroll', () => {
+                const winScroll = document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.getElementById('scroll-progress').style.width = scrolled + '%';
+            });
+            
+            // Typed Text
+            new Typed('#typed-text', {
+                strings: [
+                    'OSCP Certified Penetration Tester',
+                    'MSc Cybersecurity & AI Student',
+                    'Senior Software Engineer',
+                    'Full-Stack Developer',
+                    'Security Researcher',
+                    'DevSecOps Engineer'
+                ],
+                typeSpeed: 60,
+                backSpeed: 30,
+                backDelay: 2000,
+                loop: true,
+                showCursor: false
+            });
+            
+            // Terminal Animation
+            const terminal = document.getElementById('terminal-output');
+            const commands = [
+                { cmd: '$ whoami', output: 'Muhammad Ramis - OSCP Certified Professional' },
+                { cmd: '$ cat education.txt', output: 'MSc Cybersecurity & AI - University of Sheffield (Russell Group)' },
+                { cmd: '$ ls certifications/', output: 'OSCP.cert  PEN-200.training  CREST.pending' },
+                { cmd: '$ grep experience cv.txt', output: '5+ Years | Senior Software Engineer | Penetration Testing | DevSecOps' },
+                { cmd: '$ echo $SKILLS', output: 'Laravel | Django | React | Python | Burp Suite | Metasploit' }
+            ];
+            
+            let currentCommand = 0;
+            let currentChar = 0;
+            let isTyping = false;
+            let currentLine = null;
+            
+            function typeCharacter() {
+                if (!isTyping) return;
+                
+                const command = commands[currentCommand];
+                
+                if (currentChar === 0) {
+                    currentLine = document.createElement('div');
+                    currentLine.className = 'terminal-line';
+                    const span = document.createElement('span');
+                    span.className = 'typing';
+                    span.style.color = '#666';
+                    currentLine.appendChild(span);
+                    terminal.appendChild(currentLine);
+                }
+                
+                const typingSpan = currentLine.querySelector('.typing');
+                
+                if (currentChar < command.cmd.length) {
+                    typingSpan.textContent = command.cmd.substring(0, currentChar + 1);
+                    currentChar++;
+                    setTimeout(typeCharacter, 50);
+                } else {
+                    typingSpan.classList.remove('typing');
+                    
+                    setTimeout(() => {
+                        const outputLine = document.createElement('div');
+                        outputLine.style.color = '#00ff00';
+                        outputLine.textContent = command.output;
+                        terminal.appendChild(outputLine);
+                        
+                        currentCommand = (currentCommand + 1) % commands.length;
+                        currentChar = 0;
+                        
+                        if (currentCommand === 0) {
+                            setTimeout(() => {
+                                terminal.innerHTML = '';
+                                isTyping = true;
+                                typeCharacter();
+                            }, 3000);
+                        } else {
+                            setTimeout(() => {
+                                isTyping = true;
+                                typeCharacter();
+                            }, 1500);
+                        }
+                    }, 300);
+                    
+                    isTyping = false;
+                }
+            }
+            
+            isTyping = true;
+            typeCharacter();
+            
+            // Particles.js
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 50, density: { enable: true, value_area: 800 } },
+                    color: { value: '#ffffff' },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.5, random: false },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#ffffff',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: 'none',
+                        random: false,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: { enable: true, mode: 'grab' },
+                        onclick: { enable: true, mode: 'push' },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
+            
+            // Matrix Rain
+            const matrix = document.getElementById('matrix-rain');
+            const chars = '01';
+            
+            function createChar() {
+                const char = document.createElement('div');
+                char.className = 'matrix-char';
+                char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                char.style.left = Math.random() * 100 + '%';
+                char.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                char.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                matrix.appendChild(char);
+                
+                setTimeout(() => char.remove(), 5000);
+            }
+            
+            setInterval(createChar, 200);
+            
+            // Contact Form
+            const form = document.getElementById('contact-form');
+            form?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData);
+                
+                const subject = encodeURIComponent(data.subject);
+                const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\n\nMessage:\n${data.message}`);
+                const mailtoLink = `mailto:mramis1@outlook.com?subject=${subject}&body=${body}`;
+                
+                window.location.href = mailtoLink;
+            });
+            
+            // Load experience, certifications, and projects
+            if (typeof renderExperience === 'function') renderExperience();
+            if (typeof renderCertifications === 'function') renderCertifications();
+            if (typeof initProjects === 'function') initProjects();
+        });
+
+        // Cookie consent
+        window.addEventListener('load', function() {
+            const consent = localStorage.getItem('cookieConsent');
+            if (!consent) {
+                document.getElementById('cookie-consent').classList.add('show');
+            }
+        });
+
+        function acceptCookies() {
+            localStorage.setItem('cookieConsent', 'accepted');
+            document.getElementById('cookie-consent').classList.remove('show');
+            gtag('consent', 'update', {
+                'analytics_storage': 'granted'
+            });
+        }
+
+        function declineCookies() {
+            localStorage.setItem('cookieConsent', 'declined');
+            document.getElementById('cookie-consent').classList.remove('show');
+            gtag('consent', 'update', {
+                'analytics_storage': 'denied'
+            });
+        }
     </script>
+    
+    <!-- Load JavaScript files -->
+    <script src="js/data/experience.js"></script>
+    <script src="js/data/certifications.js"></script>
+    <script src="js/data/projects.js"></script>
+    <script src="js/animations.js"></script>
 </body>
 </html>
