@@ -85,3 +85,4 @@ const CONFIG = {
         resizeDebounce: 250
     }
 };
+
