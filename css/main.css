@@ -50,10 +50,16 @@ body {
     left: 0;
     right: 0;
     background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
     z-index: 1000;
     transition: var(--transition);
+}
+
+@supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+    .navbar {
+        -webkit-backdrop-filter: blur(10px); /* Safari */
+        backdrop-filter: blur(10px);         /* Standard */
+    }
 }
 
 body[data-theme="light"] .navbar {
