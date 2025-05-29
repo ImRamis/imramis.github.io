@@ -3,7 +3,7 @@
 const CONFIG = {
     // Personal Information
     name: 'Muhammad Ramis',
-    title: 'OSCP Certified Penetration Tester | MSc Cybersecurity & AI',
+    title: 'OSCP Certified Penetration Tester | Software Engineer',
     email: 'mramis1@outlook.com',
     phone: '07789 399 920',
     location: 'Leeds, West Yorkshire, UK',
@@ -27,11 +27,11 @@ const CONFIG = {
     // Site Settings
     siteUrl: 'https://imramis.github.io',
     siteName: 'Muhammad Ramis - Portfolio',
-    siteDescription: 'OSCP-certified penetration tester pursuing MSc in Cybersecurity and AI at University of Sheffield. Senior software engineer with 5+ years experience in security testing and full-stack development.',
+    siteDescription: 'OSCP-certified penetration tester and Software Engineer with MSc in Cybersecurity and AI from University of Sheffield. 5+ years experience in security testing, team leadership, and full-stack development.',
     
-    // Default Theme
-    defaultTheme: 'dark',
-    defaultAccentColor: '#00ff00',
+    // Theme Settings
+    defaultTheme: 'monochrome',
+    defaultAccentColor: '#000000',
     
     // Animation Settings
     animationSpeed: {
@@ -41,12 +41,35 @@ const CONFIG = {
     },
     
     // Particle.js Settings
-    particleCount: 50,
+    particleCount: 80,
     particleDensity: 800,
     
     // Terminal Settings
+    terminalCommands: [
+        { cmd: '$ whoami', output: 'Muhammad Ramis - OSCP Certified Professional | Software Engineer' },
+        { cmd: '$ cat skills.txt', output: 'Penetration Testing | Team Leadership | Laravel | Django | Magento 2 | DevSecOps' },
+        { cmd: '$ ls certifications/', output: 'OSCP.cert ✓ | OSCP+.cert ✓ | MSc_Cybersecurity_AI.ongoing | CREST.pending' },
+        { cmd: '$ grep experience cv.txt', output: '5+ Years | Senior Software Engineer → Team Lead → IT Department Head' },
+        { cmd: '$ echo $EXPERTISE', output: 'Security Testing | E-commerce | Cloud Infrastructure | Blockchain | Payment Gateways' },
+    ],
     terminalTypingSpeed: 50,
     terminalLineDelay: 1500,
+    
+    // Typed.js Settings
+    typedStrings: [
+        'OSCP Certified Penetration Tester',
+        'IT Department Head',
+        'MSc Cybersecurity & AI Student',
+        'Senior Software Engineer',
+        'Full-Stack Developer',
+        'Security Researcher',
+        'DevSecOps Engineer',
+        'Team Leader',
+        'E-commerce Specialist'
+    ],
+    typedSpeed: 60,
+    typedBackSpeed: 30,
+    typedBackDelay: 2000,
     
     // Feature Flags
     features: {
@@ -56,7 +79,8 @@ const CONFIG = {
         smoothScroll: true,
         lazyLoading: true,
         analytics: true,
-        cookieConsent: true
+        cookieConsent: true,
+        animations: true
     },
     
     // SEO Settings
@@ -64,25 +88,41 @@ const CONFIG = {
         keywords: [
             'penetration tester',
             'OSCP certified',
-            'cybersecurity',
             'senior software engineer',
+            'IT Department Head',
+            'team lead',
+            'cybersecurity',
             'University of Sheffield',
             'MSc Cybersecurity AI',
             'Laravel developer',
             'Django developer',
+            'Magento 2 expert',
+            'e-commerce specialist',
             'security researcher',
             'DevSecOps',
-            'Leeds UK'
+            'Leeds UK',
+            'payment gateway integration',
+            'blockchain developer'
         ],
         author: 'Muhammad Ramis',
-        ogImage: 'https://imramis.github.io/images/og-image.jpg'
+        ogImage: 'https://imramis.github.io/assets/og-image.jpg',
+        twitterImage: 'https://imramis.github.io/assets/twitter-card.jpg'
     },
     
     // Performance Settings
     performance: {
         imageLoadDelay: 100,
         scrollThrottle: 16,
-        resizeDebounce: 250
+        resizeDebounce: 250,
+        intersectionThreshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
     }
 };
 
+// Freeze config to prevent modifications
+Object.freeze(CONFIG);
+Object.freeze(CONFIG.social);
+Object.freeze(CONFIG.animationSpeed);
+Object.freeze(CONFIG.features);
+Object.freeze(CONFIG.seo);
+Object.freeze(CONFIG.performance);

@@ -1,256 +1,268 @@
-// js/main.js
+// js/main.js - Main Application Entry Point
 
-// Initialize on DOM load
-document.addEventListener('DOMContentLoaded', function() {
-    const themeManager = new ThemeManager();
+// Initialize application
+class App {
+    constructor() {
+        this.init();
+    }
     
-    // Loading
-    setTimeout(() => {
+    init() {
+        // Initialize components when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.onDOMReady());
+        } else {
+            this.onDOMReady();
+        }
+        
+        // Initialize features that don't require DOM
+        this.initAnalytics();
+    }
+    
+    onDOMReady() {
+        // Loading screen
+        this.hideLoading();
+        
+        // Initialize navigation
+        this.initNavigation();
+        
+        // Initialize typed text
+        this.initTypedText();
+        
+        // Initialize contact form
+        this.initContactForm();
+        
+        // Initialize cookie consent
+        this.initCookieConsent();
+        
+        // Render dynamic content
+        this.renderContent();
+        
+        // Initialize tooltips
+        this.initTooltips();
+        
+        // Performance optimizations
+        this.lazyLoadImages();
+    }
+    
+    hideLoading() {
         const loading = document.getElementById('loading');
-        loading.style.opacity = '0';
-        setTimeout(() => {
-            loading.style.display = 'none';
-        }, 500);
-    }, 1500);
+        if (loading) {
+            setTimeout(() => {
+                loading.style.opacity = '0';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 500);
+            }, 1500);
+        }
+    }
     
-    // Navigation
-    const mobileToggle = document.getElementById('mobile-toggle');
-    const navLinks = document.getElementById('nav-links');
-    
-    mobileToggle?.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-    });
-    
-    // Scroll Progress
-    window.addEventListener('scroll', () => {
-        const winScroll = document.documentElement.scrollTop;
-        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrolled = (winScroll / height) * 100;
-        document.getElementById('scroll-progress').style.width = scrolled + '%';
-    });
-    
-    // Smooth scrolling
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+    initNavigation() {
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navLinks = document.getElementById('nav-links');
+        
+        // Mobile menu toggle
+        mobileToggle?.addEventListener('click', () => {
+            navLinks?.classList.toggle('active');
+            mobileToggle.classList.toggle('active');
+        });
+        
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks?.classList.remove('active');
+                mobileToggle?.classList.remove('active');
+            });
+        });
+        
+        // Close mobile menu on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.navbar')) {
+                navLinks?.classList.remove('active');
+                mobileToggle?.classList.remove('active');
             }
         });
-    });
-    
-    // Typed Text
-    new Typed('#typed-text', {
-        strings: [
-            'OSCP Certified Penetration Tester',
-            'MSc Cybersecurity & AI Student',
-            'Senior Software Engineer',
-            'Full-Stack Developer',
-            'Security Researcher',
-            'DevSecOps Engineer'
-        ],
-        typeSpeed: 60,
-        backSpeed: 30,
-        backDelay: 2000,
-        loop: true,
-        showCursor: false
-    });
-    
-    // Terminal Animation
-    const terminal = document.getElementById('terminal-output');
-    const commands = [
-        { cmd: '$ whoami', output: 'Muhammad Ramis - OSCP Certified Professional' },
-        { cmd: '$ cat education.txt', output: 'MSc Cybersecurity & AI - University of Sheffield (Russell Group)' },
-        { cmd: '$ ls certifications/', output: 'OSCP.cert  PEN-200.training  CREST.pending' },
-        { cmd: '$ grep experience cv.txt', output: '5+ Years | Senior Software Engineer | Penetration Testing | DevSecOps' },
-        { cmd: '$ echo $SKILLS', output: 'Laravel | Django | React | Python | Burp Suite | Metasploit' }
-    ];
-    
-    let currentCommand = 0;
-    let currentChar = 0;
-    let isTyping = false;
-    let currentLine = null;
-    
-    function typeCharacter() {
-        if (!isTyping) return;
-        
-        const command = commands[currentCommand];
-        
-        if (currentChar === 0) {
-            currentLine = document.createElement('div');
-            currentLine.className = 'terminal-line';
-            const span = document.createElement('span');
-            span.className = 'typing';
-            span.style.color = '#666';
-            currentLine.appendChild(span);
-            terminal.appendChild(currentLine);
-        }
-        
-        const typingSpan = currentLine.querySelector('.typing');
-        
-        if (currentChar < command.cmd.length) {
-            typingSpan.textContent = command.cmd.substring(0, currentChar + 1);
-            currentChar++;
-            setTimeout(typeCharacter, 50);
-        } else {
-            typingSpan.classList.remove('typing');
-            
-            setTimeout(() => {
-                const outputLine = document.createElement('div');
-                outputLine.style.color = 'var(--accent-color)';
-                outputLine.textContent = command.output;
-                terminal.appendChild(outputLine);
-                
-                currentCommand = (currentCommand + 1) % commands.length;
-                currentChar = 0;
-                
-                if (currentCommand === 0) {
-                    setTimeout(() => {
-                        terminal.innerHTML = '';
-                        isTyping = true;
-                        typeCharacter();
-                    }, 3000);
-                } else {
-                    setTimeout(() => {
-                        isTyping = true;
-                        typeCharacter();
-                    }, 1500);
-                }
-            }, 300);
-            
-            isTyping = false;
-        }
     }
     
-    isTyping = true;
-    typeCharacter();
+    initTypedText() {
+        const typedElement = document.getElementById('typed-text');
+        if (!typedElement) return;
+        
+        new Typed('#typed-text', {
+            strings: CONFIG.typedStrings,
+            typeSpeed: CONFIG.typedSpeed,
+            backSpeed: CONFIG.typedBackSpeed,
+            backDelay: CONFIG.typedBackDelay,
+            loop: true,
+            showCursor: false
+        });
+    }
     
-    // Particles.js
-    particlesJS('particles-js', {
-        particles: {
-            number: {
-                value: 50,
-                density: {
-                    enable: true,
-                    value_area: 800
-                }
-            },
-            color: {
-                value: '#ffffff'
-            },
-            shape: {
-                type: 'circle'
-            },
-            opacity: {
-                value: 0.5,
-                random: false
-            },
-            size: {
-                value: 3,
-                random: true
-            },
-            line_linked: {
-                enable: true,
-                distance: 150,
-                color: '#ffffff',
-                opacity: 0.6,
-                width: 1
-            },
-            move: {
-                enable: true,
-                speed: 2,
-                direction: 'none',
-                random: false,
-                straight: false,
-                out_mode: 'out',
-                bounce: false
+    initContactForm() {
+        const form = document.getElementById('contact-form');
+        if (!form) return;
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Create mailto link
+            const subject = encodeURIComponent(data.subject);
+            const body = encodeURIComponent(
+                `Name: ${data.name}\n` +
+                `Email: ${data.email}\n\n` +
+                `Message:\n${data.message}`
+            );
+            
+            const mailtoLink = `mailto:${CONFIG.email}?subject=${subject}&body=${body}`;
+            window.location.href = mailtoLink;
+            
+            // Track form submission
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'contact_form_submit', {
+                    event_category: 'engagement',
+                    event_label: 'contact_form'
+                });
             }
-        },
-        interactivity: {
-            detect_on: 'canvas',
-            events: {
-                onhover: {
-                    enable: true,
-                    mode: 'grab'
-                },
-                onclick: {
-                    enable: true,
-                    mode: 'push'
-                },
-                resize: true
-            }
-        },
-        retina_detect: true
-    });
-    
-    // Matrix Rain Effect
-    function initMatrixRain() {
-        const matrix = document.getElementById('matrix-rain');
-        const chars = '01';
-        
-        function createChar() {
-            const char = document.createElement('div');
-            char.className = 'matrix-char';
-            char.textContent = chars[Math.floor(Math.random() * chars.length)];
-            char.style.left = Math.random() * 100 + '%';
-            char.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            char.style.fontSize = (Math.random() * 10 + 10) + 'px';
-            matrix.appendChild(char);
             
+            // Show success message (optional)
+            this.showNotification('Opening your email client...', 'success');
+        });
+    }
+    
+    initCookieConsent() {
+        const consent = localStorage.getItem('cookieConsent');
+        const banner = document.getElementById('cookie-consent');
+        
+        if (!consent && banner) {
             setTimeout(() => {
-                char.remove();
-            }, 5000);
+                banner.classList.add('show');
+            }, 2000);
+        }
+    }
+    
+    renderContent() {
+        // Render all dynamic content
+        if (typeof window.renderSkills === 'function') {
+            window.renderSkills();
         }
         
-        setInterval(createChar, 200);
+        if (typeof window.renderExperience === 'function') {
+            window.renderExperience();
+        }
+        
+        if (typeof window.renderCertifications === 'function') {
+            window.renderCertifications();
+        }
+        
+        if (typeof window.initProjects === 'function') {
+            window.initProjects();
+        }
     }
-    initMatrixRain();
     
-    // Contact Form
-    const form = document.getElementById('contact-form');
-    form?.addEventListener('submit', (e) => {
-        e.preventDefault();
+    initTooltips() {
+        // Simple tooltip implementation
+        const tooltipElements = document.querySelectorAll('[data-tooltip]');
         
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        
-        const subject = encodeURIComponent(data.subject);
-        const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\n\nMessage:\n${data.message}`);
-        const mailtoLink = `mailto:mramis1@outlook.com?subject=${subject}&body=${body}`;
-        
-        window.location.href = mailtoLink;
-    });
-    
-    // Load experience, certifications, and projects
-    if (typeof window.renderExperience === 'function') window.renderExperience();
-    if (typeof window.renderCertifications === 'function') window.renderCertifications();
-    if (typeof window.initProjects === 'function') window.initProjects();
-});
-
-// Cookie consent
-window.addEventListener('load', function() {
-    const consent = localStorage.getItem('cookieConsent');
-    if (!consent) {
-        document.getElementById('cookie-consent').classList.add('show');
+        tooltipElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                element.classList.add('tooltip-active');
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                element.classList.remove('tooltip-active');
+            });
+        });
     }
-});
+    
+    lazyLoadImages() {
+        if (!CONFIG.features.lazyLoading) return;
+        
+        const images = document.querySelectorAll('img[data-src]');
+        
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+        
+        images.forEach(img => imageObserver.observe(img));
+    }
+    
+    initAnalytics() {
+        if (!CONFIG.features.analytics) return;
+        
+        // Track page views
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                page_title: document.title,
+                page_location: window.location.href,
+                page_path: window.location.pathname
+            });
+        }
+    }
+    
+    showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+}
 
-function acceptCookies() {
+// Cookie consent functions
+window.acceptCookies = function() {
     localStorage.setItem('cookieConsent', 'accepted');
-    document.getElementById('cookie-consent').classList.remove('show');
-    gtag('consent', 'update', {
-        'analytics_storage': 'granted'
-    });
-}
+    document.getElementById('cookie-consent')?.classList.remove('show');
+    
+    // Enable analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('consent', 'update', {
+            'analytics_storage': 'granted'
+        });
+    }
+};
 
-function declineCookies() {
+window.declineCookies = function() {
     localStorage.setItem('cookieConsent', 'declined');
-    document.getElementById('cookie-consent').classList.remove('show');
-    gtag('consent', 'update', {
-        'analytics_storage': 'denied'
-    });
-}
+    document.getElementById('cookie-consent')?.classList.remove('show');
+    
+    // Disable analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('consent', 'update', {
+            'analytics_storage': 'denied'
+        });
+    }
+};
+
+// Initialize app
+const app = new App();
+
+// Export for debugging (optional)
+window.app = app;
