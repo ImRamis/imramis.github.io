@@ -1,142 +1,115 @@
-/* css/themes.css - Theme Specific Styles */
+/* css/themes.css - Theme-Specific Styles */
 
-
-a {
-    color: white;
+/* Monochrome Theme (Default) */
+body[data-theme="monochrome"] {
+    /* Colors already defined in variables.css */
 }
 
-/* Dark Theme (Default) */
-body[data-theme="dark"] {
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #1a1a1a;
-    --bg-tertiary: #252525;
-    --text-primary: #ffffff;
-    --text-secondary: #b0b0b0;
-    --text-tertiary: #888888;
-    --border-color: #333333;
-    --shadow-color: rgba(0, 0, 0, 0.5);
-    --overlay-bg: rgba(10, 10, 10, 0.95);
+body[data-theme="monochrome"] .matrix-char {
+    color: #333333;
+    opacity: 0.3;
 }
 
-body[data-theme="dark"] .navbar {
-    background: var(--overlay-bg);
+body[data-theme="monochrome"] .particles-js-canvas-el {
+    opacity: 0.5;
 }
 
-body[data-theme="dark"] .terminal-window {
+body[data-theme="monochrome"] .terminal-window,
+body[data-theme="monochrome"] .hero-terminal {
+    background: #f8f9fa;
+    border-color: #e0e0e0;
+}
+
+body[data-theme="monochrome"] .terminal-header {
+    background: #e9ecef;
+}
+
+body[data-theme="monochrome"] .terminal-output {
+    color: #333333;
+}
+
+/* Dark Theme */
+body[data-theme="dark"] .matrix-char {
+    color: var(--accent-color);
+    opacity: 0.5;
+}
+
+body[data-theme="dark"] .terminal-window,
+body[data-theme="dark"] .hero-terminal {
     background: #000000;
-    box-shadow: 0 4px 20px rgba(0, 255, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 128, 255, 0.1);
 }
 
 body[data-theme="dark"] .terminal-output {
     color: var(--accent-color);
 }
 
-body[data-theme="dark"] .matrix-char {
-    color: var(--accent-color);
-    text-shadow: 0 0 5px var(--accent-color);
+/* Hacker/Matrix Theme */
+body[data-theme="hacker"] .matrix-char {
+    color: #00ff00;
+    text-shadow: 0 0 5px #00ff00;
+    opacity: 0.8;
 }
 
-
-
-body[data-theme="dark"] .glitch {
-    text-shadow: 
-        0.05em 0 0 rgba(255, 0, 0, 0.75),
-        -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
-        0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
-    animation: glitch 500ms infinite;
+body[data-theme="hacker"] .terminal-window,
+body[data-theme="hacker"] .hero-terminal {
+    background: #000000;
+    box-shadow: 0 4px 20px rgba(0, 255, 0, 0.2);
 }
 
-@keyframes glitch {
-    0% {
-        text-shadow: 
-            0.05em 0 0 rgba(255, 0, 0, 0.75),
-            -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
-            0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
-    }
-    14% {
-        text-shadow: 
-            0.05em 0 0 rgba(255, 0, 0, 0.75),
-            -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
-            0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
-    }
-    15% {
-        text-shadow: 
-            -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
-            0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
-            -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
-    }
-    49% {
-        text-shadow: 
-            -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
-            0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
-            -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
-    }
-    50% {
-        text-shadow: 
-            0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
-            0.025em 0 0 rgba(0, 255, 0, 0.75),
-            0 -0.05em 0 rgba(0, 0, 255, 0.75);
-    }
-    99% {
-        text-shadow: 
-            0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
-            0.025em 0 0 rgba(0, 255, 0, 0.75),
-            0 -0.05em 0 rgba(0, 0, 255, 0.75);
-    }
-    100% {
-        text-shadow: 
-            -0.025em 0 0 rgba(255, 0, 0, 0.75),
-            -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
-            -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
-    }
+body[data-theme="hacker"] .terminal-output {
+    color: #00ff00;
+    text-shadow: 0 0 2px #00ff00;
+}
+
+body[data-theme="hacker"] .terminal-header {
+    background: #0a0a0a;
+}
+
+body[data-theme="hacker"] .stat-number,
+body[data-theme="hacker"] .cert-badge,
+body[data-theme="hacker"] .timeline-dot {
+    box-shadow: 0 0 20px var(--accent-color);
+}
+
+body[data-theme="hacker"] .navbar {
+    box-shadow: 0 2px 10px rgba(0, 255, 0, 0.1);
+}
+
+body[data-theme="hacker"] .scroll-progress {
+    box-shadow: 0 0 10px var(--accent-color);
 }
 
 /* Light Theme */
-body[data-theme="light"] {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --bg-tertiary: #e9ecef;
-    --text-primary: #212529;
-    --text-secondary: #495057;
-    --text-tertiary: #6c757d;
-    --border-color: #dee2e6;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --overlay-bg: rgba(255, 255, 255, 0.95);
-}
-
-body[data-theme="light"] .navbar {
-    background: var(--overlay-bg);
-    box-shadow: 0 1px 3px var(--shadow-color);
-}
-
-body[data-theme="light"] .terminal-window {
-    background: #f8f9fa;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 2px 10px var(--shadow-color);
-}
-
-body[data-theme="light"] .terminal-header {
-    background: #e9ecef;
-}
-
-body[data-theme="light"] .terminal-output {
-    color: var(--accent-color);
-}
-
 body[data-theme="light"] .matrix-char {
     color: var(--accent-color);
+    opacity: 0.2;
+}
+
+body[data-theme="light"] .particles-js-canvas-el {
     opacity: 0.3;
 }
 
-body[data-theme="light"] .particles-bg canvas {
-    opacity: 0.5;
+body[data-theme="light"] .navbar {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-body[data-theme="light"] .glitch {
-    text-shadow: 0 0 5px rgba(0, 102, 204, 0.3);
-    animation: none;
+body[data-theme="light"] .terminal-window,
+body[data-theme="light"] .hero-terminal {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+body[data-theme="light"] .terminal-header {
+    background: #f8f9fa;
+}
+
+body[data-theme="light"] .terminal-output {
+    color: #495057;
+}
+
+body[data-theme="light"] .card,
 body[data-theme="light"] .skill-category,
 body[data-theme="light"] .stat-card,
 body[data-theme="light"] .timeline-content,
@@ -144,16 +117,15 @@ body[data-theme="light"] .cert-card,
 body[data-theme="light"] .training-card,
 body[data-theme="light"] .award-card,
 body[data-theme="light"] .project-card {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-    box-shadow: 0 2px 5px var(--shadow-color);
+    background: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 body[data-theme="light"] .tech-tag,
 body[data-theme="light"] .skill-tag {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
 }
 
 body[data-theme="light"] .btn-primary {
@@ -167,9 +139,9 @@ body[data-theme="light"] .btn-primary:hover {
 
 body[data-theme="light"] .social-links a,
 body[data-theme="light"] .social-link {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    box-shadow: 0 2px 5px var(--shadow-color);
+    background: #f8f9fa;
+    color: #495057;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 body[data-theme="light"] .social-links a:hover,
@@ -178,77 +150,24 @@ body[data-theme="light"] .social-link:hover {
     color: #ffffff;
 }
 
-body[data-theme="light"] .contact-form input,
-body[data-theme="light"] .contact-form textarea {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
+/* Custom Theme */
+body[data-theme="custom"] .matrix-char {
+    color: var(--custom-color);
+    opacity: 0.6;
 }
 
-/* Custom Color Support */
-body {
-    --accent-glow: 0 0 20px var(--accent-color);
+body[data-theme="custom"] .terminal-output {
+    color: var(--custom-color);
 }
 
-.btn-primary {
-    background: var(--accent-color);
+body[data-theme="custom"] .scroll-progress {
+    background: var(--custom-color);
 }
 
-.btn-primary:hover {
-    box-shadow: var(--accent-glow);
-}
-
-.section-title::after {
-    background: var(--accent-color);
-}
-
-.nav-links a::after {
-    background: var(--accent-color);
-}
-
-.nav-links a:hover,
-.nav-links a.active {
-    color: var(--accent-color);
-}
-
-.skill-category h3,
-.stat-number,
-.timeline-company,
-.cert-badge,
-.project-header i,
-.contact-item i {
-    color: var(--accent-color);
-}
-
-.timeline-current {
-    background: var(--accent-color);
-}
-
-.cert-badge {
-    background: var(--accent-color);
-}
-
-.social-links a:hover,
-.social-link:hover {
-    background: var(--accent-color);
-}
-
-.contact-form input:focus,
-.contact-form textarea:focus {
-    border-color: var(--accent-color);
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-}
-
-.stat-card:hover,
-.cert-card:hover,
-.training-card:hover,
-.award-card:hover,
-.project-card:hover {
-    border-color: var(--accent-color);
+body[data-theme="custom"] .stat-number,
+body[data-theme="custom"] .cert-badge,
+body[data-theme="custom"] .timeline-dot {
+    background: var(--custom-color);
 }
 
 /* Theme Transition Effects */
@@ -256,6 +175,8 @@ body,
 .navbar,
 .btn,
 .social-links a,
+.social-link,
+.card,
 .skill-category,
 .stat-card,
 .timeline-content,
@@ -264,6 +185,50 @@ body,
 .award-card,
 .project-card,
 .contact-form input,
-.contact-form textarea {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+.contact-form textarea,
+.terminal-window,
+.hero-terminal {
+    transition: background-color var(--transition-base), 
+                color var(--transition-base), 
+                border-color var(--transition-base),
+                box-shadow var(--transition-base);
+}
+
+/* Theme-specific Particle Colors */
+body[data-theme="monochrome"] #particles-js canvas {
+    filter: invert(1);
+}
+
+body[data-theme="light"] #particles-js canvas {
+    filter: opacity(0.3);
+}
+
+body[data-theme="hacker"] #particles-js canvas {
+    filter: hue-rotate(120deg) saturate(2);
+}
+
+/* Accent Color Customization */
+body {
+    --accent-glow: 0 0 20px var(--accent-color);
+}
+
+/* All elements that use accent color */
+.btn-primary,
+.stat-number,
+.timeline-company,
+.cert-badge,
+.project-header i,
+.contact-item i,
+.skill-category h3,
+.timeline-dot,
+.scroll-progress,
+.nav-link:hover,
+.nav-link.active,
+.filter-btn:hover,
+.filter-btn.active,
+.section-title::after,
+.nav-link::after {
+    transition: color var(--transition-base), 
+                background-color var(--transition-base), 
+                border-color var(--transition-base);
 }

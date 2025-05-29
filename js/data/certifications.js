@@ -9,15 +9,30 @@ const CERTIFICATIONS = [
         date: 'April 2025',
         status: 'completed',
         verificationUrl: 'https://credentials.offsec.com/5185a463-88bf-4ad2-8546-2555585d8cc4',
+        credentialId: '140250188',
+        type: 'certification',
+        category: 'security',
+        icon: 'fa-shield-alt',
+        description: 'OSCP is a hands-on penetration testing certification that demonstrates the ability to identify and exploit vulnerabilities in various systems. It is widely recognized in the cybersecurity industry as a benchmark for practical skills.',
+        skills: ['Buffer Overflow', 'Active Directory', 'OSCP', 'Burp Suite', 'Bash Scripting', 'Client-side Attacks', 'Nmap', 'Kali Linux', 'Practical Tools', 'Threat Modelling', 'Wireshark', 'Windows Buffer Overflows', 'Command Line', 'Cyber-security', 'Metasploit', 'Vulnerability Scanning', 'Locating Public Exploits', 'Vulnerability Assessment and Penetration Testing (VAPT)', 'Web Application Attacks', 'Penetration Testing']
+    },
+    {
+        id: 2,
+        name: 'OSCP+',
+        fullName: 'Offensive Security Certified Professional+',
+        organization: 'Offensive Security',
+        date: 'April 2025',
+        status: 'completed',
+        verificationUrl: 'https://credentials.offsec.com/559e642d-824b-4657-bdd9-8b315e1845f7',
         credentialId: '140250238',
         type: 'certification',
         category: 'security',
         icon: 'fa-shield-alt',
-        description: 'Advanced penetration testing certification covering manual exploitation, privilege escalation, Active Directory attacks, and comprehensive security assessments. OSCP+ extends validity to 3 years.',
-        skills: ['Penetration Testing', 'Privilege Escalation', 'Active Directory', 'Buffer Overflow', 'Web Exploitation']
+        description: 'OSCP+ is an extension of OSCP that provides additional training and resources, extending the certification validity to 3 years. It includes advanced topics in penetration testing and security assessments.',
+        skills:['Buffer Overflow', 'Active Directory', 'OSCP', 'Burp Suite', 'Bash Scripting', 'Client-side Attacks', 'Nmap', 'Kali Linux', 'Practical Tools', 'Threat Modelling', 'Wireshark', 'Windows and Linux Buffer Overflows', 'Command Line', 'Cyber-security', 'Metasploit', 'Vulnerability Scanning', 'Locating Public Exploits', 'Vulnerability Assessment and Penetration Testing (VAPT)', 'Web Application Attacks', 'Penetration Testing']
     },
     {
-        id: 2,
+        id: 3,
         name: 'CREST',
         fullName: 'CREST Penetration Testing Certification',
         organization: 'CREST UK',
@@ -30,7 +45,7 @@ const CERTIFICATIONS = [
         skills: ['UK Security Standards', 'Enterprise Testing', 'Compliance', 'Professional Standards']
     },
     {
-        id: 3,
+        id: 4,
         name: 'MSc Cybersecurity & AI',
         fullName: 'Master of Science in Cybersecurity and Artificial Intelligence',
         organization: 'University of Sheffield',
@@ -40,11 +55,11 @@ const CERTIFICATIONS = [
         category: 'academic',
         icon: 'fa-graduation-cap',
         description: 'Advanced degree from Russell Group university (World Top 100) covering cybersecurity, AI applications in security, digital forensics, and secure software development.',
-        skills: ['Machine Learning', 'Digital Forensics', 'Natural Language Processing', 'Secure Software Development'],
+        skills: ['Machine Learning', 'Digital Forensics', 'Natural Language Processing', 'Secure Software Development', 'AI Security'],
         achievements: ['Russell Group University', 'World Top 100 University', 'Merit Classification Expected']
     },
     {
-        id: 4,
+        id: 5,
         name: 'BSc Computer Science',
         fullName: 'Bachelor of Science in Computer Science',
         organization: 'Pakistan Air Force Karachi Institute of Economics and Technology',
@@ -54,7 +69,7 @@ const CERTIFICATIONS = [
         category: 'academic',
         icon: 'fa-university',
         description: 'Comprehensive computer science education with focus on software engineering, algorithms, network security, and AI fundamentals.',
-        skills: ['Software Engineering', 'Algorithms', 'Data Structures', 'Network Security'],
+        skills: ['Software Engineering', 'Algorithms', 'Data Structures', 'Network Security', 'Database Systems'],
         achievements: ['Multiple Hackathon Wins', 'Programming Competition Awards']
     }
 ];
@@ -86,6 +101,24 @@ const TRAINING = [
         status: 'planned',
         category: 'offensive',
         description: 'Advanced penetration testing and AV evasion'
+    },
+    {
+        id: 4,
+        name: 'AWS Security',
+        fullName: 'Fundamentals',
+        organization: 'Amazon Web Services',
+        status: 'completed',
+        category: 'cloud',
+        description: 'Cloud security best practices and AWS security services'
+    },
+    {
+        id: 5,
+        name: 'Azure Security',
+        fullName: 'Technologies',
+        organization: 'Microsoft',
+        status: 'completed',
+        category: 'cloud',
+        description: 'Azure security services and cloud protection strategies'
     }
 ];
 
@@ -100,22 +133,30 @@ const AWARDS = [
     },
     {
         id: 2,
-        title: 'Crypto Chicks Hackathon Winner',
-        organization: 'Crypto Chicks',
-        date: '2019',
+        title: 'Promoted to IT Department Head',
+        organization: 'Apricart E-Stores',
+        date: '2021',
         icon: 'fa-medal',
-        description: 'Constructed solutions using IBM Hyperledger and Docker, highlighting innovation with emerging technologies.'
+        description: 'Rapid career progression from Senior Software Engineer to Team Lead to IT Department Head within 9 months.'
     },
     {
         id: 3,
-        title: 'ICPC Lahore Regional - Fastest Problem Solver',
-        organization: 'ACM ICPC',
-        date: '2017',
-        icon: 'fa-code',
-        description: 'Awarded for collaborative, efficient solutions to complex algorithmic problems.'
+        title: 'Crypto Chicks Hackathon Finalist',
+        organization: 'Crypto Chicks',
+        date: '2019',
+        icon: 'fa-medal',
+        description: 'Constructed blockchain supply chain solution using IBM Hyperledger and Docker, highlighting innovation with emerging technologies.'
     },
     {
         id: 4,
+        title: 'ICPC Lahore Regional - Fastest Problem Solver - Top 10',
+        organization: 'ACM ICPC',
+        date: '2017',
+        icon: 'fa-code',
+        description: 'Awarded for collaborative, efficient solutions to complex algorithmic problems in competitive programming.'
+    },
+    {
+        id: 5,
         title: 'COMBAT Algorithm Competition Organizer',
         organization: 'University Event',
         date: '2018',
