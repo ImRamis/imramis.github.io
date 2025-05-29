@@ -42,6 +42,8 @@
         overflow-y: auto;
         z-index: 999;
         box-shadow: 2px 0 10px var(--shadow-color);
+        height: 100vh;
+        gap: 0;
     }
     
     .nav-links.active {
