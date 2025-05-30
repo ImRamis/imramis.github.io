@@ -36,7 +36,7 @@ const CERTIFICATIONS = [
         name: 'CREST',
         fullName: 'CREST Penetration Testing Certification',
         organization: 'CREST UK',
-        date: 'Expected Aug 2025',
+        date: 'Expected July 2025',
         status: 'in-progress',
         type: 'certification',
         category: 'security',
@@ -86,12 +86,12 @@ const TRAINING = [
     },
     {
         id: 2,
-        name: 'PEN-210',
-        fullName: 'Wi-Fi Attacks (Planned)',
-        organization: 'Offensive Security',
+        name: 'CPENT (LPT)',
+        fullName: 'Certified Penetration Testing Professional - Licensed Penetration Tester',
+        organization: 'EC-Council',
         status: 'planned',
         category: 'offensive',
-        description: 'Advanced wireless security testing and exploitation'
+        description: 'Comprehensive penetration testing course covering advanced techniques and methodologies for professional testers'
     },
     {
         id: 3,
@@ -101,24 +101,6 @@ const TRAINING = [
         status: 'planned',
         category: 'offensive',
         description: 'Advanced penetration testing and AV evasion'
-    },
-    {
-        id: 4,
-        name: 'AWS Security',
-        fullName: 'Fundamentals',
-        organization: 'Amazon Web Services',
-        status: 'completed',
-        category: 'cloud',
-        description: 'Cloud security best practices and AWS security services'
-    },
-    {
-        id: 5,
-        name: 'Azure Security',
-        fullName: 'Technologies',
-        organization: 'Microsoft',
-        status: 'completed',
-        category: 'cloud',
-        description: 'Azure security services and cloud protection strategies'
     }
 ];
 
@@ -129,7 +111,7 @@ const AWARDS = [
         organization: 'Apricart E-Stores',
         date: '2021',
         icon: 'fa-trophy',
-        description: 'Recognized for outstanding contributions, driving 20% increase in team productivity through key security and development projects.'
+        description: 'Recognized for outstanding contributions, driving 20% increase in team productivity & Sales through key security and development projects.'
     },
     {
         id: 2,

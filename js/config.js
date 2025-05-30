@@ -54,9 +54,25 @@ const CONFIG = {
     ],
     terminalTypingSpeed: 50,
     terminalLineDelay: 1500,
-    
+    typedStringsNames: [
+        "Muhammad Ramis",
+        "محمد رامس",
+        "ムハンマド・ラミス",
+        "むはんまど・らみす"
+        // "मुहम्मद रामिस",
+        // "Мухаммад Рамис",
+        // "穆罕默德·拉米斯",
+        // "무함마드 라미스",
+        // "Μουχάμαντ Ραμίς",
+        // "מוחמד ראמיס",
+        // "محمد رامیس",
+        // "মুহাম্মদ রামিস",
+        // "முகம்மது ராமிஸ்",
+        // "มูฮัมหมัด รามิส",
+        // "ሙሐመድ ራሚስ"
+    ],
     // Typed.js Settings
-    typedStrings: [
+    typedStringsJobs: [
         'OSCP Certified Penetration Tester',
         'IT Department Head',
         'MSc Cybersecurity & AI Student',

@@ -25,8 +25,11 @@ class App {
         // Initialize navigation
         this.initNavigation();
         
+        // Initialize typed text for name
+        this.initTypedTextName();
+
         // Initialize typed text
-        this.initTypedText();
+        this.initTypedTextDesignation();
         
         // Initialize contact form
         this.initContactForm();
@@ -82,13 +85,44 @@ class App {
             }
         });
     }
+
     
-    initTypedText() {
+    initTypedTextName() {
+        const typedElement = document.getElementById('hero-title');
+        if (!typedElement) return;
+        
+        // new Typed('#hero-title', {
+        //     strings: CONFIG.typedStringsNames,
+        //     typeSpeed: 0.1,
+        //     backSpeed: 0.1,
+        //     backDelay: CONFIG.typedBackDelay+2000,
+        //     loop: true,
+        //     showCursor: false
+        // });
+        let index = 0;
+
+        function updateName() {
+            typedElement.classList.remove('fade-in');
+            typedElement.classList.add('fade-out');
+            setTimeout(() => {
+                typedElement.textContent = CONFIG.typedStringsNames[index];
+                index = (index + 1) % CONFIG.typedStringsNames.length;
+                typedElement.classList.remove('fade-out');
+                typedElement.classList.add('fade-in');
+            }, 500); 
+        }
+
+        updateName(); // Initial display
+        setInterval(updateName, 3000); // Change every 3 seconds
+    }
+    
+
+    initTypedTextDesignation() {
         const typedElement = document.getElementById('typed-text');
         if (!typedElement) return;
         
         new Typed('#typed-text', {
-            strings: CONFIG.typedStrings,
+            strings: CONFIG.typedStringsJobs,
             typeSpeed: CONFIG.typedSpeed,
             backSpeed: CONFIG.typedBackSpeed,
             backDelay: CONFIG.typedBackDelay,

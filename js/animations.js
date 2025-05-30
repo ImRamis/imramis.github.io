@@ -10,7 +10,7 @@ class AnimationManager {
     init() {
         this.initScrollAnimations();
         this.initNavbarAnimation();
-        this.initHeroAnimations();
+        // this.initHeroAnimations();
         this.initCounterAnimations();
         this.initMagneticButtons();
         this.initParallax();
@@ -83,42 +83,42 @@ class AnimationManager {
         window.addEventListener('scroll', requestTick);
     }
     
-    initHeroAnimations() {
-        // Text scramble effect for hero name
-        const heroTitle = document.querySelector('.hero-title');
-        if (!heroTitle) return;
+    // initHeroAnimations() {
+    //     // Text scramble effect for hero name
+    //     const heroTitle = document.querySelector('.hero-title');
+    //     if (!heroTitle) return;
         
-        const originalText = heroTitle.textContent;
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    //     const originalText = heroTitle.textContent;
+    //     const chars = '';
         
-        const scramble = () => {
-            let iteration = 0;
+    //     const scramble = () => {
+    //         let iteration = 0;
             
-            const interval = setInterval(() => {
-                heroTitle.textContent = originalText
-                    .split('')
-                    .map((letter, index) => {
-                        if (index < iteration) {
-                            return originalText[index];
-                        }
-                        return chars[Math.floor(Math.random() * chars.length)];
-                    })
-                    .join('');
+    //         const interval = setInterval(() => {
+    //             heroTitle.textContent = originalText
+    //                 .split('')
+    //                 .map((letter, index) => {
+    //                     if (index < iteration) {
+    //                         return originalText[index];
+    //                     }
+    //                     return chars[Math.floor(Math.random() * chars.length)];
+    //                 })
+    //                 .join('');
                 
-                if (iteration >= originalText.length) {
-                    clearInterval(interval);
-                }
+    //             if (iteration >= originalText.length) {
+    //                 clearInterval(interval);
+    //             }
                 
-                iteration += 1/3;
-            }, 30);
-        };
+    //             iteration += 1/3;
+    //         }, 5);
+    //     };
         
-        // Initial scramble
-        // setTimeout(scramble, 500);
+    //     // Initial scramble
+    //     setTimeout(scramble, 1000);
         
-        // Scramble on hover
-        // heroTitle.addEventListener('mouseenter', scramble);
-    }
+    //     // Scramble on hover
+    //     heroTitle.addEventListener('mouseenter', scramble);
+    // }
     
     initCounterAnimations() {
         const counters = document.querySelectorAll('.stat-number');

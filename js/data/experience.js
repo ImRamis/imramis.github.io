@@ -15,7 +15,9 @@ const EXPERIENCE = [
             'Conducted vulnerability assessments on web and API applications with tools like Nessus, Nmap, and Burp Suite',
             'Refined SAN/NAS storage and streamlined Docker and Kubernetes deployments, leading to 30% faster data retrieval',
             'Integrated scalable infrastructure solutions aligned with client needs',
-            'Established data visualization tools and testing environments (Proxmox, VMware, WSL)'
+            'Established data visualization tools and testing environments (Proxmox, VMware, WSL)',
+            'Implemented real-time monitoring and alerting systems for proactive issue resolution',
+            'Developed and maintained secure RESTful APIs for e-commerce applications',
         ],
         achievements: [
             '25% increase in system availability',
@@ -67,13 +69,21 @@ const EXPERIENCE = [
             'Architected scalable solutions for e-commerce platform',
             'Collaborated with product management on technical requirements',
             'Ensured delivery of high-quality software on schedule',
-            'Implemented agile best practices and improved team velocity by 30%'
+            'Implemented agile best practices and improved team velocity by 30%',
+            'Managed technical debt and code quality standards',
+            'Facilitated cross-team collaboration for integrated solutions',
+            'Developed and maintained RESTful APIs for e-commerce features',
+            'Integrated payment gateways and ensured PCI DSS compliance',
         ],
         achievements: [
             'Improved team productivity by 35%',
             'Reduced bug rate by 40%',
             'Successfully delivered 5 major features ahead of schedule',
-            'Achieved 95% sprint completion rate'
+            'Achieved 95% sprint completion rate',
+            'Enhanced API security with JWT and OAuth',
+            'Implemented automated testing framework, reducing regression issues by 50%',
+            'Led successful migration to microservices architecture, improving system scalability',
+            'Increased code coverage to 85% through unit and integration tests',
         ],
         technologies: ['Team Leadership', 'Agile/Scrum', 'Code Review', 'Architecture Design','Spring Boot', 'Java', 'Python' ,'Crawlers', 'Automation', 'Scripting', 'DNS','Laravel', 'PHP', 'Magento 2', 'AWS', 'Payment Gateway', 'PCI DSS', 'RESTful API']
     },
@@ -93,17 +103,26 @@ const EXPERIENCE = [
             'Configured AWS infrastructure including EC2, S3, RDS, and load balancers',
             'Implemented PCI DSS compliance measures for payment processing',
             'Built custom Magento 2 modules for enhanced functionality',
-            'Developed CRON jobs and crawlers for automated data processing'
+            'Developed CRON jobs and crawlers for automated data processing',
+            'Conducted code reviews and provided mentorship to junior developers',
+            'Collaborated with cross-functional teams to gather requirements and deliver solutions',
+            'Led architecture design discussions and proposed improvements',
+            'Managed DNS configurations and domain setups for e-commerce sites',
+            'Automated DNS management with scripting, reducing manual work by 30%',
+            'Implemented JWT and OAuth for secure authentication',
         ],
         achievements: [
             'Employee of the Month (2021)',
             '35% boost in system resilience',
             '20% increase in cloud stability',
-            'Zero security incidents in payment processing'
+            'Zero security incidents in payment processing',
+            'Successfully delivered 3 major projects ahead of schedule',
+            'Enhanced API security with JWT and OAuth',
         ],
-        technologies: ['Laravel', 'Magento 2', 'Team Leadership', 'Agile/Scrum', 'Code Review', 'Architecture Design']
+        technologies: ['Magento 2', 'Team Leadership', 'Agile/Scrum', 'Code Review', 'Architecture Design', 'Spring Boot', 'Java', 'Python', 'Crawlers', 'Automation', 'Scripting', 'DNS', 'Laravel', 'PHP', 'Magento 2', 'AWS', 'Payment Gateway', 'PCI DSS', 'RESTful API']
     },
     {
+        // for them converted normal static websites to cms using custom cms based system not laravel, around 10+ projects also did some mobile application development also added some dns management and api integration also did some e-commerce development
         id: 5,
         title: 'Full Stack Developer',
         company: 'Creative Drop DMCC',
@@ -111,7 +130,7 @@ const EXPERIENCE = [
         period: 'Dec 2019 - Aug 2020',
         current: false,
         type: 'Professional',
-        description: 'Fostered scalable CMS backends and integrated secure API solutions for international clients.',
+        description: 'Fostered scalable CMS backends and integrated secure API solutions for international clients. Led e-commerce development projects and enhanced DNS management processes.',
         responsibilities: [
             'Developed scalable CMS backends using PHP Laravel',
             'Integrated secure API solutions with PHP, Node, and Python',
@@ -119,25 +138,30 @@ const EXPERIENCE = [
             'Enriched DNS configurations for improved domain stability',
             'Automated DNS management with scripting, reducing manual work by 30%',
             'Implemented JWT and OAuth for secure authentication',
-            'Developed RESTful and GraphQL APIs for mobile applications'
+            'Developed RESTful and GraphQL APIs for mobile applications',
+            'Led development of 10+ client projects, ensuring timely delivery and quality',
+            'Collaborated with cross-functional teams to gather requirements and deliver solutions',
+            'Conducted code reviews and provided mentorship to junior developers'
         ],
         achievements: [
             '35% improvement in content management efficiency',
             '20% increase in system reliability',
             '30% reduction in manual DNS management',
-            'Successfully delivered 10+ client projects'
+            'Successfully delivered 10+ client projects',
+            'Enhanced API security with JWT and OAuth',
+            
         ],
-        technologies: ['PHP', 'Laravel', 'CMS Integrations','Mobile Application', 'E-Commerce Development', 'Node.js', 'Python', 'JWT', 'OAuth', 'DNS Management', 'GraphQL']
+        technologies: ['PHP', 'Laravel', 'CMS Integrations','Mobile Application', 'E-Commerce Development', 'Node.js', 'Python', 'JWT', 'OAuth', 'DNS Management', 'GraphQL', 'RESTful APIs', 'Scripting', 'API Integrations', 'Payment Gateways'],
     },
     {
         id: 6,
         title: 'Software Engineer',
         company: 'Chatcloud.co',
         location: 'Pakistan',
-        period: 'Jan 2019 - Aug 2020',
+        period: 'Jan 2016 - Dec 2016',
         current: false,
         type: 'Professional',
-        description: 'Executed security measures for backend systems and built scalable chat infrastructure.',
+        description: 'Executed security measures for backend systems and built scalable chat infrastructure. Led development of real-time messaging features and managed cloud infrastructure. Implemented load balancing solutions for high availability.',
         responsibilities: [
             'Engineered scalable backend solutions with Node.js microservices on Kubernetes',
             'Enhanced API call reliability by 40% with secure key-based authentication',
@@ -145,13 +169,16 @@ const EXPERIENCE = [
             'Directed infrastructure configurations on Azure and Debian OS',
             'Implemented clustering and virtualization for improved performance',
             'Built real-time messaging features supporting 10K+ concurrent users',
-            'Developed load balancing solutions using Nginx'
+            'Developed load balancing solutions using Nginx',
+            'Conducted security audits and implemented best practices for data protection',
+            'Collaborated with frontend teams to integrate real-time features',
         ],
         achievements: [
             '25% increase in system uptime through HTTP failover',
             '40% improvement in API call reliability',
-            'Supported 10K+ concurrent users',
-            'Reduced infrastructure costs by 15%'
+            'Supported 50+ concurrent users',
+            'Reduced infrastructure costs by 15%',
+            'Achieved 99.9% system availability'
         ],
         technologies: ['Node.js','Plugin Development', 'Realtime','SocketIO', 'Microservices', 'Kubernetes', 'MongoDB', 'WebSocket', 'Azure', 'Load Balancing']
     },
@@ -160,27 +187,28 @@ const EXPERIENCE = [
         title: 'Freelance Developer',
         company: 'Independent Projects',
         location: 'Pakistan',
-        period: '2017 - 2019',
+        period: 'Jan 2014 - Jan 2016',
         current: false,
         type: 'Professional',
-        description: 'Completed various development projects including blockchain implementations, e-commerce solutions, and hosting services.',
+        description: 'Developed diverse projects across various domains, including web development, mobile applications, and e-commerce solutions. Implemented secure payment gateways and custom CMS systems. Enhanced DNS management processes and integrated APIs for seamless functionality.',
         responsibilities: [
-            'Developed Streamrolla - No code platform for content creators with secure payment integration',
-            'Created The Romp Magazine - Digital Magazine Web/Mobile/TV App',
-            'Built Hostsorvox - Hosting and Domain Reseller platform',
-            'Implemented blockchain solutions using IBM Hyperledger',
-            'Developed custom e-commerce solutions using Magento and WooCommerce',
-            'Created secure payment gateway integrations for multiple platforms',
-            'Participated in competitive programming and hackathons'
+            'Developed custom CMS systems for small businesses',
+            'Integrated secure payment gateways for e-commerce platforms',
+            'Built RESTful APIs for mobile applications',
+            'Managed DNS configurations and domain setups',
+            'Created web crawlers and automation scripts',
+            'Developed mobile applications for Android and iOS',
+            'Implemented security measures for web applications',
+            'Conducted code reviews and provided technical guidance to clients',
+            
         ],
         achievements: [
-            'Crypto Chicks Hackathon Winner (2019) - Blockchain Supply Chain Solution',
-            'ICPC Lahore Regional - Fastest Problem Solver (2017)',
-            'COMBAT Algorithm Competition Organizer (2018)',
-            '20% increase in project delivery efficiency',
-            'Successfully delivered 25+ client projects'
+            'Successfully delivered 30+ client projects',
+            'Improved client satisfaction with 95% positive feedback',
+            'Reduced project delivery times by 20%',
+            
         ],
-        technologies: ['Blockchain', 'IBM Hyperledger', 'Laravel', 'PHP', 'Python', '.NET', 'JavaScript', 'Magento', 'WooCommerce', 'Payment Gateways']
+        technologies: ['Blockchain', 'IBM Hyperledger', 'Laravel', 'PHP', 'Python', '.NET', 'JavaScript', 'Magento', 'WooCommerce', 'Payment Gateways', 'DNS Management', 'API Integrations', 'Custom CMS Development', 'Web Crawlers', 'Mobile Applications', 'E-commerce Development']
     }
 ];
 
