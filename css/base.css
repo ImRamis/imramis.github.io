@@ -25,7 +25,7 @@ body {
     background-color: var(--bg-primary);
     overflow-x: hidden;
     position: relative;
-    transition: background-color var(--transition-base), color var(--transition-base);
+    transition: background-color var(--transition-time), color var(--transition-time);
 }
 
 /* Typography */

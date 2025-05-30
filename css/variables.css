@@ -62,6 +62,7 @@
     
     /* Transitions */
     --transition-fast: 0.15s ease;
+    --transition-time: 0.3s;
     --transition-base: 0.3s all;
     --transition-slow: 0.5s ease;
     

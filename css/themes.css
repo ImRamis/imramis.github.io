@@ -188,10 +188,11 @@ body,
 .contact-form textarea,
 .terminal-window,
 .hero-terminal {
-    transition: background-color var(--transition-base), 
-                color var(--transition-base), 
-                border-color var(--transition-base),
-                box-shadow var(--transition-base);
+    transition: background-color var(--transition-time), 
+                color var(--transition-time), 
+                border-color var(--transition-time),
+                box-shadow var(--transition-time),
+                transform var(--transition-time);
 }
 
 /* Theme-specific Particle Colors */
@@ -228,7 +229,7 @@ body {
 .filter-btn.active,
 .section-title::after,
 .nav-link::after {
-    transition: color var(--transition-base), 
-                background-color var(--transition-base), 
-                border-color var(--transition-base);
+    transition: color var(--transition-time), 
+                background-color var(--transition-time), 
+                border-color var(--transition-time), transform var(--transition-time);
 }

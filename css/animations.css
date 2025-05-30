@@ -135,6 +135,9 @@
     opacity: 1;
     transform: translateY(0);
 }
+.fade-in-up.visible:hover {
+    transform: translateY(-2px);
+}
 
 .slide-in-left {
     opacity: 0;
@@ -193,11 +196,11 @@
 
 /* Hover Effects */
 .hover-lift {
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    transition: transform var(--transition-time), box-shadow var(--transition-time);
 }
 
 .hover-lift:hover {
-    /* transform: translateY(-5px); */
+    transform: translateY(-5px);
     box-shadow: 0 10px 30px var(--shadow-color);
 }
 
@@ -234,7 +237,7 @@
 .award-card::before,
 .project-card::before,
 .skill-category::before {
-    /* content: '';
+    content: '';
     position: absolute;
     top: -2px;
     left: -2px;
@@ -242,9 +245,9 @@
     bottom: -2px;
     background: linear-gradient(45deg, var(--accent-color), transparent);
     opacity: 0;
-    transition: opacity var(--transition-base);
+    transition: opacity var(--transition-time);
     z-index: -1;
-    border-radius: inherit; */
+    border-radius: inherit;
 }
 
 .card:hover::before,
@@ -270,7 +273,7 @@
     background: var(--accent-color);
     opacity: 0;
     transform: scale(0);
-    transition: all var(--transition-base);
+    transition: var(--transition-base);
     z-index: -1;
 }
 
@@ -293,7 +296,7 @@
     width: 0;
     height: 2px;
     background: var(--accent-color);
-    transition: width var(--transition-base);
+    transition: width var(--transition-time);
 }
 
 .nav-link:hover::before,
@@ -303,7 +306,7 @@
 
 /* Mobile Menu Animation */
 .nav-toggle span {
-    transition: all var(--transition-base);
+    transition: var(--transition-base);
 }
 
 .nav-toggle.active span:nth-child(1) {
@@ -321,7 +324,7 @@
 /* Tag Hover Effect */
 .tech-tag,
 .skill-tag {
-    transition: all var(--transition-base);
+    transition: var(--transition-base);
     cursor: default;
 }
 

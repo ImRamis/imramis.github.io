@@ -38,7 +38,7 @@
         justify-content: flex-start;
         padding: var(--space-xl);
         transform: translateX(-100%);
-        transition: transform var(--transition-base);
+        transition: transform var(--transition-time);
         overflow-y: auto;
         z-index: 999;
         box-shadow: 2px 0 10px var(--shadow-color);
