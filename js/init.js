@@ -121,7 +121,7 @@ class App {
         const typedElement = document.getElementById('typed-text');
         if (!typedElement) return;
         
-        new Typed('#typed-text', {
+        new window.Typed('#typed-text', {
             strings: CONFIG.typedStringsJobs,
             typeSpeed: CONFIG.typedSpeed,
             backSpeed: CONFIG.typedBackSpeed,
