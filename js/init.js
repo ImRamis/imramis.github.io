@@ -55,7 +55,7 @@ class App {
                 setTimeout(() => {
                     loading.style.display = 'none';
                 }, 500);
-            }, 1500);
+            }, 1000);
         }
     }
     
@@ -121,14 +121,16 @@ class App {
         const typedElement = document.getElementById('typed-text');
         if (!typedElement) return;
         
-        new window.Typed('#typed-text', {
-            strings: CONFIG.typedStringsJobs,
-            typeSpeed: CONFIG.typedSpeed,
-            backSpeed: CONFIG.typedBackSpeed,
-            backDelay: CONFIG.typedBackDelay,
-            loop: true,
-            showCursor: false
-        });
+        setTimeout(() => {
+            new window.Typed('#typed-text', {
+                strings: CONFIG.typedStringsJobs,
+                typeSpeed: CONFIG.typedSpeed,
+                backSpeed: CONFIG.typedBackSpeed,
+                backDelay: CONFIG.typedBackDelay,
+                loop: true,
+                showCursor: false
+            });
+        },2000);
     }
     
     initContactForm() {
