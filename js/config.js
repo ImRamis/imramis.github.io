@@ -135,6 +135,8 @@ const CONFIG = {
     }
 };
 
+// Export the config globally
+window.CONFIG = CONFIG;
 // Freeze config to prevent modifications
 Object.freeze(CONFIG);
 Object.freeze(CONFIG.social);

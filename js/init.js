@@ -1,4 +1,4 @@
-// js/main.js - Main Application Entry Point
+// js/init.js - Main Application Entry Point
 
 // Initialize application
 class App {
