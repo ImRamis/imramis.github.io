@@ -20,7 +20,7 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist'),
       filename: isProduction ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
       clean: true,
-      publicPath: isProduction ? '/imramis.github.io/' : '/',
+      publicPath: isProduction ? 'https://imramis.github.io/' : '/',
       assetModuleFilename: 'assets/[name][ext]'
     },
     module: {
