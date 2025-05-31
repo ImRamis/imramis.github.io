@@ -190,7 +190,7 @@ function initProjects() {
     if (!projectsGrid) return;
     
 
-    function renderProjects(filter = 'all') {
+    function renderProjects(filter = 'security') {
         projectsGrid.innerHTML = '';
 
         const filteredProjects = filter === 'all'

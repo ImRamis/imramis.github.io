@@ -31,7 +31,7 @@ class App {
 
             // Initialize typed text
             this.initTypedTextDesignation();
-        },5000)
+        },6000)
         
         // Initialize contact form
         this.initContactForm();
