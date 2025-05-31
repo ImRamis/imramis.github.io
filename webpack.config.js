@@ -13,7 +13,6 @@ module.exports = (env, argv) => {
 
   return {
     entry: {
-      // Single entry point that imports everything in order
       app: './js/app.js',
       styles: './css/index.css'
     },
@@ -21,7 +20,7 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist'),
       filename: isProduction ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
       clean: true,
-      publicPath: '/',
+      publicPath: isProduction ? '/imramis.github.io/' : '/',
       assetModuleFilename: 'assets/[name][ext]'
     },
     module: {
@@ -66,8 +65,9 @@ module.exports = (env, argv) => {
     plugins: [
       new HtmlWebpackPlugin({
         template: './index.html',
-        inject: 'body',
+        inject: true,
         scriptLoading: 'defer',
+        chunks: ['styles', 'app'],
         minify: isProduction ? {
           removeComments: true,
           collapseWhitespace: true,
