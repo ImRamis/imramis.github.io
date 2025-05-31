@@ -55,10 +55,10 @@ const CONFIG = {
     terminalTypingSpeed: 50,
     terminalLineDelay: 1500,
     typedStringsNames: [
-        "Muhammad Ramis",
         "محمد رامس",
-        "ムハンマド・ラミス",
-        "むはんまど・らみす"
+        "Muhammad Ramis",
+        // "ムハンマド・ラミス",
+        // "むはんまど・らみす"
         // "मुहम्मद रामिस",
         // "Мухаммад Рамис",
         // "穆罕默德·拉米斯",
@@ -74,9 +74,9 @@ const CONFIG = {
     // Typed.js Settings
     typedStringsJobs: [
         'OSCP Certified Penetration Tester',
-        'IT Department Head',
-        'MSc Cybersecurity & AI Student',
+        'MSc Cybersecurity & AI Student at University of Sheffield',
         'Senior Software Engineer',
+        'IT Department Head',
         'Full-Stack Developer',
         'Security Researcher',
         'DevSecOps Engineer',

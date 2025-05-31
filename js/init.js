@@ -25,11 +25,13 @@ class App {
         // Initialize navigation
         this.initNavigation();
         
-        // Initialize typed text for name
-        this.initTypedTextName();
+        setTimeout(() => {
+            // Initialize typed text for name
+            this.initTypedTextName();
 
-        // Initialize typed text
-        this.initTypedTextDesignation();
+            // Initialize typed text
+            this.initTypedTextDesignation();
+        },5000)
         
         // Initialize contact form
         this.initContactForm();
