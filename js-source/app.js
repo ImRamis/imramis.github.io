@@ -1,0 +1,1 @@
+import"./config.js";import"particles.js";import Typed from"typed.js";window.Typed=Typed;import"./particles-config.js";import"./smooth-scroll.js";import"./theme.js";import"./terminal.js";import"./data/skills.js";import"./data/experience.js";import"./data/certifications.js";import"./data/projects.js";import"./animations.js";import"./init.js";
