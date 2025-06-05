@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- Primary Meta Tags -->
+    <title>Muhammad Ramis - OSCP Certified Penetration Tester</title>
+    <meta name="title" content="Muhammad Ramis - OSCP Certified Penetration Tester">
+    <meta name="description" content="OSCP-certified penetration tester with MSc in Cybersecurity and AI from University of Sheffield. 5+ years experience in security testing, full-stack development, DevSecOps, and team leadership.">
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    
+    <!-- Critical fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imramis.github.io/">
+    <meta property="og:title" content="Muhammad Ramis - OSCP Certified Penetration Tester">
+    <meta property="og:description" content="OSCP-certified penetration tester and MSc in Cybersecurity and AI at University of Sheffield">
+    
+    <!-- Webpack will inject CSS here -->
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Muhammad Ramis",
+        "jobTitle": "OSCP Certified Penetration Tester",
+        "alumniOf": {
+            "@type": "EducationalOrganization",
+            "name": "University of Sheffield"
+        }
+    }
+    </script>
+</head>
+<body data-theme="monochrome">
+    <!-- Global Particles Background -->
+    <div id="particles-js" class="particles-global"></div>
+    
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-consent" class="cookie-consent" style="display:none">
+        <div class="cookie-content">
+            <p>This site uses cookies for analytics to improve user experience.</p>
+            <div class="cookie-buttons">
+                <button onclick="acceptCookies()" class="btn btn-primary btn-sm">Accept</button>
+                <button onclick="declineCookies()" class="btn btn-secondary btn-sm">Decline</button>
+                <a href="#privacy" class="privacy-link">Privacy Policy</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-screen">
+        <div class="loader">
+            <div class="loader-inner"></div>
+        </div>
+        <div class="loading-text">Initializing Security Protocols...</div>
+    </div>
+    
+    <!-- Scroll Progress -->
+    <div id="scroll-progress" class="scroll-progress"></div>
+    
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="#home" class="brand-link">
+                    <span class="brand-name">Muhammad Ramis</span>
+                </a>
+            </div>
+            <div class="nav-toggle" id="mobile-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#home" class="nav-link" data-section="home"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                <li><a href="#about" class="nav-link" data-section="about"><i class="fas fa-user"></i> <span>About</span></a></li>
+                <li><a href="#skills" class="nav-link" data-section="skills"><i class="fas fa-cogs"></i> <span>Skills</span></a></li>
+                <li><a href="#experience" class="nav-link" data-section="experience"><i class="fas fa-briefcase"></i> <span>Experience</span></a></li>
+                <li><a href="#certifications" class="nav-link" data-section="certifications"><i class="fas fa-certificate"></i> <span>Certifications</span></a></li>
+                <li><a href="#projects" class="nav-link" data-section="projects"><i class="fas fa-code"></i> <span>Projects</span></a></li>
+                <li><a href="#contact" class="nav-link" data-section="contact"><i class="fas fa-envelope"></i> <span>Contact</span></a></li>
+            </ul>
+            <div class="theme-selector-wrapper">
+                <button class="theme-toggle" id="theme-toggle" data-tooltip="Theme">
+                    <i class="fas fa-palette"></i>
+                </button>
+                <div class="theme-dropdown" id="theme-dropdown">
+                    <button class="theme-option" data-theme="monochrome">
+                        <i class="fas fa-adjust"></i> Monochrome (Default)
+                    </button>
+                    <button class="theme-option" data-theme="hacker">
+                        <i class="fas fa-terminal"></i> Matrix
+                    </button>
+                    <button class="theme-option" data-theme="dark">
+                        <i class="fas fa-moon"></i> Dark
+                    </button>
+                    <div class="color-picker-wrapper">
+                        <div class="color-picker-label">Custom Accent</div>
+                        <div class="color-samples">
+                            <div class="color-sample" style="background: #00ff00;" data-color="#00ff00"></div>
+                            <div class="color-sample" style="background: #0080ff;" data-color="#0080ff"></div>
+                            <div class="color-sample" style="background: #ff0080;" data-color="#ff0080"></div>
+                            <div class="color-sample" style="background: #ff8000;" data-color="#ff8000"></div>
+                            <div class="color-sample" style="background: #8000ff;" data-color="#8000ff"></div>
+                        </div>
+                        <input type="color" id="accent-color" value="#000000" class="color-picker">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div id="matrix-rain" class="matrix-rain"></div>
+        <div class="container hero-container">
+            <div class="hero-content">
+                <div class="hero-badges">
+                    <span class="badge"><i class="fas fa-shield-alt"></i> OSCP Certified</span>
+                    <span class="badge"><i class="fas fa-code"></i> Senior Software Engineer - Team Lead</span>
+                    <span class="badge"><i class="fas fa-graduation-cap"></i> University of Sheffield MSc</span>
+                    <span class="badge"><i class="fas fa-building"></i> 5+ Years Experience</span>
+                </div>
+                
+                <h1 class="hero-title"><span id="hero-title">Muhammad Ramis</span></h1>
+                <div class="hero-subtitle">
+                    <span class="fade-in" id="typed-text">Cybersecurity</span><span class="cursor">|</span>
+                </div>
+                
+                <div class="hero-location">
+                    <i class="fas fa-map-marker-alt"></i> Leeds, West Yorkshire, UK
+                    <i class="fas fa-check-circle"></i> Available for Immediate Start
+                </div>
+                
+                <div class="hero-cta">
+                    <a href="#contact" class="btn btn-primary">
+                        <i class="fas fa-envelope"></i> Get in Touch
+                    </a>
+                    <!-- <button class="btn btn-secondary" onclick="window.open('assets/Muhammad_Ramis_CV.pdf')">
+                        <i class="fas fa-download"></i> Download CV
+                    </button> -->
+                </div>
+                
+                <div class="hero-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-controls">
+                            <span class="terminal-control close"></span>
+                            <span class="terminal-control minimize"></span>
+                            <span class="terminal-control maximize"></span>
+                        </div>
+                        <span class="terminal-title">ramis@cybersec:~$</span>
+                    </div>
+                    <div class="terminal-body" id="terminal-output"></div>
+                </div>
+                
+                <div class="social-links">
+                    <a href="https://linkedin.com/in/imramis" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/imRamis" target="_blank" rel="noopener" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://stackoverflow.com/users/16912003/ramis" target="_blank" rel="noopener" aria-label="Stack Overflow">
+                        <i class="fab fa-stack-overflow"></i>
+                    </a>
+                    <a href="https://tryhackme.com/p/mriramis" target="_blank" rel="noopener" aria-label="TryHackMe">
+                        <i class="fas fa-flag"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="lead">
+                        OSCP-certified penetration tester and MSc in Cybersecurity and AI at the University of Sheffield
+                        (Russell Group, World Top 100). With 5+ years of experience progressing from Senior Software Engineer to Team Lead to IT Department Lead.
+                        I specialize in development and security, offering the best of both worlds. This dual expertise allows me to effectively identify
+                        vulnerabilities across web applications, cloud environments, and enterprise systems while leading technical teams. 
+                    </p>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">5+</div>
+                            <div class="stat-label">Years Experience</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">OSCP+</div>
+                            <div class="stat-label">Certified Apr 2025</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">MSc</div>
+                            <div class="stat-label">Cybersecurity & AI</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">20+</div>
+                            <div class="stat-label">Technical Skills</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Skills Section -->
+    <section id="skills" class="skills-section">
+        <div class="container">
+            <h2 class="section-title">Technical Skills</h2>
+            <div id="skills-container" class="skills-container">
+                <!-- Skills will be rendered by JavaScript -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Experience Section -->
+    <section id="experience" class="experience-section">
+        <div class="container">
+            <h2 class="section-title">Professional Experience</h2>
+            <div id="experience-timeline" class="timeline">
+                <!-- Timeline items will be rendered by JavaScript -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Certifications Section -->
+    <section id="certifications" class="certifications-section">
+        <div class="container">
+            <h2 class="section-title">Certifications & Education</h2>
+            <div id="certifications-grid" class="certifications-grid">
+                <!-- Certification items will be rendered by JavaScript -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Projects Section -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="project-filters">
+                <button class="filter-btn active" data-filter="security">Security</button>
+                <button class="filter-btn" data-filter="development">Development</button>
+                <button class="filter-btn" data-filter="enterprise">Enterprise</button>
+                <button class="filter-btn" data-filter="blockchain">Blockchain</button>
+                <button class="filter-btn" data-filter="all">All Projects</button>
+            </div>
+            <div id="projects-grid" class="projects-grid">
+                <!-- Project cards will be rendered by JavaScript -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Let's Connect</h3>
+                    <p>I'm currently seeking penetration testing and cybersecurity leadership opportunities in the UK. Feel free to reach out!</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="#" id="reveal-email" onclick="window.revealEmail()">Click to Reveal Email</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>United Kingdom</span>
+                        </div>
+                    </div>
+                    <div class="social-links" style="justify-content: flex-start;">
+                        <a href="https://linkedin.com/in/imramis" target="_blank" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://github.com/imRamis" target="_blank" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://stackoverflow.com/users/16912003/ramis" target="_blank" class="social-link">
+                            <i class="fab fa-stack-overflow"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="contact-form-wrapper">
+                    <form id="contact-form" class="contact-form">
+                        <input type="text" name="name" placeholder="Your Name" required>
+                        <input type="email" name="email" placeholder="Your Email" required>
+                        <input type="text" name="subject" placeholder="Subject" required>
+                        <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Privacy Section -->
+    <section id="privacy" class="privacy-section">
+        <div class="container">
+            <h2>Privacy Policy</h2>
+            <p>This website uses Google Analytics and Microsoft Clarity to understand visitor behavior. These services may collect anonymous data about your visit. 
+            As this site is hosted on GitHub Pages, please refer to <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank">GitHub's Privacy Statement</a> 
+            for information about how GitHub handles visitor data.</p>
+        </div>
+    </section>
+    
+    <button id="goTopBtn" title="Go to top"><i class="fas fa-arrow-up"></i></button>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Muhammad Ramis. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Font Awesome - loaded asynchronously -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    
+    <!-- External Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.1.0/dist/typed.umd.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
+    
+    <!-- Webpack will inject JS bundles here with defer automatically -->
+    
+    <!-- Google Analytics - loaded after page load -->
+    <script>
+    window.addEventListener('load', function() {
+        var script = document.createElement('script');
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66';
+        script.async = true;
+        document.head.appendChild(script);
+        
+        script.onload = function() {
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-GKD7JXRS66', { 'anonymize_ip': true });
+        };
+    });
+    </script>
+    
+    <!-- Microsoft Clarity - loaded after page load -->
+    <script>
+    window.addEventListener('load', function() {
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "rpwqh3rock");
+    });
+    </script>
+</body>
+</html>
