@@ -1,0 +1,171 @@
+/* css/variables.css - CSS Custom Properties */
+
+:root {
+    /* Colors - Monochrome Theme (Default) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-tertiary: #666666;
+    --accent-color: #000000;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --overlay-bg: rgba(255, 255, 255, 0.95);
+    
+    /* Success/Error/Warning Colors */
+    --success: #28a745;
+    --error: #dc3545;
+    --warning: #ffc107;
+    --info: #17a2b8;
+    
+    /* Typography */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Consolas', 'JetBrains Mono', 'Courier New', monospace;
+    --font-size-base: 16px;
+    --line-height-base: 1.6;
+    
+    /* Font Sizes */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-md: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 2rem;
+    --text-4xl: 2.5rem;
+    --text-5xl: 3rem;
+    --text-6xl: 4rem;
+    
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2.5rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+    --space-4xl: 5rem;
+    
+    /* Layout */
+    --container-max: 1200px;
+    --navbar-height: 70px;
+    --section-padding: 80px 0;
+    
+    /* Borders */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 20px;
+    --border-radius-round: 50%;
+    --border-radius-pill: 50px;
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-time: 0.3s;
+    --transition-base: 0.3s all;
+    --transition-slow: 0.5s ease;
+    
+    /* Z-index Scale */
+    --z-negative: -1;
+    --z-normal: 1;
+    --z-tooltip: 10;
+    --z-sticky: 100;
+    --z-fixed: 1000;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip-high: 1070;
+    
+    /* Breakpoints (for reference in JS) */
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --breakpoint-xxl: 1400px;
+    
+    /* Animation Durations */
+    --animation-duration-fast: 200ms;
+    --animation-duration-base: 300ms;
+    --animation-duration-slow: 600ms;
+    --animation-duration-slower: 1000ms;
+}
+
+/* Dark Theme Variables */
+body[data-theme="dark"] {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #252525;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --text-tertiary: #888888;
+    --accent-color: #0080ff;
+    --border-color: #333333;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --overlay-bg: rgba(10, 10, 10, 0.95);
+}
+
+/* Hacker/Matrix Theme Variables */
+body[data-theme="hacker"] {
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-tertiary: #111111;
+    --text-primary: #00ff00;
+    --text-secondary: #00cc00;
+    --text-tertiary: #009900;
+    --accent-color: #00ff00;
+    --border-color: #003300;
+    --shadow-color: rgba(0, 255, 0, 0.2);
+    --overlay-bg: rgba(0, 0, 0, 0.95);
+}
+
+/* Light Theme Variables */
+body[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #212529;
+    --text-secondary: #495057;
+    --text-tertiary: #6c757d;
+    --accent-color: #0066cc;
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --overlay-bg: rgba(255, 255, 255, 0.95);
+}
+
+/* Custom Theme Variables */
+body[data-theme="custom"] {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #252525;
+    --text-primary: var(--custom-color, #ffffff);
+    --text-secondary: var(--custom-color, #cccccc);
+    --text-tertiary: #888888;
+    --accent-color: var(--custom-color, #ff00ff);
+    --border-color: #333333;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --overlay-bg: rgba(10, 10, 10, 0.95);
+}
+
+/* Responsive Font Sizes */
+@media (max-width: 768px) {
+    :root {
+        --font-size-base: 14px;
+        --text-6xl: 3rem;
+        --text-5xl: 2.5rem;
+        --text-4xl: 2rem;
+        --text-3xl: 1.75rem;
+        --section-padding: 60px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    :root {
+        --text-6xl: 2.5rem;
+        --text-5xl: 2rem;
+        --text-4xl: 1.75rem;
+        --text-3xl: 1.5rem;
+        --navbar-height: 60px;
+    }
+}
