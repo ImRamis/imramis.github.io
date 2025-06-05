@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NanoJava Visualizer - Information Flow System</title>
+
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="An educational tool to visualize information flow security in Java-like programs using AST-based analysis. Learn explicit and implicit flow violations interactively.">
+  <meta name="keywords" content="information flow security, secure programming, java security, implicit flow, explicit flow, AST, code analysis, noninterference, flowchart visualizer, NanoJava, educational tools">
+  <meta name="author" content="ITS NanoJava Project">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://imramis.github.io/its-nanojava.html">
+
+  <!-- Open Graph for Social Sharing -->
+  <meta property="og:title" content="NanoJava Visualizer – Information Flow Security Learning Tool">
+  <meta property="og:description" content="Explore how secure information flow works in programs with this interactive, visual tool. Built on AST analysis and policy-based checking.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://imramis.github.io/its-nanojava.html">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NanoJava Visualizer – Secure Code Learning Tool">
+  <meta name="twitter:description" content="Interactive tool to learn explicit and implicit flow violations in Java-like code. Visual AST analysis with flowcharts.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/ico" href="/assets/favicon.ico">
+
+  <!-- GA4 Tag -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-GKD7JXRS66');
+  </script>
+
+  
+  <!-- Core Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/clike/clike.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <!-- Tippy.js for interactive tooltips -->
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css" />
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f1f5f9;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .section-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .section {
+      flex: 1;
+      min-width: 300px;
+      margin: 10px;
+    }
+    #editor {
+      height: 300px;
+      border: 1px solid #334155;
+    }
+    .trace-output {
+      white-space: pre-wrap;
+      background: #1e293b;
+      padding: 1rem;
+      overflow-y: auto;
+      height: 300px;
+      border: 1px solid #334155;
+      font-family: monospace;
+    }
+    .flowchart-box {
+      background: #1e293b;
+      padding: 1rem;
+      border: 1px solid #334155;
+      overflow-x: auto;
+      overflow-y: auto;
+      min-height: 400px;
+      max-height: 800px;
+    }
+    .highlight-line {
+      background-color: #facc15 !important;
+    }
+    .tippy-box[data-theme~='light'] {
+      color: #0f172a;
+      background-color: #fff;
+    }
+    @media (max-width: 768px) {
+      .section-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+<div style="position: absolute; top: 10px; right: 15px; z-index: 999;">
+  <button id="shareButton" class="btn btn-outline-light btn-sm">🔗 Share</button>
+</div>
+<div class="container-fluid p-3">
+  <h3 class="text-center mb-3">NanoJava Secure Information Flow Visualizer</h3>
+
+  <div class="d-flex flex-wrap align-items-center mb-3">
+    <button id="runButton" class="btn btn-primary me-2">▶ Run</button>
+    <button id="stopButton" class="btn btn-warning me-2" disabled>⏹ Stop</button>
+    <button id="nextButton" class="btn btn-secondary me-2">➡ Next</button>
+    <button id="prevButton" class="btn btn-secondary me-2">⬅ Prev</button>
+    <input type="number" id="gotoIndex" placeholder="Go to Step #" class="form-control form-control-sm me-2" style="width: 100px;">
+    <button id="gotoButton" class="btn btn-info btn-sm me-2">Go</button>
+    <button id="resetButton" class="btn btn-danger me-2">🔄 Reset</button>
+    <label class="text-light me-2">Speed:
+      <input type="range" id="speedSlider" min="100" max="2000" value="800" step="100" class="form-range" style="width:120px;">
+    </label>
+    <button id="exportJSON" class="btn btn-outline-light btn-sm me-2">💾 Export JSON</button>
+    <button id="exportFlowchart" class="btn btn-outline-warning btn-sm me-2">🖼 Export Flowchart</button>
+    <div class="form-check form-switch text-light me-3">
+      <input class="form-check-input" type="checkbox" id="breakOnViolation">
+      <label class="form-check-label" for="breakOnViolation">Break on violation</label>
+    </div>
+    <label class="text-light">Iterations:
+      <input type="number" id="maxIterations" value="10" min="1" class="form-control form-control-sm d-inline-block" style="width: 80px;">
+    </label>
+    <label class="text-light ms-2">Chart Steps:
+      <input type="number" id="maxSteps" value="4" min="1" class="form-control form-control-sm d-inline-block" style="width: 80px;">
+    </label>
+    <span class="badge bg-info text-dark ms-auto" id="status">Idle</span>
+  </div>
+
+  <div class="section-container">
+    <div class="section">
+      <h5>Code Editor</h5>
+      <textarea id="editor"></textarea>
+    </div>
+    <div class="section">
+      <h5>Execution Trace</h5>
+      <div class="trace-output" id="traceOutput">Execution trace will appear here...</div>
+    </div>
+  </div>
+  <div class="section">
+    <h5>Flowchart</h5>
+    <div class="flowchart-box" id="flowchartBox">Flowchart will render here...</div>
+  </div>
+<script>
+mermaid.initialize({ startOnLoad: false });
+
+const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+  mode: "text/x-csrc",
+  theme: "default",
+  lineNumbers: true,
+  tabSize: 2
+});
+
+editor.setValue(`hi = hi + 1;\nlo = lo + hi;\nif (hi < hi1) {\n  lo = 1;\n} else {\n  lo = 0;\n}\nwhile (lo < 3) {\n  hi = hi + 2;\n}`);
+
+const SecurityLevel = {
+  LOW: "LOW",
+  HIGH: "HIGH"
+};
+
+function extractVariables(expr) {
+  return expr.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [];
+}
+
+function joinLabel(a, b) {
+  return (a === SecurityLevel.HIGH || b === SecurityLevel.HIGH) ? SecurityLevel.HIGH : SecurityLevel.LOW;
+}
+
+function dominates(from, to) {
+  return !(from === SecurityLevel.HIGH && to === SecurityLevel.LOW);
+}
+
+function parseStatements(codeLines) {
+  const ast = [];
+  let stack = [];
+  let currentBlock = ast;
+
+  codeLines.forEach((line, index) => {
+    const trimmed = line.trim();
+    const lineNumber = index + 1;
+    if (!trimmed || trimmed.startsWith("//")) return;
+
+    if (trimmed.startsWith("if")) {
+      const condition = trimmed.match(/\((.*?)\)/)[1];
+      const node = { type: "IfStatement", condition, body: [], line: lineNumber };
+      currentBlock.push(node);
+      stack.push(currentBlock);
+      currentBlock = node.body;
+    } else if (trimmed.startsWith("while")) {
+      const condition = trimmed.match(/\((.*?)\)/)[1];
+      const node = { type: "WhileStatement", condition, body: [], line: lineNumber };
+      currentBlock.push(node);
+      stack.push(currentBlock);
+      currentBlock = node.body;
+    } else if (trimmed === "}") {
+      currentBlock = stack.pop();
+    } else if (trimmed.includes("=")) {
+      const [lhs, rhs] = trimmed.split("=");
+      currentBlock.push({
+        type: "Assignment",
+        lhs: lhs.trim(),
+        rhs: rhs.replace(";", "").trim(),
+        line: lineNumber
+      });
+    }
+  });
+
+  return ast;
+}
+
+function evaluateSecurity(ast, labels, pc = SecurityLevel.LOW, steps = [], iterDepth = 0) {
+  for (const stmt of ast) {
+    if (stmt.type === "Assignment") {
+      const rhsVars = extractVariables(stmt.rhs);
+      const rhsLabel = rhsVars.reduce((acc, v) => joinLabel(acc, labels[v] || SecurityLevel.LOW), SecurityLevel.LOW);
+      const lhsLabel = labels[stmt.lhs] || SecurityLevel.LOW;
+
+      if (dominates(rhsLabel, lhsLabel)) {
+        steps.push({
+          line: stmt,
+          type: "ok",
+          text: `${stmt.lhs} ← ${stmt.rhs} (${rhsLabel} → ${lhsLabel}) [OK]`,
+          tooltip: `No violation. RHS (${stmt.rhs}) involves ${rhsVars.join(", ") || "constants"}, all labeled ${rhsLabel}. Assignment to ${stmt.lhs} (label: ${lhsLabel}). pc=${pc}.`
+        });
+      } else {
+        steps.push({
+          line: stmt,
+          type: "explicit",
+          text: `${stmt.lhs} ← ${stmt.rhs} (${rhsLabel} → ${lhsLabel}) [VIOLATION] ← explicit`,
+          tooltip: `Explicit violation. RHS (${stmt.rhs}) involves ${rhsVars.join(", ")}, which includes HIGH-labeled variables (${rhsLabel}). Cannot assign to ${stmt.lhs} (label: ${lhsLabel}). pc=${pc}.`
+        });
+        if (document.getElementById("breakOnViolation").checked) break;
+      }
+
+      labels[stmt.lhs] = joinLabel(rhsLabel, pc);
+
+    } else if (stmt.type === "IfStatement") {
+      const condVars = extractVariables(stmt.condition);
+      const condLabel = condVars.reduce((acc, v) => joinLabel(acc, labels[v] || SecurityLevel.LOW), SecurityLevel.LOW);
+
+      steps.push({
+        line: stmt,
+        type: "control",
+        text: `if (${stmt.condition}) [pc=${condLabel}]`,
+        tooltip: `Control condition depends on: ${condVars.join(", ")}, which raises pc to ${condLabel}.`
+      });
+
+      evaluateSecurity(stmt.body, { ...labels }, condLabel, steps);
+
+    } else if (stmt.type === "WhileStatement") {
+      const condVars = extractVariables(stmt.condition);
+      const condLabel = condVars.reduce((acc, v) => joinLabel(acc, labels[v] || SecurityLevel.LOW), SecurityLevel.LOW);
+
+      steps.push({
+        line: stmt,
+        type: "control",
+        text: `while (${stmt.condition}) [pc=${condLabel}]`,
+        tooltip: `Loop condition depends on: ${condVars.join(", ")}, setting pc=${condLabel}. May cause implicit flows within the loop body.`
+      });
+
+      const maxIterations = parseInt(document.getElementById("maxIterations").value);
+      for (let i = 0; i < maxIterations; i++) {
+        steps.push({
+          line: stmt,
+          type: "control",
+          text: `Iteration ${i + 1}`,
+          tooltip: `Loop iteration ${i + 1}`
+        });
+        evaluateSecurity(stmt.body, { ...labels }, condLabel, steps, iterDepth + 1);
+      }
+    }
+  }
+
+  return steps;
+}
+
+function analyzeCode(code) {
+  const lines = code.split("\n");
+  const ast = parseStatements(lines);
+  const labelMap = {
+    hi: SecurityLevel.HIGH,
+    hi1: SecurityLevel.HIGH,
+    lo: SecurityLevel.LOW
+  };
+  return evaluateSecurity(ast, labelMap);
+}
+</script>
+<script>
+function generateFlowchart(steps) {
+  let chart = "flowchart TD\nStart";
+  let prev = null;
+
+  steps.forEach((step, i) => {
+    const nodeId = `S${i}`;
+    const label = step.text.replace(/["<>]/g, '');
+    chart += `\n${nodeId}["${label}"]:::${step.type}`;
+    chart += prev === null ? `\nStart --> ${nodeId}` : `\n${prev} --> ${nodeId}`;
+    prev = nodeId;
+  });
+
+  chart += "\nclassDef ok fill:#22c55e,color:#fff;";
+  chart += "\nclassDef explicit,implicit,control fill:#ef4444,color:#fff;";
+  return chart;
+}
+
+function renderFlowchart(chartText, tooltips) {
+  const flowchartBox = document.getElementById("flowchartBox");
+  flowchartBox.innerHTML = "";
+  const chartEl = document.createElement("div");
+  chartEl.className = "mermaid";
+  chartEl.textContent = chartText;
+  chartEl.style.opacity = 0;
+  chartEl.style.transition = "opacity 0.6s ease-in-out";
+  flowchartBox.appendChild(chartEl);
+
+  setTimeout(() => {
+    mermaid.run({ nodes: [chartEl] }).then(() => {
+      const nodes = flowchartBox.querySelectorAll("g.node");
+      nodes.forEach((node, i) => {
+        const tooltip = tooltips[i] || "Step";
+        tippy(node, {
+          content: tooltip,
+          theme: 'light',
+          placement: 'top',
+          allowHTML: true
+        });
+      });
+      chartEl.style.opacity = 1;
+    });
+  }, 50);
+}
+
+function updateTraceDisplay(trace, index, chartSteps) {
+  const traceOut = document.getElementById("traceOutput");
+  const entry = trace[index];
+
+  // Render trace lines
+  traceOut.innerHTML = trace.slice(0, index + 1).map((s, i) =>
+    `<div class="trace-line" data-tippy-content="${s.tooltip || ''}">${s.text}</div>`
+  ).join('');
+
+  // Enable tooltips for trace entries
+  tippy('.trace-line', {
+    theme: 'light',
+    delay: [100, 0],
+    allowHTML: true
+  });
+
+  // Scroll to the bottom of the trace panel
+  traceOut.scrollTop = traceOut.scrollHeight;
+
+  // Highlight the source code line in the CodeMirror editor
+  editor.operation(() => {
+    for (let i = 0; i < editor.lineCount(); i++) {
+      editor.removeLineClass(i, "background", "highlight-line");
+    }
+
+    // Get the actual line number from entry.line or entry.line.line (AST node)
+    let lineNumber = null;
+    if (typeof entry.line === "number") {
+      lineNumber = entry.line;
+    } else if (typeof entry.line === "object" && typeof entry.line.line === "number") {
+      lineNumber = entry.line.line;
+    }
+
+    if (lineNumber !== null) {
+      editor.addLineClass(lineNumber - 1, "background", "highlight-line");
+    }
+  });
+
+  // Slice steps for recent flowchart
+  const sliced = trace.slice(Math.max(0, index - chartSteps + 1), index + 1);
+  const chart = generateFlowchart(sliced);
+  const tooltips = sliced.map(s => s.tooltip || '');
+  renderFlowchart(chart, tooltips);
+
+  // Update status badge
+  document.getElementById("status").textContent = `Step ${index + 1}/${trace.length}`;
+}
+``
+
+
+let fullTrace = [], stepIndex = 0, interval = null;
+
+document.getElementById("runButton").onclick = () => {
+  fullTrace = analyzeCode(editor.getValue());
+  stepIndex = 0;
+  clearInterval(interval);
+
+  const runBtn = document.getElementById("runButton");
+  const stopBtn = document.getElementById("stopButton");
+
+  runBtn.disabled = true;
+  stopBtn.disabled = false;
+  runBtn.innerText = "⏸ Running";
+
+  const delay = 2100 - parseInt(document.getElementById("speedSlider").value);
+  interval = setInterval(() => {
+    if (stepIndex >= fullTrace.length) {
+      clearInterval(interval);
+      runBtn.disabled = false;
+      stopBtn.disabled = true;
+      runBtn.innerText = "▶ Run";
+      return;
+    }
+    updateTraceDisplay(fullTrace, stepIndex++, parseInt(document.getElementById("maxSteps").value));
+  }, delay);
+    gtag('event', 'run_clicked', {
+    event_category: 'Execution',
+    event_label: 'Run Auto Execution'
+    });
+};
+
+document.getElementById("stopButton").onclick = () => {
+  clearInterval(interval);
+  interval = null;
+  const runBtn = document.getElementById("runButton");
+  const stopBtn = document.getElementById("stopButton");
+  runBtn.disabled = false;
+  runBtn.innerText = "▶ Run";
+  stopBtn.disabled = true;
+    gtag('event', 'stop_clicked', {
+    event_category: 'Execution',
+    event_label: 'Stopped Execution'
+  });
+};
+
+document.getElementById("nextButton").onclick = () => {
+  if (!fullTrace.length) fullTrace = analyzeCode(editor.getValue());
+  if (stepIndex < fullTrace.length)
+    updateTraceDisplay(fullTrace, stepIndex++, parseInt(document.getElementById("maxSteps").value));
+    gtag('event', 'step_next', {
+    event_category: 'Execution',
+    event_label: 'Step Forward'
+  });
+};
+document.getElementById("prevButton").onclick = () => {
+  if (stepIndex > 0)
+    updateTraceDisplay(fullTrace, --stepIndex, parseInt(document.getElementById("maxSteps").value));
+    gtag('event', 'step_prev', {
+    event_category: 'Execution',
+    event_label: 'Step Back'
+  });
+};
+document.getElementById("gotoButton").onclick = () => {
+  const target = parseInt(document.getElementById("gotoIndex").value);
+  if (!isNaN(target) && target > 0 && target <= fullTrace.length) {
+    stepIndex = target - 1;
+    updateTraceDisplay(fullTrace, stepIndex, parseInt(document.getElementById("maxSteps").value));
+  }
+    gtag('event', 'goto_step', {
+    event_category: 'Execution',
+    event_label: 'Go To Step #'
+  });
+};
+document.getElementById("resetButton").onclick = () => {
+  stepIndex = 0;
+  fullTrace = [];
+  document.getElementById("traceOutput").textContent = "";
+  document.getElementById("flowchartBox").innerHTML = "Flowchart will render here...";
+  document.getElementById("status").textContent = "Idle";
+  clearInterval(interval);
+    gtag('event', 'reset_clicked', {
+    event_category: 'Execution',
+    event_label: 'Reset Analysis'
+  });
+};
+
+document.getElementById("exportJSON").onclick = () => {
+  const blob = new Blob([JSON.stringify(fullTrace, null, 2)], { type: "application/json" });
+  saveAs(blob, "trace.json");
+    gtag('event', 'export_trace', {
+    event_category: 'Export',
+    event_label: 'Export JSON'
+  });
+};
+document.getElementById("exportFlowchart").onclick = () => {
+  const svg = document.getElementById("flowchartBox").querySelector("svg");
+  if (!svg) return alert("No chart to export.");
+  const svgData = new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+  saveAs(blob, "flowchart.svg");
+    gtag('event', 'export_chart', {
+    event_category: 'Export',
+    event_label: 'Export Flowchart SVG'
+  });
+};
+
+document.getElementById("shareButton").onclick = () => {
+  const code = editor.getValue();
+  const encoded = btoa(unescape(encodeURIComponent(code)));
+  const url = `${window.location.origin}${window.location.pathname}?sharecode=${encoded}`;
+  window.history.pushState(null, '', url);
+  navigator.clipboard.writeText(url).then(() => alert("Shareable link copied to clipboard!"));
+    gtag('event', 'share_link', {
+    event_category: 'Share',
+    event_label: 'Copied Share Link'
+  });
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const shareCode = params.get("sharecode");
+  if (shareCode) {
+    try {
+      const decoded = decodeURIComponent(escape(atob(shareCode)));
+      editor.setValue(decoded);
+    } catch (e) {
+      console.error("Invalid sharecode", e);
+    }
+  }
+  gtag('event', 'tool_loaded', {
+    event_category: 'Page',
+    event_label: 'NanoJava Visualizer Loaded'
+  });
+});
+</script>
+
+<!-- Glossary -->
+<div class="accordion mt-4" id="glossaryAccordion">
+  <div class="accordion-item bg-dark text-light border-secondary">
+    <h2 class="accordion-header" id="headingGlossary">
+      <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGlossary" aria-expanded="false" aria-controls="collapseGlossary">
+        📘 Glossary of Key Terms
+      </button>
+    </h2>
+    <div id="collapseGlossary" class="accordion-collapse collapse" aria-labelledby="headingGlossary" data-bs-parent="#glossaryAccordion">
+      <div class="accordion-body">
+        <ul>
+          <li><strong>Explicit Flow Violation</strong>: A low-security variable is directly influenced by a high-security value.</li>
+          <li><strong>Implicit Flow Violation</strong>: A low-security variable is influenced through control dependent on high-security data.</li>
+          <li><strong>Security Lattice</strong>: A hierarchy (e.g., LOW ≤ HIGH) for classifying data confidentiality levels.</li>
+          <li><strong>AST (Abstract Syntax Tree)</strong>: A structured representation of source code used for static analysis.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
