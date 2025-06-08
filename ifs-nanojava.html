@@ -27,12 +27,24 @@
   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.css"/>
   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/clike/clike.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
   <!-- Tippy.js for interactive tooltips -->
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
+
+  <!-- MathJax for LaTeX Rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
   <style>
     body {
@@ -47,15 +59,15 @@
       gap: 1rem;
       grid-template-areas:
         "editor trace"
-        "state-table flowchart";
+        "derivation tree";
     }
     .section {
       min-width: 350px;
     }
     #editor-section { grid-area: editor; }
     #trace-section { grid-area: trace; }
-    #state-table-section { grid-area: state-table; }
-    #flowchart-section { grid-area: flowchart; }
+    #derivation-section { grid-area: derivation; }
+    #tree-section { grid-area: tree; }
 
     .CodeMirror {
       height: 350px;
@@ -91,8 +103,8 @@
     }
     .trace-entry:hover { background-color: #334155; }
     .trace-entry.ok, .trace-entry.skip { border-left-color: #22c55e; }
-    .trace-entry.explicit { border-left-color: #ef4444; } /* Bright Red for Explicit */
-    .trace-entry.implicit { border-left-color: #f97316; } /* Orange-Red for Implicit */
+    .trace-entry.explicit { border-left-color: #ef4444; }
+    .trace-entry.implicit { border-left-color: #f97316; }
     .trace-entry.control { border-left-color: #6366f1; }
     .trace-header, .trace-details { display: flex; justify-content: space-between; align-items: center; }
     .trace-header { font-family: 'SF Mono', 'Courier New', monospace; font-weight: bold; }
@@ -103,20 +115,49 @@
     .status-icon.implicit { color: #f97316; }
     .status-icon.control { color: #6366f1; }
     .trace-type-tag { font-family: monospace; font-size: 0.9em; padding: 2px 5px; border-radius: 4px; background-color: #3e4c62; }
-
-    /* State Table Styles */
-    #state-table-box { padding: 0; }
-    .table { color: #f1f5f9; font-size: 0.9em; margin-bottom: 0; }
-    .table thead th { position: sticky; top: 0; background-color: #334155; }
-    .table th, .table td { text-align: center; vertical-align: middle; padding: 0.4rem; cursor: help; }
-    .level-high { color: #fb7185; font-weight: bold; }
-    .level-low { color: #86efac; }
-    tr.active-step-row { background-color: rgba(59, 130, 246, 0.2) !important; }
+    
+    /* Derivation & Tree Styles */
+    #derivation-box { padding: 0.75rem; font-size: 1em; }
+    #tree-box { padding: 0.75rem; }
+    .level-high, .cm-high-var { color: #fb7185 !important; }
+    .level-low, .cm-low-var { color: #86efac !important; }
+    .derivation-tree {
+        padding-left: 0;
+        list-style-type: none;
+    }
+    .derivation-tree ul {
+        padding-left: 1.5rem;
+        border-left: 1px solid #475569;
+        margin-left: 0.5rem;
+        list-style-type: none;
+    }
+    .derivation-node {
+        padding: 0.5rem;
+        margin: 0.25rem 0;
+        background-color: #293548;
+        border: 1px solid #475569;
+        border-radius: 4px;
+        transition: border-color 0.2s;
+        font-family: 'SF Mono', 'Courier New', monospace;
+        font-size: 0.9em;
+    }
+    .derivation-node.highlight-node {
+        border-color: #3b82f6;
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    }
+    .derivation-rule-conclusion {
+        border-top: 1px solid #64748b;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+    }
   </style>
 </head>
 <body>
 <div class="container-fluid p-3">
-  <h3 class="text-center mb-3">🛡️ NanoJava Secure Information Flow Visualizer</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="text-center flex-grow-1 m-0">🛡️ NanoJava Secure Information Flow Visualizer</h3>
+        <button id="shareButton" class="btn btn-outline-light btn-sm">🔗 Share</button>
+    </div>
 
   <div class="d-flex flex-wrap align-items-center mb-3 gap-2">
     <button id="runButton" class="btn btn-primary">▶ Run</button>
@@ -146,13 +187,13 @@
       <h5>Execution Trace</h5>
       <div class="output-box" id="traceOutput">Execution trace will appear here...</div>
     </div>
-    <div class="section" id="state-table-section">
-        <h5>State Table</h5>
-        <div class="output-box" id="state-table-box">State table will appear here...</div>
+    <div class="section" id="derivation-section">
+        <h5>Single-Step Derivation</h5>
+        <div class="output-box" id="derivation-box">Derivation for the current step appears here...</div>
     </div>
-    <div class="section" id="flowchart-section">
-      <h5>Flowchart</h5>
-      <div class="output-box" id="flowchartBox">Flowchart will render here...</div>
+    <div class="section" id="tree-section">
+      <h5>Full Derivation Tree</h5>
+      <div class="output-box" id="tree-box">The full proof tree will be built here...</div>
     </div>
   </div>
   
@@ -195,7 +236,7 @@ const SecurityLevel = { LOW: "LOW", HIGH: "HIGH" };
 
 function joinLabel(a, b) { return (a === SecurityLevel.HIGH || b === SecurityLevel.HIGH) ? SecurityLevel.HIGH : SecurityLevel.LOW; }
 function dominates(from, to) { return from === SecurityLevel.LOW || to === SecurityLevel.HIGH; }
-function extractVariables(expr) { return expr ? expr.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [] : []; }
+function extractVariables(expr) { return expr ? expr.match(/\b[a-zA-Z_][a-zA-Z0-9_']*\b/g) || [] : []; }
 
 function parseStatements(codeLines) {
   const ast = [];
@@ -207,26 +248,26 @@ function parseStatements(codeLines) {
     const current = stack[stack.length - 1];
     if (line.startsWith("if")) {
       const condition = line.match(/\((.*?)\)/)[1];
-      const node = { type: "IfStatement", condition, body: [], alternate: null, line: i + 1 };
+      const node = { type: "IfStatement", condition, body: [], alternate: null, line: i + 1, id: `stmt-${i}` };
       current.block.push(node);
       stack.push({ block: node.body, type: 'if', node: node });
     } else if (line.startsWith("} else {")) {
         const ifContext = stack.pop();
         if (ifContext.type !== 'if') throw new Error("Syntax Error: 'else' without 'if'");
         ifContext.node.alternate = [];
-        stack.push({ block: ifContext.node.alternate, type: 'else'});
+        stack.push({ block: ifContext.node.alternate, type: 'else', node: ifContext.node});
     } else if (line.startsWith("while")) {
       const condition = line.match(/\((.*?)\)/)[1];
-      const node = { type: "WhileStatement", condition, body: [], line: i + 1 };
+      const node = { type: "WhileStatement", condition, body: [], line: i + 1, id: `stmt-${i}` };
       current.block.push(node);
-      stack.push({ block: node.body, type: 'while' });
+      stack.push({ block: node.body, type: 'while', node: node });
     } else if (line === "skip;") {
-        current.block.push({ type: "SkipStatement", line: i + 1 });
+        current.block.push({ type: "SkipStatement", line: i + 1, id: `stmt-${i}` });
     } else if (line.startsWith("}")) {
       stack.pop();
     } else if (line.includes("=")) {
       const [lhs, rhs] = line.split("=").map(s => s.trim());
-      current.block.push({ type: "Assignment", lhs, rhs: rhs.replace(";", ""), line: i + 1 });
+      current.block.push({ type: "Assignment", lhs, rhs: rhs.replace(";", ""), line: i + 1, id: `stmt-${i}` });
     }
   }
   return ast;
@@ -242,6 +283,50 @@ function evaluateSecurity(initialState) {
         allVars.forEach(v => state[v] = labels[v] || SecurityLevel.LOW);
         steps.push({ ...stepData, state: state });
     }
+    
+    function colorize(text, level) {
+        const cleanText = text.replace(/'/g, "\\'"); 
+        return `\\color{${level === 'HIGH' ? '#fb7185' : '#86efac'}}{${cleanText}}`;
+    }
+
+    function buildDerivation(type, data, currentLabels, pc) {
+        let derivationHtml = '';
+        if (type === 'Assignment') {
+            const { lhs, rhs } = data;
+            let premises = '';
+            let exprLevel = SecurityLevel.LOW;
+
+            rhs.split(/([\+\-\*\/><=]+)/).forEach(term => {
+                const trimmedTerm = term.trim();
+                if (!trimmedTerm || ['+', '-', '*', '/', '>', '<', '=='].includes(trimmedTerm)) return;
+                
+                const varsInTerm = extractVariables(trimmedTerm);
+                if (varsInTerm.length > 0) {
+                     varsInTerm.forEach(v => {
+                        const level = currentLabels[v] || SecurityLevel.LOW;
+                        premises += `\\frac{ }{${colorize(v, level)} : ${colorize(level, level)}}~(TVar) \\quad `;
+                        exprLevel = joinLabel(exprLevel, level);
+                     });
+                } else if (trimmedTerm.match(/^\d+$/)) {
+                     premises += `\\frac{ }{${trimmedTerm} : ${colorize('LOW', 'low')}}~(TNum) \\quad `;
+                }
+            });
+
+            const oldLhsLabel = currentLabels[lhs] || SecurityLevel.LOW;
+            const effectiveSourceLabel = joinLabel(exprLevel, pc);
+            
+            derivationHtml = `$$ \\frac{${premises} pc = ${colorize(pc, pc)}}{${colorize(lhs, oldLhsLabel)} : ${colorize(oldLhsLabel, oldLhsLabel)}; \\quad ${colorize(rhs, exprLevel)} : ${colorize(exprLevel, exprLevel)}; \\quad ${colorize(effectiveSourceLabel, effectiveSourceLabel)} \\le ${colorize(oldLhsLabel, oldLhsLabel)} \\rightarrow \\mathbf{${dominates(effectiveSourceLabel, oldLhsLabel)}}}{(TAss)} $$`;
+
+        } else if (type === 'control') {
+             const { condition } = data;
+             const condLabel = extractVariables(condition).reduce((acc, v) => joinLabel(acc, currentLabels[v] || SecurityLevel.LOW), SecurityLevel.LOW);
+             derivationHtml = `$$ \\frac{b : ${colorize(condLabel, condLabel)} \\quad pc = ${colorize(pc, pc)}}{pc' = pc \\sqcup b = ${colorize(joinLabel(pc, condLabel), joinLabel(pc, condLabel))}} $$`;
+        } else if (type === 'skip') {
+            derivationHtml = `$$ \\frac{ }{skip : high} (TSkip) $$`;
+        }
+        return derivationHtml;
+    }
+
 
     function recurse(subAst, pc = SecurityLevel.LOW) {
         for (const stmt of subAst) {
@@ -259,12 +344,13 @@ function evaluateSecurity(initialState) {
                 const effectiveSourceLabel = joinLabel(rhsLabel, pc);
                 const newLhsLabel = joinLabel(oldLhsLabel, effectiveSourceLabel);
                 const flow = `${effectiveSourceLabel}→${oldLhsLabel}`;
+                const derivation = buildDerivation('Assignment', stmt, labels, pc);
                 
                 let stepData;
                 if (!dominates(effectiveSourceLabel, oldLhsLabel)) {
                     let violationType = (pc === SecurityLevel.HIGH && rhsLabel === SecurityLevel.LOW) ? "implicit" : "explicit";
                     let reason = `<div class="tooltip-title">${violationType.charAt(0).toUpperCase() + violationType.slice(1)} Violation</div>Rule <span class="tooltip-rule">(TAss)</span> is violated. The program is in a HIGH context (pc=${pc}), so assignment to the LOW variable '<code>${stmt.lhs}</code>' is forbidden.<br><b>Result:</b> Its level is tainted and permanently raised from ${oldLhsLabel} to ${newLhsLabel}.`;
-                    stepData = createStep({ line: stmt, type: violationType, pc, lhs: stmt.lhs, rhs: stmt.rhs, flow, status: "VIOLATION", tooltip: reason, });
+                    stepData = createStep({ line: stmt, type: violationType, pc, lhs: stmt.lhs, rhs: stmt.rhs, flow, status: "VIOLATION", tooltip: reason, derivation });
                     if (document.getElementById("breakOnViolation").checked) {
                         gtag('event', 'violation_break', { event_category: 'Execution', event_label: violationType });
                         steps.push({ type: 'stop' });
@@ -278,13 +364,14 @@ function evaluateSecurity(initialState) {
                         reason += `<b>Result:</b> The security level of '<code>${stmt.lhs}</code>' remains ${newLhsLabel}.`;
                     }
                     reason += `<br>Current context pc=${pc}.`;
-                    stepData = createStep({ line: stmt, type: "ok", pc, lhs: stmt.lhs, rhs: stmt.rhs, flow, status: "OK", tooltip: reason, });
+                    stepData = createStep({ line: stmt, type: "ok", pc, lhs: stmt.lhs, rhs: stmt.rhs, flow, status: "OK", tooltip: reason, derivation });
                 }
                 labels[stmt.lhs] = newLhsLabel; 
                 recordState(stepData);
 
             } else if (stmt.type === "SkipStatement") {
-                recordState(createStep({ line: stmt, type: "skip", pc, statement: "skip;", isControl: true, newPc: pc, tooltip: `<div class="tooltip-title">OK</div>Rule <span class="tooltip-rule">(TSkip)</span> applies. 'skip' does nothing and is always secure, regardless of context.`, fullStatement: "skip;" }));
+                const derivation = buildDerivation('skip');
+                recordState(createStep({ line: stmt, type: "skip", pc, statement: "skip;", isControl: true, newPc: pc, tooltip: `<div class="tooltip-title">OK</div>Rule <span class="tooltip-rule">(TSkip)</span> applies. 'skip' does nothing and is always secure.`, fullStatement: "skip;", derivation }));
             
             } else if (stmt.type === "IfStatement" || stmt.type === "WhileStatement") {
                 const condVars = extractVariables(stmt.condition);
@@ -292,18 +379,16 @@ function evaluateSecurity(initialState) {
                 const newPc = joinLabel(pc, condLabel);
                 const statementText = `${stmt.type === "IfStatement" ? "if" : "while"} (${stmt.condition})`;
                 const ruleName = stmt.type === "IfStatement" ? "(TIf)" : "(TWhile)";
+                const derivation = buildDerivation('control', stmt, labels, pc);
                 
                 let reason = `<div class="tooltip-title">Control Flow</div>Entering a control block. The condition '<code>${stmt.condition}</code>' has level ${condLabel} based on [${condVars.join(", ") || 'constants'}].<br>`;
-                if (pc !== newPc) {
-                    reason += `<b>Result:</b> The program context (pc) is raised from ${pc} to ${newPc} for this block, as required by rule <span class="tooltip-rule">${ruleName}</span>.`;
-                } else {
-                    reason += `<b>Result:</b> The program context (pc) remains ${newPc}.`;
-                }
+                if (pc !== newPc) { reason += `<b>Result:</b> The program context (pc) is raised from ${pc} to ${newPc} for this block, as required by rule <span class="tooltip-rule">${ruleName}</span>.`; }
+                else { reason += `<b>Result:</b> The program context (pc) remains ${newPc}.`; }
 
-                recordState(createStep({ line: stmt, type: "control", pc: newPc, statement: statementText, isControl: true, newPc, tooltip: reason }));
+                recordState(createStep({ line: stmt, type: "control", pc: newPc, statement: statementText, isControl: true, newPc, tooltip: reason, derivation }));
                 recurse(stmt.body, newPc);
                 if (stmt.alternate) {
-                    recordState(createStep({ line: stmt, type: "control", pc: newPc, statement: "else", isControl: true, newPc, tooltip: `<div class="tooltip-title">Control Flow</div>The 'else' block executes under the same security context (pc=${newPc}) inherited from the 'if', per rule <span class="tooltip-rule">(TIf)</span>.` }));
+                    recordState(createStep({ line: stmt, type: "control", pc: newPc, statement: "else", isControl: true, newPc, tooltip: `<div class="tooltip-title">Control Flow</div>The 'else' block executes under the same security context (pc=${newPc}) inherited from the 'if', per rule <span class="tooltip-rule">(TIf)</span>.`, derivation: 'Inherits pc from "if".' }));
                     recurse(stmt.alternate, newPc);
                 }
             }
@@ -328,6 +413,31 @@ function analyzeCode(code) {
 
 let fullTrace = [], allVarsInTrace = [], stepIndex = 0, intervalId = null, highlightedLine = null;
 let editor = null;
+let derivationTreeRoot = null;
+
+function colorizeEditor(labels) {
+    if (!editor) return;
+    editor.operation(() => {
+        editor.getAllMarks().forEach(mark => mark.clear());
+        editor.eachLine((line) => {
+            const lineNo = editor.getLineNumber(line);
+            const tokens = editor.getLineTokens(lineNo);
+            tokens.forEach(token => {
+                if (token.type === 'variable' || token.type === 'variable-2') {
+                    const level = labels[token.string];
+                    if (level) {
+                        editor.markText(
+                            { line: lineNo, ch: token.start },
+                            { line: lineNo, ch: token.end },
+                            { className: `cm-${level.toLowerCase()}-var` }
+                        );
+                    }
+                }
+            });
+        });
+    });
+}
+
 
 function updateUiForStep(index) {
   if (!editor || !fullTrace.length) return; 
@@ -344,11 +454,10 @@ function updateUiForStep(index) {
     entryDiv.className = `trace-entry ${s.type}`;
     entryDiv.setAttribute('data-tippy-content', s.tooltip || '');
     const isViolation = s.type === 'explicit' || s.type === 'implicit';
-    const statusIcon = isViolation ? '🔴' : (s.type === 'ok' || s.type === 'skip' ? '🟢' : '🔵');
-    const iconClass = s.type === 'implicit' ? 'implicit' : (isViolation ? 'explicit' : s.type);
+    const statusIcon = isViolation ? (s.type === 'implicit' ? '🟠' : '🔴') : (s.type === 'ok' || s.type === 'skip' ? '🟢' : '🔵');
     entryDiv.innerHTML = `
         <div class="trace-header">
-            <div><span class="status-icon ${iconClass}">${statusIcon}</span><span>${s.fullStatement}</span></div>
+            <div><span class="status-icon">${statusIcon}</span><span>${s.fullStatement}</span></div>
             <span class="status-tag">${s.status || ''}</span>
         </div>
         <div class="trace-details">
@@ -370,77 +479,98 @@ function updateUiForStep(index) {
     }
   });
   
-  renderStateTable(trace, allVarsInTrace, index);
-  const chart = generateFlowchart(trace.slice(0, index + 1));
-  const tooltips = trace.slice(0, index + 1).map(s => s.tooltip || '');
-  renderFlowchart(chart, tooltips);
+  const derivationBox = document.getElementById('derivation-box');
+  derivationBox.innerHTML = entry.derivation || '';
+  if (window.MathJax) {
+      MathJax.typesetPromise([derivationBox]).catch((err) => console.log('MathJax typeset failed: ', err));
+  }
+  
+  const treeBox = document.getElementById('tree-box');
+  const currentStmtId = entry.line ? entry.line.id : null;
+  treeBox.innerHTML = `<ul class="derivation-tree">${renderDerivationTree(derivationTreeRoot, currentStmtId)}</ul>`;
+  
   document.getElementById("status").textContent = `Step ${index + 1}/${trace.length}`;
 }
 
-function generateFlowchart(steps) {
-    if (!steps || !steps.length) return "flowchart TD\n  Start";
-    let chart = "flowchart TD\n  Start";
-    let prevNodeId = "Start";
-    steps.forEach((step, i) => {
-        const nodeId = `S${i}`;
-        const label = (step.fullStatement || "").replace(/["<>]/g, '');
-        chart += `\n  ${nodeId}("${label}"):::${step.type}`;
-        chart += `\n  ${prevNodeId} --> ${nodeId}`;
-        prevNodeId = nodeId;
-    });
-    chart += "\n  classDef ok,skip fill:#16a34a,stroke:#166534,color:#fff";
-    chart += "\n  classDef explicit fill:#ef4444,stroke:#991b1b,color:#fff";
-    chart += "\n  classDef implicit fill:#f97316,stroke:#c2410c,color:#fff";
-    chart += "\n  classDef control fill:#4f46e5,stroke:#3730a3,color:#fff";
-    return chart;
+function renderDerivationTree(node, currentStepId) {
+    if (!node) return '';
+    let childrenHtml = '';
+    if (node.children && node.children.length > 0) {
+        childrenHtml = `<ul>${node.children.map(child => renderDerivationTree(child, currentStepId)).join('')}</ul>`;
+    }
+    const highlightClass = (node.id === currentStepId) ? 'highlight-node' : '';
+    const conclusionHtml = `<div class="derivation-rule-conclusion">${node.conclusion} <span class="tooltip-rule">${node.rule}</span></div>`;
+
+    return `<li><div class="derivation-node ${highlightClass}" data-id="${node.id}">${childrenHtml}${conclusionHtml}</div></li>`;
 }
 
-function renderStateTable(trace, allVars, currentIndex) {
-    const tableBox = document.getElementById('state-table-box');
-    if (!tableBox) return;
-    let tableHtml = `<table class="table table-dark table-striped"><thead><tr><th>Step</th><th>PC</th>`;
-    allVars.forEach(v => tableHtml += `<th>${v}</th>`);
-    tableHtml += `</tr></thead><tbody>`;
-    trace.slice(0, currentIndex + 1).forEach((step, i) => {
-        const s = step.state;
-        if (!s) return;
-        const activeClass = (i === currentIndex) ? 'active-step-row' : '';
-        tableHtml += `<tr class="${activeClass}">`;
-        tableHtml += `<td data-tippy-content="Execution step number">${i + 1}</td>`;
-        tableHtml += `<td class="level-${s.pc.toLowerCase()}" data-tippy-content="Program Counter security context at step ${i+1} is <b>${s.pc}</b>">${s.pc}</td>`;
-        allVars.forEach(v => {
-            tableHtml += `<td class="level-${(s[v] || 'low').toLowerCase()}" data-tippy-content="Security level of '<code>${v}</code>' at step ${i+1} is <b>${s[v]}</b>">${s[v]}</td>`;
-        });
-        tableHtml += `</tr>`;
-    });
-    tableHtml += `</tbody></table>`;
-    tableBox.innerHTML = tableHtml;
-    tippy('#state-table-box td', { theme: 'dark', allowHTML: true });
-    tableBox.scrollTop = tableBox.scrollHeight;
-}
+function buildDerivationTree(ast, labels) {
+    if (!ast) return null;
 
+    if (Array.isArray(ast)) { // Handle sequences
+        if (ast.length === 0) return null;
+        if (ast.length === 1) return buildDerivationTree(ast[0], labels);
+        if (ast.length > 1) {
+            const P1_tree = buildDerivationTree(ast.slice(0, -1), labels);
+            const P2_tree = buildDerivationTree(ast.slice(-1), labels);
+            return {
+                rule: '(TSeq)',
+                conclusion: 'P1; P2',
+                children: [P1_tree, P2_tree].filter(t => t),
+                id: ast.map(s => s.id).join('-')
+            };
+        }
+        return null;
+    }
+
+    const { type, condition, body, alternate, lhs, rhs, id } = ast;
+    
+    if (type === "IfStatement") {
+        const condLabel = extractVariables(condition).reduce((acc, v) => joinLabel(acc, labels[v] || SecurityLevel.LOW), SecurityLevel.LOW);
+        const bodyTree = buildDerivationTree(body, labels);
+        const elseTree = alternate ? buildDerivationTree(alternate, labels) : { rule: '(TSkip)', conclusion: 'skip;', children: [], id: `${id}-else-skip` };
+
+        return {
+            rule: '(TIf)',
+            conclusion: `if (${condition}) { ... } else { ... }`,
+            children: [{ rule: 'cond', conclusion: `b : ${condLabel}`, children: [], id: `${id}-cond` }, bodyTree, elseTree].filter(t => t),
+            id
+        };
+    } else if (type === "WhileStatement") {
+        const bodyTree = buildDerivationTree(body, labels);
+        return {
+            rule: '(TWhile)',
+            conclusion: `while (${condition}) { ... }`,
+            children: [bodyTree],
+            id
+        }
+    } else if (type === "Assignment") {
+        return { rule: '(TAss)', conclusion: `${lhs} = ${rhs};`, children: [], id };
+    } else if (type === "SkipStatement") {
+        return { rule: '(TSkip)', conclusion: 'skip;', children: [], id };
+    }
+    return null;
+}
 
 window.addEventListener("DOMContentLoaded", () => {
     editor = CodeMirror.fromTextArea(document.getElementById("editor"), { mode: "text/x-java", theme: "default", lineNumbers: true, tabSize: 2 });
-    mermaid.initialize({ startOnLoad: false, theme: 'dark' });
-
     function buildRandomExercise() {
         const highVars = ['hi', 'hi1'];
-        const lowVars = ['lo', 'lo1'];
+        const lowVars = ['lo', "lo'"];
         const allVars = [...highVars, ...lowVars];
         const getRandomAssignment = () => `${allVars[Math.floor(Math.random()*4)]} = ${allVars[Math.floor(Math.random()*4)]} + ${Math.floor(Math.random()*5)};`;
         
         const templates = [
-            `if (hi > 5) {\n  lo = 1;\n} else {\n  lo = 0;\n}`, // Classic Implicit
-            `lo = hi;`, // Classic Explicit
-            `if (lo > 0) {\n  hi = 5;\n} else {\n  skip;\n}`, // Secure
-            `while (lo < hi) {\n  lo = lo + 1;\n}`, // Loop implicit
+            `if (hi > 5) {\n  lo = 1;\n} else {\n  lo = 0;\n}`,
+            `lo = hi;`,
+            `if (lo > 0) {\n  hi = 5;\n} else {\n  skip;\n}`,
+            `while (lo < hi) {\n  lo = lo + 1;\n}`,
         ];
         
         const randomType = Math.random();
-        if (randomType < 0.5) { // 50% chance for a specific template
+        if (randomType < 0.5) {
             return templates[Math.floor(Math.random() * templates.length)];
-        } else { // 50% chance for a fully random structure
+        } else {
             let code = [];
             const numLines = Math.floor(Math.random() * 2) + 3;
             for (let i = 0; i < numLines; i++) {
@@ -481,25 +611,37 @@ window.addEventListener("DOMContentLoaded", () => {
         stepIndex = 0; 
         fullTrace = []; 
         allVarsInTrace = []; 
+        derivationTreeRoot = null;
         document.getElementById("traceOutput").innerHTML = ""; 
-        document.getElementById("flowchartBox").innerHTML = ""; 
-        document.getElementById("state-table-box").innerHTML = ""; 
+        document.getElementById("derivation-box").innerHTML = ""; 
+        document.getElementById("tree-box").innerHTML = ""; 
         document.getElementById("status").textContent = "Idle"; 
         if (highlightedLine !== null && editor) { 
             editor.removeLineClass(highlightedLine, "background", "highlight-line");
             highlightedLine = null; 
         } 
-        renderFlowchart(generateFlowchart([]), []);
+        colorizeEditor({});
     }
 
     document.getElementById('generateExerciseButton').addEventListener('click', generateNewExercise);
     document.getElementById("runButton").onclick = () => {
         resetExecution();
-        const analysisResult = analyzeCode(editor.getValue());
+        const code = editor.getValue();
+        const ast = parseStatements(code.split('\n'));
+        const analysisResult = analyzeCode(code);
+        
         fullTrace = analysisResult.steps;
         allVarsInTrace = analysisResult.allVars;
+
+        const initialLabels = {};
+        allVarsInTrace.forEach(v => { initialLabels[v] = v.startsWith('hi') ? 'HIGH' : 'LOW'; });
+        derivationTreeRoot = buildDerivationTree(ast, initialLabels);
+        
         stepIndex = 0;
         if (!fullTrace.length) return;
+        
+        colorizeEditor(initialLabels);
+
         document.getElementById("runButton").disabled = true;
         document.getElementById("stopButton").disabled = false;
         document.getElementById("runButton").innerText = "⏸ Running";
@@ -510,24 +652,27 @@ window.addEventListener("DOMContentLoaded", () => {
     
     document.getElementById("nextButton").onclick = () => { 
         stopExecution(); 
-        if (!fullTrace.length || stepIndex >= fullTrace.length -1) { 
+        if (!fullTrace.length || stepIndex >= fullTrace.length) { 
             const res = analyzeCode(editor.getValue()); 
             fullTrace = res.steps; 
             allVarsInTrace = res.allVars; 
+            const ast = parseStatements(editor.getValue().split('\n'));
+            const initialLabels = {};
+            allVarsInTrace.forEach(v => { initialLabels[v] = v.startsWith('hi') ? 'HIGH' : 'LOW'; });
+            derivationTreeRoot = buildDerivationTree(ast, initialLabels);
             stepIndex = 0;
-            updateUiForStep(stepIndex);
-        } else { 
-            stepIndex++;
-            updateUiForStep(stepIndex); 
+        } 
+        if (stepIndex < fullTrace.length) { 
+            updateUiForStep(stepIndex++); 
         }
         gtag('event', 'step_next', { event_category: 'Execution' });
     };
 
     document.getElementById("prevButton").onclick = () => { 
         stopExecution(); 
-        if (stepIndex > 0) {
+        if (stepIndex > 1) { 
              stepIndex--; 
-             updateUiForStep(stepIndex); 
+             updateUiForStep(stepIndex - 1); 
         }
         gtag('event', 'step_prev', { event_category: 'Execution' });
     };
@@ -536,14 +681,22 @@ window.addEventListener("DOMContentLoaded", () => {
         stopExecution(); 
         const target = parseInt(document.getElementById("gotoIndex").value); 
         if (fullTrace.length && !isNaN(target) && target > 0 && target <= fullTrace.length) { 
-            stepIndex = target - 1; 
-            updateUiForStep(stepIndex); 
+            stepIndex = target;
+            updateUiForStep(stepIndex - 1); 
         }
         gtag('event', 'go_to_step', { event_category: 'Execution' });
     };
 
     document.getElementById("stopButton").onclick = stopExecution;
     document.getElementById("resetButton").onclick = resetExecution;
+
+    document.getElementById("shareButton").onclick = () => {
+        const code = editor.getValue();
+        const encoded = btoa(unescape(encodeURIComponent(code)));
+        const url = `${window.location.origin}${window.location.pathname}?sharecode=${encoded}`;
+        navigator.clipboard.writeText(url).then(() => alert("Shareable link copied to clipboard!"));
+        gtag('event', 'share_link', { event_category: 'Share' });
+    };
 
     const params = new URLSearchParams(window.location.search);
     const shareCode = params.get("sharecode");
@@ -556,28 +709,6 @@ window.addEventListener("DOMContentLoaded", () => {
     gtag('event', 'tool_loaded', { event_category: 'Page' });
 });
 
-async function renderFlowchart(chartText, tooltips) {
-  const flowchartBox = document.getElementById("flowchartBox");
-  if (!flowchartBox) return;
-  const renderId = 'mermaid-graph-' + Date.now();
-  try {
-    const { svg } = await mermaid.render(renderId, chartText);
-    flowchartBox.innerHTML = svg;
-    const svgElement = flowchartBox.querySelector("svg");
-    if (svgElement) {
-        svgElement.style.maxWidth = '12%'; 
-        const nodes = flowchartBox.querySelectorAll("g.node");
-        nodes.forEach((node, i) => {
-            if (i > 0 && tooltips[i - 1]) {
-                tippy(node, { content: tooltips[i - 1], allowHTML: true, theme: 'dark' });
-            }
-        });
-    }
-  } catch (e) {
-    console.error("Mermaid rendering failed:", e);
-    flowchartBox.innerHTML = `<div class="alert alert-danger p-2">Flowchart rendering failed.</div>`;
-  }
-}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
