@@ -8,7 +8,7 @@
   <!-- SEO Meta Tags -->
   <meta name="description" content="An educational tool to visualize information flow security in Java-like programs using AST-based analysis. Learn explicit and implicit flow violations interactively.">
   <meta name="keywords" content="information flow security, taint tracking, secure programming, java security, implicit flow, explicit flow, AST, code analysis, noninterference, flowchart visualizer, NanoJava, educational tools">
-  <meta name="author" content="Gemini">
+  <meta name="author" content="Ramis">
 
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
@@ -40,36 +40,35 @@
       color: #f1f5f9;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    .section-container {
-      display: flex;
-      flex-wrap: wrap;
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
       gap: 1rem;
+      grid-template-areas:
+        "editor trace"
+        "state-table flowchart";
     }
     .section {
-      flex: 1;
       min-width: 350px;
-      margin-bottom: 1rem;
     }
+    #editor-section { grid-area: editor; }
+    #trace-section { grid-area: trace; }
+    #state-table-section { grid-area: state-table; }
+    #flowchart-section { grid-area: flowchart; }
+
     .CodeMirror {
       height: 350px;
       border: 1px solid #334155;
       border-radius: 0.375rem;
     }
-    .trace-output {
+    .output-box {
       background: #1e293b;
       padding: 0.5rem;
       overflow-y: auto;
       height: 350px;
       border: 1px solid #334155;
       border-radius: 0.375rem;
-    }
-    .flowchart-box {
-      background: #1e293b;
-      padding: 1rem;
-      border: 1px solid #334155;
-      border-radius: 0.375rem;
-      overflow: auto;
-      min-height: 400px;
     }
     .highlight-line {
       background-color: #3b82f6 !important;
@@ -79,60 +78,43 @@
     .tooltip-title { font-weight: bold; color: #3b82f6; }
     .tooltip-rule { font-family: monospace; background-color: #334155; padding: 2px 4px; border-radius: 4px; }
 
-    /* New Trace Entry Styles */
+    /* Trace Entry Styles */
     .trace-entry {
         background-color: #293548;
-        border-left: 5px solid #64748b;
+        border-left-width: 5px;
+        border-left-style: solid;
         padding: 0.5rem 0.75rem;
         margin-bottom: 0.5rem;
         border-radius: 0.25rem;
         transition: background-color 0.2s;
         cursor: help;
     }
-    .trace-entry:hover {
-        background-color: #334155;
-    }
-    .trace-entry.ok { border-left-color: #22c55e; }
-    .trace-entry.explicit, .trace-entry.implicit { border-left-color: #ef4444; }
+    .trace-entry:hover { background-color: #334155; }
+    .trace-entry.ok, .trace-entry.skip { border-left-color: #22c55e; }
+    .trace-entry.explicit { border-left-color: #ef4444; } /* Bright Red for Explicit */
+    .trace-entry.implicit { border-left-color: #f97316; } /* Orange-Red for Implicit */
     .trace-entry.control { border-left-color: #6366f1; }
-    
-    .trace-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-family: 'SF Mono', 'Courier New', monospace;
-        font-weight: bold;
-    }
-    .trace-details {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.8em;
-        color: #94a3b8;
-        margin-top: 0.25rem;
-    }
-    .status-icon {
-        margin-right: 0.5rem;
-        font-size: 0.9em;
-    }
-    .status-icon.ok { color: #22c55e; }
-    .status-icon.violation { color: #ef4444; }
+    .trace-header, .trace-details { display: flex; justify-content: space-between; align-items: center; }
+    .trace-header { font-family: 'SF Mono', 'Courier New', monospace; font-weight: bold; }
+    .trace-details { font-size: 0.8em; color: #94a3b8; margin-top: 0.25rem; }
+    .status-icon { margin-right: 0.5rem; font-size: 0.9em; }
+    .status-icon.ok, .status-icon.skip { color: #22c55e; }
+    .status-icon.explicit { color: #ef4444; }
+    .status-icon.implicit { color: #f97316; }
     .status-icon.control { color: #6366f1; }
+    .trace-type-tag { font-family: monospace; font-size: 0.9em; padding: 2px 5px; border-radius: 4px; background-color: #3e4c62; }
 
-    .trace-type-tag {
-        font-family: monospace;
-        font-size: 0.9em;
-        padding: 2px 5px;
-        border-radius: 4px;
-        background-color: #3e4c62;
-    }
-
+    /* State Table Styles */
+    #state-table-box { padding: 0; }
+    .table { color: #f1f5f9; font-size: 0.9em; margin-bottom: 0; }
+    .table thead th { position: sticky; top: 0; background-color: #334155; }
+    .table th, .table td { text-align: center; vertical-align: middle; padding: 0.4rem; cursor: help; }
+    .level-high { color: #fb7185; font-weight: bold; }
+    .level-low { color: #86efac; }
+    tr.active-step-row { background-color: rgba(59, 130, 246, 0.2) !important; }
   </style>
 </head>
 <body>
-<div style="position: absolute; top: 10px; right: 15px; z-index: 999;">
-  <button id="shareButton" class="btn btn-outline-light btn-sm">🔗 Share</button>
-</div>
 <div class="container-fluid p-3">
   <h3 class="text-center mb-3">🛡️ NanoJava Secure Information Flow Visualizer</h3>
 
@@ -155,22 +137,25 @@
     <span class="badge bg-info text-dark ms-auto" id="status">Idle</span>
   </div>
 
-  <div class="section-container">
-    <div class="section">
+  <div class="main-container">
+    <div class="section" id="editor-section">
       <h5>Code Editor</h5>
       <textarea id="editor"></textarea>
     </div>
-    <div class="section">
+    <div class="section" id="trace-section">
       <h5>Execution Trace</h5>
-      <div class="trace-output" id="traceOutput">Execution trace will appear here...</div>
+      <div class="output-box" id="traceOutput">Execution trace will appear here...</div>
+    </div>
+    <div class="section" id="state-table-section">
+        <h5>State Table</h5>
+        <div class="output-box" id="state-table-box">State table will appear here...</div>
+    </div>
+    <div class="section" id="flowchart-section">
+      <h5>Flowchart</h5>
+      <div class="output-box" id="flowchartBox">Flowchart will render here...</div>
     </div>
   </div>
-  <div class="section w-100">
-    <h5>Flowchart</h5>
-    <div class="flowchart-box" id="flowchartBox">Flowchart will render here...</div>
-  </div>
   
-  <!-- Glossary Section -->
   <div class="accordion mt-4" id="glossaryAccordion">
     <div class="accordion-item bg-dark text-light border-secondary">
       <h2 class="accordion-header" id="headingGlossary">
@@ -179,7 +164,7 @@
         </button>
       </h2>
       <div id="collapseGlossary" class="accordion-collapse collapse" aria-labelledby="headingGlossary" data-bs-parent="#glossaryAccordion">
-        <div class="accordion-body">
+         <div class="accordion-body">
           <h6>Key Concepts</h6>
           <ul>
             <li><strong>Security Level</strong>: A label (e.g., LOW or HIGH) indicating the confidentiality of data.</li>
@@ -196,6 +181,7 @@
             <li><span class="tooltip-rule">(TIf)</span>: For an `if(b){P1}else{P2}` statement, the level of the condition `b` raises the `pc` for `P1` and `P2`. The security of the whole `if` statement is the lowest level of `P1` and `P2`.</li>
              <li><span class="tooltip-rule">(TWhile)</span>: For a `while(b){P}` loop, the level of the condition `b` must be less than or equal to (`≤`) the security level of the body `P`. The level of `b` also raises the `pc` for the body.</li>
              <li><span class="tooltip-rule">(TSeq)</span>: For a sequence `P1; P2`, the security of the whole sequence is the lowest level of `P1` and `P2`.</li>
+             <li><span class="tooltip-rule">(TSkip)</span>: The `skip;` command is always secure. It does nothing, so it cannot cause a leak.</li>
           </ul>
         </div>
       </div>
@@ -207,18 +193,9 @@
 // --- CORE LOGIC ---
 const SecurityLevel = { LOW: "LOW", HIGH: "HIGH" };
 
-function joinLabel(a, b) {
-  return (a === SecurityLevel.HIGH || b === SecurityLevel.HIGH) ? SecurityLevel.HIGH : SecurityLevel.LOW;
-}
-
-function dominates(from, to) {
-  if (from === SecurityLevel.LOW) return true;
-  return to === SecurityLevel.HIGH;
-}
-
-function extractVariables(expr) {
-  return expr.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [];
-}
+function joinLabel(a, b) { return (a === SecurityLevel.HIGH || b === SecurityLevel.HIGH) ? SecurityLevel.HIGH : SecurityLevel.LOW; }
+function dominates(from, to) { return from === SecurityLevel.LOW || to === SecurityLevel.HIGH; }
+function extractVariables(expr) { return expr ? expr.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [] : []; }
 
 function parseStatements(codeLines) {
   const ast = [];
@@ -227,9 +204,7 @@ function parseStatements(codeLines) {
   for (let i = 0; i < codeLines.length; i++) {
     const line = codeLines[i].trim();
     if (!line || line.startsWith("//")) continue;
-
     const current = stack[stack.length - 1];
-
     if (line.startsWith("if")) {
       const condition = line.match(/\((.*?)\)/)[1];
       const node = { type: "IfStatement", condition, body: [], alternate: null, line: i + 1 };
@@ -245,16 +220,13 @@ function parseStatements(codeLines) {
       const node = { type: "WhileStatement", condition, body: [], line: i + 1 };
       current.block.push(node);
       stack.push({ block: node.body, type: 'while' });
+    } else if (line === "skip;") {
+        current.block.push({ type: "SkipStatement", line: i + 1 });
     } else if (line.startsWith("}")) {
       stack.pop();
     } else if (line.includes("=")) {
       const [lhs, rhs] = line.split("=").map(s => s.trim());
-      current.block.push({
-        type: "Assignment",
-        lhs,
-        rhs: rhs.replace(";", ""),
-        line: i + 1
-      });
+      current.block.push({ type: "Assignment", lhs, rhs: rhs.replace(";", ""), line: i + 1 });
     }
   }
   return ast;
@@ -262,16 +234,21 @@ function parseStatements(codeLines) {
 
 function evaluateSecurity(initialState) {
     const steps = [];
-    const labels = { ...initialState };
-    delete labels.code;
+    const labels = { ...initialState.labels };
+    const allVars = [...initialState.allVars];
     
+    function recordState(stepData) {
+        const state = { pc: stepData.pc };
+        allVars.forEach(v => state[v] = labels[v] || SecurityLevel.LOW);
+        steps.push({ ...stepData, state: state });
+    }
+
     function recurse(subAst, pc = SecurityLevel.LOW) {
         for (const stmt of subAst) {
             if (steps.some(s => s.type === 'stop')) return;
-
             const createStep = (base) => {
                 const text = base.isControl ? `${base.statement}` : `${base.lhs} = ${base.rhs}`;
-                const fullText = base.isControl ? `${text} [pc becomes ${base.newPc}]` : `${text} (${base.flow}) [${base.status}]`;
+                const fullText = base.isControl ? `${text}` : `${text} (${base.flow || ''}) [${base.status || ''}]`;
                 return { ...base, text: fullText, fullStatement: text };
             };
 
@@ -282,50 +259,40 @@ function evaluateSecurity(initialState) {
                 const effectiveSourceLabel = joinLabel(rhsLabel, pc);
                 const newLhsLabel = joinLabel(oldLhsLabel, effectiveSourceLabel);
                 const flow = `${effectiveSourceLabel}→${oldLhsLabel}`;
-
+                
+                let stepData;
                 if (!dominates(effectiveSourceLabel, oldLhsLabel)) {
-                    let violationType, reason;
-                    let rule = `<span class="tooltip-rule">(TAss)</span>`;
-                    if (pc === SecurityLevel.HIGH && rhsLabel === SecurityLevel.LOW) {
-                        violationType = "implicit";
-                        reason = `<div class="tooltip-title">Implicit Violation</div>Rule ${rule} is violated. The program is in a HIGH context (pc=HIGH), so assignment to the LOW variable '<code>${stmt.lhs}</code>' is forbidden.<br><b>Result:</b> Its level is tainted and permanently raised from ${oldLhsLabel} to ${newLhsLabel}.`;
-                    } else {
-                        violationType = "explicit";
-                        reason = `<div class="tooltip-title">Explicit Violation</div>Rule ${rule} is violated. Data from HIGH source(s) [${rhsVars.join(", ")}] cannot flow to a LOW variable '<code>${stmt.lhs}</code>'.<br><b>Result:</b> Its level is tainted and permanently raised from ${oldLhsLabel} to ${newLhsLabel}.`;
-                    }
-                    steps.push(createStep({
-                        line: stmt, type: violationType,
-                        lhs: stmt.lhs, rhs: stmt.rhs, flow: flow,
-                        status: "VIOLATION", tooltip: reason,
-                    }));
+                    let violationType = (pc === SecurityLevel.HIGH && rhsLabel === SecurityLevel.LOW) ? "implicit" : "explicit";
+                    let reason = `<div class="tooltip-title">${violationType.charAt(0).toUpperCase() + violationType.slice(1)} Violation</div>Rule <span class="tooltip-rule">(TAss)</span> is violated. The program is in a HIGH context (pc=${pc}), so assignment to the LOW variable '<code>${stmt.lhs}</code>' is forbidden.<br><b>Result:</b> Its level is tainted and permanently raised from ${oldLhsLabel} to ${newLhsLabel}.`;
+                    stepData = createStep({ line: stmt, type: violationType, pc, lhs: stmt.lhs, rhs: stmt.rhs, flow, status: "VIOLATION", tooltip: reason, });
                     if (document.getElementById("breakOnViolation").checked) {
+                        gtag('event', 'violation_break', { event_category: 'Execution', event_label: violationType });
                         steps.push({ type: 'stop' });
                         return;
                     }
                 } else {
-                    let rule = `<span class="tooltip-rule">(TAss)</span>`;
-                    let reason = `<div class="tooltip-title">OK</div>Rule ${rule} is satisfied. A flow from effective level ${effectiveSourceLabel} to destination level ${oldLhsLabel} is secure.<br>`;
+                    let reason = `<div class="tooltip-title">OK</div>Rule <span class="tooltip-rule">(TAss)</span> is satisfied. A flow from effective level ${effectiveSourceLabel} to destination level ${oldLhsLabel} is secure.<br>`;
                     if (oldLhsLabel !== newLhsLabel) {
                         reason += `<b>Result:</b> The security level of '<code>${stmt.lhs}</code>' is raised from ${oldLhsLabel} to ${newLhsLabel}.`;
                     } else {
                         reason += `<b>Result:</b> The security level of '<code>${stmt.lhs}</code>' remains ${newLhsLabel}.`;
                     }
                     reason += `<br>Current context pc=${pc}.`;
-                    steps.push(createStep({
-                        line: stmt, type: "ok",
-                        lhs: stmt.lhs, rhs: stmt.rhs, flow: flow,
-                        status: "OK", tooltip: reason,
-                    }));
+                    stepData = createStep({ line: stmt, type: "ok", pc, lhs: stmt.lhs, rhs: stmt.rhs, flow, status: "OK", tooltip: reason, });
                 }
                 labels[stmt.lhs] = newLhsLabel; 
+                recordState(stepData);
 
+            } else if (stmt.type === "SkipStatement") {
+                recordState(createStep({ line: stmt, type: "skip", pc, statement: "skip;", isControl: true, newPc: pc, tooltip: `<div class="tooltip-title">OK</div>Rule <span class="tooltip-rule">(TSkip)</span> applies. 'skip' does nothing and is always secure, regardless of context.`, fullStatement: "skip;" }));
+            
             } else if (stmt.type === "IfStatement" || stmt.type === "WhileStatement") {
                 const condVars = extractVariables(stmt.condition);
                 const condLabel = condVars.reduce((acc, v) => joinLabel(acc, labels[v] || SecurityLevel.LOW), SecurityLevel.LOW);
                 const newPc = joinLabel(pc, condLabel);
-                const ruleName = stmt.type === "IfStatement" ? "(TIf)" : "(TWhile)";
                 const statementText = `${stmt.type === "IfStatement" ? "if" : "while"} (${stmt.condition})`;
-
+                const ruleName = stmt.type === "IfStatement" ? "(TIf)" : "(TWhile)";
+                
                 let reason = `<div class="tooltip-title">Control Flow</div>Entering a control block. The condition '<code>${stmt.condition}</code>' has level ${condLabel} based on [${condVars.join(", ") || 'constants'}].<br>`;
                 if (pc !== newPc) {
                     reason += `<b>Result:</b> The program context (pc) is raised from ${pc} to ${newPc} for this block, as required by rule <span class="tooltip-rule">${ruleName}</span>.`;
@@ -333,20 +300,10 @@ function evaluateSecurity(initialState) {
                     reason += `<b>Result:</b> The program context (pc) remains ${newPc}.`;
                 }
 
-                steps.push(createStep({
-                    line: stmt, type: "control",
-                    statement: statementText, isControl: true, newPc: newPc,
-                    tooltip: reason,
-                }));
-                
+                recordState(createStep({ line: stmt, type: "control", pc: newPc, statement: statementText, isControl: true, newPc, tooltip: reason }));
                 recurse(stmt.body, newPc);
-                
                 if (stmt.alternate) {
-                    steps.push(createStep({
-                        line: stmt, type: "control",
-                        statement: "else", isControl: true, newPc: newPc,
-                        tooltip: `<div class="tooltip-title">Control Flow</div>The 'else' block executes under the same security context (pc=${newPc}) inherited from the 'if', per rule <span class="tooltip-rule">(TIf)</span>.`,
-                    }));
+                    recordState(createStep({ line: stmt, type: "control", pc: newPc, statement: "else", isControl: true, newPc, tooltip: `<div class="tooltip-title">Control Flow</div>The 'else' block executes under the same security context (pc=${newPc}) inherited from the 'if', per rule <span class="tooltip-rule">(TIf)</span>.` }));
                     recurse(stmt.alternate, newPc);
                 }
             }
@@ -355,126 +312,260 @@ function evaluateSecurity(initialState) {
     
     const ast = parseStatements(initialState.code.split("\n"));
     recurse(ast);
-    return steps.filter(s => s.type !== 'stop');
+    return {steps, allVars};
 }
 
-
 function analyzeCode(code) {
-  const labelMap = { hi: SecurityLevel.HIGH, lo: SecurityLevel.LOW, hi1: SecurityLevel.HIGH, lo1: SecurityLevel.LOW, code: code };
-  const allVars = extractVariables(code);
+  const allVars = [...new Set(extractVariables(code) || [])].sort();
+  const labels = {};
   allVars.forEach(v => {
-      if (!labelMap[v]) labelMap[v] = SecurityLevel.LOW;
+      labels[v] = v.startsWith('hi') ? SecurityLevel.HIGH : SecurityLevel.LOW;
   });
-  return evaluateSecurity(labelMap);
+  return evaluateSecurity({ labels, allVars, code });
 }
 
 // --- UI AND VISUALIZATION ---
 
-mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+let fullTrace = [], allVarsInTrace = [], stepIndex = 0, intervalId = null, highlightedLine = null;
+let editor = null;
 
-const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
-  mode: "text/x-java", theme: "default", lineNumbers: true, tabSize: 2
-});
+function updateUiForStep(index) {
+  if (!editor || !fullTrace.length) return; 
+  const trace = fullTrace;
+  if (index < 0 || index >= trace.length) return;
+  const entry = trace[index];
+  if (!entry) return;
 
-let fullTrace = [], stepIndex = 0, intervalId = null;
-let highlightedLine = null;
-
-// --- DYNAMIC EXERCISE GENERATOR ---
-function buildRandomExercise() {
-    const highVars = ['hi', 'hi1'];
-    const lowVars = ['lo', 'lo1'];
-    const allVars = [...highVars, ...lowVars];
-    
-    const getRandomVar = (level) => {
-        const pool = level === 'HIGH' ? highVars : lowVars;
-        return pool[Math.floor(Math.random() * pool.length)];
-    };
-    
-    const getRandomAssignment = () => {
-        const lhs = allVars[Math.floor(Math.random() * allVars.length)];
-        const rhsVar = allVars[Math.floor(Math.random() * allVars.length)];
-        const rhsConst = Math.floor(Math.random() * 10);
-        const rhs = Math.random() > 0.5 ? `${rhsVar} + ${rhsConst}` : `${rhsVar}`;
-        return `${lhs} = ${rhs};`;
-    };
-
-    const getRandomCondition = () => {
-        const var1 = allVars[Math.floor(Math.random() * allVars.length)];
-        const var2 = allVars[Math.floor(Math.random() * allVars.length)];
-        const constVal = Math.floor(Math.random() * 10);
-        const operators = ['>', '<', '=='];
-        const operator = operators[Math.floor(Math.random() * operators.length)];
-
-        if (Math.random() > 0.5) {
-            return `${var1} ${operator} ${constVal}`;
-        } else {
-            return `${var1} ${operator} ${var2}`;
-        }
-    };
-
-    let code = [];
-    const numLines = Math.floor(Math.random() * 3) + 2; // 2 to 4 statements
-
-    for (let i = 0; i < numLines; i++) {
-        const stmtType = Math.random();
-        if (stmtType > 0.7 && i < numLines - 1) { // Create an if/else block
-            code.push(`if (${getRandomCondition()}) {`);
-            code.push(`  ${getRandomAssignment()}`);
-            if (Math.random() > 0.5) {
-                code.push(`} else {`);
-                code.push(`  ${getRandomAssignment()}`);
-            }
-            code.push(`}`);
-            i++; // consume extra line for the block
-        } else {
-            code.push(getRandomAssignment());
-        }
+  const traceOut = document.getElementById("traceOutput");
+  traceOut.innerHTML = "";
+  const traceFragment = document.createDocumentFragment();
+  trace.slice(0, index + 1).forEach(s => {
+    const entryDiv = document.createElement('div');
+    entryDiv.className = `trace-entry ${s.type}`;
+    entryDiv.setAttribute('data-tippy-content', s.tooltip || '');
+    const isViolation = s.type === 'explicit' || s.type === 'implicit';
+    const statusIcon = isViolation ? '🔴' : (s.type === 'ok' || s.type === 'skip' ? '🟢' : '🔵');
+    const iconClass = s.type === 'implicit' ? 'implicit' : (isViolation ? 'explicit' : s.type);
+    entryDiv.innerHTML = `
+        <div class="trace-header">
+            <div><span class="status-icon ${iconClass}">${statusIcon}</span><span>${s.fullStatement}</span></div>
+            <span class="status-tag">${s.status || ''}</span>
+        </div>
+        <div class="trace-details">
+            <span>${s.flow || `pc: ${s.pc}`}</span>
+            <span class="trace-type-tag">${s.type}</span>
+        </div>`;
+    traceFragment.appendChild(entryDiv);
+  });
+  traceOut.appendChild(traceFragment);
+  tippy('.trace-entry', { theme: 'dark', delay: [100, 0], allowHTML: true });
+  traceOut.scrollTop = traceOut.scrollHeight;
+  
+  editor.operation(() => {
+    if (highlightedLine !== null) editor.removeLineClass(highlightedLine, "background", "highlight-line");
+    if (entry.line && entry.line.line) {
+        const lineNum = entry.line.line - 1;
+        editor.addLineClass(lineNum, "background", "highlight-line");
+        highlightedLine = lineNum;
     }
-    
-    return code.join('\n');
+  });
+  
+  renderStateTable(trace, allVarsInTrace, index);
+  const chart = generateFlowchart(trace.slice(0, index + 1));
+  const tooltips = trace.slice(0, index + 1).map(s => s.tooltip || '');
+  renderFlowchart(chart, tooltips);
+  document.getElementById("status").textContent = `Step ${index + 1}/${trace.length}`;
 }
-
-function generateNewExercise() {
-    editor.setValue(buildRandomExercise());
-    resetExecution();
-    gtag('event', 'generate_exercise', { event_category: 'Execution' });
-}
-
-document.getElementById('generateExerciseButton').addEventListener('click', generateNewExercise);
-
-generateNewExercise();
 
 function generateFlowchart(steps) {
-  if (!steps || !steps.length) return "flowchart TD\n  Start";
-  let chart = "flowchart TD";
-  let prevNodeId = "Start";
-  chart += `\n  Start`;
-
-  steps.forEach((step, i) => {
-    const nodeId = `S${i}`;
-    const label = step.text.replace(/["<>]/g, '');
-    chart += `\n  ${nodeId}("${label}"):::${step.type}`;
-    chart += `\n  ${prevNodeId} --> ${nodeId}`;
-    prevNodeId = nodeId;
-  });
-
-  chart += "\n  classDef ok fill:#16a34a,stroke:#166534,color:#fff";
-  chart += "\n  classDef explicit fill:#dc2626,stroke:#991b1b,color:#fff";
-  chart += "\n  classDef implicit fill:#ef4444,stroke:#c2410c,color:#fff";
-  chart += "\n  classDef control fill:#4f46e5,stroke:#3730a3,color:#fff";
-  return chart;
+    if (!steps || !steps.length) return "flowchart TD\n  Start";
+    let chart = "flowchart TD\n  Start";
+    let prevNodeId = "Start";
+    steps.forEach((step, i) => {
+        const nodeId = `S${i}`;
+        const label = (step.fullStatement || "").replace(/["<>]/g, '');
+        chart += `\n  ${nodeId}("${label}"):::${step.type}`;
+        chart += `\n  ${prevNodeId} --> ${nodeId}`;
+        prevNodeId = nodeId;
+    });
+    chart += "\n  classDef ok,skip fill:#16a34a,stroke:#166534,color:#fff";
+    chart += "\n  classDef explicit fill:#ef4444,stroke:#991b1b,color:#fff";
+    chart += "\n  classDef implicit fill:#f97316,stroke:#c2410c,color:#fff";
+    chart += "\n  classDef control fill:#4f46e5,stroke:#3730a3,color:#fff";
+    return chart;
 }
+
+function renderStateTable(trace, allVars, currentIndex) {
+    const tableBox = document.getElementById('state-table-box');
+    if (!tableBox) return;
+    let tableHtml = `<table class="table table-dark table-striped"><thead><tr><th>Step</th><th>PC</th>`;
+    allVars.forEach(v => tableHtml += `<th>${v}</th>`);
+    tableHtml += `</tr></thead><tbody>`;
+    trace.slice(0, currentIndex + 1).forEach((step, i) => {
+        const s = step.state;
+        if (!s) return;
+        const activeClass = (i === currentIndex) ? 'active-step-row' : '';
+        tableHtml += `<tr class="${activeClass}">`;
+        tableHtml += `<td data-tippy-content="Execution step number">${i + 1}</td>`;
+        tableHtml += `<td class="level-${s.pc.toLowerCase()}" data-tippy-content="Program Counter security context at step ${i+1} is <b>${s.pc}</b>">${s.pc}</td>`;
+        allVars.forEach(v => {
+            tableHtml += `<td class="level-${(s[v] || 'low').toLowerCase()}" data-tippy-content="Security level of '<code>${v}</code>' at step ${i+1} is <b>${s[v]}</b>">${s[v]}</td>`;
+        });
+        tableHtml += `</tr>`;
+    });
+    tableHtml += `</tbody></table>`;
+    tableBox.innerHTML = tableHtml;
+    tippy('#state-table-box td', { theme: 'dark', allowHTML: true });
+    tableBox.scrollTop = tableBox.scrollHeight;
+}
+
+
+window.addEventListener("DOMContentLoaded", () => {
+    editor = CodeMirror.fromTextArea(document.getElementById("editor"), { mode: "text/x-java", theme: "default", lineNumbers: true, tabSize: 2 });
+    mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
+    function buildRandomExercise() {
+        const highVars = ['hi', 'hi1'];
+        const lowVars = ['lo', 'lo1'];
+        const allVars = [...highVars, ...lowVars];
+        const getRandomAssignment = () => `${allVars[Math.floor(Math.random()*4)]} = ${allVars[Math.floor(Math.random()*4)]} + ${Math.floor(Math.random()*5)};`;
+        
+        const templates = [
+            `if (hi > 5) {\n  lo = 1;\n} else {\n  lo = 0;\n}`, // Classic Implicit
+            `lo = hi;`, // Classic Explicit
+            `if (lo > 0) {\n  hi = 5;\n} else {\n  skip;\n}`, // Secure
+            `while (lo < hi) {\n  lo = lo + 1;\n}`, // Loop implicit
+        ];
+        
+        const randomType = Math.random();
+        if (randomType < 0.5) { // 50% chance for a specific template
+            return templates[Math.floor(Math.random() * templates.length)];
+        } else { // 50% chance for a fully random structure
+            let code = [];
+            const numLines = Math.floor(Math.random() * 2) + 3;
+            for (let i = 0; i < numLines; i++) {
+                const stmtType = Math.random();
+                if (stmtType > 0.6 && i < numLines - 1) {
+                    const condVar = allVars[Math.floor(Math.random()*4)];
+                    code.push(`if (${condVar} > ${Math.floor(Math.random()*10)}) {`);
+                    code.push(`  ${Math.random() > 0.5 ? getRandomAssignment() : 'skip;'}`);
+                    code.push(`} else {`);
+                    code.push(`  ${getRandomAssignment()}`);
+                    code.push(`}`);
+                    i++; 
+                } else {
+                    code.push(getRandomAssignment());
+                }
+            }
+            return code.join('\n');
+        }
+    }
+
+    function generateNewExercise() { 
+        editor.setValue(buildRandomExercise()); 
+        resetExecution(); 
+    }
+    
+    function stopExecution() { 
+        if (intervalId) { 
+            clearInterval(intervalId); 
+            intervalId = null; 
+            document.getElementById("runButton").disabled = false; 
+            document.getElementById("stopButton").disabled = true; 
+            document.getElementById("runButton").innerText = "▶ Run"; 
+        } 
+    }
+
+    function resetExecution() { 
+        stopExecution(); 
+        stepIndex = 0; 
+        fullTrace = []; 
+        allVarsInTrace = []; 
+        document.getElementById("traceOutput").innerHTML = ""; 
+        document.getElementById("flowchartBox").innerHTML = ""; 
+        document.getElementById("state-table-box").innerHTML = ""; 
+        document.getElementById("status").textContent = "Idle"; 
+        if (highlightedLine !== null && editor) { 
+            editor.removeLineClass(highlightedLine, "background", "highlight-line");
+            highlightedLine = null; 
+        } 
+        renderFlowchart(generateFlowchart([]), []);
+    }
+
+    document.getElementById('generateExerciseButton').addEventListener('click', generateNewExercise);
+    document.getElementById("runButton").onclick = () => {
+        resetExecution();
+        const analysisResult = analyzeCode(editor.getValue());
+        fullTrace = analysisResult.steps;
+        allVarsInTrace = analysisResult.allVars;
+        stepIndex = 0;
+        if (!fullTrace.length) return;
+        document.getElementById("runButton").disabled = true;
+        document.getElementById("stopButton").disabled = false;
+        document.getElementById("runButton").innerText = "⏸ Running";
+        gtag('event', 'run_analysis', { event_category: 'Execution' });
+        const delay = 2100 - parseInt(document.getElementById("speedSlider").value);
+        intervalId = setInterval(() => { if (stepIndex >= fullTrace.length) { stopExecution(); return; } updateUiForStep(stepIndex++); }, delay);
+    };
+    
+    document.getElementById("nextButton").onclick = () => { 
+        stopExecution(); 
+        if (!fullTrace.length || stepIndex >= fullTrace.length -1) { 
+            const res = analyzeCode(editor.getValue()); 
+            fullTrace = res.steps; 
+            allVarsInTrace = res.allVars; 
+            stepIndex = 0;
+            updateUiForStep(stepIndex);
+        } else { 
+            stepIndex++;
+            updateUiForStep(stepIndex); 
+        }
+        gtag('event', 'step_next', { event_category: 'Execution' });
+    };
+
+    document.getElementById("prevButton").onclick = () => { 
+        stopExecution(); 
+        if (stepIndex > 0) {
+             stepIndex--; 
+             updateUiForStep(stepIndex); 
+        }
+        gtag('event', 'step_prev', { event_category: 'Execution' });
+    };
+    
+    document.getElementById("gotoButton").onclick = () => {
+        stopExecution(); 
+        const target = parseInt(document.getElementById("gotoIndex").value); 
+        if (fullTrace.length && !isNaN(target) && target > 0 && target <= fullTrace.length) { 
+            stepIndex = target - 1; 
+            updateUiForStep(stepIndex); 
+        }
+        gtag('event', 'go_to_step', { event_category: 'Execution' });
+    };
+
+    document.getElementById("stopButton").onclick = stopExecution;
+    document.getElementById("resetButton").onclick = resetExecution;
+
+    const params = new URLSearchParams(window.location.search);
+    const shareCode = params.get("sharecode");
+    if (shareCode) {
+        try { editor.setValue(decodeURIComponent(escape(atob(shareCode)))); } 
+        catch (e) { console.error("Invalid sharecode", e); generateNewExercise(); }
+    } else {
+        generateNewExercise();
+    }
+    gtag('event', 'tool_loaded', { event_category: 'Page' });
+});
 
 async function renderFlowchart(chartText, tooltips) {
   const flowchartBox = document.getElementById("flowchartBox");
+  if (!flowchartBox) return;
   const renderId = 'mermaid-graph-' + Date.now();
-
   try {
     const { svg } = await mermaid.render(renderId, chartText);
     flowchartBox.innerHTML = svg;
     const svgElement = flowchartBox.querySelector("svg");
     if (svgElement) {
-        svgElement.style.maxWidth = '100%'; 
+        svgElement.style.maxWidth = '12%'; 
         const nodes = flowchartBox.querySelectorAll("g.node");
         nodes.forEach((node, i) => {
             if (i > 0 && tooltips[i - 1]) {
@@ -487,167 +578,6 @@ async function renderFlowchart(chartText, tooltips) {
     flowchartBox.innerHTML = `<div class="alert alert-danger p-2">Flowchart rendering failed.</div>`;
   }
 }
-
-function updateUiForStep(trace, index) {
-  const traceOut = document.getElementById("traceOutput");
-  traceOut.innerHTML = "";
-  
-  const traceFragment = document.createDocumentFragment();
-
-  trace.slice(0, index + 1).forEach(s => {
-    const entryDiv = document.createElement('div');
-    entryDiv.className = `trace-entry ${s.type}`;
-    entryDiv.setAttribute('data-tippy-content', s.tooltip || '');
-
-    const isViolation = s.type === 'explicit' || s.type === 'implicit';
-    const statusIcon = isViolation ? '🔴' : (s.type === 'ok' ? '🟢' : '🔵');
-    const statusClass = isViolation ? 'violation' : s.type;
-    
-    entryDiv.innerHTML = `
-        <div class="trace-header">
-            <div><span class="status-icon ${statusClass}">${statusIcon}</span><span>${s.fullStatement}</span></div>
-            <span class="status-tag">${s.status || ''}</span>
-        </div>
-        <div class="trace-details">
-            <span>${s.flow || `pc becomes ${s.newPc}`}</span>
-            <span class="trace-type-tag">${s.type}</span>
-        </div>
-    `;
-    traceFragment.appendChild(entryDiv);
-  });
-
-  traceOut.appendChild(traceFragment);
-  tippy('.trace-entry', { theme: 'dark', delay: [100, 0], allowHTML: true });
-  traceOut.scrollTop = traceOut.scrollHeight;
-
-  editor.operation(() => {
-    if (highlightedLine !== null) {
-        editor.removeLineClass(highlightedLine, "background", "highlight-line");
-    }
-    const entry = trace[index];
-    if (entry && entry.line && entry.line.line) {
-        const lineNum = entry.line.line - 1;
-        editor.addLineClass(lineNum, "background", "highlight-line");
-        highlightedLine = lineNum;
-    }
-  });
-
-  const chart = generateFlowchart(trace.slice(0, index + 1));
-  const tooltips = trace.slice(0, index + 1).map(s => s.tooltip || '');
-  renderFlowchart(chart, tooltips);
-
-  document.getElementById("status").textContent = `Step ${index + 1}/${trace.length}`;
-}
-
-function stopExecution() {
-    if (!intervalId) return;
-    clearInterval(intervalId);
-    intervalId = null;
-    document.getElementById("runButton").disabled = false;
-    document.getElementById("stopButton").disabled = true;
-    document.getElementById("runButton").innerText = "▶ Run";
-}
-
-function resetExecution() {
-  stopExecution();
-  stepIndex = 0;
-  fullTrace = [];
-  document.getElementById("traceOutput").innerHTML = "";
-  document.getElementById("flowchartBox").innerHTML = "Flowchart will render here...";
-  document.getElementById("status").textContent = "Idle";
-  editor.operation(() => {
-    if(highlightedLine !== null) {
-        editor.removeLineClass(highlightedLine, "background", "highlight-line");
-        highlightedLine = null;
-    }
-  });
-  renderFlowchart(generateFlowchart([]), []);
-  gtag('event', 'reset_clicked', { event_category: 'Execution' });
-}
-
-document.getElementById("runButton").onclick = () => {
-  resetExecution();
-  fullTrace = analyzeCode(editor.getValue());
-  stepIndex = 0;
-  if (!fullTrace.length) return;
-
-  document.getElementById("runButton").disabled = true;
-  document.getElementById("stopButton").disabled = false;
-  document.getElementById("runButton").innerText = "⏸ Running";
-  
-  gtag('event', 'run_clicked', { event_category: 'Execution' });
-
-  const delay = 2100 - parseInt(document.getElementById("speedSlider").value);
-  intervalId = setInterval(() => {
-    if (stepIndex >= fullTrace.length) {
-      stopExecution();
-      return;
-    }
-    updateUiForStep(fullTrace, stepIndex++);
-  }, delay);
-};
-
-document.getElementById("stopButton").onclick = () => {
-    stopExecution();
-    gtag('event', 'stop_clicked', { event_category: 'Execution' });
-};
-
-document.getElementById("nextButton").onclick = () => {
-  stopExecution();
-  if (!fullTrace.length || stepIndex >= fullTrace.length) {
-    fullTrace = analyzeCode(editor.getValue());
-    stepIndex = 0;
-  }
-  if (stepIndex < fullTrace.length) {
-      updateUiForStep(fullTrace, stepIndex++);
-  }
-  gtag('event', 'step_next', { event_category: 'Execution' });
-};
-
-document.getElementById("prevButton").onclick = () => {
-    stopExecution();
-    if(stepIndex > 1) {
-        stepIndex--;
-        updateUiForStep(fullTrace, stepIndex - 1);
-    }
-    gtag('event', 'step_prev', { event_category: 'Execution' });
-};
-
-document.getElementById("gotoButton").onclick = () => {
-    stopExecution();
-    const target = parseInt(document.getElementById("gotoIndex").value);
-    if (fullTrace.length && !isNaN(target) && target > 0 && target <= fullTrace.length) {
-        stepIndex = target;
-        updateUiForStep(fullTrace, stepIndex - 1);
-    }
-    gtag('event', 'goto_step', { event_category: 'Execution' });
-};
-
-document.getElementById("resetButton").onclick = resetExecution;
-
-document.getElementById("shareButton").onclick = () => {
-  const code = editor.getValue();
-  const encoded = btoa(unescape(encodeURIComponent(code)));
-  const url = `${window.location.origin}${window.location.pathname}?sharecode=${encoded}`;
-  navigator.clipboard.writeText(url).then(() => alert("Shareable link copied to clipboard!"));
-  gtag('event', 'share_link', { event_category: 'Share' });
-};
-
-window.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  const shareCode = params.get("sharecode");
-  if (shareCode) {
-    try {
-      const decoded = decodeURIComponent(escape(atob(shareCode)));
-      editor.setValue(decoded);
-    } catch (e) { console.error("Invalid sharecode", e); }
-  } else {
-      generateNewExercise();
-  }
-  renderFlowchart(generateFlowchart([]), []);
-  gtag('event', 'tool_loaded', { event_category: 'Page' });
-});
-
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
