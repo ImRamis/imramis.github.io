@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PoC: Cross-Origin Information Leaks — Chrome 145</title>
+<style>
+  body { font-family: 'Courier New', monospace; background: #0a0a0a; color: #00ff41; padding: 20px; }
+  h1 { color: #ff3333; border-bottom: 1px solid #333; padding-bottom: 10px; }
+  h2 { color: #ffaa00; margin-top: 30px; }
+  .test-block { background: #111; border: 1px solid #333; border-radius: 4px; padding: 15px; margin: 10px 0; }
+  .result { padding: 5px 10px; margin: 3px 0; font-size: 13px; }
+  .pass { color: #00ff41; }
+  .fail { color: #ff3333; }
+  .info { color: #00bfff; }
+  .warn { color: #ffaa00; }
+  #summary { margin-top: 30px; padding: 15px; border: 2px solid #ffaa00; background: #1a1a00; }
+  button { background: #222; color: #00ff41; border: 1px solid #00ff41; padding: 8px 16px; cursor: pointer; margin: 5px; font-family: inherit; }
+  button:hover { background: #00ff41; color: #000; }
+  pre { background: #0d0d0d; padding: 10px; overflow-x: auto; border: 1px solid #222; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+  th, td { border: 1px solid #333; padding: 6px 10px; text-align: left; font-size: 12px; }
+  th { background: #1a1a1a; color: #ffaa00; }
+</style>
+</head>
+<body>
+
+<h1>[PoC] Cross-Origin Information Leaks — Chrome 145</h1>
+<p class="info">
+  Tests cross-origin information leakage via frame counting, window property
+  probing, timing side-channels, redirect detection, Resource Timing API,
+  history length, and error-based oracles.
+</p>
+<p class="warn">⚠ Educational / authorized-testing only.</p>
+
+<button onclick="runAllTests()">▶ Run All Tests</button>
+<button onclick="clearResults()">Clear</button>
+
+<div id="frame-container" style="display:none"></div>
+
+<!-- ============================================================ -->
+<h2>1. Frame Counting (window.length)</h2>
+<div class="test-block" id="test-frame-count"></div>
+
+<!-- ============================================================ -->
+<h2>2. Window Property Detection (cross-origin)</h2>
+<div class="test-block" id="test-win-props"></div>
+
+<!-- ============================================================ -->
+<h2>3. Navigation Timing / Redirect Detection</h2>
+<div class="test-block" id="test-redirect"></div>
+
+<!-- ============================================================ -->
+<h2>4. Resource Timing API Leaks</h2>
+<div class="test-block" id="test-resource-timing"></div>
+
+<!-- ============================================================ -->
+<h2>5. Error-Based Content Type Oracle</h2>
+<div class="test-block" id="test-error-oracle"></div>
+
+<!-- ============================================================ -->
+<h2>6. History Length Leak</h2>
+<div class="test-block" id="test-history"></div>
+
+<!-- ============================================================ -->
+<h2>7. onload/onerror Timing Oracle</h2>
+<div class="test-block" id="test-load-timing"></div>
+
+<!-- ============================================================ -->
+<h2>8. Performance.now() Fetch Timing</h2>
+<div class="test-block" id="test-fetch-timing"></div>
+
+<!-- ============================================================ -->
+<h2>9. Cross-Origin PDF / Download Detection</h2>
+<div class="test-block" id="test-download"></div>
+
+<!-- ============================================================ -->
+<div id="summary"></div>
+
+<script>
+"use strict";
+
+const results = {};
+const frameContainer = document.getElementById("frame-container");
+
+/* Target URLs for cross-origin tests — using known public sites */
+const TARGETS = [
+  { name: "example.com",      url: "https://example.com" },
+  { name: "google.com",       url: "https://www.google.com" },
+  { name: "wikipedia.org",    url: "https://en.wikipedia.org" },
+  { name: "nonexistent.test", url: "https://nonexistent.invalid" },
+];
+
+function log(target, msg, cls = "info") {
+  const el = document.getElementById(target);
+  const d = document.createElement("div");
+  d.className = "result " + cls;
+  d.textContent = msg;
+  el.appendChild(d);
+}
+
+function clearResults() {
+  document.querySelectorAll(".test-block").forEach(b => b.innerHTML = "");
+  document.getElementById("summary").innerHTML = "";
+  frameContainer.innerHTML = "";
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ============================================================
+   TEST 1 — Frame Counting (window.length)
+   The number of iframes in a cross-origin page is leaked via
+   window.length on the opened window reference.
+   ============================================================ */
+async function testFrameCount() {
+  const t = "test-frame-count";
+  log(t, "[*] Testing frame count leak via window.length ...");
+  log(t, "[i] window.length reveals # of child frames in any opened window, cross-origin or not.", "info");
+
+  const frameResults = [];
+
+  for (const target of TARGETS) {
+    log(t, `[*] Testing ${target.name} ...`);
+
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = target.url;
+    frameContainer.appendChild(iframe);
+
+    await new Promise(resolve => {
+      iframe.onload = resolve;
+      iframe.onerror = resolve;
+      setTimeout(resolve, 5000); /* timeout fallback */
+    });
+
+    try {
+      const frameCount = iframe.contentWindow.length;
+      log(t, `[!] ${target.name}: window.length = ${frameCount}`, frameCount > 0 ? "fail" : "warn");
+      frameResults.push({ site: target.name, frames: frameCount, leaked: true });
+    } catch (e) {
+      log(t, `[+] ${target.name}: window.length blocked — ${e.name}`, "pass");
+      frameResults.push({ site: target.name, frames: "blocked", leaked: false });
+    }
+
+    iframe.remove();
+  }
+
+  results["frame_count"] = frameResults;
+
+  const leakedCount = frameResults.filter(r => r.leaked).length;
+  if (leakedCount > 0) {
+    log(t, `[!] Frame count leaked for ${leakedCount}/${TARGETS.length} targets.`, "fail");
+    log(t, "[i] This is a known XS-Leak — frame count reveals page state.", "warn");
+  }
+}
+
+/* ============================================================
+   TEST 2 — Window Property Detection
+   Probe which window properties are accessible cross-origin.
+   Per spec: window, self, location (partial), close, closed,
+   focus, blur, frames, length, top, opener, parent, postMessage.
+   ============================================================ */
+async function testWindowProps() {
+  const t = "test-win-props";
+  log(t, "[*] Probing cross-origin window properties ...");
+
+  const iframe = document.createElement("iframe");
+  iframe.src = "https://example.com";
+  iframe.style.display = "none";
+  frameContainer.appendChild(iframe);
+
+  await new Promise(resolve => {
+    iframe.onload = resolve;
+    setTimeout(resolve, 5000);
+  });
+
+  const w = iframe.contentWindow;
+  const propertiesToTest = [
+    "window", "self", "location", "close", "closed", "focus", "blur",
+    "frames", "length", "top", "opener", "parent", "postMessage",
+    /* These should be blocked cross-origin: */
+    "document", "localStorage", "sessionStorage", "indexedDB",
+    "cookie", "alert", "fetch", "XMLHttpRequest", "navigator",
+    "innerWidth", "innerHeight", "outerWidth", "outerHeight",
+    "screen", "history", "performance", "crypto",
+    "name", /* Chrome 145: window.name may be cleared on navigation */
+  ];
+
+  const accessible = [];
+  const blocked = [];
+
+  for (const prop of propertiesToTest) {
+    try {
+      const val = w[prop];
+      accessible.push({ prop, type: typeof val });
+    } catch (e) {
+      blocked.push({ prop, error: e.name });
+    }
+  }
+
+  log(t, `[i] Accessible properties (${accessible.length}):`, "info");
+  accessible.forEach(a => {
+    const expected = ["window","self","location","close","closed","focus","blur",
+      "frames","length","top","opener","parent","postMessage"].includes(a.prop);
+    const cls = expected ? "info" : "fail";
+    const prefix = expected ? "[i]" : "[!]";
+    log(t, `    ${prefix} ${a.prop} (${a.type})${expected ? '' : ' — UNEXPECTED ACCESS'}`, cls);
+  });
+
+  log(t, `[i] Blocked properties (${blocked.length}):`, "info");
+  blocked.forEach(b => log(t, `    [+] ${b.prop} → ${b.error}`, "pass"));
+
+  const unexpected = accessible.filter(a =>
+    !["window","self","location","close","closed","focus","blur",
+      "frames","length","top","opener","parent","postMessage"].includes(a.prop)
+  );
+
+  results["window_props"] = {
+    accessible: accessible.length,
+    blocked: blocked.length,
+    unexpected: unexpected.map(u => u.prop)
+  };
+
+  if (unexpected.length > 0) {
+    log(t, `[!] ${unexpected.length} unexpected properties accessible cross-origin!`, "fail");
+  } else {
+    log(t, "[+] Only expected properties accessible cross-origin.", "pass");
+  }
+
+  iframe.remove();
+}
+
+/* ============================================================
+   TEST 3 — Redirect Detection
+   Detect whether a cross-origin URL redirects by measuring
+   timing or observing final URL changes.
+   ============================================================ */
+async function testRedirectDetection() {
+  const t = "test-redirect";
+  log(t, "[*] Testing cross-origin redirect detection ...");
+
+  const testUrls = [
+    { name: "direct (no redirect)", url: "https://example.com", expectRedirect: false },
+    { name: "http→https redirect", url: "http://example.com", expectRedirect: true },
+    { name: "www redirect", url: "https://google.com", expectRedirect: true },
+  ];
+
+  for (const test of testUrls) {
+    log(t, `[*] Testing: ${test.name} (${test.url}) ...`);
+
+    /* Method 1: Timing-based redirect detection via fetch */
+    const start = performance.now();
+    try {
+      await fetch(test.url, { mode: "no-cors", cache: "no-store", redirect: "follow" });
+    } catch(e) { /* expected for cross-origin */ }
+    const duration = performance.now() - start;
+
+    log(t, `    [i] Fetch duration: ${duration.toFixed(2)} ms`, "info");
+
+    /* Method 2: iframe load timing */
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    const iframeStart = performance.now();
+    iframe.src = test.url;
+    frameContainer.appendChild(iframe);
+
+    await new Promise(resolve => {
+      iframe.onload = resolve;
+      setTimeout(resolve, 5000);
+    });
+
+    const iframeDuration = performance.now() - iframeStart;
+    log(t, `    [i] Iframe load duration: ${iframeDuration.toFixed(2)} ms`, "info");
+
+    /* Method 3: Check if origin changed (via error pattern) */
+    let originChanged = false;
+    try {
+      /* Will throw for cross-origin, but the error itself may differ */
+      iframe.contentWindow.location.href;
+    } catch (e) {
+      log(t, `    [i] Location access error: ${e.name}`, "info");
+    }
+
+    iframe.remove();
+  }
+
+  log(t, "[i] Redirect detection via timing is a known XS-Leak vector.", "warn");
+  results["redirect_detection"] = "MEASURED (see timing data above)";
+}
+
+/* ============================================================
+   TEST 4 — Resource Timing API Leaks
+   PerformanceResourceTiming exposes timing info for resources.
+   Cross-origin resources without TAO should have zeroed fields.
+   ============================================================ */
+async function testResourceTiming() {
+  const t = "test-resource-timing";
+  log(t, "[*] Testing Resource Timing API information leaks ...");
+
+  if (typeof PerformanceObserver === "undefined") {
+    log(t, "[i] PerformanceObserver not available.", "warn");
+    results["resource_timing"] = "API UNAVAILABLE";
+    return;
+  }
+
+  /* Clear existing entries */
+  performance.clearResourceTimings();
+
+  /* Fetch cross-origin resources */
+  const fetches = [
+    { name: "example.com (no TAO)", url: "https://example.com/favicon.ico" },
+    { name: "google.com", url: "https://www.google.com/favicon.ico" },
+  ];
+
+  for (const f of fetches) {
+    try {
+      await fetch(f.url, { mode: "no-cors", cache: "no-store" });
+    } catch (e) { /* expected */ }
+  }
+
+  await sleep(1000);
+
+  const entries = performance.getEntriesByType("resource");
+  const crossOriginEntries = entries.filter(e =>
+    !e.name.startsWith(location.origin)
+  );
+
+  log(t, `[i] Total resource entries: ${entries.length}, cross-origin: ${crossOriginEntries.length}`, "info");
+
+  const timingLeaks = [];
+
+  for (const entry of crossOriginEntries) {
+    const host = new URL(entry.name).hostname;
+    const info = {
+      host,
+      /* These should be 0 for cross-origin without TAO header */
+      duration: entry.duration,
+      transferSize: entry.transferSize,
+      encodedBodySize: entry.encodedBodySize,
+      decodedBodySize: entry.decodedBodySize,
+      /* Timing fields that should be 0 without TAO */
+      redirectStart: entry.redirectStart,
+      redirectEnd: entry.redirectEnd,
+      domainLookupStart: entry.domainLookupStart,
+      domainLookupEnd: entry.domainLookupEnd,
+      connectStart: entry.connectStart,
+      connectEnd: entry.connectEnd,
+      requestStart: entry.requestStart,
+      responseStart: entry.responseStart,
+      responseEnd: entry.responseEnd,
+      /* These are always available */
+      startTime: entry.startTime,
+      fetchStart: entry.fetchStart,
+      /* TAO check */
+      nextHopProtocol: entry.nextHopProtocol,
+    };
+
+    const sensitiveLeaks = [];
+    if (info.transferSize > 0) sensitiveLeaks.push("transferSize");
+    if (info.encodedBodySize > 0) sensitiveLeaks.push("encodedBodySize");
+    if (info.redirectStart > 0) sensitiveLeaks.push("redirectStart");
+    if (info.requestStart > 0) sensitiveLeaks.push("requestStart");
+    if (info.responseStart > 0) sensitiveLeaks.push("responseStart");
+
+    if (sensitiveLeaks.length > 0) {
+      log(t, `[!] ${host}: leaks → ${sensitiveLeaks.join(", ")}`, "fail");
+      timingLeaks.push({ host, leaks: sensitiveLeaks });
+    } else {
+      log(t, `[+] ${host}: timing fields zeroed (TAO enforced).`, "pass");
+    }
+
+    /* Duration is always available — this is an intentional leak */
+    log(t, `    [i] ${host}: duration=${info.duration.toFixed(2)}ms, protocol=${info.nextHopProtocol}`, "info");
+  }
+
+  if (crossOriginEntries.length === 0) {
+    log(t, "[i] No cross-origin resource entries captured (may need HTTPS).", "warn");
+  }
+
+  /* Always-available fields that leak info */
+  log(t, "\n[i] Even without TAO, these always leak:", "warn");
+  log(t, "    • startTime, duration — request timing", "warn");
+  log(t, "    • nextHopProtocol — protocol version", "warn");
+  log(t, "    • entry existence — confirms resource reachability", "warn");
+
+  results["resource_timing"] = {
+    entries: crossOriginEntries.length,
+    leaks: timingLeaks.length,
+    details: timingLeaks
+  };
+}
+
+/* ============================================================
+   TEST 5 — Error-Based Content Type Oracle
+   Loading cross-origin URLs as different types (script, img, etc.)
+   reveals info about the response based on success/failure.
+   ============================================================ */
+async function testErrorOracle() {
+  const t = "test-error-oracle";
+  log(t, "[*] Testing error-based content type oracle ...");
+
+  const targetUrl = "https://example.com";
+
+  const elementTests = [
+    { tag: "script", attr: "src", desc: "script element" },
+    { tag: "img", attr: "src", desc: "image element" },
+    { tag: "link", attr: "href", desc: "stylesheet link", extraAttrs: { rel: "stylesheet" } },
+    { tag: "video", attr: "src", desc: "video element" },
+    { tag: "audio", attr: "src", desc: "audio element" },
+    { tag: "object", attr: "data", desc: "object element" },
+  ];
+
+  const oracleResults = [];
+
+  for (const test of elementTests) {
+    const result = await new Promise((resolve) => {
+      const el = document.createElement(test.tag);
+      if (test.extraAttrs) {
+        for (const [k, v] of Object.entries(test.extraAttrs)) el[k] = v;
+      }
+
+      const timer = setTimeout(() => {
+        el.remove();
+        resolve({ type: test.desc, result: "timeout" });
+      }, 5000);
+
+      el.onload = () => {
+        clearTimeout(timer);
+        el.remove();
+        resolve({ type: test.desc, result: "loaded", leaked: true });
+      };
+
+      el.onerror = () => {
+        clearTimeout(timer);
+        el.remove();
+        resolve({ type: test.desc, result: "error", leaked: true });
+      };
+
+      el[test.attr] = targetUrl + "?type=" + test.tag + "&t=" + Date.now();
+      document.body.appendChild(el);
+    });
+
+    const icon = result.leaked ? "[~]" : "[i]";
+    const cls = result.leaked ? "warn" : "info";
+    log(t, `${icon} ${result.type}: ${result.result}`, cls);
+    oracleResults.push(result);
+  }
+
+  const leaked = oracleResults.filter(r => r.leaked).length;
+  log(t, `\n[i] ${leaked}/${oracleResults.length} element types provided load/error signal.`, leaked > 0 ? "warn" : "pass");
+  log(t, "[i] Load/error events reveal content type info about cross-origin resources.", "warn");
+
+  results["error_oracle"] = oracleResults;
+}
+
+/* ============================================================
+   TEST 6 — History Length Leak
+   history.length reveals navigation count — can detect if
+   a cross-origin redirect occurred.
+   ============================================================ */
+function testHistory() {
+  const t = "test-history";
+  log(t, "[*] Testing history.length information leak ...");
+
+  const historyBefore = history.length;
+  log(t, `[i] Current history.length: ${historyBefore}`, "info");
+
+  /* Open cross-origin page in iframe and check if history changes */
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = "https://example.com";
+  frameContainer.appendChild(iframe);
+
+  iframe.onload = () => {
+    try {
+      const iframeHistory = iframe.contentWindow.history.length;
+      log(t, `[!] Cross-origin iframe history.length: ${iframeHistory}`, "fail");
+      results["history_length"] = `LEAKED (iframe: ${iframeHistory})`;
+    } catch (e) {
+      log(t, `[+] Cross-origin history.length blocked: ${e.name}`, "pass");
+      results["history_length"] = "BLOCKED";
+    }
+
+    const historyAfter = history.length;
+    log(t, `[i] Parent history.length after iframe: ${historyAfter}`, "info");
+
+    if (historyAfter !== historyBefore) {
+      log(t, "[~] History length changed after cross-origin iframe load.", "warn");
+    }
+
+    iframe.remove();
+  };
+
+  setTimeout(() => {
+    if (!results["history_length"]) {
+      results["history_length"] = "TIMEOUT";
+      iframe.remove();
+    }
+  }, 5000);
+}
+
+/* ============================================================
+   TEST 7 — onload/onerror Timing Oracle
+   Precise timing of onload vs onerror can distinguish between
+   different page states (logged in vs out, exists vs 404).
+   ============================================================ */
+async function testLoadTiming() {
+  const t = "test-load-timing";
+  log(t, "[*] Testing onload/onerror timing oracle ...");
+
+  const testUrls = [
+    { name: "example.com (exists)", url: "https://example.com" },
+    { name: "example.com/404", url: "https://example.com/nonexistent-page-xyz" },
+    { name: "nonexistent.invalid", url: "https://nonexistent.invalid" },
+  ];
+
+  const timingResults = [];
+
+  for (const test of testUrls) {
+    const result = await new Promise((resolve) => {
+      const img = document.createElement("img");
+      const start = performance.now();
+
+      const timeout = setTimeout(() => {
+        resolve({ name: test.name, event: "timeout", time: performance.now() - start });
+      }, 8000);
+
+      img.onload = () => {
+        clearTimeout(timeout);
+        resolve({ name: test.name, event: "load", time: performance.now() - start });
+      };
+
+      img.onerror = () => {
+        clearTimeout(timeout);
+        resolve({ name: test.name, event: "error", time: performance.now() - start });
+      };
+
+      img.src = test.url + "?img_probe=" + Date.now();
+    });
+
+    log(t, `[i] ${result.name}: ${result.event} in ${result.time.toFixed(2)}ms`, "info");
+    timingResults.push(result);
+  }
+
+  /* Compare timings */
+  if (timingResults.length >= 2) {
+    const times = timingResults.map(r => r.time);
+    const maxDiff = Math.max(...times) - Math.min(...times);
+    if (maxDiff > 100) {
+      log(t, `[~] Timing difference of ${maxDiff.toFixed(0)}ms — state distinguishable.`, "warn");
+    } else {
+      log(t, `[+] Timing difference only ${maxDiff.toFixed(0)}ms — hard to distinguish.`, "pass");
+    }
+  }
+
+  results["load_timing"] = timingResults;
+}
+
+/* ============================================================
+   TEST 8 — Performance.now() Fetch Timing
+   Measure cross-origin fetch timing at high precision.
+   ============================================================ */
+async function testFetchTiming() {
+  const t = "test-fetch-timing";
+  log(t, "[*] Testing high-precision fetch timing for cross-origin ...");
+
+  const testUrls = [
+    { name: "example.com", url: "https://example.com" },
+    { name: "google.com", url: "https://www.google.com" },
+  ];
+
+  const fetchTimings = [];
+
+  for (const test of testUrls) {
+    const times = [];
+
+    for (let i = 0; i < 5; i++) {
+      const start = performance.now();
+      try {
+        await fetch(test.url + "?t=" + Date.now() + "&i=" + i, {
+          mode: "no-cors",
+          cache: "no-store"
+        });
+      } catch (e) { /* expected */ }
+      times.push(performance.now() - start);
+    }
+
+    const avg = times.reduce((a, b) => a + b, 0) / times.length;
+    const min = Math.min(...times);
+    const max = Math.max(...times);
+    const stddev = Math.sqrt(times.reduce((s, t) => s + (t - avg) ** 2, 0) / times.length);
+
+    log(t, `[i] ${test.name}: avg=${avg.toFixed(2)}ms, min=${min.toFixed(2)}ms, max=${max.toFixed(2)}ms, σ=${stddev.toFixed(2)}ms`, "info");
+
+    fetchTimings.push({
+      name: test.name,
+      avg: +avg.toFixed(2),
+      min: +min.toFixed(2),
+      max: +max.toFixed(2),
+      stddev: +stddev.toFixed(2)
+    });
+  }
+
+  if (fetchTimings.length >= 2) {
+    const diff = Math.abs(fetchTimings[0].avg - fetchTimings[1].avg);
+    if (diff > 50) {
+      log(t, `[~] ${diff.toFixed(0)}ms avg difference between targets — sites distinguishable.`, "warn");
+    } else {
+      log(t, `[+] Only ${diff.toFixed(0)}ms difference — limited timing leak.`, "pass");
+    }
+  }
+
+  results["fetch_timing"] = fetchTimings;
+}
+
+/* ============================================================
+   TEST 9 — Download / Content-Disposition Detection
+   Detect if a URL triggers download vs render, which reveals
+   Content-Disposition header and content type info.
+   ============================================================ */
+async function testDownloadDetection() {
+  const t = "test-download";
+  log(t, "[*] Testing download/render detection for cross-origin URLs ...");
+
+  const testUrl = "https://example.com";
+
+  /* Method: iframe navigation — if the iframe "downloads" instead
+     of rendering, the iframe's contentWindow may behave differently */
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = testUrl;
+  frameContainer.appendChild(iframe);
+
+  let loadFired = false;
+
+  await new Promise(resolve => {
+    iframe.onload = () => {
+      loadFired = true;
+      resolve();
+    };
+    setTimeout(resolve, 5000);
+  });
+
+  if (loadFired) {
+    log(t, "[i] iframe onload fired — content rendered (not downloaded).", "info");
+
+    try {
+      const len = iframe.contentWindow.length;
+      log(t, `[i] iframe frame count: ${len}`, "info");
+    } catch (e) {
+      log(t, `[i] Cross-origin access blocked: ${e.name}`, "info");
+    }
+  } else {
+    log(t, "[~] iframe onload did NOT fire — possible download or block.", "warn");
+  }
+
+  iframe.remove();
+
+  /* Method 2: window.open detection (blocked without user gesture) */
+  log(t, "[i] window.open-based download detection requires user gesture.", "info");
+
+  /* Method 3: Content-Type sniffing via <object> */
+  const obj = document.createElement("object");
+  obj.data = testUrl;
+  obj.style.display = "none";
+
+  await new Promise(resolve => {
+    obj.onload = () => {
+      log(t, "[i] <object> loaded — content is embeddable.", "info");
+      resolve();
+    };
+    obj.onerror = () => {
+      log(t, "[i] <object> error — content blocked/download.", "info");
+      resolve();
+    };
+    document.body.appendChild(obj);
+    setTimeout(resolve, 5000);
+  });
+
+  obj.remove();
+
+  results["download_detection"] = loadFired ? "RENDERED" : "DOWNLOAD/BLOCKED";
+
+  log(t, "\n[i] Download detection leaks:", "warn");
+  log(t, "    • Whether URL triggers download vs render", "warn");
+  log(t, "    • Content-Type category (HTML, image, PDF, etc.)", "warn");
+  log(t, "    • Content-Disposition header presence", "warn");
+}
+
+/* ============================================================
+   RUN ALL
+   ============================================================ */
+async function runAllTests() {
+  clearResults();
+  results["timestamp"] = new Date().toISOString();
+  results["userAgent"] = navigator.userAgent;
+
+  await testFrameCount();
+  await testWindowProps();
+  await testRedirectDetection();
+  await testResourceTiming();
+  await testErrorOracle();
+  testHistory();
+  await sleep(2000); /* let history test settle */
+  await testLoadTiming();
+  await testFetchTiming();
+  await testDownloadDetection();
+
+  renderSummary();
+}
+
+function renderSummary() {
+  const el = document.getElementById("summary");
+  el.innerHTML = "<h2 style='color:#ffaa00;margin-top:0'>Summary — Cross-Origin Leaks</h2>";
+
+  const known = [
+    "Frame counting (window.length) — per-spec leak",
+    "Resource timing duration — always available",
+    "Error/load events — reveal content type",
+    "Fetch timing — network fingerprint",
+  ];
+
+  const knownDiv = document.createElement("div");
+  knownDiv.innerHTML = "<p class='warn'><strong>Known XS-Leaks (by design, hard to fix):</strong></p>" +
+    known.map(k => `<div class="result warn">• ${k}</div>`).join("");
+  el.appendChild(knownDiv);
+
+  const pre = document.createElement("pre");
+  pre.textContent = JSON.stringify(results, null, 2);
+  el.appendChild(pre);
+}
+</script>
+</body>
+</html>

