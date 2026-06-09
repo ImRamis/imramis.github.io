@@ -79,8 +79,8 @@ temp/
 # Build output (legacy)
 dist/
 
-# Local helper scripts
-build-data.mjs
+# One-time local content helper (build-posts.mjs IS tracked — CI runs it)
+build-content.mjs
 
 # Private / role-targeted source CVs at repo root — kept local only.
 # Publishable, neutral-named copies live in assets/cv/ (those ARE tracked).

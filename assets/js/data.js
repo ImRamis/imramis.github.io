@@ -1,52 +1,67 @@
-/* Core factual data — Muhammad Ramis. Lens-rich content lives in content.js (window.CONTENT). */
+/* Core factual data — Muhammad Ramis. Lens-rich content lives in content.js (window.CONTENT) and posts.js (window.POSTS). */
 window.DATA = {
   profile: {
     name: 'Muhammad Ramis',
     initials: 'MR',
     headline: 'Penetration Tester & Security-Minded Engineer',
     location: 'Nottingham, United Kingdom',
-    availability: 'Open to UK roles · SC/NSV clearable · relocation',
-    email: 'mramis1@outlook.com',
-    phone: '+44 7789 399920',
+    availability: 'Open to UK roles · relocation',
+    // Email is split to deter scrapers; revealed on interaction by app.js.
+    emailUser: 'mramis1',
+    emailDomain: 'outlook.com',
     domain: 'ramis.me',
     socials: [
       { id: 'linkedin', label: 'LinkedIn', icon: 'fa-brands fa-linkedin-in', url: 'https://linkedin.com/in/imramis' },
       { id: 'github', label: 'GitHub', icon: 'fa-brands fa-github', url: 'https://github.com/imRamis' },
-      { id: 'stackoverflow', label: 'Stack Overflow', icon: 'fa-brands fa-stack-overflow', url: 'https://stackoverflow.com/users/16912003/ramis' },
-      { id: 'tryhackme', label: 'TryHackMe', icon: 'fa-solid fa-flag', url: 'https://tryhackme.com/p/mriramis' }
+      { id: 'tryhackme', label: 'TryHackMe', icon: 'fa-solid fa-flag', url: 'https://tryhackme.com/p/mriramis' },
+      { id: 'stackoverflow', label: 'Stack Overflow', icon: 'fa-brands fa-stack-overflow', url: 'https://stackoverflow.com/users/16912003/ramis' }
     ],
     cvByLens: {
       overview: 'assets/cv/muhammad-ramis-cv.pdf',
-      offensive: 'assets/cv/muhammad-ramis-offensive-security.pdf',
-      defensive: 'assets/cv/muhammad-ramis-security-engineer.pdf',
+      cybersecurity: 'assets/cv/muhammad-ramis-offensive-security.pdf',
       engineering: 'assets/cv/muhammad-ramis-software-engineer.pdf',
+      aiml: 'assets/cv/muhammad-ramis-ai-security.pdf',
       uiux: 'assets/cv/muhammad-ramis-web-developer.pdf'
     }
   },
 
+  // Rotating roles for the gateway typewriter — red / blue / purple + disciplines.
+  roles: [
+    'Penetration Tester',
+    'Red Teamer',
+    'Blue-Team Defender',
+    'Purple — both sides of the wire',
+    'Exploit Developer  ·  OSED next',
+    'Bug Bounty Hunter  ·  51 findings',
+    'Java & .NET Backend Engineer',
+    'AI / LLM Security Researcher',
+    'Builder & Breaker'
+  ],
+
   // Gateway / switcher metadata. Rich content per id comes from window.CONTENT.tracks
   lenses: [
-    { id: 'offensive',   label: 'Offensive Security',  short: 'Offensive',   icon: 'fa-user-secret',
-      blurb: 'Pen testing, red/purple teaming, exploit dev and a 51-finding bug-bounty record.',
-      rgb: '255,71,111' },
-    { id: 'defensive',   label: 'Defensive & Security Eng.', short: 'Defensive', icon: 'fa-shield-halved',
-      blurb: 'Detection, SAST/DAST automation, hardening, GDPR controls and incident response.',
-      rgb: '34,211,238' },
+    { id: 'cybersecurity', label: 'Cybersecurity', short: 'Cybersecurity', icon: 'fa-shield-halved',
+      blurb: 'Red + blue — pen testing, exploit dev, detection engineering and a 51-finding bug-bounty record.',
+      rgb: '255,77,109', rgb2: '255,154,61' },
     { id: 'engineering', label: 'Software Engineering', short: 'Engineering', icon: 'fa-code',
-      blurb: 'Cloud-native .NET/Node/Go microservices and high-scale APIs (6.5M req/day).',
-      rgb: '167,139,250' },
-    { id: 'uiux',        label: 'UI / UX Engineering',  short: 'UI·UX',       icon: 'fa-pen-ruler',
-      blurb: 'React/TypeScript design systems, accessible dashboards and WCAG 2.2 AA delivery.',
-      rgb: '244,114,182' }
+      blurb: 'Java/Spring + Kafka, .NET, Go & Node microservices and high-scale APIs (6.5M req/day).',
+      rgb: '129,140,248', rgb2: '56,189,248' },
+    { id: 'aiml', label: 'AI / ML Engineering', short: 'AI / ML', icon: 'fa-brain',
+      blurb: 'LLM security, AI agents, ML for security telemetry and applied research.',
+      rgb: '52,211,153', rgb2: '34,211,238' },
+    { id: 'uiux', label: 'UI / UX Engineering', short: 'UI / UX', icon: 'fa-pen-ruler',
+      blurb: 'Accessible React/TypeScript design systems, dashboards and product UX.',
+      rgb: '251,113,133', rgb2: '251,191,36' }
   ],
   overviewLens: { id: 'overview', label: 'The full picture', short: 'Overview', icon: 'fa-layer-group',
-    blurb: 'Not sure where to start? See everything — the offensive, defensive, engineering and design sides together.',
-    rgb: '110,231,255' },
+    blurb: 'Not sure where to start? See everything — security, engineering, AI, games and design together.',
+    rgb: '110,231,255', rgb2: '139,123,255' },
 
   marquee: [
     'OSCP+', 'OSED (scheduled)', 'MSc Cyber Security & AI — Distinction', '51 bug-bounty findings',
-    'Burp Suite', 'Ghidra', 'Active Directory', 'AWS · Azure · GCP', 'Kubernetes', 'C#/.NET', 'Rust', 'Go',
-    'React · TypeScript', 'WCAG 2.2 AA', 'Semgrep · CodeQL', 'OWASP · MITRE ATT&CK', 'BugTraceAI'
+    'Burp Suite', 'Ghidra', 'Active Directory', 'Java · Spring Boot', 'Apache Kafka', 'C#/.NET', 'Go', 'Rust',
+    'AWS · Azure · GCP', 'Kubernetes', 'PyTorch · LLM agents', 'React · TypeScript', 'WCAG 2.2 AA',
+    'Semgrep · CodeQL', 'OWASP · MITRE ATT&CK', 'BugTraceAI'
   ],
 
   certifications: [
@@ -76,35 +91,35 @@ window.DATA = {
       period: '2024 — Present',
       desc: 'Full-time offensive research across public bug-bounty programs and AI/LLM security.',
       points: [
-        'Exploit-tested public web apps and APIs for authorization bypass, IDOR/BOLA, race conditions, SSRF and sensitive-data exposure — 51 accepted findings across five programs.',
+        'Exploit-tested public web apps and APIs for authorization bypass, IDOR/BOLA, race conditions, SSRF and sensitive-data exposure — 51 accepted findings across five programs (Bugcrowd, HackerOne, Google, YesWeHack, Intigriti).',
         'Built repeatable Burp + Python workflows for endpoint discovery, authorization-matrix testing and reproducible evidence capture.',
-        'Researched AI/LLM abuse: prompt injection, unsafe tool invocation and model data leakage across agent trust boundaries.'
+        'Researched AI/LLM abuse: prompt injection, unsafe tool invocation and model data leakage across agent trust boundaries; shipped BugTraceAI, a self-hosted AI security scanner.'
       ],
       tags: ['Bug Bounty', 'Burp Suite', 'Python', 'API Testing', 'AI/LLM Security']
     },
     {
-      role: 'Lead Software Engineer / AppSec Engineer',
+      role: 'Lead Software / AppSec & Senior Java Backend Engineer',
       company: 'Sorvox Groups',
       period: '2022 — 2024',
-      desc: 'Led web, API and infrastructure penetration tests end-to-end while building the security automation around them.',
+      desc: 'Led penetration testing end-to-end while building Spring Boot/Kafka microservices and the security automation around them.',
       points: [
-        'Owned web, REST API and internal/external infra pentests across Linux, Windows and Active Directory estates; drove remediation with engineering teams and executive boards.',
-        'Identified complex vulnerability chains (BOLA, auth/session flaws, injection, SSRF, insecure uploads) and audited AWS/Azure for IAM over-permissioning, exposed storage and leaked secrets.',
-        'Built an LLM triage layer over scanner output that cut duplicate review 61%; mentored junior testers through shadowing, code review and purple-team workshops.'
+        'Built Spring Boot microservices integrating Apache Kafka for event-driven architectures handling 50K+ daily financial transactions; led a team of 8 with TDD (JUnit 5, TestContainers), reaching 88% coverage and cutting production incidents 65%.',
+        'Owned web, API and infra penetration tests across Linux/Windows/Active Directory and AWS/Azure; identified BOLA, injection, SSRF and IAM over-permissioning chains and drove remediation.',
+        'Shipped an LLM triage layer over scanner output that cut duplicate review 61%; added observability (Micrometer, Prometheus, Grafana, distributed tracing) with defined SLIs/SLOs.'
       ],
-      tags: ['Web/API Pentest', 'AWS · Azure', 'Burp · Nessus · Nmap', 'Semgrep · CodeQL', 'Python · Rust']
+      tags: ['Java · Spring Boot', 'Apache Kafka', 'AWS EKS', 'Web/API Pentest', 'Semgrep · CodeQL']
     },
     {
-      role: 'IT Department Lead / Secure SDLC',
+      role: 'IT Department Lead / Secure SDLC & Senior Java Backend Engineer',
       company: 'Apricart (e-commerce & payments)',
       period: '2020 — 2022',
-      desc: 'Ran security and secure delivery for a regulated, payment-handling e-commerce platform.',
+      desc: 'Ran security and secure delivery for a regulated, payment-handling e-commerce platform built on Java microservices.',
       points: [
-        'Hardened authentication, authorization and PCI-relevant payment flows handling sensitive financial and customer data.',
-        'Ran network and infrastructure testing (Kali, Nessus) across Linux, Windows and Active Directory; remediated injection, IDOR, weak validation and secrets exposure.',
-        'Mapped 74 PII fields and closed 24 GDPR Article 30/32 control gaps; maintained the internal testing methodology and secure-coding standards.'
+        'Built highly-scalable Spring Boot microservices serving 800K+ daily requests at 99.8% availability (Spring Data JPA, Hibernate); event-driven order/inventory/payment flows with Kafka consumers.',
+        'Hardened authentication, authorization and PCI-relevant payment flows; ran network/infra testing (Kali, Nessus) and remediated injection, IDOR, weak validation and secrets exposure.',
+        'Mapped 74 PII fields and closed 24 GDPR Article 30/32 control gaps; optimised PostgreSQL + Redis caching to cut DB load 40%.'
       ],
-      tags: ['PHP/Laravel', 'Secure SDLC', 'PCI', 'GDPR', 'Network/Infra Testing']
+      tags: ['Java · Spring Boot', 'Kafka', 'PostgreSQL · Redis', 'Secure SDLC', 'PCI · GDPR']
     },
     {
       role: 'Software Engineer (Full-Stack / Lead) & Startup CTO',
@@ -112,11 +127,11 @@ window.DATA = {
       period: '2016 — 2019',
       desc: 'Delivered real-time products and APIs with security built in from the client layer down.',
       points: [
-        'Built API, admin and real-time messaging features with input validation, CSRF protection, secure session handling and role/data-access controls.',
-        'Designed real-time messaging on WebSockets/REST scaling to thousands of concurrent users at sub-100ms delivery, on AWS/Azure infrastructure.',
+        'Built a real-time messaging platform (Spring Boot, Spring WebSocket, JPA persistence); delivered MVP in 4 months, scaling to 8K+ users with AWS auto-scaling.',
+        'Delivered REST APIs and admin journeys with input validation, CSRF protection, secure sessions and role/data-access controls.',
         'Acted as the primary offensive tester for early-stage deployments and championed secure-by-default configuration.'
       ],
-      tags: ['Node.js', 'WebSockets', 'REST APIs', 'AWS · Azure', 'Secure Coding']
+      tags: ['Java · Spring', 'WebSockets', 'REST APIs', 'AWS', 'Secure Coding']
     }
   ],
 

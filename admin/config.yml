@@ -1,0 +1,54 @@
+# Decap CMS configuration.
+# Edit posts in the browser at /admin; entries are committed as Markdown to
+# content/posts/, then CI (build-posts.mjs) compiles them into the live blog.
+#
+# Local editing (no auth needed): run `npx decap-server` in another terminal,
+# then open /admin — local_backend routes writes straight to your working tree.
+#
+# Live editing on ramis.me: set up a GitHub OAuth app + a small OAuth proxy
+# (e.g. a free Cloudflare Worker) and point base_url/auth_endpoint at it, or
+# host on Netlify and switch backend to git-gateway.
+
+backend:
+  name: github
+  repo: imRamis/imramis.github.io   # <-- change if you rename the repo for ramis.me
+  branch: main
+
+local_backend: true
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+publish_mode: simple
+site_url: https://ramis.me
+display_url: https://ramis.me
+
+collections:
+  - name: posts
+    label: "Blog & Write-ups"
+    label_singular: "Post"
+    folder: content/posts
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    format: frontmatter
+    summary: "{{title}}  ·  {{track}}  ·  {{date}}"
+    sortable_fields: [date, title, track]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, picker_utc: true }
+      - label: "Track"
+        name: "track"
+        widget: "select"
+        default: "cybersecurity"
+        options:
+          - { label: "Cybersecurity", value: "cybersecurity" }
+          - { label: "Software Engineering", value: "engineering" }
+          - { label: "AI / ML", value: "aiml" }
+          - { label: "Game Dev", value: "gamedev" }
+          - { label: "UI / UX", value: "uiux" }
+          - { label: "Research", value: "research" }
+      - { label: "Reading time", name: "readingTime", widget: "string", required: false, hint: "e.g. '8 min read' — auto-estimated at build if left blank" }
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Tags", name: "tags", widget: "list", default: ["security"] }
+      - { label: "Body", name: "body", widget: "markdown" }

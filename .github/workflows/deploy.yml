@@ -19,12 +19,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Zero-build static site — publish the repository root as-is to the
-      # gh-pages branch, keeping the ramis.me custom domain.
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Compile CMS markdown (content/posts/*.md) -> assets/js/posts.js
+      - name: Compile blog posts
+        run: node build-posts.mjs
+
+      # Publish the static site root to the gh-pages branch with the custom domain.
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
           cname: ramis.me
-          exclude_assets: '.github,build-data.mjs,*.docx'
+          exclude_assets: '.github,build-content.mjs,build-posts.mjs,content,*.docx'

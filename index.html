@@ -51,6 +51,8 @@
     <div class="bg-grid"></div>
     <div class="bg-aurora"><span></span><span></span><span></span></div>
   </div>
+  <div class="spotlight" id="spotlight" aria-hidden="true"></div>
+  <div class="lens-flash" id="lensFlash" aria-hidden="true"></div>
 
   <!-- ============ GATEWAY ============ -->
   <section id="gateway" class="gateway" aria-label="Choose a lens to explore the portfolio">
@@ -58,7 +60,7 @@
       <span class="gateway__badge"><span class="dot"></span> Available for work · Nottingham, UK</span>
       <h1 class="gateway__name">Muhammad Ramis</h1>
       <p class="gateway__roles"><span id="gatewayRoles"></span><span class="cursor">▋</span></p>
-      <p class="gateway__sub">OSCP+ penetration tester and engineer who works on both sides of the wire — breaking systems, then building the things that keep them standing.</p>
+      <p class="gateway__sub">Red, blue, and the purple in between — I break systems, then engineer the detection, platforms and interfaces that keep them standing.</p>
       <p class="gateway__prompt">Choose your <b>lens</b> — I'll tailor everything to what you came to see.</p>
       <div class="lens-grid" id="lensGrid"><!-- lens cards injected --></div>
       <p class="gateway__foot">Prefer the classics? <a href="#" id="enterAll">Skip the intro and view the full portfolio →</a></p>
@@ -78,6 +80,7 @@
         <a href="#about" data-nav>About</a>
         <a href="#focus" data-nav>Focus</a>
         <a href="#projects" data-nav>Projects</a>
+        <a href="#bugbounty" data-nav>Bug Bounty</a>
         <a href="#experience" data-nav>Experience</a>
         <a href="#credentials" data-nav>Credentials</a>
         <a href="#blog" data-nav>Blog</a>
@@ -174,6 +177,18 @@
       </div>
     </section>
 
+    <!-- BUG BOUNTY -->
+    <section class="section" id="bugbounty">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Bug bounty</span>
+          <h2 class="section-title">51 findings · <span class="grad">five programs</span></h2>
+          <p class="section-sub">Accepted coordinated-disclosure findings across Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti — authorization, logic, race-condition and SSRF flaws, each with a reproducible PoC.</p>
+        </div>
+        <div id="bugBounty"></div>
+      </div>
+    </section>
+
     <!-- EXPERIENCE -->
     <section class="section" id="experience">
       <div class="wrap">
@@ -211,6 +226,7 @@
         </div>
         <div class="filters reveal" id="blogFilters"></div>
         <div class="blog-grid" id="blogGrid"></div>
+        <p class="cms-note reveal"><i class="fa-solid fa-feather"></i> Written in the open — posts live as Markdown in the repo and are published through a Git-based CMS.</p>
       </div>
     </section>
 
@@ -258,6 +274,7 @@
   <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg"></span></div>
 
   <script src="assets/js/content.js"></script>
+  <script src="assets/js/posts.js"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
