@@ -696,5 +696,31 @@ body.gateway-open { overflow: hidden; }
 .readmore { margin-top: .6rem; display: inline-flex; align-items: center; gap: .4rem; font-weight: 600; color: var(--accent); background: none; padding: 0; font-size: .9rem; }
 .readmore i { transition: transform .3s; }
 
+/* Bug-bounty highlights — tap to expand */
+.bb__hlcard { width: 100%; text-align: left; cursor: pointer; display: block; }
+.bb__hlhead { display: flex; align-items: center; gap: .6rem; }
+.bb__hlhead h5 { font-family: var(--font-display); font-size: 1rem; margin: 0; flex: 1; }
+.bb__hlhead .chev { color: var(--text-faint); font-size: .7rem; transition: transform .3s; }
+.bb__hlcard.open .bb__hlhead .chev { transform: rotate(180deg); }
+.bb__hlblurb { color: var(--text-dim); font-size: .87rem; max-height: 0; overflow: hidden; opacity: 0; transition: max-height .4s var(--ease), opacity .3s, margin .3s; }
+.bb__hlcard.open .bb__hlblurb { max-height: 180px; opacity: 1; margin-top: .55rem; }
+
+/* Certification description — clamp to keep cards uniform */
+.cert__desc { margin-top: .8rem; color: var(--text-dim); font-size: .85rem; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Blog cards — per-track accent + clamped excerpt */
+.post { border-top: 3px solid rgb(var(--pc, 110, 231, 255)); }
+.post__lens { color: rgb(var(--pc, 110, 231, 255)) !important; border-color: rgba(var(--pc, 110, 231, 255), .4) !important; }
+.post__excerpt { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Project hover preview (desktop pointers only) */
+@media (hover: hover) and (pointer: fine) {
+  .proj__peek { position: absolute; left: 0; right: 0; bottom: 0; padding: 1.1rem 1.1rem .9rem; font-size: .84rem; line-height: 1.5; color: var(--text-dim);
+    background: linear-gradient(transparent, var(--surface-solid) 42%); border-top: 1px solid var(--border);
+    transform: translateY(101%); opacity: 0; transition: transform .4s var(--ease), opacity .3s; pointer-events: none; }
+  .proj:hover .proj__peek { transform: none; opacity: 1; }
+}
+@media (hover: none) { .proj__peek { display: none; } }
+
 /* ---------- Print ---------- */
 @media print { .nav, .gateway, .to-top, .bg-layer, .scrollbar, .spotlight { display: none !important; } .site { opacity: 1 !important; } }

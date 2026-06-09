@@ -232,12 +232,14 @@
     $('#projectGrid').innerHTML = PROJECTS.map((p, idx) => {
       const stack = p.stack || [];
       const chips = stack.slice(0, 4).map(s => `<span>${s}</span>`).join('') + (stack.length > 4 ? `<span class="more">+${stack.length - 4}</span>` : '');
+      const peek = (((p.blurb || '').match(/^[\s\S]*?[.!?](\s|$)/) || [p.blurb || ''])[0]).trim();
       return `<article class="proj reveal" data-lenses="${p.lenses.join(' ')}" data-idx="${idx}" tabindex="0" role="button" aria-label="${p.title} — open details">
         <div class="proj__top"><span class="proj__ic"><i class="fa-solid ${projIcon(p)}"></i></span><span class="proj__type">${p.type}</span></div>
         <h3 class="proj__title">${p.title}</h3>
         <div class="proj__stat"><i class="fa-solid fa-bolt ic"></i><span>${emphasize((p.metrics && p.metrics[0]) || '')}</span></div>
         <div class="proj__stack">${chips}</div>
         <button class="proj__more" type="button" tabindex="-1">View details <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="proj__peek">${peek}</div>
       </article>`;
     }).join('');
     $$('#projectGrid .proj').forEach(card => {
@@ -293,7 +295,7 @@
     }).join('');
     const hl = bb.highlights.map(h => {
       const sc = /crit/i.test(h.severity) ? 'sev-critical' : /high/i.test(h.severity) ? 'sev-high' : 'sev-medium';
-      return `<div class="bb__hlcard"><span class="sev ${sc}">${h.severity}</span><h5>${h.title}</h5><p>${h.blurb}</p></div>`;
+      return `<button class="bb__hlcard" type="button"><div class="bb__hlhead"><span class="sev ${sc}">${h.severity}</span><h5>${h.title}</h5><i class="fa-solid fa-chevron-down chev"></i></div><p class="bb__hlblurb">${h.blurb}</p></button>`;
     }).join('');
     $('#bugBounty').innerHTML = `<div class="bb reveal">
       <div class="panel">
@@ -301,8 +303,9 @@
         <div class="bb__prog">${programs}</div>
         <div class="bb__sev">${sev}</div>
       </div>
-      <div class="panel"><h3><i class="fa-solid fa-crosshairs"></i> Representative findings</h3><div class="bb__hl">${hl}</div></div>
+      <div class="panel"><h3><i class="fa-solid fa-crosshairs"></i> Representative findings <span style="color:var(--text-faint);font-weight:400;font-size:.78rem">— tap to expand</span></h3><div class="bb__hl">${hl}</div></div>
     </div>`;
+    $$('#bugBounty .bb__hlcard').forEach(b => b.addEventListener('click', () => b.classList.toggle('open')));
   }
 
   /* ---------- TIMELINE ---------- */
@@ -325,10 +328,10 @@
       const status = c.status === 'verified'
         ? `<a class="cert__status verified" href="${c.url}" target="_blank" rel="noopener"><i class="fa-solid fa-circle-check"></i> Verified</a>`
         : `<span class="cert__status progress"><i class="fa-solid fa-hourglass-half"></i> In progress</span>`;
-      cards.push(`<div class="cert"><div class="cert__badge"><i class="fa-solid ${c.icon}"></i></div><div class="cert__name">${c.name}</div><div class="cert__full">${c.full}</div><div class="cert__org">${c.org}</div><div class="cert__date">${c.date}</div>${status}<p class="cert__full" style="margin-top:.8rem;min-height:auto">${c.desc}</p></div>`);
+      cards.push(`<div class="cert"><div class="cert__badge"><i class="fa-solid ${c.icon}"></i></div><div class="cert__name">${c.name}</div><div class="cert__full">${c.full}</div><div class="cert__org">${c.org}</div><div class="cert__date">${c.date}</div>${status}<p class="cert__desc">${c.desc}</p></div>`);
     });
     DATA.education.forEach(e => {
-      cards.push(`<div class="cert"><div class="cert__badge"><i class="fa-solid ${e.icon}"></i></div><div class="cert__name">${e.name}</div><div class="cert__full">${e.org}</div><div class="cert__org">${e.grade}</div><div class="cert__date">${e.date}</div><span class="cert__status verified"><i class="fa-solid fa-graduation-cap"></i> ${e.grade}</span><p class="cert__full" style="margin-top:.8rem;min-height:auto">${e.desc}</p></div>`);
+      cards.push(`<div class="cert"><div class="cert__badge"><i class="fa-solid ${e.icon}"></i></div><div class="cert__name">${e.name}</div><div class="cert__full">${e.org}</div><div class="cert__org">${e.grade}</div><div class="cert__date">${e.date}</div><span class="cert__status verified"><i class="fa-solid fa-graduation-cap"></i> ${e.grade}</span><p class="cert__desc">${e.desc}</p></div>`);
     });
     $('#certGrid').innerHTML = cards.join('');
     $('#achGrid').innerHTML = DATA.achievements.map(a => `<div class="ach"><span class="ach__ic"><i class="fa-solid ${a.icon}"></i></span><div><h4>${a.title}</h4><div class="ach__meta">${a.meta}</div><p>${a.desc}</p></div></div>`).join('');
@@ -336,6 +339,8 @@
 
   /* ---------- BLOG ---------- */
   const lensName = id => (DATA.lenses.find(l => l.id === id) || { short: id === 'research' ? 'Research' : 'Overview' }).short;
+  const TRACK_RGB = { cybersecurity: '255,77,109', engineering: '129,140,248', aiml: '52,211,153', uiux: '251,113,133', research: '52,211,153' };
+  const trackRgb = t => TRACK_RGB[t] || '110,231,255';
   function renderBlogFilters() {
     const filters = [{ id: 'all', label: 'All' }, ...DATA.lenses.map(l => ({ id: l.id, label: l.short })), { id: 'research', label: 'Research' }];
     $('#blogFilters').innerHTML = filters.map((f, i) => `<button class="filter${i === 0 ? ' active' : ''}" data-blogfilter="${f.id}">${f.label}</button>`).join('');
@@ -343,7 +348,7 @@
   }
   function renderBlog(filter) {
     const posts = POSTS.filter(p => filter === 'all' || p.track === filter);
-    $('#blogGrid').innerHTML = posts.map(p => `<article class="post reveal" data-slug="${p.slug}">
+    $('#blogGrid').innerHTML = posts.map(p => `<article class="post reveal" data-slug="${p.slug}" style="--pc:${trackRgb(p.track)}">
       <div class="post__meta"><span class="post__lens">${lensName(p.track)}</span><span>${fmtDate(p.date)}</span><span>· ${p.readingTime}</span></div>
       <h3 class="post__title">${p.title}</h3><p class="post__excerpt">${p.excerpt}</p>
       <div class="post__tags">${(p.tags || []).slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('')}</div>
