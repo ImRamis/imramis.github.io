@@ -1,128 +1,68 @@
-# Muhammad Ramis - Portfolio Website
+# Muhammad Ramis — Portfolio (ramis.me)
 
-A modern, responsive portfolio - OSCP Certified Penetration Tester and MSc Cybersecurity & AI student at University of Sheffield.
+A lens-driven personal portfolio. On arrival, visitors **choose a lens** —
+**Offensive · Defensive · Engineering · UI·UX** (or the full **Overview**) — and the
+entire site re-themes and re-focuses around that discipline. Content spans
+penetration testing, security engineering, cloud-native software and accessible
+product UX, plus a built-in blog.
 
-## 🌟 Features
+## ✨ Highlights
 
-- **Modern Design**: Clean, professional design with dark/light theme support
-- **Interactive Elements**: Terminal animation, particle effects, matrix rain background
-- **Responsive**: Fully responsive design that works on all devices
-- **Performance Optimized**: Lazy loading, optimized animations, and efficient code
-- **SEO Optimized**: Complete meta tags, structured data, and sitemap
-- **Analytics**: Google Analytics and Microsoft Clarity integration
-- **Accessibility**: WCAG compliant with proper ARIA labels
+- **"Choose your lens" gateway** — pick a discipline; accent colour, hero copy,
+  focus areas, toolkit, default project filter and an animated terminal all adapt.
+  Switch lenses anytime from the nav.
+- **Lens-aware content** — four curated content packs (focus areas, tools,
+  projects, contributions) generated from the CV set and wired to one design system.
+- **Blog** — hash-routed (`/#/blog/<slug>`), works on static hosting; clean
+  `/blog/<slug>` deep links resolve via `404.html`.
+- **Heavy on UX** — glassmorphism, aurora background, scroll-reveal, animated
+  counters, marquee, light/dark theme, full keyboard access and
+  `prefers-reduced-motion` support.
+- **Zero build step** — plain HTML/CSS/JS. Open `index.html` and it runs.
 
-## 🚀 Live Demo
-
-Visit: [https://imramis.github.io](https://imramis.github.io)
-
-## 📁 Project Structure
+## 📁 Structure
 
 ```
-├── index.html              # Main HTML file
-├── README.md              # Documentation
-├── .gitignore            # Git ignore file
-├── assets/               # Static assets
-│   ├── favicon.ico
-│   └── Muhammad_Ramis_CV.pdf
-├── css/                  # Stylesheets
-│   ├── main.css         # Main styles
-│   ├── themes.css       # Theme-specific styles
-│   ├── animations.css   # Animation styles
-│   └── responsive.css   # Responsive design
-├── js/                  # JavaScript files
-│   ├── config.js       # Configuration
-│   ├── main.js         # Main application logic
-│   ├── theme.js        # Theme management
-│   ├── animations.js   # Animation scripts
-│   └── data/           # Data files
-│       ├── experience.js
-│       ├── certifications.js
-│       └── projects.js
-└── .github/            # GitHub Actions
-    └── workflows/
-        └── deploy.yml
+index.html              # Shell: gateway, nav, sections, blog, contact
+404.html                # Clean-path → hash-route redirect
+CNAME                   # ramis.me custom domain
+sw.js                   # Unregisters any legacy service worker
+assets/
+  css/style.css         # The whole design system (theming + components + motion)
+  js/
+    data.js             # Factual core: profile, certs, education, experience, awards
+    content.js          # Generated: career tracks, blog posts, overview copy
+    app.js              # Lens engine, rendering, router, animations, markdown
+  cv/                   # Publishable, neutral-named CV PDFs (per discipline)
+  favicon.ico
+build-data.mjs          # Local helper: sanitises generated content → content.js
+.github/workflows/      # Static deploy to GitHub Pages
 ```
 
-## 🛠️ Technologies Used
+## 🚀 Local preview
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Libraries**: 
-  - Particles.js - Interactive particle background
-  - Typed.js - Typing animation effect
-  - Font Awesome - Icons
-- **Analytics**: Google Analytics, Microsoft Clarity
-- **Hosting**: GitHub Pages
-- **CI/CD**: GitHub Actions
-
-## 📋 Key Sections
-
-1. **Hero Section**: Interactive terminal with typing effect
-2. **About**: Skills and expertise overview
-3. **Experience**: Professional timeline with 5+ years experience
-4. **Certifications**: OSCP, MSc, and professional training
-5. **Projects**: Featured security and development projects
-6. **Contact**: Direct contact information and links
-
-## 🎨 Customization
-
-### Theme Colors
-- Dark theme with customizable accent color
-- Light theme for accessibility
-- Color picker for personalization
-
-### Configuration
-Edit `js/config.js` to update:
-- Personal information
-- Social links
-- Analytics IDs
-- Feature flags
-
-## 📱 Responsive Design
-
-- **Desktop**: Full features with hover effects
-- **Tablet**: Optimized layout with touch-friendly navigation
-- **Mobile**: Simplified design with essential information
-
-## 🔒 Privacy & Analytics
-
-- Cookie consent implementation
-- Privacy policy section
-- Anonymous analytics tracking
-- GitHub Pages privacy compliance
-
-## 📈 Performance
-
-- Lighthouse Score: 95+
-- First Contentful Paint: < 1.5s
-- Time to Interactive: < 3.5s
-- Optimized images and assets
-
-## 🚦 Development
-
-1. Clone the repository:
-```bash
-git clone https://github.com/imRamis/imramis.github.io.git
-```
-
-2. Open `index.html` in a browser or use a local server:
 ```bash
 python -m http.server 8000
+# then open http://localhost:8000
 ```
 
-3. Make changes and test locally
+No dependencies, no bundler.
 
-4. Push to GitHub to deploy automatically
+## 🌐 Deployment
 
-## 📝 License
+Pushing to `main` runs `.github/workflows/deploy.yml`, which publishes the repo
+root to GitHub Pages with the `ramis.me` custom domain (`CNAME`). Point the
+`ramis.me` DNS at GitHub Pages and enable HTTPS in the repo's Pages settings.
 
-© 2025 Muhammad Ramis. All rights reserved.
+> Role-targeted source CVs in the repo root are git-ignored (kept private);
+> the neutral copies under `assets/cv/` are the ones served publicly.
 
-## 📧 Contact
+## ✏️ Editing content
 
-- LinkedIn: [linkedin.com/in/imramis](https://linkedin.com/in/imramis)
-- GitHub: [github.com/imRamis](https://github.com/imRamis)
+- **Facts** (experience, certs, awards, contact, lens metadata): `assets/js/data.js`.
+- **Track packs, blog posts, overview copy**: `assets/js/content.js`.
+- **Design**: `assets/css/style.css` (lens accents live in the `[data-lens="…"]` rules).
 
 ---
 
-**Note**: This portfolio is actively maintained and updated with latest projects and achievements.
+© 2026 Muhammad Ramis · [LinkedIn](https://linkedin.com/in/imramis) · [GitHub](https://github.com/imRamis)

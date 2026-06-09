@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting… — Muhammad Ramis</title>
+  <meta name="robots" content="noindex" />
+  <script>
+    // Single-page site with hash routing. Map clean paths (e.g. /blog/<slug>)
+    // onto the hash router so deep links resolve.
+    (function () {
+      var path = location.pathname.replace(/^\/+/, '');
+      var blog = path.match(/^blog\/(.+)$/);
+      if (blog) { location.replace('/#/blog/' + blog[1]); }
+      else { location.replace('/'); }
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting to <a href="/">ramis.me</a>…</p>
+</body>
+</html>

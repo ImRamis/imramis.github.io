@@ -76,6 +76,16 @@ temp/
 *.tmp
 *.temp
 
+# Build output (legacy)
+dist/
+
+# Local helper scripts
+build-data.mjs
+
+# Private / role-targeted source CVs at repo root — kept local only.
+# Publishable, neutral-named copies live in assets/cv/ (those ARE tracked).
+/*.pdf
+
 # Source maps
 *.map
 
