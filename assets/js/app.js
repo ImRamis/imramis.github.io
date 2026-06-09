@@ -114,7 +114,7 @@
   function typeRoles() {
     const roles = (DATA.roles && DATA.roles.length ? DATA.roles : CONTENT.overview.heroTaglines) || ['Penetration Tester'];
     const eln = $('#gatewayRoles');
-    if (reduce) { eln.textContent = roles[0]; return; }
+    if (reduce) { eln.textContent = 'Red + Blue security · engineer · AI/ML · UX'; return; }
     let ri = 0, ci = 0, del = false;
     (function tick() {
       const w = roles[ri];

@@ -28,14 +28,15 @@ window.DATA = {
   // Rotating roles for the gateway typewriter — lead with the full duality,
   // then rotate through facets (red / blue / purple + every discipline).
   roles: [
-    'Penetration Tester × Software Engineer',
     'Red + Blue = Purple Teamer',
+    'Offensive  &  Defensive Security',
+    'Penetration Tester × Software Engineer',
     'Exploit Developer  ·  OSED next',
+    'Detection & Security Engineer',
     'Bug Bounty Hunter  ·  51 findings',
     'Java · .NET · Kafka Backend Engineer',
     'AI / LLM Security Researcher',
     'Accessible UI / UX Engineer',
-    'OSCP+  ·  MSc Cyber Security & AI',
     'Builder & Breaker'
   ],
 
