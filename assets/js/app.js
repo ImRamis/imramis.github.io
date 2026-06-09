@@ -153,7 +153,10 @@
     $('#footSocial').innerHTML = socialLinks();
     const items = DATA.marquee.map(m => `<span>${m}</span>`).join('');
     $('#marquee').innerHTML = items + items;
-    $('#aboutProse').innerHTML = mdToHtml(CONTENT.overview.about);
+    const paras = CONTENT.overview.about.split(/\n\s*\n/);
+    const rest = paras.slice(1).join('\n\n');
+    $('#aboutProse').innerHTML = mdToHtml(paras[0]) + (rest ? `<div class="pmore" hidden>${mdToHtml(rest)}</div><button class="readmore" id="aboutMore" type="button">Read more <i class="fa-solid fa-chevron-down"></i></button>` : '');
+    if (rest) $('#aboutMore').addEventListener('click', function () { const m = $('.pmore'); if (m.hasAttribute('hidden')) { m.removeAttribute('hidden'); this.innerHTML = 'Show less <i class="fa-solid fa-chevron-up"></i>'; } else { m.setAttribute('hidden', ''); this.innerHTML = 'Read more <i class="fa-solid fa-chevron-down"></i>'; } });
     $('#philosophy').innerHTML = CONTENT.overview.philosophy.map(p => `<div class="phi"><span class="phi__ic"><i class="fa-solid fa-${p.icon}"></i></span><div><h4>${p.title}</h4><p>${p.text}</p></div></div>`).join('');
     $('#aboutStats').innerHTML = OVERVIEW.stats.map(statCard).join('');
     renderProjectsOnce();
@@ -192,8 +195,33 @@
     $('#focusEyebrow').textContent = t.label;
     $('#focusTitle').innerHTML = id === 'overview' ? `Four lenses, <span class="grad">one engineer</span>` : `<span class="grad">${t.short}</span> — focus & toolkit`;
     $('#focusSub').textContent = t.summary;
-    $('#focusAreas').innerHTML = `<h3><i class="fa-solid fa-crosshairs"></i> What I work on</h3><div class="focus-list">${t.focusAreas.map(f => `<div class="focus-item"><i class="fa-solid fa-angle-right"></i><span>${f}</span></div>`).join('')}</div>`;
+    $('#focusAreas').innerHTML = `<h3><i class="fa-solid fa-crosshairs"></i> What I work on <span style="color:var(--text-faint);font-weight:400;font-size:.78rem">— tap to expand</span></h3>
+      <div class="focus-tiles">${t.focusAreas.map(f => `<button class="ftile" type="button"><span class="ftile__top"><span class="ic"><i class="fa-solid ${focusIcon(f)}"></i></span><span class="ftile__lbl">${shortLabel(f)}</span><i class="fa-solid fa-chevron-down chev"></i></span><span class="ftile__full">${f}</span></button>`).join('')}</div>`;
+    $$('#focusAreas .ftile').forEach(b => b.addEventListener('click', () => b.classList.toggle('open')));
     $('#focusTools').innerHTML = `<h3><i class="fa-solid fa-toolbox"></i> Tools & tech I reach for</h3><div class="tags">${t.tools.map(x => `<span class="tag">${x}</span>`).join('')}</div>`;
+  }
+  function shortLabel(s) {
+    let base = s.split('(')[0].replace(/\s[—-]\s.*$/, '').trim();
+    const parts = base.split(/,| and | & /);
+    let lab = parts[0].trim();
+    if (lab.length < 16 && parts[1]) lab += ', ' + parts[1].trim();
+    lab = lab.replace(/\s+/g, ' ');
+    if (lab.length > 40) lab = lab.slice(0, 38).replace(/[ ,]+$/, '') + '…';
+    return lab;
+  }
+  function focusIcon(s) {
+    const t = s.toLowerCase();
+    const m = [[/exploit dev|binary|ghidra|reverse|osed|rop/, 'fa-microchip'], [/active.directory|kerber|lateral|cloud attack/, 'fa-network-wired'],
+      [/detection|siem|suricata|ids|monitor/, 'fa-tower-broadcast'], [/sast|dast|ci\/cd|pipeline|automation/, 'fa-robot'],
+      [/threat model|stride/, 'fa-diagram-project'], [/gdpr|privacy|pii|compliance/, 'fa-user-shield'],
+      [/harden|cis|zero.trust|segment/, 'fa-server'], [/incident|forensic/, 'fa-triangle-exclamation'],
+      [/ai|llm|prompt|model|agent/, 'fa-brain'], [/exploit|bola|idor|ssrf|injection|business.logic|race|bug/, 'fa-bug'],
+      [/microservice|kafka|spring|api|grpc|rest/, 'fa-diagram-project'], [/real.time|websocket|stream/, 'fa-bolt'],
+      [/observability|opentelemetry|prometheus|slo/, 'fa-chart-line'], [/data|postgres|redis|sql|mongo/, 'fa-database'],
+      [/accessib|wcag|a11y/, 'fa-universal-access'], [/design system|component|ui|ux|dashboard|motion|figma|handoff/, 'fa-pen-ruler'],
+      [/mlops|pytorch|embedding|vector|anomaly|model eval/, 'fa-wave-square'], [/secure sdlc|devsecops|review/, 'fa-code-branch']];
+    for (const [re, ic] of m) if (re.test(t)) return ic;
+    return 'fa-angle-right';
   }
 
   /* ---------- PROJECTS ---------- */
@@ -202,22 +230,41 @@
     $('#projectFilters').innerHTML = filters.map(f => `<button class="filter" data-filter="${f.id}"><i class="fa-solid ${f.icon}"></i> ${f.label}</button>`).join('');
     $$('#projectFilters .filter').forEach(b => b.addEventListener('click', () => setProjectFilter(b.getAttribute('data-filter'))));
     $('#projectGrid').innerHTML = PROJECTS.map((p, idx) => {
-      const links = Object.entries(p.links || {}).filter(([, v]) => v).map(([k, v]) => {
-        const ic = k === 'repo' ? 'fa-brands fa-github' : k === 'demo' ? 'fa-solid fa-arrow-up-right-from-square' : 'fa-solid fa-book-open';
-        const lbl = k === 'repo' ? 'Code' : k === 'demo' ? 'Live' : 'Write-up';
-        return `<a href="${v}" target="_blank" rel="noopener"><i class="${ic}"></i> ${lbl}</a>`;
-      }).join('');
-      return `<article class="proj reveal" data-lenses="${p.lenses.join(' ')}" data-idx="${idx}">
+      const stack = p.stack || [];
+      const chips = stack.slice(0, 4).map(s => `<span>${s}</span>`).join('') + (stack.length > 4 ? `<span class="more">+${stack.length - 4}</span>` : '');
+      return `<article class="proj reveal" data-lenses="${p.lenses.join(' ')}" data-idx="${idx}" tabindex="0" role="button" aria-label="${p.title} — open details">
         <div class="proj__top"><span class="proj__ic"><i class="fa-solid ${projIcon(p)}"></i></span><span class="proj__type">${p.type}</span></div>
         <h3 class="proj__title">${p.title}</h3>
-        <p class="proj__blurb">${p.blurb}</p>
-        <div class="proj__metrics">${(p.metrics || []).map(m => `<div><i class="fa-solid fa-check"></i><span>${m}</span></div>`).join('')}</div>
-        <div class="proj__stack">${(p.stack || []).map(s => `<span>${s}</span>`).join('')}</div>
-        <div class="proj__links">${links}</div>
+        <div class="proj__stat"><i class="fa-solid fa-bolt ic"></i><span>${emphasize((p.metrics && p.metrics[0]) || '')}</span></div>
+        <div class="proj__stack">${chips}</div>
+        <button class="proj__more" type="button" tabindex="-1">View details <i class="fa-solid fa-arrow-right"></i></button>
       </article>`;
     }).join('');
-    $$('#projectGrid .proj').forEach(attachTilt);
+    $$('#projectGrid .proj').forEach(card => {
+      attachTilt(card);
+      const open = () => openProjectModal(+card.getAttribute('data-idx'));
+      card.addEventListener('click', open);
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
   }
+  const emphasize = s => String(s).replace(/(\d[\d.,]*%?)/g, '<b>$1</b>');
+  function openProjectModal(idx) {
+    const p = PROJECTS[idx]; if (!p) return;
+    const links = Object.entries(p.links || {}).filter(([, v]) => v).map(([k, v]) => {
+      const ic = k === 'repo' ? 'fa-brands fa-github' : k === 'demo' ? 'fa-solid fa-arrow-up-right-from-square' : 'fa-solid fa-book-open';
+      const lbl = k === 'repo' ? 'Code' : k === 'demo' ? 'Live' : 'Write-up';
+      return `<a href="${v}" target="_blank" rel="noopener"><i class="${ic}"></i> ${lbl}</a>`;
+    }).join('');
+    $('#projModalBody').innerHTML = `<span class="modal__ic"><i class="fa-solid ${projIcon(p)}"></i></span>
+      <span class="modal__type">${p.type} · ${p.lenses.map(l => lensMeta(l).short).join(' · ')}</span>
+      <h3 class="modal__title">${p.title}</h3>
+      <p class="modal__blurb">${p.blurb}</p>
+      <div class="modal__metrics">${(p.metrics || []).map(m => `<div><i class="fa-solid fa-check"></i><span>${m}</span></div>`).join('')}</div>
+      <div class="proj__stack" style="margin-bottom:1.3rem">${(p.stack || []).map(s => `<span>${s}</span>`).join('')}</div>
+      <div class="proj__links">${links}</div>`;
+    const m = $('#projModal'); m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+  }
+  function closeProjectModal() { const m = $('#projModal'); m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); if (!$('#article').classList.contains('open')) document.body.style.overflow = ''; }
   function setProjectFilter(id) {
     $$('#projectFilters .filter').forEach(b => b.classList.toggle('active', b.getAttribute('data-filter') === id));
     $$('#projectGrid .proj').forEach(card => {
@@ -264,8 +311,11 @@
       <span class="tl-dot"></span>
       <div class="tl-card"><span class="tl-when">${e.period}</span><h3 class="tl-role">${e.role}</h3><p class="tl-co"><b>${e.company}</b></p>
       <p class="tl-desc">${e.desc}</p>
-      <ul class="tl-points">${e.points.map(p => `<li><i class="fa-solid fa-angle-right"></i><span>${p}</span></li>`).join('')}</ul>
-      <div class="tl-tags">${e.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div></div></div>`).join('');
+      <div class="tl-badges">${(e.metrics || []).map(m => `<span class="tl-badge">${m}</span>`).join('')}</div>
+      <button class="tl-toggle" type="button">Details <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="tl-details"><ul class="tl-points">${e.points.map(p => `<li><i class="fa-solid fa-angle-right"></i><span>${p}</span></li>`).join('')}</ul>
+      <div class="tl-tags">${e.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div></div></div></div>`).join('');
+    $$('#timeline .tl-toggle').forEach(btn => btn.addEventListener('click', () => btn.closest('.tl-item').classList.toggle('open')));
   }
 
   /* ---------- CREDENTIALS ---------- */
@@ -475,6 +525,10 @@
   $$('#navLinks a[data-nav]').forEach(a => a.addEventListener('click', () => $('#navLinks').classList.remove('open')));
 
   function toast(msg) { $('#toastMsg').textContent = msg; const t = $('#toast'); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
+
+  // project modal close handlers
+  $$('#projModal [data-close]').forEach(el => el.addEventListener('click', closeProjectModal));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeProjectModal(); });
 
   /* ============================================================
      INIT

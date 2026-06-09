@@ -97,6 +97,7 @@ window.DATA = {
         'Built repeatable Burp + Python workflows for endpoint discovery, authorization-matrix testing and reproducible evidence capture.',
         'Researched AI/LLM abuse: prompt injection, unsafe tool invocation and model data leakage across agent trust boundaries; shipped BugTraceAI, a self-hosted AI security scanner.'
       ],
+      metrics: ['51 accepted findings', '5 programs', 'AI / LLM research'],
       tags: ['Bug Bounty', 'Burp Suite', 'Python', 'API Testing', 'AI/LLM Security']
     },
     {
@@ -109,6 +110,7 @@ window.DATA = {
         'Owned web, API and infra penetration tests across Linux/Windows/Active Directory and AWS/Azure; identified BOLA, injection, SSRF and IAM over-permissioning chains and drove remediation.',
         'Shipped an LLM triage layer over scanner output that cut duplicate review 61%; added observability (Micrometer, Prometheus, Grafana, distributed tracing) with defined SLIs/SLOs.'
       ],
+      metrics: ['50K+ daily txns', '88% test coverage', '-65% incidents', '-61% triage noise'],
       tags: ['Java · Spring Boot', 'Apache Kafka', 'AWS EKS', 'Web/API Pentest', 'Semgrep · CodeQL']
     },
     {
@@ -121,6 +123,7 @@ window.DATA = {
         'Hardened authentication, authorization and PCI-relevant payment flows; ran network/infra testing (Kali, Nessus) and remediated injection, IDOR, weak validation and secrets exposure.',
         'Mapped 74 PII fields and closed 24 GDPR Article 30/32 control gaps; optimised PostgreSQL + Redis caching to cut DB load 40%.'
       ],
+      metrics: ['800K+ daily req', '99.8% uptime', '24 GDPR gaps closed'],
       tags: ['Java · Spring Boot', 'Kafka', 'PostgreSQL · Redis', 'Secure SDLC', 'PCI · GDPR']
     },
     {
@@ -133,6 +136,7 @@ window.DATA = {
         'Delivered REST APIs and admin journeys with input validation, CSRF protection, secure sessions and role/data-access controls.',
         'Acted as the primary offensive tester for early-stage deployments and championed secure-by-default configuration.'
       ],
+      metrics: ['8K+ users', 'sub-100ms delivery', 'MVP in 4 months'],
       tags: ['Java · Spring', 'WebSockets', 'REST APIs', 'AWS', 'Secure Coding']
     }
   ],
