@@ -91,6 +91,7 @@
   function showView(id) {
     if (!VIEWS.includes(id)) id = 'home';
     currentView = id;
+    root.setAttribute('data-route', id);
     const v = $(`.view[data-view="${id}"]`);
     $$('.view').forEach(el => el.classList.toggle('is-active', el.dataset.view === id));
     $$('[data-tab-link]').forEach(a => a.classList.toggle('active', a.getAttribute('data-tab-link') === id));
@@ -160,10 +161,21 @@
     renderContributions(id);
     renderTerminal(id);
     updateLensControls(id);
+    updateNavForLens(id);
     setProjectFilter(id === 'overview' ? 'all' : id);
     $('#aboutSummary').textContent = t.tagline;
     $('#footLens').textContent = t.short;
     if (!opts.silent) flashLens();
+  }
+
+  // The Security view (bug bounty) is only relevant to the Overview & Cybersecurity lenses —
+  // hide its nav tab for the other lenses, and bounce away if we're sitting on it.
+  const SECURITY_LENSES = ['overview', 'cybersecurity'];
+  function updateNavForLens(id) {
+    const showSec = SECURITY_LENSES.includes(id);
+    const link = $('[data-tab-link="security"]');
+    if (link) link.classList.toggle('nav-hidden', !showSec);
+    if (!showSec && currentView === 'security') go('home');
   }
   function flashLens() { if (reduce) return; const f = $('#lensFlash'); f.classList.remove('run'); void f.offsetWidth; f.classList.add('run'); }
 
@@ -619,7 +631,10 @@
   function buildCmdkItems() {
     const items = [];
     const nav = { home: 'fa-house', about: 'fa-user', work: 'fa-folder-open', security: 'fa-bug', experience: 'fa-briefcase', writing: 'fa-feather', contact: 'fa-paper-plane' };
-    VIEWS.forEach((v, i) => items.push({ group: 'Go to', label: v === 'home' ? 'Home' : VIEW_TITLES[v], hint: `${i + 1}`, icon: nav[v], run: () => go(v) }));
+    VIEWS.forEach((v, i) => {
+      if (v === 'security' && !SECURITY_LENSES.includes(currentLens)) return; // hidden for non-security lenses
+      items.push({ group: 'Go to', label: v === 'home' ? 'Home' : VIEW_TITLES[v], hint: `${i + 1}`, icon: nav[v], run: () => go(v) });
+    });
     [DATA.overviewLens, ...DATA.lenses].forEach(l => items.push({ group: 'Switch lens', label: l.label, hint: l.blurb.slice(0, 60) + '…', icon: l.icon, run: () => setLens(l.id) }));
     items.push({ group: 'Actions', label: 'Toggle light / dark theme', icon: 'fa-circle-half-stroke', run: toggleTheme });
     items.push({ group: 'Actions', label: 'Copy email address', icon: 'fa-envelope', run: () => { navigator.clipboard && navigator.clipboard.writeText(email()); toast('Email copied to clipboard'); } });
@@ -670,10 +685,101 @@
     if (e.key === 'Escape') { closeCmdk(); closeProjectModal(); if ($('#article').classList.contains('open')) location.hash = '#/writing'; return; }
     const typing = /^(input|textarea|select)$/i.test((e.target.tagName || '')) || e.target.isContentEditable;
     if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
-    if (cmdk.classList.contains('open') || $('#article').classList.contains('open') || $('#projModal').classList.contains('open')) return;
+    if (cmdk.classList.contains('open') || $('#article').classList.contains('open') || $('#projModal').classList.contains('open') || document.body.classList.contains('snake-on')) return;
     const n = parseInt(e.key, 10);
     if (n >= 1 && n <= VIEWS.length) go(VIEWS[n - 1]);
   });
+
+  /* ============================================================
+     SNAKE — home easter egg: a mouse-controlled snake that eats the page
+     ============================================================ */
+  (function snakeMode() {
+    const fab = $('#snakeFab'); if (!fab) return;
+    let on = false, cv, ctx, raf, segs, food, parts, score, eaten, hud;
+    const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
+    const rgbVar = (n) => (getComputedStyle(root).getPropertyValue(n).trim() || '110,231,255');
+    const onMove = e => { mouse.x = e.clientX; mouse.y = e.clientY; };
+    const resize = () => { if (cv) { cv.width = innerWidth; cv.height = innerHeight; } };
+
+    function gatherFood() {
+      const sel = '#view-home .tile, #view-home .chip, #view-home .lens-pill, #view-home .stat, #view-home .home__social a, #view-home .marquee__track span, .nav__links a:not(.nav-hidden), .brand, #cmdkBtn';
+      const list = [];
+      $$(sel).forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.width < 4 || r.bottom < 0 || r.top > innerHeight || r.left > innerWidth) return;
+        list.push({ x: r.left + r.width / 2, y: r.top + r.height / 2, el, rad: Math.min(28, Math.max(11, r.height / 2)), eaten: false, pulse: Math.random() * 6 });
+      });
+      return list;
+    }
+    function burst(x, y, rgb) { for (let i = 0; i < 14; i++) { const a = Math.random() * 6.283, sp = 1 + Math.random() * 3.4; parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, rgb }); } }
+
+    function start() {
+      if (on) return; on = true;
+      document.body.classList.add('snake-on');
+      cv = document.createElement('canvas'); cv.className = 'snake-cv'; document.body.appendChild(cv);
+      ctx = cv.getContext('2d'); resize();
+      segs = Array.from({ length: 18 }, () => ({ x: mouse.x, y: mouse.y }));
+      food = gatherFood(); parts = []; score = 0; eaten = [];
+      hud = document.createElement('div'); hud.className = 'snake-hud';
+      hud.innerHTML = `<span class="snake-hud__score">🐍 <b id="snakeScore">0</b> eaten · ${food.length} on the page</span><button class="snake-hud__exit" id="snakeExit" type="button">Esc to exit</button>`;
+      document.body.appendChild(hud);
+      $('#snakeExit').addEventListener('click', stop);
+      window.addEventListener('pointermove', onMove, { passive: true });
+      window.addEventListener('resize', resize);
+      raf = requestAnimationFrame(loop);
+    }
+    function stop() {
+      if (!on) return; on = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('resize', resize);
+      eaten.forEach(el => el.classList.remove('snake-eaten'));
+      if (cv) cv.remove(); if (hud) hud.remove(); cv = hud = ctx = null;
+      document.body.classList.remove('snake-on');
+    }
+
+    function loop() {
+      if (!on) return;
+      const rgb = rgbVar('--accent-rgb'), rgb2 = rgbVar('--accent-2-rgb');
+      const head = segs[0];
+      head.x += (mouse.x - head.x) * 0.22; head.y += (mouse.y - head.y) * 0.22;
+      for (let i = 1; i < segs.length; i++) { const p = segs[i - 1], s = segs[i]; s.x += (p.x - s.x) * 0.46; s.y += (p.y - s.y) * 0.46; }
+
+      for (const f of food) {
+        if (f.eaten) continue;
+        let near = Infinity;
+        for (let k = 0; k < 3 && k < segs.length; k++) near = Math.min(near, Math.hypot(segs[k].x - f.x, segs[k].y - f.y));
+        if (near < f.rad + 16) {
+          f.eaten = true; score++; const sc = $('#snakeScore'); if (sc) sc.textContent = score;
+          const tail = segs[segs.length - 1]; segs.push({ x: tail.x, y: tail.y }, { x: tail.x, y: tail.y });
+          if (f.el) { f.el.classList.add('snake-eaten'); eaten.push(f.el); }
+          burst(f.x, f.y, rgb2);
+        }
+      }
+
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      for (const f of food) {
+        if (f.eaten) continue; f.pulse += 0.06; const r = f.rad * (0.55 + 0.12 * Math.sin(f.pulse));
+        ctx.beginPath(); ctx.arc(f.x, f.y, r, 0, 6.283); ctx.fillStyle = `rgba(${rgb},.14)`; ctx.fill();
+        ctx.beginPath(); ctx.arc(f.x, f.y, 4, 0, 6.283); ctx.fillStyle = `rgb(${rgb})`; ctx.fill();
+      }
+      for (let i = parts.length - 1; i >= 0; i--) { const p = parts[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life -= 0.03; if (p.life <= 0) { parts.splice(i, 1); continue; } ctx.globalAlpha = Math.max(0, p.life); ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, 6.283); ctx.fillStyle = `rgb(${p.rgb})`; ctx.fill(); }
+      ctx.globalAlpha = 1;
+      for (let i = segs.length - 1; i >= 0; i--) {
+        const s = segs[i], t = 1 - i / segs.length, rad = 4 + t * 9;
+        ctx.beginPath(); ctx.arc(s.x, s.y, rad + 4, 0, 6.283); ctx.fillStyle = `rgba(${rgb},${0.12 * t})`; ctx.fill();
+        ctx.beginPath(); ctx.arc(s.x, s.y, rad, 0, 6.283); ctx.fillStyle = i === 0 ? `rgb(${rgb2})` : `rgba(${rgb},${0.5 + 0.5 * t})`; ctx.fill();
+      }
+      const h = segs[0], dx = mouse.x - h.x, dy = mouse.y - h.y, d = Math.hypot(dx, dy) || 1, nx = dx / d, ny = dy / d;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(h.x + nx * 4 - ny * 5, h.y + ny * 4 + nx * 5, 2.6, 0, 6.283); ctx.fill();
+      ctx.beginPath(); ctx.arc(h.x + nx * 4 + ny * 5, h.y + ny * 4 - nx * 5, 2.6, 0, 6.283); ctx.fill();
+      raf = requestAnimationFrame(loop);
+    }
+
+    fab.addEventListener('click', start);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && on) stop(); });
+  })();
 
   /* ============================================================
      INTERACTIVITY
