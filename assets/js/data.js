@@ -6,9 +6,10 @@ window.DATA = {
     headline: 'Penetration Tester & Security-Minded Engineer',
     location: 'Nottingham, United Kingdom',
     availability: 'Open to UK roles · relocation',
-    // Email is split to deter scrapers; revealed on interaction by app.js.
-    emailUser: 'mramis1',
-    emailDomain: 'outlook.com',
+    // Public-facing address (Cloudflare Email Routing forwards hello@ramis.me to the
+    // real inbox, so the personal address is never exposed). Split to deter scrapers.
+    emailUser: 'hello',
+    emailDomain: 'ramis.me',
     domain: 'ramis.me',
     socials: [
       { id: 'linkedin', label: 'LinkedIn', icon: 'fa-brands fa-linkedin-in', url: 'https://linkedin.com/in/imramis' },
