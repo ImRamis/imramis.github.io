@@ -695,33 +695,64 @@
      ============================================================ */
   (function snakeMode() {
     const fab = $('#snakeFab'); if (!fab) return;
-    let on = false, cv, ctx, raf, segs, food, parts, score, eaten, hud;
+    let on = false, cv, ctx, raf, segs, foods, crumbs, dust, eaten, hud, ate;
     const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
     const rgbVar = (n) => (getComputedStyle(root).getPropertyValue(n).trim() || '110,231,255');
     const onMove = e => { mouse.x = e.clientX; mouse.y = e.clientY; };
     const resize = () => { if (cv) { cv.width = innerWidth; cv.height = innerHeight; } };
+
+    const SPEED = 5;     // px/frame — a calm crawl toward the cursor, not a whip
+    const SPACING = 8;   // gap between body segments
+    const HEAD_R = 13;
 
     function gatherFood() {
       const sel = '#view-home .tile, #view-home .chip, #view-home .lens-pill, #view-home .stat, #view-home .home__social a, #view-home .marquee__track span, .nav__links a:not(.nav-hidden), .brand, #cmdkBtn';
       const list = [];
       $$(sel).forEach(el => {
         const r = el.getBoundingClientRect();
-        if (r.width < 4 || r.bottom < 0 || r.top > innerHeight || r.left > innerWidth) return;
-        list.push({ x: r.left + r.width / 2, y: r.top + r.height / 2, el, rad: Math.min(28, Math.max(11, r.height / 2)), eaten: false, pulse: Math.random() * 6 });
+        if (r.width < 6 || r.height < 6 || r.bottom < 0 || r.top > innerHeight || r.left > innerWidth) return;
+        list.push({ el, r, shattered: false });
       });
       return list;
     }
-    function burst(x, y, rgb) { for (let i = 0; i < 14; i++) { const a = Math.random() * 6.283, sp = 1 + Math.random() * 3.4; parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, rgb }); } }
+    function elColor(el) {
+      const cs = getComputedStyle(el);
+      let c = cs.backgroundColor;
+      if (!c || c === 'rgba(0, 0, 0, 0)' || c === 'transparent') c = cs.color;
+      const m = c.match(/(\d+)\D+(\d+)\D+(\d+)/);
+      return m ? [+m[1], +m[2], +m[3]] : null;
+    }
+    // Break an element into a grid of little "lego" blocks the snake can nibble.
+    function shatter(f) {
+      f.shattered = true;
+      const el = f.el, r = el.getBoundingClientRect();
+      const cell = 15;
+      const cols = Math.max(1, Math.min(44, Math.round(r.width / cell)));
+      const rows = Math.max(1, Math.min(18, Math.round(r.height / cell)));
+      const cw = r.width / cols, ch = r.height / rows;
+      const acc = rgbVar('--accent-rgb').split(',').map(Number);
+      const base = elColor(el) || acc;
+      for (let yy = 0; yy < rows; yy++) for (let xx = 0; xx < cols; xx++) {
+        const j = 0.72 + Math.random() * 0.5;
+        const col = [Math.min(255, (base[0] * .45 + acc[0] * .55) * j) | 0, Math.min(255, (base[1] * .45 + acc[1] * .55) * j) | 0, Math.min(255, (base[2] * .45 + acc[2] * .55) * j) | 0];
+        crumbs.push({ x: r.left + xx * cw, y: r.top + yy * ch, w: cw, h: ch, cx: r.left + xx * cw + cw / 2, cy: r.top + yy * ch + ch / 2, col });
+      }
+      el.classList.add('snake-crumbled'); eaten.push(el);
+    }
+    function dropDust(c) {
+      const n = 2 + (Math.random() * 2 | 0);
+      for (let i = 0; i < n; i++) dust.push({ x: c.cx + (Math.random() - .5) * c.w, y: c.cy + (Math.random() - .5) * c.h, vx: (Math.random() - .5) * 1.3, vy: Math.random() * -0.6, life: 1, col: c.col, s: 1.5 + Math.random() * 2.6 });
+    }
 
     function start() {
       if (on) return; on = true;
       document.body.classList.add('snake-on');
       cv = document.createElement('canvas'); cv.className = 'snake-cv'; document.body.appendChild(cv);
       ctx = cv.getContext('2d'); resize();
-      segs = Array.from({ length: 18 }, () => ({ x: mouse.x, y: mouse.y }));
-      food = gatherFood(); parts = []; score = 0; eaten = [];
+      segs = []; for (let i = 0; i < 26; i++) segs.push({ x: mouse.x, y: mouse.y + i * SPACING });
+      foods = gatherFood(); crumbs = []; dust = []; eaten = []; ate = 0;
       hud = document.createElement('div'); hud.className = 'snake-hud';
-      hud.innerHTML = `<span class="snake-hud__score">🐍 <b id="snakeScore">0</b> eaten · ${food.length} on the page</span><button class="snake-hud__exit" id="snakeExit" type="button">Esc to exit</button>`;
+      hud.innerHTML = `<span class="snake-hud__score">🐍 <b id="snakeScore">0</b> crumbs eaten</span><button class="snake-hud__exit" id="snakeExit" type="button">Esc to exit</button>`;
       document.body.appendChild(hud);
       $('#snakeExit').addEventListener('click', stop);
       window.addEventListener('pointermove', onMove, { passive: true });
@@ -733,7 +764,7 @@
       cancelAnimationFrame(raf);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('resize', resize);
-      eaten.forEach(el => el.classList.remove('snake-eaten'));
+      eaten.forEach(el => el.classList.remove('snake-crumbled'));
       if (cv) cv.remove(); if (hud) hud.remove(); cv = hud = ctx = null;
       document.body.classList.remove('snake-on');
     }
@@ -741,39 +772,49 @@
     function loop() {
       if (!on) return;
       const rgb = rgbVar('--accent-rgb'), rgb2 = rgbVar('--accent-2-rgb');
+      // head crawls toward the cursor at a steady speed
       const head = segs[0];
-      head.x += (mouse.x - head.x) * 0.22; head.y += (mouse.y - head.y) * 0.22;
-      for (let i = 1; i < segs.length; i++) { const p = segs[i - 1], s = segs[i]; s.x += (p.x - s.x) * 0.46; s.y += (p.y - s.y) * 0.46; }
-
-      for (const f of food) {
-        if (f.eaten) continue;
-        let near = Infinity;
-        for (let k = 0; k < 3 && k < segs.length; k++) near = Math.min(near, Math.hypot(segs[k].x - f.x, segs[k].y - f.y));
-        if (near < f.rad + 16) {
-          f.eaten = true; score++; const sc = $('#snakeScore'); if (sc) sc.textContent = score;
-          const tail = segs[segs.length - 1]; segs.push({ x: tail.x, y: tail.y }, { x: tail.x, y: tail.y });
-          if (f.el) { f.el.classList.add('snake-eaten'); eaten.push(f.el); }
-          burst(f.x, f.y, rgb2);
-        }
+      const dx = mouse.x - head.x, dy = mouse.y - head.y, d = Math.hypot(dx, dy);
+      if (d > 1) { const step = Math.min(d, SPEED); head.x += dx / d * step; head.y += dy / d * step; }
+      // body keeps a fixed distance behind the segment in front → smooth crawl
+      for (let i = 1; i < segs.length; i++) {
+        const p = segs[i - 1], s = segs[i], ax = s.x - p.x, ay = s.y - p.y, ad = Math.hypot(ax, ay) || 1;
+        s.x = p.x + ax / ad * SPACING; s.y = p.y + ay / ad * SPACING;
       }
+      // shatter elements the head reaches into blocks
+      for (const f of foods) {
+        if (f.shattered) continue; const r = f.r;
+        if (head.x > r.left - HEAD_R && head.x < r.right + HEAD_R && head.y > r.top - HEAD_R && head.y < r.bottom + HEAD_R) shatter(f);
+      }
+      // eat blocks under the front of the snake; each bite drops dust
+      const reach = HEAD_R + 6;
+      for (let i = crumbs.length - 1; i >= 0; i--) {
+        const c = crumbs[i]; let hit = false;
+        for (let k = 0; k < 4 && k < segs.length; k++) { if (Math.abs(segs[k].x - c.cx) < reach && Math.abs(segs[k].y - c.cy) < reach) { hit = true; break; } }
+        if (hit) { dropDust(c); crumbs.splice(i, 1); ate++; if (ate % 3 === 0) { const tl = segs[segs.length - 1]; segs.push({ x: tl.x, y: tl.y }); } }
+      }
+      if (ate) { const sc = $('#snakeScore'); if (sc) sc.textContent = ate; }
 
       ctx.clearRect(0, 0, cv.width, cv.height);
-      for (const f of food) {
-        if (f.eaten) continue; f.pulse += 0.06; const r = f.rad * (0.55 + 0.12 * Math.sin(f.pulse));
-        ctx.beginPath(); ctx.arc(f.x, f.y, r, 0, 6.283); ctx.fillStyle = `rgba(${rgb},.14)`; ctx.fill();
-        ctx.beginPath(); ctx.arc(f.x, f.y, 4, 0, 6.283); ctx.fillStyle = `rgb(${rgb})`; ctx.fill();
+      // lego blocks
+      for (const c of crumbs) { ctx.fillStyle = `rgba(${c.col[0]},${c.col[1]},${c.col[2]},.92)`; ctx.fillRect(c.x + .5, c.y + .5, c.w - 1, c.h - 1); }
+      // falling dust
+      for (let i = dust.length - 1; i >= 0; i--) {
+        const p = dust[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.life -= 0.016;
+        if (p.life <= 0 || p.y > innerHeight) { dust.splice(i, 1); continue; }
+        ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = `rgb(${p.col[0]},${p.col[1]},${p.col[2]})`; ctx.fillRect(p.x, p.y, p.s, p.s);
       }
-      for (let i = parts.length - 1; i >= 0; i--) { const p = parts[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life -= 0.03; if (p.life <= 0) { parts.splice(i, 1); continue; } ctx.globalAlpha = Math.max(0, p.life); ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, 6.283); ctx.fillStyle = `rgb(${p.rgb})`; ctx.fill(); }
       ctx.globalAlpha = 1;
+      // snake body
       for (let i = segs.length - 1; i >= 0; i--) {
-        const s = segs[i], t = 1 - i / segs.length, rad = 4 + t * 9;
-        ctx.beginPath(); ctx.arc(s.x, s.y, rad + 4, 0, 6.283); ctx.fillStyle = `rgba(${rgb},${0.12 * t})`; ctx.fill();
+        const s = segs[i], t = 1 - i / segs.length, rad = 4 + t * 8;
+        ctx.beginPath(); ctx.arc(s.x, s.y, rad + 4, 0, 6.283); ctx.fillStyle = `rgba(${rgb},${0.1 * t})`; ctx.fill();
         ctx.beginPath(); ctx.arc(s.x, s.y, rad, 0, 6.283); ctx.fillStyle = i === 0 ? `rgb(${rgb2})` : `rgba(${rgb},${0.5 + 0.5 * t})`; ctx.fill();
       }
-      const h = segs[0], dx = mouse.x - h.x, dy = mouse.y - h.y, d = Math.hypot(dx, dy) || 1, nx = dx / d, ny = dy / d;
+      const h2 = segs[0], ex = mouse.x - h2.x, ey = mouse.y - h2.y, ed = Math.hypot(ex, ey) || 1, nx = ex / ed, ny = ey / ed;
       ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(h.x + nx * 4 - ny * 5, h.y + ny * 4 + nx * 5, 2.6, 0, 6.283); ctx.fill();
-      ctx.beginPath(); ctx.arc(h.x + nx * 4 + ny * 5, h.y + ny * 4 - nx * 5, 2.6, 0, 6.283); ctx.fill();
+      ctx.beginPath(); ctx.arc(h2.x + nx * 4 - ny * 5, h2.y + ny * 4 + nx * 5, 2.4, 0, 6.283); ctx.fill();
+      ctx.beginPath(); ctx.arc(h2.x + nx * 4 + ny * 5, h2.y + ny * 4 - nx * 5, 2.4, 0, 6.283); ctx.fill();
       raf = requestAnimationFrame(loop);
     }
 
