@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Observability and monitoring dashboard UI">
+  <defs>
+    <linearGradient id="mo-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a0f1e"/><stop offset="1" stop-color="#060912"/></linearGradient>
+    <linearGradient id="mo-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#818cf8" stop-opacity=".55"/><stop offset="1" stop-color="#818cf8" stop-opacity="0"/></linearGradient>
+    <linearGradient id="mo-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34d399" stop-opacity=".55"/><stop offset="1" stop-color="#34d399" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#mo-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#11182c"/><rect x="0" y="24" width="800" height="16" fill="#11182c"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#060912"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#737da0" text-anchor="middle">grafana · services</text>
+  <text x="24" y="76" font-family="sans-serif" font-size="16" font-weight="700" fill="#fff">Service health · prod-eu-west</text>
+  <rect x="690" y="58" width="94" height="26" rx="13" fill="#34d39922"/><text x="737" y="75" font-family="sans-serif" font-size="11" fill="#34d399" text-anchor="middle">● all green</text>
+  <!-- 4 graph panels -->
+  <g font-family="sans-serif" font-size="11" fill="#737da0">
+    <rect x="24" y="96" width="370" height="150" rx="12" fill="#ffffff08" stroke="#ffffff12"/><text x="40" y="118">Request rate (req/s)</text>
+    <path d="M40 226 L100 200 L150 210 L200 176 L260 188 L320 150 L378 168 L378 234 L40 234 Z" fill="url(#mo-a)"/><polyline points="40,226 100,200 150,210 200,176 260,188 320,150 378,168" fill="none" stroke="#818cf8" stroke-width="2"/>
+    <rect x="406" y="96" width="370" height="150" rx="12" fill="#ffffff08" stroke="#ffffff12"/><text x="422" y="118">p99 latency (ms)</text>
+    <path d="M422 220 L482 214 L532 222 L582 200 L642 208 L702 192 L760 198 L760 234 L422 234 Z" fill="url(#mo-b)"/><polyline points="422,220 482,214 532,222 582,200 642,208 702,192 760,198" fill="none" stroke="#34d399" stroke-width="2"/>
+    <rect x="24" y="262" width="240" height="150" rx="12" fill="#ffffff08" stroke="#ffffff12"/><text x="40" y="284">CPU / pod</text>
+    <g><rect x="48" y="360" width="22" height="40" rx="4" fill="#818cf8"/><rect x="80" y="340" width="22" height="60" rx="4" fill="#818cf8"/><rect x="112" y="372" width="22" height="28" rx="4" fill="#818cf8"/><rect x="144" y="350" width="22" height="50" rx="4" fill="#818cf8"/><rect x="176" y="330" width="22" height="70" rx="4" fill="#fbbf24"/><rect x="208" y="364" width="22" height="36" rx="4" fill="#818cf8"/></g>
+    <rect x="276" y="262" width="240" height="150" rx="12" fill="#ffffff08" stroke="#ffffff12"/><text x="292" y="284">Error budget</text>
+    <circle cx="396" cy="346" r="44" fill="none" stroke="#ffffff14" stroke-width="12"/><circle cx="396" cy="346" r="44" fill="none" stroke="#34d399" stroke-width="12" stroke-dasharray="248 28" transform="rotate(-90 396 346)"/><text x="396" y="344" font-family="sans-serif" font-size="20" font-weight="700" fill="#fff" text-anchor="middle">99.99%</text><text x="396" y="362" font-size="9" fill="#737da0" text-anchor="middle">SLO met</text>
+    <rect x="528" y="262" width="248" height="150" rx="12" fill="#ffffff08" stroke="#ffffff12"/><text x="544" y="284">Traces</text>
+    <g font-family="monospace" font-size="9" fill="#9aa3c4"><rect x="544" y="296" width="216" height="16" rx="4" fill="#818cf833"/><text x="550" y="308" fill="#c3c9e6">GET /orders  88ms</text><rect x="544" y="318" width="160" height="16" rx="4" fill="#34d39933"/><text x="550" y="330" fill="#c3c9e6">kafka publish  12ms</text><rect x="544" y="340" width="190" height="16" rx="4" fill="#818cf833"/><text x="550" y="352" fill="#c3c9e6">db query  31ms</text><rect x="544" y="362" width="120" height="16" rx="4" fill="#fbbf2433"/><text x="550" y="374" fill="#c3c9e6">cache miss  9ms</text></g>
+  </g>
+  <!-- log tail -->
+  <rect x="24" y="424" width="752" height="56" rx="12" fill="#070a14" stroke="#ffffff10"/>
+  <g font-family="monospace" font-size="10" fill="#737da0"><text x="40" y="446"><tspan fill="#34d399">INFO</tspan>  payment.consumer  processed offset=84412 in 11ms</text><text x="40" y="466"><tspan fill="#fbbf24">WARN</tspan>  retry  circuit half-open → closed after 1 probe</text></g>
+</svg>

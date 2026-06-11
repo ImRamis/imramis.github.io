@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#07080d" />
+
+  <!-- Security headers (GitHub Pages can't set real headers; enforced via meta) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://www.google-analytics.com https://*.clarity.ms; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.clarity.ms; frame-src https://www.clarity.ms; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
 
   <title>Muhammad Ramis — Penetration Tester & Security-Minded Engineer</title>
   <meta name="description" content="Muhammad Ramis — OSCP+ penetration tester and software engineer. Offensive security, defensive engineering, cloud-native development and accessible UI/UX. 51 bug-bounty findings, MSc Cyber Security & AI (Distinction)." />
@@ -13,11 +18,21 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://ramis.me/" />
+  <meta property="og:site_name" content="Muhammad Ramis" />
   <meta property="og:title" content="Muhammad Ramis — Penetration Tester & Security-Minded Engineer" />
   <meta property="og:description" content="Offensive security, defensive engineering, cloud-native development and accessible UI/UX — choose your lens." />
+  <meta property="og:image" content="https://ramis.me/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Muhammad Ramis — OSCP+ penetration tester and engineer. 51 bug-bounty findings, MSc Distinction, 10+ years." />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Muhammad Ramis — Penetration Tester & Security-Minded Engineer" />
+  <meta name="twitter:description" content="Offensive security, defensive engineering, cloud-native development and accessible UI/UX — choose your lens." />
+  <meta name="twitter:image" content="https://ramis.me/assets/og.png" />
 
   <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  <link rel="apple-touch-icon" href="/assets/og.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,7 +43,9 @@
   <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-  <link rel="stylesheet" href="assets/css/style.css?v=5" />
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+  <link rel="dns-prefetch" href="https://www.clarity.ms" />
+  <link rel="stylesheet" href="assets/css/style.css?v=10" />
 
   <script type="application/ld+json">
   {
@@ -44,57 +61,51 @@
   }
   </script>
 </head>
-<body class="gateway-open">
+<body>
 
-  <!-- Animated background -->
+  <a class="skip-link" href="#stage">Skip to content</a>
+  <div id="srAnnounce" class="sr-only" role="status" aria-live="polite"></div>
+
+  <noscript>
+    <div class="noscript-fallback">
+      <h1>Muhammad Ramis — Penetration Tester &amp; Security-Minded Engineer</h1>
+      <p>OSCP+ penetration tester and software engineer based in Nottingham, UK, with 10+ years across offensive security and software engineering. 51 accepted bug-bounty findings across five public programs (Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack, Intigriti), MSc Cyber Security &amp; AI (Distinction, University of Sheffield).</p>
+      <p>Disciplines: offensive &amp; defensive security · Java/Spring/Kafka backends · AI/LLM security &amp; ML · accessible UI/UX engineering.</p>
+      <p>This site is interactive and needs JavaScript. Reach me at <a href="mailto:mramis1@outlook.com">mramis1@outlook.com</a> or via
+        <a href="https://linkedin.com/in/imramis" rel="noopener">LinkedIn</a> ·
+        <a href="https://github.com/imRamis" rel="noopener">GitHub</a>.</p>
+    </div>
+  </noscript>
+
+  <!-- Animated, interactive background -->
   <div class="bg-layer" aria-hidden="true">
     <div class="bg-grid"></div>
     <div class="bg-aurora"><span></span><span></span><span></span></div>
+    <canvas class="bg-fx" id="bgFx"></canvas>
   </div>
-  <div class="spotlight" id="spotlight" aria-hidden="true"></div>
+  <div class="spotlight on" id="spotlight" aria-hidden="true"></div>
   <div class="lens-flash" id="lensFlash" aria-hidden="true"></div>
-
-  <!-- ============ GATEWAY ============ -->
-  <section id="gateway" class="gateway" aria-label="Choose a lens to explore the portfolio">
-    <div class="gateway__inner">
-      <span class="gateway__badge"><span class="dot"></span> Available for work · Nottingham, UK</span>
-      <h1 class="gateway__name">Muhammad Ramis</h1>
-      <p class="gateway__roles"><span id="gatewayRoles"></span><span class="cursor">▋</span></p>
-      <div class="gateway__chips">
-        <span class="chip"><i class="fa-solid fa-user-secret"></i> Red Team · Offensive</span>
-        <span class="chip"><i class="fa-solid fa-shield-halved"></i> Blue Team · Detection</span>
-        <span class="chip"><i class="fa-solid fa-bug"></i> 51 bug-bounty findings</span>
-        <span class="chip"><i class="fa-solid fa-code"></i> Java · .NET · Kafka</span>
-        <span class="chip"><i class="fa-solid fa-brain"></i> AI / LLM security</span>
-        <span class="chip"><i class="fa-solid fa-pen-ruler"></i> Accessible UI / UX</span>
-      </div>
-      <p class="gateway__sub">Red, blue, and the purple in between — I break systems, then engineer the detection, platforms and interfaces that keep them standing.</p>
-      <p class="gateway__prompt">Choose your <b>lens</b> — I'll tailor everything to what you came to see.</p>
-      <div class="lens-grid" id="lensGrid"><!-- lens cards injected --></div>
-      <p class="gateway__foot">Prefer the classics? <a href="#" id="enterAll">Skip the intro and view the full portfolio →</a></p>
-    </div>
-  </section>
-
-  <div class="scrollbar" id="scrollbar" aria-hidden="true"></div>
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
     <div class="wrap nav__inner">
-      <a class="brand" href="#home" data-nav>
+      <a class="brand" href="#/home">
         <span class="brand__mark">MR</span>
         <span class="brand__name">Ramis<b>.</b></span>
       </a>
       <nav class="nav__links" id="navLinks" aria-label="Primary">
-        <a href="#about" data-nav>About</a>
-        <a href="#focus" data-nav>Focus</a>
-        <a href="#projects" data-nav>Projects</a>
-        <a href="#bugbounty" data-nav>Bug Bounty</a>
-        <a href="#experience" data-nav>Experience</a>
-        <a href="#credentials" data-nav>Credentials</a>
-        <a href="#blog" data-nav>Blog</a>
-        <a href="#contact" data-nav>Contact</a>
+        <a href="#/home" data-tab-link="home">Home</a>
+        <a href="#/about" data-tab-link="about">About</a>
+        <a href="#/work" data-tab-link="work">Work</a>
+        <a href="#/security" data-tab-link="security">Security</a>
+        <a href="#/experience" data-tab-link="experience">Experience</a>
+        <a href="#/writing" data-tab-link="writing">Writing</a>
+        <a href="#/contact" data-tab-link="contact">Contact</a>
       </nav>
       <div class="nav__tools">
+        <button class="cmdk-btn" id="cmdkBtn" aria-label="Open command palette">
+          <i class="fa-solid fa-magnifying-glass"></i><span>Search</span><kbd>⌘K</kbd>
+        </button>
         <div class="lens-switch" id="lensSwitch">
           <button class="lens-switch__btn" id="lensSwitchBtn" aria-haspopup="true" aria-expanded="false">
             <span class="swatch"></span><span class="lstxt" id="lensSwitchLabel">Overview</span>
@@ -102,31 +113,52 @@
           </button>
           <div class="lens-switch__menu" id="lensSwitchMenu" role="menu"><!-- options injected --></div>
         </div>
-        <button class="icon-btn" id="themeToggle" aria-label="Toggle light/dark theme" data-tooltip="Theme"><i class="fa-solid fa-moon"></i></button>
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle light/dark theme"><i class="fa-solid fa-moon"></i></button>
         <button class="nav__burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
     </div>
   </header>
 
-  <!-- ============ SITE ============ -->
-  <main class="site" id="site">
+  <!-- ============ STAGE ============ -->
+  <main class="stage" id="stage">
 
-    <!-- HERO -->
-    <section class="hero section" id="home">
-      <div class="wrap">
-        <div class="hero__grid">
-          <div class="hero__col">
-            <div class="hero__badges" id="heroBadges"></div>
-            <h1 class="hero__title">Muhammad <span class="grad">Ramis</span></h1>
-            <p class="hero__lensline" id="heroLensline"></p>
-            <p class="hero__sub" id="heroSub"></p>
-            <div class="hero__cta">
-              <a class="btn btn-primary" href="#projects" data-nav><i class="fa-solid fa-folder-open"></i> View Projects</a>
-              <a class="btn btn-ghost" id="heroCv" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-download"></i> Download CV</a>
-            </div>
-            <div class="hero__social" id="heroSocial"></div>
+    <!-- HOME -->
+    <section class="view is-active" data-view="home" id="view-home" aria-label="Home">
+      <div class="wrap home">
+        <div class="home__id">
+          <span class="pill rv"><span class="dot"></span> Available for work · Nottingham, UK</span>
+          <h1 class="home__name rv">Muhammad <span class="grad">Ramis</span></h1>
+          <p class="home__role rv"><span id="roleType"></span><span class="cursor">▋</span></p>
+          <p class="home__sub rv" id="homeSub"></p>
+          <div class="lens-bar rv" id="lensBar" role="tablist" aria-label="Choose a lens"></div>
+          <p class="lens-hint rv"><i class="fa-solid fa-wand-magic-sparkles"></i> Pick a lens — the whole site re-tailors itself.</p>
+          <div class="home__cta rv">
+            <a class="btn btn-primary" href="#/work"><i class="fa-solid fa-folder-open"></i> View work</a>
+            <a class="btn btn-ghost" href="#/contact"><i class="fa-solid fa-paper-plane"></i> Get in touch</a>
           </div>
-          <div class="hero__col">
+          <div class="home__meta rv">
+            <div class="home__social" id="homeSocial"></div>
+            <span class="kbd-hint">press <kbd>⌘K</kbd> to explore · <kbd>1</kbd>–<kbd>7</kbd> to jump</span>
+          </div>
+        </div>
+
+        <div class="bento" id="bento">
+          <a class="tile tile--findings rv" href="#/security" aria-label="51 bug-bounty findings — see security work">
+            <div class="tile__top"><span class="tile__kicker"><i class="fa-solid fa-bug"></i> Bug bounty</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
+            <div class="tile__big"><b data-count="51">51</b><span>accepted findings<br>across 5 programs</span></div>
+            <div class="tile__sev" id="tileSev"></div>
+          </a>
+
+          <a class="tile tile--cred rv" href="#/experience" data-exp-tab="credentials" aria-label="Credentials">
+            <div class="tile__top"><span class="tile__kicker"><i class="fa-solid fa-certificate"></i> Credentials</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
+            <div class="tile__rows">
+              <span class="tile__row"><i class="fa-solid fa-shield-halved"></i> OSCP+ · OffSec verified</span>
+              <span class="tile__row"><i class="fa-solid fa-graduation-cap"></i> MSc Distinction · Sheffield</span>
+              <span class="tile__row"><i class="fa-solid fa-trophy"></i> 4th of ~9,000 · OffSec Gauntlet</span>
+            </div>
+          </a>
+
+          <div class="tile tile--term rv" aria-hidden="true">
             <div class="terminal">
               <div class="terminal__bar">
                 <div class="dots"><span></span><span></span><span></span></div>
@@ -135,120 +167,133 @@
               <div class="terminal__body" id="terminal"></div>
             </div>
           </div>
+
+          <a class="tile tile--proj rv" href="#/work" id="tileProj" aria-label="Featured project — view all work">
+            <div class="tile__top"><span class="tile__kicker" id="tileProjKicker"><i class="fa-solid fa-star"></i> Featured</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
+            <div id="tileProjBody"></div>
+          </a>
+
+          <a class="tile tile--post rv" href="#" id="tilePost" aria-label="Latest article">
+            <div class="tile__top"><span class="tile__kicker"><i class="fa-solid fa-feather"></i> Latest writing</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
+            <div id="tilePostBody"></div>
+          </a>
+
+          <a class="tile rv" href="#/experience" aria-label="Experience">
+            <div class="tile__top"><span class="tile__kicker"><i class="fa-solid fa-briefcase"></i> Experience</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
+            <div class="tile__big"><b data-count="10">10</b><span>+ years<br>CTO → AppSec lead → researcher</span></div>
+          </a>
+
+          <a class="tile tile--contact rv" href="#/contact" aria-label="Contact">
+            <div class="tile__top"><span class="tile__kicker"><i class="fa-solid fa-paper-plane"></i> Contact</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
+            <strong class="tile__title">Let's build something secure</strong>
+            <span class="tile__label">Open to UK roles · relocation friendly</span>
+          </a>
         </div>
-        <div class="marquee"><div class="marquee__track" id="marquee"></div></div>
+
+        <div class="home__marquee rv">
+          <div class="marquee"><div class="marquee__track" id="marquee"></div></div>
+        </div>
       </div>
     </section>
 
     <!-- ABOUT -->
-    <section class="section" id="about">
+    <section class="view" data-view="about" id="view-about" aria-label="About">
       <div class="wrap">
-        <div class="section-head reveal">
+        <div class="vhead rv">
           <span class="eyebrow">About</span>
-          <h2 class="section-title">Two disciplines, <span class="grad">one operator</span></h2>
-          <p class="section-sub">Eight years across offensive security and software engineering — and a habit of treating every system as something to both build well and break carefully.</p>
+          <h2 class="view-title">Two disciplines, <span class="grad">one operator</span></h2>
+          <p class="view-sub" id="aboutSummary"></p>
         </div>
         <div class="about-grid">
-          <div class="prose reveal" id="aboutProse"></div>
-          <div class="philosophy reveal" data-delay="1" id="philosophy"></div>
+          <div class="prose rv" id="aboutProse"></div>
+          <div class="philosophy rv" id="philosophy"></div>
         </div>
-        <div class="stat-grid reveal" id="aboutStats" style="margin-top:2.4rem"></div>
-      </div>
-    </section>
-
-    <!-- FOCUS (lens-aware) -->
-    <section class="section" id="focus">
-      <div class="wrap">
-        <div class="section-head reveal">
-          <span class="eyebrow" id="focusEyebrow">Focus</span>
-          <h2 class="section-title" id="focusTitle"></h2>
-          <p class="section-sub" id="focusSub"></p>
-        </div>
+        <div class="stat-grid rv" id="aboutStats"></div>
+        <h3 class="block-label rv" id="focusHead"></h3>
         <div class="focus-grid">
-          <div class="panel reveal" id="focusAreas"></div>
-          <div class="panel reveal" data-delay="1" id="focusTools"></div>
+          <div class="panel rv" id="focusAreas"></div>
+          <div class="panel rv" id="focusTools"></div>
         </div>
       </div>
     </section>
 
-    <!-- PROJECTS -->
-    <section class="section" id="projects">
+    <!-- WORK -->
+    <section class="view" data-view="work" id="view-work" aria-label="Work">
       <div class="wrap">
-        <div class="section-head reveal">
+        <div class="vhead rv">
           <span class="eyebrow">Selected work</span>
-          <h2 class="section-title">Projects & <span class="grad">contributions</span></h2>
-          <p class="section-sub">Showcase pieces spanning offensive tooling, security engineering, platforms and product UX. Filter by discipline.</p>
+          <h2 class="view-title">Projects & <span class="grad">contributions</span></h2>
+          <p class="view-sub">Offensive tooling, security engineering, platforms and product UX. Filter by discipline — cards open full details.</p>
         </div>
-        <div class="filters reveal" id="projectFilters"></div>
+        <div class="filters rv" id="projectFilters"></div>
         <div class="proj-grid" id="projectGrid"></div>
-        <div class="reveal" id="contributions" style="margin-top:2.6rem"></div>
+        <div class="more" id="projMore" hidden>
+          <span class="more__count" id="projCount"></span>
+          <button class="btn btn-ghost" id="projMoreBtn" type="button">Load more projects <i class="fa-solid fa-arrow-down"></i></button>
+        </div>
+        <div class="rv" id="contributions" style="margin-top:2rem"></div>
       </div>
     </section>
 
-    <!-- BUG BOUNTY -->
-    <section class="section" id="bugbounty">
+    <!-- SECURITY / BUG BOUNTY -->
+    <section class="view" data-view="security" id="view-security" aria-label="Security and bug bounty">
       <div class="wrap">
-        <div class="section-head reveal">
+        <div class="vhead rv">
           <span class="eyebrow">Bug bounty</span>
-          <h2 class="section-title">51 findings · <span class="grad">five programs</span></h2>
-          <p class="section-sub">Accepted coordinated-disclosure findings across Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti — authorization, logic, race-condition and SSRF flaws, each with a reproducible PoC.</p>
+          <h2 class="view-title">51 findings · <span class="grad">five programs</span></h2>
+          <p class="view-sub">Accepted coordinated-disclosure findings across Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti — each with a reproducible PoC.</p>
         </div>
         <div id="bugBounty"></div>
       </div>
     </section>
 
     <!-- EXPERIENCE -->
-    <section class="section" id="experience">
+    <section class="view" data-view="experience" id="view-experience" aria-label="Experience and credentials">
       <div class="wrap">
-        <div class="section-head reveal">
-          <span class="eyebrow">Career</span>
-          <h2 class="section-title">Where I've <span class="grad">made an impact</span></h2>
-          <p class="section-sub">From startup CTO to lead AppSec engineer to independent researcher.</p>
+        <div class="vhead rv">
+          <span class="eyebrow">Track record</span>
+          <h2 class="view-title">Where I've <span class="grad">made an impact</span></h2>
         </div>
-        <div class="timeline" id="timeline"></div>
+        <div class="tabs rv" id="expTabs" role="tablist">
+          <button class="tab active" data-tab="career" role="tab"><i class="fa-solid fa-briefcase"></i> Career</button>
+          <button class="tab" data-tab="credentials" role="tab"><i class="fa-solid fa-certificate"></i> Credentials</button>
+          <button class="tab" data-tab="awards" role="tab"><i class="fa-solid fa-award"></i> Awards</button>
+        </div>
+        <div class="tabpane active" data-pane="career"><div class="timeline" id="timeline"></div></div>
+        <div class="tabpane" data-pane="credentials"><div class="cert-grid" id="certGrid"></div></div>
+        <div class="tabpane" data-pane="awards"><div class="ach-grid" id="achGrid"></div></div>
       </div>
     </section>
 
-    <!-- CREDENTIALS -->
-    <section class="section" id="credentials">
+    <!-- WRITING -->
+    <section class="view" data-view="writing" id="view-writing" aria-label="Writing">
       <div class="wrap">
-        <div class="section-head reveal">
-          <span class="eyebrow">Credentials</span>
-          <h2 class="section-title">Certifications, education <span class="grad">& wins</span></h2>
-          <p class="section-sub">Verified certifications, a distinction-grade MSc, and a competitive track record.</p>
-        </div>
-        <h3 class="panel-label reveal" style="font-family:var(--font-display);margin-bottom:1.1rem;color:var(--text-dim)"><i class="fa-solid fa-certificate" style="color:var(--accent);margin-right:.5rem"></i> Certifications & Education</h3>
-        <div class="cert-grid reveal" id="certGrid"></div>
-        <h3 class="panel-label reveal" style="font-family:var(--font-display);margin:2.6rem 0 1.1rem;color:var(--text-dim)"><i class="fa-solid fa-award" style="color:var(--accent);margin-right:.5rem"></i> Achievements & Recognition</h3>
-        <div class="ach-grid reveal" id="achGrid"></div>
-      </div>
-    </section>
-
-    <!-- BLOG -->
-    <section class="section" id="blog">
-      <div class="wrap">
-        <div class="section-head reveal">
+        <div class="vhead rv">
           <span class="eyebrow">Writing</span>
-          <h2 class="section-title">From the <span class="grad">field notes</span></h2>
-          <p class="section-sub">Methodology, build logs and research — offensive, defensive, engineering and design.</p>
+          <h2 class="view-title">From the <span class="grad">field notes</span></h2>
+          <p class="view-sub">Methodology, build logs and research — offensive, defensive, engineering and design.</p>
         </div>
-        <div class="filters reveal" id="blogFilters"></div>
+        <div class="filters rv" id="blogFilters"></div>
         <div class="blog-grid" id="blogGrid"></div>
-        <p class="cms-note reveal"><i class="fa-solid fa-feather"></i> Written in the open — posts live as Markdown in the repo and are published through a Git-based CMS.</p>
+        <div class="more" id="blogMore" hidden>
+          <span class="more__count" id="blogCount"></span>
+          <button class="btn btn-ghost" id="blogMoreBtn" type="button">Load more articles <i class="fa-solid fa-arrow-down"></i></button>
+        </div>
+        <p class="cms-note rv"><i class="fa-solid fa-feather"></i> Written in the open — posts live as Markdown in the repo and are published through a Git-based CMS.</p>
       </div>
     </section>
 
     <!-- CONTACT -->
-    <section class="section" id="contact">
+    <section class="view" data-view="contact" id="view-contact" aria-label="Contact">
       <div class="wrap">
-        <div class="section-head reveal">
+        <div class="vhead rv">
           <span class="eyebrow">Contact</span>
-          <h2 class="section-title">Let's build something <span class="grad">secure</span></h2>
-          <p class="section-sub">Open to penetration testing, security engineering and senior engineering roles in the UK. Say hello.</p>
+          <h2 class="view-title">Let's build something <span class="grad">secure</span></h2>
+          <p class="view-sub">Open to penetration testing, security engineering and senior engineering roles in the UK. Say hello.</p>
         </div>
         <div class="contact-grid">
-          <div class="reveal" id="contactInfo"></div>
-          <form class="form glass reveal" data-delay="1" id="contactForm" style="padding:1.6rem">
+          <div class="rv" id="contactInfo"></div>
+          <form class="form glass rv" id="contactForm" style="padding:1.6rem">
             <input type="text" name="name" placeholder="Your name" required autocomplete="name" />
             <input type="email" name="email" placeholder="Your email" required autocomplete="email" />
             <input type="text" name="subject" placeholder="Subject" required />
@@ -261,17 +306,32 @@
 
     <footer class="footer">
       <div class="wrap footer__inner">
-        <p>© <span id="year"></span> Muhammad Ramis · Built from scratch, no template · <span id="footLens"></span> lens</p>
+        <p>© 2026 Muhammad Ramis · Built from scratch, no template · <span id="footLens"></span> lens<br>
+          <span class="footer__priv">This site uses privacy-respecting Google Analytics (IP anonymised) &amp; Microsoft Clarity to understand traffic.</span></p>
         <div class="footer__social" id="footSocial"></div>
       </div>
     </footer>
   </main>
 
+  <!-- COMMAND PALETTE -->
+  <div class="cmdk" id="cmdk" aria-hidden="true">
+    <div class="cmdk__bd" data-cmdk-close></div>
+    <div class="cmdk__panel" role="dialog" aria-label="Command palette">
+      <div class="cmdk__inputwrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="cmdkInput" type="text" placeholder="Jump to a page, lens, project or post…" autocomplete="off" spellcheck="false" />
+        <kbd>esc</kbd>
+      </div>
+      <div class="cmdk__list" id="cmdkList" role="listbox"></div>
+      <div class="cmdk__foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> select</span><span><kbd>esc</kbd> close</span></div>
+    </div>
+  </div>
+
   <!-- ARTICLE OVERLAY (blog post) -->
   <div class="article" id="article" aria-hidden="true">
     <div class="article__bar">
       <div class="wrap" style="display:flex;align-items:center;gap:1rem">
-        <a href="#blog" class="article__back" id="articleBack"><i class="fa-solid fa-arrow-left"></i> Back to blog</a>
+        <a href="#/writing" class="article__back" id="articleBack"><i class="fa-solid fa-arrow-left"></i> Back to writing</a>
         <span style="margin-left:auto;color:var(--text-faint);font-family:var(--font-mono);font-size:.78rem">ramis.me/blog</span>
       </div>
     </div>
@@ -287,12 +347,38 @@
     </div>
   </div>
 
-  <button class="to-top" id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
   <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg"></span></div>
 
-  <script src="assets/js/content.js?v=5"></script>
-  <script src="assets/js/posts.js?v=5"></script>
-  <script src="assets/js/data.js?v=5"></script>
-  <script src="assets/js/app.js?v=5"></script>
+  <script src="assets/js/content.js?v=10"></script>
+  <script src="assets/js/posts.js?v=10"></script>
+  <script src="assets/js/data.js?v=10"></script>
+  <script src="assets/js/app.js?v=10"></script>
+
+  <!-- Google Analytics (GA4) — loaded after page load, IP anonymised -->
+  <script>
+  window.addEventListener('load', function () {
+    var s = document.createElement('script');
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-GKD7JXRS66';
+    s.async = true;
+    document.head.appendChild(s);
+    s.onload = function () {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', 'G-GKD7JXRS66', { anonymize_ip: true, send_page_view: true });
+    };
+  });
+  </script>
+
+  <!-- Microsoft Clarity — loaded after page load -->
+  <script>
+  window.addEventListener('load', function () {
+    (function (c, l, a, r, i, t, y) {
+      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
+      t = l.createElement(r); t.async = 1; t.src = 'https://www.clarity.ms/tag/' + i;
+      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+    })(window, document, 'clarity', 'script', 'rpwqh3rock');
+  });
+  </script>
 </body>
 </html>

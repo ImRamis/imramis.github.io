@@ -7,7 +7,7 @@ window.CONTENT = {
       "short": "Cybersecurity",
       "icon": "shield-halved",
       "tagline": "Red and blue in one operator: I break web, API, AD, cloud and LLM systems, then build the detection that stops them.",
-      "summary": "I am an OSCP+ penetration tester and security engineer with 8+ years spanning both sides of the wire and 51 accepted bug bounty findings across five public programs. I find authorization, logic, race-condition and SSRF flaws by hand, develop exploits at the binary level, and lead AI/LLM offensive research, then turn that attacker knowledge into detection engineering, SAST/DAST automation, LLM-assisted triage and hardened zero-trust infrastructure. Thinking like an attacker is exactly what lets me ship defences that make breaking in expensive.",
+      "summary": "I am an OSCP+ penetration tester and security engineer with 10+ years spanning both sides of the wire and 51 accepted bug bounty findings across five public programs. I find authorization, logic, race-condition and SSRF flaws by hand, develop exploits at the binary level, and lead AI/LLM offensive research, then turn that attacker knowledge into detection engineering, SAST/DAST automation, LLM-assisted triage and hardened zero-trust infrastructure. Thinking like an attacker is exactly what lets me ship defences that make breaking in expensive.",
       "stats": [
         {
           "value": "51",
@@ -268,10 +268,10 @@ window.CONTENT = {
       "short": "Engineering",
       "icon": "code",
       "tagline": "Event-driven Java backends and full-stack platforms built to scale, stay up, and ship securely.",
-      "summary": "I am a software engineer with 8+ years building backend and full-stack platforms, with deep Java at the core: Spring Boot, Spring Data JPA/Hibernate and Apache Kafka event-driven services running 50K+ daily financial transactions, designed 12-factor and tested hard with JUnit 5, Mockito, TestContainers and PACT. Around that Java core I ship polyglot — C#/.NET Core microservices, Node, Go, Rust and PHP/Laravel — on EKS/AKS with Helm, Terraform and CI/CD. I have run e-commerce APIs at 6.5M requests a day and Java services at 800K+ daily requests and 99.8% availability, and I bring a security engineer's instinct so the platforms I build are as hard to break as they are to outgrow.",
+      "summary": "I am a software engineer with 10+ years building backend and full-stack platforms, with deep Java at the core: Spring Boot, Spring Data JPA/Hibernate and Apache Kafka event-driven services running 50K+ daily financial transactions, designed 12-factor and tested hard with JUnit 5, Mockito, TestContainers and PACT. Around that Java core I ship polyglot — C#/.NET Core microservices, Node, Go, Rust and PHP/Laravel — on EKS/AKS with Helm, Terraform and CI/CD. I have run e-commerce APIs at 6.5M requests a day and Java services at 800K+ daily requests and 99.8% availability, and I bring a security engineer's instinct so the platforms I build are as hard to break as they are to outgrow.",
       "stats": [
         {
-          "value": "8+ yrs",
+          "value": "10+ yrs",
           "label": "Backend & full-stack engineering"
         },
         {
@@ -323,6 +323,8 @@ window.CONTENT = {
         {
           "title": "Event-Driven Payments Platform (Spring Boot + Kafka)",
           "type": "Java backend platform",
+          "shot": "architecture",
+          "role": "Lead engineer",
           "blurb": "Designed and led a Spring Boot 3 payments and ledger backend built around Apache Kafka and Kafka Streams, processing 50K+ daily financial transactions with exactly-once semantics and an idempotent outbox pattern. Domain services use Spring Data JPA and Hibernate over PostgreSQL, are packaged 12-factor and deployed on AWS EKS via Helm. A full test pyramid — JUnit 5, Mockito, TestContainers for real Kafka and Postgres, plus PACT contract tests between producers and consumers — held coverage at 88% and helped cut production incidents by 65%.",
           "stack": [
             "Java 21",
@@ -355,6 +357,8 @@ window.CONTENT = {
         {
           "title": "Apricart High-Throughput Java Services",
           "type": "High-scale backend engineering",
+          "shot": "analytics-dashboard",
+          "role": "Contributor",
           "blurb": "Built and operated the Spring Boot backend services behind a regulated e-commerce and payments platform, sustaining 800K+ daily requests at 99.8% availability. Work spanned Spring Data JPA query and index tuning, Redis caching, Kafka-based order and inventory events, and read-replica routing across a busy MySQL/PostgreSQL estate. Services were instrumented with Micrometer and Prometheus, traced end-to-end, and gated by JUnit 5 and TestContainers integration suites so releases stayed safe under heavy retail traffic.",
           "stack": [
             "Java 17",
@@ -387,6 +391,8 @@ window.CONTENT = {
         {
           "title": "Resilient .NET Core Microservices Platform",
           "type": "Cloud-native backend",
+          "shot": "microservices",
+          "role": "Contributor",
           "blurb": "Architected a C#/.NET Core microservices backend powering business-critical workflows at 99.99% uptime. Used Polly for retries, circuit breakers and bulkheads, deployed on Azure AKS with Helm, and wired full observability through Serilog and OpenTelemetry into Datadog. Service-to-service auth, idempotent message handling and graceful degradation were baked in from day one, with PACT contract tests guarding the boundaries against breaking changes.",
           "stack": [
             "C#/.NET Core",
@@ -419,6 +425,7 @@ window.CONTENT = {
         {
           "title": "High-Scale E-commerce API Layer",
           "type": "Backend platform engineering",
+          "role": "Contributor",
           "blurb": "Hardened and scaled the API layer behind a large e-commerce platform serving 6.5M daily requests and 2.8M monthly active users on top of a multi-TB datastore. Work spanned read-replica routing, Redis caching strategies, query and index tuning, rate limiting and PCI-relevant payment flows. The result was a backend that stayed fast and predictable under heavy, bursty retail traffic, with response times cut 25% after profiling.",
           "stack": [
             "PHP/Laravel",
@@ -450,6 +457,7 @@ window.CONTENT = {
         {
           "title": "Polyglot CI/CD & Infrastructure-as-Code Toolkit",
           "type": "Platform & DevOps engineering",
+          "role": "Creator",
           "blurb": "Built the deployment backbone shared across Java, .NET, Go and Node services: reusable GitHub Actions and Jenkins pipelines that run Maven/Gradle builds, JUnit/TestContainers suites, SAST/DAST gates and PACT contract verification before promotion. Terraform modules and Helm charts provision EKS/AKS clusters, observability (Prometheus, Grafana, Datadog) and secrets, giving every team a 12-factor, secure-by-default path from commit to production. Standardising the pipeline cut mean time to deploy and made rollbacks routine.",
           "stack": [
             "Terraform",
@@ -482,6 +490,7 @@ window.CONTENT = {
         {
           "title": "Real-Time Messaging Backend (Spring WebSocket)",
           "type": "Real-time systems",
+          "role": "Contributor",
           "blurb": "Engineered a real-time messaging backend that sustained 5K-8K concurrent users with sub-100ms delivery, originally for Chatcloud's SaaS product. Built on Spring WebSocket with a STOMP message broker and Redis-backed pub/sub, it scaled horizontally behind Nginx with auto-scaling and failover on Kubernetes. An embeddable JavaScript plugin and an admin dashboard rounded out the offering, with JUnit and TestContainers integration tests covering the messaging guarantees.",
           "stack": [
             "Java",
@@ -508,6 +517,134 @@ window.CONTENT = {
             "repo": "https://github.com/imRamis/realtime-messaging-core",
             "demo": "https://chat-demo.ramis.me",
             "writeup": "https://ramis.me/#/blog/realtime-messaging-spring-websocket-8k"
+          }
+        },
+        {
+          "title": "Multi-Region API Gateway & GraphQL Federation",
+          "type": "API platform engineering",
+          "shot": "gateway",
+          "role": "Creator",
+          "blurb": "A polyglot API edge that federates a dozen Spring Boot, Go and Node services behind a single typed GraphQL schema, with a thin Go gateway handling auth, rate limiting, request coalescing and per-field authorization. It runs active-active across two AWS regions with latency-based routing and graceful failover, so a regional outage degrades rather than drops. Persisted queries, response caching and schema-change CI checks (composition + breaking-change detection) keep the contract safe as teams ship independently.",
+          "stack": [
+            "Go",
+            "GraphQL Federation",
+            "Spring Boot",
+            "Node.js",
+            "Redis",
+            "AWS (multi-region)",
+            "Terraform"
+          ],
+          "metrics": [
+            "12+ services federated behind one typed schema",
+            "Active-active across 2 regions with latency routing",
+            "Per-field authorization at the edge",
+            "Breaking-change detection gated in CI"
+          ],
+          "tags": [
+            "api",
+            "graphql",
+            "go",
+            "multi-region"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/edge-graphql-federation",
+            "demo": "https://gateway-demo.ramis.me",
+            "writeup": "https://ramis.me/#/blog/graphql-federation-edge-gateway"
+          }
+        },
+        {
+          "title": "Event-Sourced Inventory Engine (CQRS + Kafka)",
+          "type": "Distributed systems",
+          "role": "Creator",
+          "blurb": "An inventory and reservation engine built on event sourcing and CQRS: every stock movement is an immutable event on Kafka, projections are rebuilt on demand, and read models are tuned per query pattern. The design made overselling structurally impossible under concurrency, gave a complete audit trail for free, and let new read views (analytics, alerting, search) be added without touching the write path. Snapshotting and idempotent consumers keep replay fast even with tens of millions of events.",
+          "stack": [
+            "Java 21",
+            "Spring Boot 3",
+            "Apache Kafka",
+            "Axon / CQRS",
+            "PostgreSQL",
+            "Redis",
+            "Kubernetes"
+          ],
+          "metrics": [
+            "Overselling eliminated under high concurrency",
+            "Full immutable audit trail of every stock movement",
+            "New read models added without write-path changes",
+            "Snapshotting keeps event replay fast at 10M+ events"
+          ],
+          "tags": [
+            "event-sourcing",
+            "cqrs",
+            "kafka",
+            "java"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/event-sourced-inventory",
+            "writeup": "https://ramis.me/#/blog/event-sourcing-cqrs-inventory"
+          }
+        },
+        {
+          "title": "Feature-Flag & Experimentation Service",
+          "type": "Developer platform",
+          "role": "Creator",
+          "blurb": "A self-hosted feature-flag and A/B experimentation service with a low-latency Go evaluation engine, streaming flag updates over SSE so changes propagate to clients in under a second without redeploys. It supports percentage rollouts, targeting rules, kill switches and sticky bucketing, with a typed SDK for Java, Node and React. An audit log records who flipped what and when, and a guarded-rollout mode auto-reverts a flag if error rates spike — turning risky releases into routine, observable ones.",
+          "stack": [
+            "Go",
+            "TypeScript SDK",
+            "React",
+            "PostgreSQL",
+            "Redis",
+            "Server-Sent Events"
+          ],
+          "metrics": [
+            "Sub-second flag propagation via SSE, no redeploys",
+            "Percentage rollouts, targeting and sticky bucketing",
+            "Typed SDKs for Java, Node and React",
+            "Guarded rollout auto-reverts on error-rate spike"
+          ],
+          "tags": [
+            "platform",
+            "feature-flags",
+            "go",
+            "developer-experience"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/flagforge",
+            "demo": "https://flags-demo.ramis.me",
+            "writeup": "https://ramis.me/#/blog/building-a-feature-flag-service"
+          }
+        },
+        {
+          "title": "Observability & SLO Platform (OpenTelemetry)",
+          "type": "Platform & SRE engineering",
+          "shot": "monitoring",
+          "role": "Creator",
+          "blurb": "The observability backbone standardised across the service estate: OpenTelemetry auto-instrumentation for traces, metrics and logs, shipped through a collector into Prometheus, Tempo and Grafana with Datadog for long-term retention. I defined SLOs and error budgets per service, wired multi-window burn-rate alerts that page only on real budget threats, and built reusable Grafana dashboards generated from code so every new service ships observable on day one. Mean time to detection dropped sharply and on-call noise fell with it.",
+          "stack": [
+            "OpenTelemetry",
+            "Prometheus",
+            "Grafana / Tempo",
+            "Datadog",
+            "Go",
+            "Kubernetes",
+            "Terraform"
+          ],
+          "metrics": [
+            "Traces, metrics and logs unified via OTel collector",
+            "Per-service SLOs with multi-window burn-rate alerts",
+            "Dashboards generated from code, not clicked together",
+            "Sharp drop in MTTD and on-call alert noise"
+          ],
+          "tags": [
+            "observability",
+            "slo",
+            "opentelemetry",
+            "sre"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/otel-slo-platform",
+            "demo": "https://obs-demo.ramis.me",
+            "writeup": "https://ramis.me/#/blog/slo-platform-with-opentelemetry"
           }
         }
       ],
@@ -809,7 +946,7 @@ window.CONTENT = {
       "summary": "I build product front-ends that are quick, accessible and maintainable: React, React Native and Next.js apps, typed component libraries, and data-dense dashboards that operators actually enjoy using. I treat accessibility as engineering rather than garnish, shipping WCAG 2.2 AA flows with semantic markup, keyboard-first interactions and CI-gated axe checks. Years on the offensive side mean I also wire front-ends that fail safely and never leak more than they should.",
       "stats": [
         {
-          "value": "8+ yrs",
+          "value": "10+ yrs",
           "label": "Product + UI engineering"
         },
         {
@@ -861,6 +998,8 @@ window.CONTENT = {
         {
           "title": "Sorvox Design System & Component Library",
           "type": "Design system",
+          "shot": "design-system",
+          "role": "Lead engineer",
           "blurb": "A typed React + TypeScript component library and token pipeline that unified the look of Sorvox client products and internal AppSec tooling. I built 60+ accessible primitives — forms, tables, modals, toasts, a command palette and a charting kit — on Radix behaviours, with design tokens synced from Figma via Style Dictionary, documented in Storybook and accessibility-regression-tested in CI. It cut new-screen build time sharply and gave engineers a guard-railed way to ship consistent, WCAG-compliant UI.",
           "stack": [
             "React",
@@ -893,6 +1032,8 @@ window.CONTENT = {
         {
           "title": "BugTraceAI Findings Dashboard",
           "type": "Dashboard / data UX",
+          "shot": "bugtrace-dashboard",
+          "role": "Creator",
           "blurb": "The React front-end for BugTraceAI, my self-hosted AI security scanning platform. It turns a noisy six-phase pipeline into a calm operator experience: live scan progress streamed over SSE, a triage queue spanning 14 vulnerability classes, consensus-vote indicators and per-finding evidence views with reproduction steps. The public demo surfaces 145 findings with 43 validated, so the UI had to make severity, confidence and validation state legible at a glance without overwhelming the reviewer.",
           "stack": [
             "React",
@@ -923,6 +1064,8 @@ window.CONTENT = {
         {
           "title": "Apricart Operations Console — Orders, Fulfilment & Live Ops",
           "type": "Admin / operator UX",
+          "shot": "ops-console",
+          "role": "Contributor",
           "blurb": "A React + TypeScript admin console for the Apricart e-commerce and payments platform, giving operators a single pane over orders, fulfilment, refunds and live delivery tracking on top of backend services handling 800K+ daily requests. I designed the data-dense journeys around real warehouse and support workflows — bulk actions, optimistic status updates, audit trails and role-scoped views — and tuned the heaviest tables and maps so they stayed responsive at peak retail load. Accessibility and clear destructive-action affordances were treated as first-class, since operators live in this UI all day.",
           "stack": [
             "React",
@@ -953,6 +1096,8 @@ window.CONTENT = {
         {
           "title": "Chatcloud Embeddable Chat Widget & Admin Console",
           "type": "Real-time product UI",
+          "shot": "chat-widget",
+          "role": "Contributor",
           "blurb": "The customer-facing chat widget and Angular admin console for Chatcloud's real-time messaging SaaS. The embeddable widget was themeable per tenant, fully keyboard-navigable, and tuned to render smoothly at 5K-8K concurrent users with sub-100ms message paint. The admin console gave operators live conversation views, user management and analytics without drowning them in data. I focused on resilient WebSocket UI states — reconnect, backoff and optimistic sends that never lie to the user.",
           "stack": [
             "Angular",
@@ -983,6 +1128,8 @@ window.CONTENT = {
         {
           "title": "Carpool Mobile App — React Native Rider & Driver Experience",
           "type": "Mobile UI",
+          "shot": "mobile-app",
+          "role": "Creator",
           "blurb": "The cross-platform rider and driver experience for a React Native carpooling platform (Laravel backend) that reached around 10K downloads. I designed and built the map-first journey: live GPS matching, in-app chat, ride scheduling and an admin moderation view. The work leaned hard on mobile UX fundamentals — thumb-reachable controls, motion that communicates state, haptics, and offline-tolerant flows for patchy connections — and shipped to both iOS and Android from a single codebase.",
           "stack": [
             "React Native",
@@ -1013,6 +1160,8 @@ window.CONTENT = {
         {
           "title": "Post-Quantum Benchmark Analysis Dashboard (MSc)",
           "type": "Research data UI",
+          "shot": "data-viz",
+          "role": "Creator",
           "blurb": "A Next.js analysis dashboard built for my Sheffield MSc distinction dissertation comparing post-quantum blind signature schemes. It visualises reproducible performance and security benchmarks across a multi-language library (Python/Rust/Node.js) behind gRPC/REST APIs, letting reviewers compare key sizes, signing latency and verification cost interactively. The interface prioritised clear, accessible data presentation — every chart ships with a data-table fallback — so the comparative framework could be read and reproduced by non-specialists.",
           "stack": [
             "Next.js",
@@ -1038,6 +1187,134 @@ window.CONTENT = {
             "repo": "https://github.com/imRamis/pq-blindsig-dashboard",
             "demo": "https://pqbench.ramis.me",
             "writeup": "https://ramis.me/#/blog/visualising-post-quantum-benchmarks"
+          }
+        },
+        {
+          "title": "Lumen — Fintech Wallet App",
+          "type": "Product UI / fintech",
+          "shot": "fintech-wallet",
+          "role": "Creator",
+          "blurb": "A consumer wallet experience covering balances, transfers, cards and spending insights, built in React Native with a shared design-token core so iOS, Android and web feel identical. I designed the money-movement flows for trust and clarity — confirmation states that never lie, optimistic transfers with safe rollback, biometric gates, and a spending breakdown that turns raw transactions into a story. Every screen ships WCAG 2.2 AA: large tap targets, dynamic-type support, reduced-motion variants and full screen-reader labelling for amounts and statuses.",
+          "stack": [
+            "React Native",
+            "TypeScript",
+            "Reanimated",
+            "Style Dictionary",
+            "Victory Native",
+            "Figma"
+          ],
+          "metrics": [
+            "One token core across iOS, Android and web",
+            "Trust-first money-movement flows with safe rollback",
+            "Biometric auth and reduced-motion variants",
+            "WCAG 2.2 AA: dynamic type, SR-labelled amounts"
+          ],
+          "tags": [
+            "fintech",
+            "react-native",
+            "design-tokens",
+            "accessibility"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/lumen-wallet",
+            "demo": "https://wallet.ramis.me",
+            "writeup": "https://ramis.me/#/blog/designing-a-trustworthy-wallet"
+          }
+        },
+        {
+          "title": "Aperture — SaaS Marketing Site & Brand System",
+          "type": "Marketing UI / brand",
+          "shot": "saas-landing",
+          "role": "Creator",
+          "blurb": "A high-converting marketing site and brand system for a developer-tools SaaS, built on Next.js App Router with MDX-driven content so marketing can ship pages without engineering. I designed the visual language — type scale, motion grammar and a gradient-led component kit — then engineered it for Core Web Vitals: streamed RSC, image optimisation and a strict bundle budget kept it at 99+ Lighthouse across the board. Scroll-linked motion and a live product preview respect prefers-reduced-motion and degrade gracefully without JavaScript.",
+          "stack": [
+            "Next.js",
+            "TypeScript",
+            "Tailwind CSS",
+            "Framer Motion",
+            "MDX",
+            "Vercel"
+          ],
+          "metrics": [
+            "99+ Lighthouse across perf, a11y and SEO",
+            "MDX content model — marketing ships pages solo",
+            "Scroll-linked motion that respects reduced-motion",
+            "Streamed RSC with a strict bundle budget"
+          ],
+          "tags": [
+            "marketing",
+            "next.js",
+            "motion",
+            "performance"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/aperture-marketing",
+            "demo": "https://aperture.ramis.me",
+            "writeup": "https://ramis.me/#/blog/building-a-fast-marketing-site"
+          }
+        },
+        {
+          "title": "Caretrack — Patient Portal & Telehealth UI",
+          "type": "Healthcare product UX",
+          "shot": "health-portal",
+          "role": "Lead engineer",
+          "blurb": "A patient-facing portal unifying vitals, medications, appointments and secure video consults into one calm, legible dashboard. Healthcare raises the accessibility and clarity bar, so I treated it as a hard constraint: semantic landmarks, a fully keyboard-operable appointment booker, screen-reader-announced vitals, colour choices that survive deuteranopia, and every chart backed by a data-table fallback. Motion is purposeful and reduced-motion-aware, and destructive or irreversible actions carry deliberate, clearly-labelled confirmation.",
+          "stack": [
+            "React",
+            "TypeScript",
+            "Radix UI",
+            "TanStack Query",
+            "Recharts",
+            "WebRTC"
+          ],
+          "metrics": [
+            "Vitals, meds, appointments and video in one view",
+            "Keyboard-operable booking with SR-announced state",
+            "Colour-blind-safe palette, charts with table fallbacks",
+            "Deliberate confirmation on irreversible actions"
+          ],
+          "tags": [
+            "healthcare",
+            "accessibility",
+            "dashboard",
+            "react"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/caretrack-portal",
+            "demo": "https://portal.ramis.me",
+            "writeup": "https://ramis.me/#/blog/accessible-healthcare-ui"
+          }
+        },
+        {
+          "title": "Lumen Storefront — Headless Commerce Redesign",
+          "type": "E-commerce product UI",
+          "shot": "ecommerce",
+          "role": "Creator",
+          "blurb": "A headless storefront redesign focused on the moments that move revenue: fast product discovery, a frictionless bag, and a checkout that feels instant. Built on Next.js over a commerce API, it uses optimistic cart updates, skeleton-free streamed product grids, and persistent mini-cart state across the journey. I rebuilt the design system around a flexible product-card and filter kit, tuned Largest Contentful Paint on image-heavy pages, and made the entire purchase path keyboard- and screen-reader-complete — accessibility that also happens to lift conversion.",
+          "stack": [
+            "Next.js",
+            "TypeScript",
+            "Tailwind CSS",
+            "Zustand",
+            "Commerce API",
+            "Storybook"
+          ],
+          "metrics": [
+            "Optimistic cart with persistent cross-page mini-bag",
+            "Streamed product grids tuned for LCP on image pages",
+            "Reusable product-card and filter component kit",
+            "Keyboard- and screen-reader-complete checkout"
+          ],
+          "tags": [
+            "ecommerce",
+            "next.js",
+            "design-system",
+            "performance"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/lumen-storefront",
+            "demo": "https://store.ramis.me",
+            "writeup": "https://ramis.me/#/blog/headless-commerce-redesign"
           }
         }
       ],
@@ -1076,7 +1353,7 @@ window.CONTENT = {
       "Accessibility-Minded UI/UX Engineer"
     ],
     "elevator": "OSCP+ penetration tester and software engineer who breaks systems, then builds the secure, scalable, accessible ones that replace them — across security, Java/Kafka backends, AI, games and design.",
-    "about": "I am a penetration tester and software engineer with 8+ years of hybrid experience, based in Nottingham and open to UK roles and relocation. I sit deliberately on both sides of the table: I find the authorization bypasses, IDORs, race conditions, SSRF and AI/LLM abuse paths that break real systems, and then I ship the well-engineered code that closes them. That dual lens is the whole point. Having designed event-driven Java services on Kafka, secured e-commerce APIs at 6.5M requests per day, and built real-time messaging for thousands of concurrent users, I know exactly where the bodies are buried in production software — which makes my offensive work sharper and my fixes genuinely actionable rather than theoretical.\n\nOn the **offensive** side I hold **OSCP+** and **OSCP** (both Apr 2025), with the **OSED** exploit-development exam scheduled for mid-2026, and I have **51 accepted findings across 5 public bug-bounty programmes** on Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti, spanning Critical, High and Medium severity. As an **engineer** I work as a Senior Java Backend Engineer in Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka + Kafka Streams — driving event-driven systems through 50K+ daily financial transactions on AWS EKS, with rigorous TDD/BDD (JUnit 5, Mockito, TestContainers, PACT, Cucumber), 88% coverage and a 65% drop in production incidents. I am equally at home in C#/.NET Core microservices (Polly, AKS, OpenTelemetry, 99.99% uptime), plus Node, Go, Rust and PHP/Laravel.\n\nThe **AI/ML**, **game** and **design** range rounds it out. I completed an **MSc in Cyber Security & AI at the University of Sheffield with Distinction**, and my flagship build **BugTraceAI** is a self-hosted AI security-scanning platform — a six-phase pipeline of specialist agents across 14 vulnerability classes, combining Go fuzzers, Playwright browser checks, LLM-guided payload mutation and consensus voting. I build **games** as a way to sharpen systems thinking — deterministic simulation loops, custom ECS tooling and procedural generation that double as fertile ground for fuzzing and exploitation research. And I care, perhaps unfashionably, about the people who actually use software: I build to **WCAG 2.2 AA** with semantic HTML and ARIA, and treat clear UX and accessibility as part of security, not an afterthought.",
+    "about": "I am a penetration tester and software engineer with 10+ years of hybrid experience, based in Nottingham and open to UK roles and relocation. I sit deliberately on both sides of the table: I find the authorization bypasses, IDORs, race conditions, SSRF and AI/LLM abuse paths that break real systems, and then I ship the well-engineered code that closes them. That dual lens is the whole point. Having designed event-driven Java services on Kafka, secured e-commerce APIs at 6.5M requests per day, and built real-time messaging for thousands of concurrent users, I know exactly where the bodies are buried in production software — which makes my offensive work sharper and my fixes genuinely actionable rather than theoretical.\n\nOn the **offensive** side I hold **OSCP+** and **OSCP** (both Apr 2025), with the **OSED** exploit-development exam scheduled for mid-2026, and I have **51 accepted findings across 5 public bug-bounty programmes** on Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti, spanning Critical, High and Medium severity. As an **engineer** I work as a Senior Java Backend Engineer in Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka + Kafka Streams — driving event-driven systems through 50K+ daily financial transactions on AWS EKS, with rigorous TDD/BDD (JUnit 5, Mockito, TestContainers, PACT, Cucumber), 88% coverage and a 65% drop in production incidents. I am equally at home in C#/.NET Core microservices (Polly, AKS, OpenTelemetry, 99.99% uptime), plus Node, Go, Rust and PHP/Laravel.\n\nThe **AI/ML**, **game** and **design** range rounds it out. I completed an **MSc in Cyber Security & AI at the University of Sheffield with Distinction**, and my flagship build **BugTraceAI** is a self-hosted AI security-scanning platform — a six-phase pipeline of specialist agents across 14 vulnerability classes, combining Go fuzzers, Playwright browser checks, LLM-guided payload mutation and consensus voting. I build **games** as a way to sharpen systems thinking — deterministic simulation loops, custom ECS tooling and procedural generation that double as fertile ground for fuzzing and exploitation research. And I care, perhaps unfashionably, about the people who actually use software: I build to **WCAG 2.2 AA** with semantic HTML and ARIA, and treat clear UX and accessibility as part of security, not an afterthought.",
     "philosophy": [
       {
         "title": "Attacker's mindset, builder's discipline",

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Analytics dashboard UI">
+  <defs>
+    <linearGradient id="an-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1530"/><stop offset="1" stop-color="#070b1c"/></linearGradient>
+    <linearGradient id="an-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#818cf8"/></linearGradient>
+    <linearGradient id="an-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38bdf8" stop-opacity=".5"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#an-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#11203f"/><rect x="0" y="24" width="800" height="16" fill="#11203f"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#070b1c"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#7c89a8" text-anchor="middle">dashboard.ramis.me</text>
+  <text x="24" y="76" font-family="sans-serif" font-size="18" font-weight="700" fill="#fff">Overview</text>
+  <rect x="688" y="58" width="96" height="28" rx="14" fill="url(#an-ac)" opacity=".25"/><text x="736" y="77" font-family="sans-serif" font-size="11" fill="#9fd6ff" text-anchor="middle">Last 30 days</text>
+  <!-- KPI cards -->
+  <g font-family="sans-serif">
+    <rect x="24" y="96" width="180" height="86" rx="12" fill="#ffffff0a" stroke="#ffffff14"/><text x="40" y="124" font-size="11" fill="#7c89a8">Requests / day</text><text x="40" y="156" font-size="24" font-weight="700" fill="#fff">6.5M</text><text x="150" y="156" font-size="11" fill="#34d399">+12%</text>
+    <rect x="216" y="96" width="180" height="86" rx="12" fill="#ffffff0a" stroke="#ffffff14"/><text x="232" y="124" font-size="11" fill="#7c89a8">p99 latency</text><text x="232" y="156" font-size="24" font-weight="700" fill="#fff">118ms</text><text x="338" y="156" font-size="11" fill="#34d399">-9%</text>
+    <rect x="408" y="96" width="180" height="86" rx="12" fill="#ffffff0a" stroke="#ffffff14"/><text x="424" y="124" font-size="11" fill="#7c89a8">Uptime</text><text x="424" y="156" font-size="24" font-weight="700" fill="#fff">99.99%</text><text x="540" y="156" font-size="11" fill="#34d399">SLO</text>
+    <rect x="600" y="96" width="180" height="86" rx="12" fill="#ffffff0a" stroke="#ffffff14"/><text x="616" y="124" font-size="11" fill="#7c89a8">Error rate</text><text x="616" y="156" font-size="24" font-weight="700" fill="#fff">0.02%</text><text x="724" y="156" font-size="11" fill="#34d399">ok</text>
+  </g>
+  <!-- area chart -->
+  <rect x="24" y="196" width="476" height="200" rx="12" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="44" y="224" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Traffic</text>
+  <path d="M44 360 L100 330 L156 342 L212 300 L268 312 L324 264 L380 286 L436 240 L480 256 L480 380 L44 380 Z" fill="url(#an-area)"/>
+  <polyline points="44,360 100,330 156,342 212,300 268,312 324,264 380,286 436,240 480,256" fill="none" stroke="url(#an-ac)" stroke-width="3"/>
+  <!-- bar chart -->
+  <rect x="512" y="196" width="268" height="200" rx="12" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="532" y="224" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">By region</text>
+  <g>
+    <rect x="540" y="300" width="30" height="64" rx="5" fill="url(#an-ac)"/><rect x="584" y="270" width="30" height="94" rx="5" fill="url(#an-ac)"/>
+    <rect x="628" y="320" width="30" height="44" rx="5" fill="url(#an-ac)"/><rect x="672" y="250" width="30" height="114" rx="5" fill="url(#an-ac)"/>
+    <rect x="716" y="288" width="30" height="76" rx="5" fill="url(#an-ac)"/>
+  </g>
+  <!-- table -->
+  <rect x="24" y="410" width="756" height="74" rx="12" fill="#ffffff0a" stroke="#ffffff14"/>
+  <g font-family="monospace" font-size="11" fill="#9fb0d0">
+    <text x="44" y="436">endpoint</text><text x="360" y="436">calls</text><text x="500" y="436">p95</text><text x="640" y="436">status</text>
+    <line x1="40" y1="446" x2="764" y2="446" stroke="#ffffff14"/>
+    <text x="44" y="468" fill="#cfd8ec">/api/v2/orders</text><text x="360" y="468">2.1M</text><text x="500" y="468">88ms</text><text x="640" y="468" fill="#34d399">● healthy</text>
+  </g>
+</svg>

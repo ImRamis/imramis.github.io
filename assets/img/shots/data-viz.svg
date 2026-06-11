@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Research data visualisation UI">
+  <defs>
+    <linearGradient id="dv-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d0f1e" /><stop offset="1" stop-color="#070812"/></linearGradient>
+    <linearGradient id="dv-a" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+    <linearGradient id="dv-b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#c084fc"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#dv-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#161929"/><rect x="0" y="24" width="800" height="16" fill="#161929"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#070812"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#777e9b" text-anchor="middle">pqbench.ramis.me</text>
+  <text x="24" y="78" font-family="sans-serif" font-size="17" font-weight="700" fill="#fff">Post-quantum blind signatures — benchmark</text>
+  <!-- legend -->
+  <rect x="560" y="62" width="14" height="14" rx="3" fill="#34d399"/><text x="580" y="74" font-family="sans-serif" font-size="11" fill="#9aa2bf">Scheme A</text>
+  <rect x="660" y="62" width="14" height="14" rx="3" fill="#818cf8"/><text x="680" y="74" font-family="sans-serif" font-size="11" fill="#9aa2bf">Scheme B</text>
+  <!-- grouped bars: signing latency -->
+  <rect x="24" y="96" width="370" height="200" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="44" y="122" font-family="sans-serif" font-size="12" fill="#c7cce4">Signing latency (ms)</text>
+  <g>
+    <rect x="60" y="210" width="26" height="64" rx="4" fill="url(#dv-a)"/><rect x="90" y="190" width="26" height="84" rx="4" fill="url(#dv-b)"/>
+    <rect x="150" y="232" width="26" height="42" rx="4" fill="url(#dv-a)"/><rect x="180" y="178" width="26" height="96" rx="4" fill="url(#dv-b)"/>
+    <rect x="240" y="200" width="26" height="74" rx="4" fill="url(#dv-a)"/><rect x="270" y="160" width="26" height="114" rx="4" fill="url(#dv-b)"/>
+    <rect x="330" y="222" width="26" height="52" rx="4" fill="url(#dv-a)"/><rect x="360" y="186" width="26" height="88" rx="4" fill="url(#dv-b)"/>
+    <line x1="48" y1="274" x2="386" y2="274" stroke="#ffffff22"/>
+  </g>
+  <!-- scatter -->
+  <rect x="406" y="96" width="370" height="200" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="426" y="122" font-family="sans-serif" font-size="12" fill="#c7cce4">Key size vs verify cost</text>
+  <line x1="430" y1="274" x2="760" y2="274" stroke="#ffffff22"/><line x1="430" y1="140" x2="430" y2="274" stroke="#ffffff22"/>
+  <g fill="#34d399"><circle cx="470" cy="250" r="5"/><circle cx="510" cy="232" r="5"/><circle cx="560" cy="238" r="5"/><circle cx="600" cy="210" r="5"/><circle cx="650" cy="216" r="5"/></g>
+  <g fill="#c084fc"><circle cx="490" cy="200" r="5"/><circle cx="540" cy="186" r="5"/><circle cx="600" cy="170" r="5"/><circle cx="660" cy="178" r="5"/><circle cx="720" cy="156" r="5"/></g>
+  <!-- data table fallback -->
+  <rect x="24" y="308" width="752" height="176" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="44" y="334" font-family="sans-serif" font-size="12" font-weight="700" fill="#fff">Data table fallback</text>
+  <rect x="640" y="318" width="120" height="22" rx="11" fill="url(#dv-a)" opacity=".25"/><text x="700" y="333" font-family="sans-serif" font-size="10" fill="#7fe9d4" text-anchor="middle">accessible · reproducible</text>
+  <g font-family="monospace" font-size="11" fill="#9aa2bf">
+    <text x="44" y="362">scheme</text><text x="220" y="362">keygen</text><text x="360" y="362">sign</text><text x="500" y="362">verify</text><text x="640" y="362">size</text>
+    <line x1="40" y1="372" x2="760" y2="372" stroke="#ffffff14"/>
+    <text x="44" y="396" fill="#d6dbf0">Dilithium-bs</text><text x="220" y="396">4.1ms</text><text x="360" y="396">2.8ms</text><text x="500" y="396">1.9ms</text><text x="640" y="396">2.4kB</text>
+    <text x="44" y="422" fill="#d6dbf0">Falcon-bs</text><text x="220" y="422">9.7ms</text><text x="360" y="422">3.6ms</text><text x="500" y="422">0.8ms</text><text x="640" y="422">1.3kB</text>
+    <text x="44" y="448" fill="#d6dbf0">SPHINCS-bs</text><text x="220" y="448">1.2ms</text><text x="360" y="448">14ms</text><text x="500" y="448">4.1ms</text><text x="640" y="448">7.9kB</text>
+  </g>
+</svg>

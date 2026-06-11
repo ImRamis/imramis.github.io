@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="BugTraceAI security findings dashboard UI">
+  <defs>
+    <linearGradient id="bt-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a0c12"/><stop offset="1" stop-color="#0f0709"/></linearGradient>
+    <linearGradient id="bt-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff4d6d"/><stop offset="1" stop-color="#ff9a3d"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#bt-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#26151a"/><rect x="0" y="24" width="800" height="16" fill="#26151a"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#0f0709"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#a8838c" text-anchor="middle">bugtraceai.ramis.me</text>
+  <text x="24" y="78" font-family="sans-serif" font-size="18" font-weight="700" fill="#fff">Scan #2291 · live</text>
+  <!-- pipeline progress -->
+  <g font-family="sans-serif" font-size="9" fill="#a8838c">
+    <circle cx="40" cy="104" r="9" fill="#34d399"/><text x="40" y="128" text-anchor="middle">Discover</text>
+    <line x1="49" y1="104" x2="121" y2="104" stroke="#34d399" stroke-width="2"/>
+    <circle cx="130" cy="104" r="9" fill="#34d399"/><text x="130" y="128" text-anchor="middle">Analyse</text>
+    <line x1="139" y1="104" x2="211" y2="104" stroke="#34d399" stroke-width="2"/>
+    <circle cx="220" cy="104" r="9" fill="#34d399"/><text x="220" y="128" text-anchor="middle">Consolidate</text>
+    <line x1="229" y1="104" x2="301" y2="104" stroke="url(#bt-ac)" stroke-width="2"/>
+    <circle cx="310" cy="104" r="9" fill="#ff9a3d"/><text x="310" y="128" text-anchor="middle">Exploit</text>
+    <line x1="319" y1="104" x2="391" y2="104" stroke="#ffffff22" stroke-width="2" stroke-dasharray="3 3"/>
+    <circle cx="400" cy="104" r="9" fill="#ffffff22"/><text x="400" y="128" text-anchor="middle">Validate</text>
+    <line x1="409" y1="104" x2="481" y2="104" stroke="#ffffff22" stroke-width="2" stroke-dasharray="3 3"/>
+    <circle cx="490" cy="104" r="9" fill="#ffffff22"/><text x="490" y="128" text-anchor="middle">Report</text>
+  </g>
+  <!-- severity donut -->
+  <rect x="560" y="92" width="216" height="120" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <circle cx="612" cy="152" r="34" fill="none" stroke="#ff4d6d" stroke-width="12" stroke-dasharray="60 154" transform="rotate(-90 612 152)"/>
+  <circle cx="612" cy="152" r="34" fill="none" stroke="#ff9a3d" stroke-width="12" stroke-dasharray="90 124" stroke-dashoffset="-60" transform="rotate(-90 612 152)"/>
+  <circle cx="612" cy="152" r="34" fill="none" stroke="#fbbf24" stroke-width="12" stroke-dasharray="64 150" stroke-dashoffset="-150" transform="rotate(-90 612 152)"/>
+  <text x="612" y="150" font-family="sans-serif" font-size="20" font-weight="700" fill="#fff" text-anchor="middle">145</text><text x="612" y="166" font-family="sans-serif" font-size="9" fill="#a8838c" text-anchor="middle">findings</text>
+  <g font-family="sans-serif" font-size="11" fill="#d8c4ca"><text x="666" y="138">43 validated</text><text x="666" y="160">14 classes</text><text x="666" y="182">9 critical</text></g>
+  <!-- findings list -->
+  <rect x="24" y="148" width="512" height="252" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="44" y="174" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Triage queue</text>
+  <g font-family="sans-serif" font-size="12">
+    <rect x="40" y="186" width="480" height="44" rx="10" fill="#ff4d6d14"/><rect x="52" y="200" width="46" height="16" rx="8" fill="#ff4d6d33"/><text x="75" y="212" font-size="9" fill="#ff4d6d" text-anchor="middle">CRIT</text><text x="112" y="210" fill="#f0dde2">Cross-tenant IDOR · /api/orders</text><text x="500" y="210" font-size="10" fill="#34d399" text-anchor="end">✓ validated</text>
+    <rect x="40" y="238" width="480" height="44" rx="10" fill="#ff9a3d10"/><rect x="52" y="252" width="46" height="16" rx="8" fill="#ff9a3d33"/><text x="75" y="264" font-size="9" fill="#ff9a3d" text-anchor="middle">HIGH</text><text x="112" y="262" fill="#f0dde2">SSRF → cloud metadata</text><text x="500" y="262" font-size="10" fill="#34d399" text-anchor="end">✓ validated</text>
+    <rect x="40" y="290" width="480" height="44" rx="10" fill="#ff9a3d10"/><rect x="52" y="304" width="46" height="16" rx="8" fill="#ff9a3d33"/><text x="75" y="316" font-size="9" fill="#ff9a3d" text-anchor="middle">HIGH</text><text x="112" y="314" fill="#f0dde2">Race condition · limit bypass</text><text x="500" y="314" font-size="10" fill="#fbbf24" text-anchor="end">⟳ exploiting</text>
+    <rect x="40" y="342" width="480" height="44" rx="10" fill="#fbbf2410"/><rect x="52" y="356" width="46" height="16" rx="8" fill="#fbbf2433"/><text x="75" y="368" font-size="9" fill="#fbbf24" text-anchor="middle">MED</text><text x="112" y="366" fill="#f0dde2">LLM prompt-injection · tool abuse</text><text x="500" y="366" font-size="10" fill="#a8838c" text-anchor="end">queued</text>
+  </g>
+  <!-- consensus panel -->
+  <rect x="560" y="224" width="216" height="176" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="580" y="250" font-family="sans-serif" font-size="12" font-weight="700" fill="#fff">Agent consensus</text>
+  <g font-family="monospace" font-size="10" fill="#c8b3ba">
+    <text x="580" y="278">agent-1  exploitable</text><circle cx="752" cy="274" r="4" fill="#34d399"/>
+    <text x="580" y="302">agent-2  exploitable</text><circle cx="752" cy="298" r="4" fill="#34d399"/>
+    <text x="580" y="326">agent-3  uncertain</text><circle cx="752" cy="322" r="4" fill="#fbbf24"/>
+    <text x="580" y="350">vote: 2/3 → confirm</text>
+  </g>
+  <rect x="580" y="364" width="176" height="24" rx="12" fill="url(#bt-ac)" opacity=".22"/><text x="668" y="380" font-family="sans-serif" font-size="10" fill="#ff9a3d" text-anchor="middle">circuit-breaker armed</text>
+  <rect x="24" y="412" width="752" height="36" rx="11" fill="#ffffff08"/><text x="44" y="435" font-family="monospace" font-size="11" fill="#a8838c">streamed over SSE · virtualised table · 5k+ rows @ 60fps</text>
+</svg>

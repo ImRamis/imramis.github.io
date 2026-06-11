@@ -1,0 +1,14 @@
+{
+  "name": "Muhammad Ramis — Penetration Tester & Engineer",
+  "short_name": "Ramis",
+  "description": "OSCP+ penetration tester and software engineer. Security, Java/Kafka, AI/ML and accessible UI/UX.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07080d",
+  "theme_color": "#07080d",
+  "icons": [
+    { "src": "/assets/favicon.ico", "sizes": "any", "type": "image/x-icon" },
+    { "src": "/assets/og.png", "sizes": "1200x630", "type": "image/png", "purpose": "any" }
+  ]
+}
