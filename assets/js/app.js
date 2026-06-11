@@ -108,14 +108,12 @@
   function revealScope(scope) {
     if (!scope) return;
     const items = $$('.rv', scope);
-    items.forEach(el => el.classList.remove('in'));
-    const show = () => items.forEach((el, i) => {
-      el.style.transitionDelay = reduce ? '0s' : (Math.min(i, 14) * 55) + 'ms';
+    items.forEach(el => { el.classList.remove('in'); el.style.animationDelay = ''; });
+    void scope.offsetWidth; // single reflow → the keyframe animation restarts on re-add
+    items.forEach((el, i) => {
+      el.style.animationDelay = reduce ? '0ms' : (Math.min(i, 14) * 55) + 'ms';
       el.classList.add('in');
     });
-    // double rAF guarantees the hidden state paints first, so the transition actually runs
-    if (reduce) show();
-    else requestAnimationFrame(() => requestAnimationFrame(show));
   }
   function focusHeading(scope) {
     if (!scope) return;
@@ -411,9 +409,9 @@
       card.style.display = show ? '' : 'none';
       if (show && (reset || !was)) newly.push(card);
     });
-    newly.forEach(c => c.classList.remove('in'));
-    const showNewly = () => newly.forEach((c, i) => { c.style.transitionDelay = reduce ? '0s' : (Math.min(i, 8) * 45) + 'ms'; c.classList.add('in'); });
-    if (reduce) showNewly(); else requestAnimationFrame(() => requestAnimationFrame(showNewly));
+    newly.forEach(c => { c.classList.remove('in'); c.style.animationDelay = ''; });
+    if (newly.length) void newly[0].offsetWidth; // reflow → restart keyframe animation
+    newly.forEach((c, i) => { c.style.animationDelay = reduce ? '0ms' : (Math.min(i, 8) * 45) + 'ms'; c.classList.add('in'); });
     const more = $('#projMore');
     if (more) {
       if (matched > projShown) { more.hidden = false; $('#projCount').textContent = `Showing ${projShown} of ${matched} projects`; }
@@ -509,8 +507,8 @@
       <span class="post__more">Read article <i class="fa-solid fa-arrow-right"></i></span></article>`).join('') || `<p style="color:var(--text-dim)">No posts in this category yet.</p>`;
     const posts2 = $$('#blogGrid .post');
     posts2.forEach(c => c.addEventListener('click', () => { location.hash = '#/blog/' + c.getAttribute('data-slug'); }));
-    const showPosts = () => posts2.forEach((c, i) => { c.style.transitionDelay = reduce ? '0s' : (Math.min(i, 8) * 45) + 'ms'; c.classList.add('in'); });
-    if (reduce) showPosts(); else requestAnimationFrame(() => requestAnimationFrame(showPosts));
+    if (posts2.length) void posts2[0].offsetWidth; // reflow → restart keyframe animation
+    posts2.forEach((c, i) => { c.style.animationDelay = reduce ? '0ms' : (Math.min(i, 8) * 45) + 'ms'; c.classList.add('in'); });
     const more = $('#blogMore');
     if (more) {
       if (posts.length > blogShown) { more.hidden = false; $('#blogCount').textContent = `Showing ${blogShown} of ${posts.length} articles`; }
@@ -625,6 +623,7 @@
     [DATA.overviewLens, ...DATA.lenses].forEach(l => items.push({ group: 'Switch lens', label: l.label, hint: l.blurb.slice(0, 60) + '…', icon: l.icon, run: () => setLens(l.id) }));
     items.push({ group: 'Actions', label: 'Toggle light / dark theme', icon: 'fa-circle-half-stroke', run: toggleTheme });
     items.push({ group: 'Actions', label: 'Copy email address', icon: 'fa-envelope', run: () => { navigator.clipboard && navigator.clipboard.writeText(email()); toast('Email copied to clipboard'); } });
+    items.push({ group: 'Fun', label: 'Play: Packet Runner', hint: 'WebGL mini-game · opens /play in a new tab', icon: 'fa-gamepad', run: () => window.open('/play/', '_blank', 'noopener') });
     PROJECTS.forEach((p, idx) => items.push({ group: 'Projects', label: shortTitle(p.title), hint: p.type, icon: projIcon(p), run: () => { go('work'); setTimeout(() => openProjectModal(idx), 120); } }));
     POSTS.forEach(p => items.push({ group: 'Writing', label: p.title, hint: `${fmtDate(p.date)} · ${p.readingTime}`, icon: 'fa-feather', run: () => { location.hash = '#/blog/' + p.slug; } }));
     return items;
@@ -862,5 +861,9 @@
   const qLens = new URLSearchParams(location.search).get('lens');
   setLens(qLens && (qLens === 'overview' || byId[qLens]) ? qLens : 'overview', { silent: true });
   handleRoute();
+
+  // Safety net: if any reveal animation never fired (edge-case browser), never leave
+  // content stuck hidden — force the active view's items visible after a moment.
+  setTimeout(() => $$('.view.is-active .rv:not(.in)').forEach(el => el.classList.add('in')), 1500);
 
 })();

@@ -274,12 +274,15 @@ kbd {
 
 /* Staggered entrance — transition-based; JS (revealScope) toggles .in with per-item delay.
    Scoped to .js so content is fully visible if JavaScript never runs. */
-.js .rv {
-  opacity: 0; transform: translateY(26px) scale(.985);
-  transition: opacity .6s var(--ease-out), transform .6s var(--ease-out);
-  will-change: opacity, transform;
+/* Keyframe animations (not transitions) — reliably re-trigger in Firefox/Safari/Chrome
+   when restarted via reflow in revealScope(). */
+.js .rv { opacity: 0; }
+.js .rv.in { animation: rvRise .62s var(--ease-out) both; }
+@keyframes rvRise {
+  from { opacity: 0; transform: translateY(26px) scale(.985); }
+  to   { opacity: 1; transform: none; }
 }
-.js .rv.in { opacity: 1; transform: none; }
+@keyframes rvFade { from { opacity: 0; } to { opacity: 1; } }
 /* programmatic focus target (route headings) shouldn't draw a focus ring */
 [tabindex="-1"]:focus { outline: none; }
 
@@ -746,6 +749,11 @@ a.tile:hover .tile__go { transform: translateX(4px); color: var(--accent); }
 .footer__inner { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; }
 .footer p { color: var(--text-faint); font-size: .82rem; }
 .footer__priv { font-size: .74rem; opacity: .8; }
+.footer__right { display: flex; align-items: center; gap: 1.1rem; }
+.footer__play { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--font-mono); font-size: .78rem; color: var(--text-dim); padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); transition: .25s var(--ease); }
+.footer__play:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--glow); }
+.footer__play i { color: var(--accent); }
+@media (max-width: 560px) { .footer__right { flex-direction: column-reverse; gap: .8rem; align-items: flex-start; } }
 .footer__social { display: flex; gap: .6rem; }
 .footer__social a { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; border: 1px solid var(--border); color: var(--text-dim); transition: .3s; }
 .footer__social a:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-3px); }
@@ -786,8 +794,11 @@ a.tile:hover .tile__go { transform: translateX(4px); color: var(--accent); }
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
-  .js .rv, .js .rv.in { opacity: 1 !important; transform: none !important; }
-  .bg-aurora span, .marquee__track { animation: none; }
+  /* Keep a gentle, movement-free opacity fade on entrance (opacity is vestibular-safe),
+     so reduced-motion users — including Firefox with resistFingerprinting — still see life. */
+  .js .rv { opacity: 0; }
+  .js .rv.in { animation-name: rvFade !important; animation-duration: .35s !important; animation-fill-mode: both !important; transform: none !important; }
+  .bg-aurora span, .marquee__track { animation: none !important; }
 }
 
 /* ---------- Print ---------- */
