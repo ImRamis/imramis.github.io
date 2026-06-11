@@ -215,6 +215,7 @@ kbd {
 }
 .nav__links a:hover { color: var(--text); background: var(--surface-2); }
 .nav__links a.active { color: #07080d; background: linear-gradient(100deg, var(--accent), var(--accent-2)); font-weight: 600; }
+.nav__links a.nav-hidden { display: none; }
 [data-theme="light"] .nav__links a.active { color: #fff; }
 .nav__tools { display: flex; align-items: center; gap: .5rem; }
 .icon-btn {
@@ -790,6 +791,31 @@ a.tile:hover .tile__go { transform: translateX(4px); color: var(--accent); }
 .toast { position: fixed; bottom: 1.4rem; left: 50%; transform: translate(-50%, 24px); z-index: 220; padding: .8rem 1.2rem; border-radius: 12px; background: var(--surface-solid); border: 1px solid var(--border); box-shadow: var(--shadow); font-size: .9rem; opacity: 0; visibility: hidden; transition: .35s var(--ease); display: flex; align-items: center; gap: .6rem; }
 .toast.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
 .toast i { color: #34d399; }
+
+/* =====================================================================
+   SNAKE easter egg
+   ===================================================================== */
+.snake-fab {
+  position: fixed; left: 1.3rem; bottom: 1.3rem; z-index: 95;
+  width: 48px; height: 48px; border-radius: 14px; display: none; place-items: center;
+  font-size: 1.35rem; line-height: 1; border: 1px solid var(--border); background: var(--surface-solid);
+  box-shadow: var(--shadow); transition: transform .3s var(--ease), border-color .3s, box-shadow .3s;
+}
+html[data-route="home"] .snake-fab { display: grid; }
+body.snake-on .snake-fab { display: none !important; }
+.snake-fab:hover { transform: translateY(-3px) rotate(-10deg); border-color: var(--accent); box-shadow: var(--glow); }
+.snake-cv { position: fixed; inset: 0; z-index: 300; pointer-events: none; }
+body.snake-on { overflow: hidden; cursor: crosshair; }
+.snake-hud {
+  position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 301;
+  display: flex; align-items: center; gap: 1rem; padding: .45rem .45rem .45rem 1rem;
+  border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface-solid);
+  box-shadow: var(--shadow); font-family: var(--font-mono); font-size: .82rem; color: var(--text-dim);
+}
+.snake-hud__score b { color: var(--accent); font-size: 1rem; }
+.snake-hud__exit { pointer-events: auto; padding: .35rem .85rem; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-dim); font: inherit; font-size: .74rem; transition: .2s; }
+.snake-hud__exit:hover { color: var(--accent); border-color: var(--accent); }
+.snake-eaten { transform: scale(0) rotate(14deg) !important; opacity: 0 !important; transition: transform .45s var(--ease), opacity .4s !important; pointer-events: none !important; }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
