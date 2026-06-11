@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Multi-region API gateway and GraphQL federation">
+  <defs>
+    <linearGradient id="gw-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1020"/><stop offset="1" stop-color="#070912"/></linearGradient>
+    <linearGradient id="gw-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#818cf8"/></linearGradient>
+    <marker id="gw-ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#4a7fd0"/></marker>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#gw-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#111a30"/><rect x="0" y="24" width="800" height="16" fill="#111a30"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <text x="400" y="24" font-family="monospace" font-size="10" fill="#76839f" text-anchor="middle">gateway-demo.ramis.me · edge</text>
+  <!-- clients -->
+  <g font-family="sans-serif" font-size="10" fill="#9fb0d0">
+    <rect x="34" y="80" width="86" height="40" rx="10" fill="#ffffff0a" stroke="#ffffff1a"/><text x="77" y="105" text-anchor="middle">Web</text>
+    <rect x="34" y="170" width="86" height="40" rx="10" fill="#ffffff0a" stroke="#ffffff1a"/><text x="77" y="195" text-anchor="middle">Mobile</text>
+    <rect x="34" y="260" width="86" height="40" rx="10" fill="#ffffff0a" stroke="#ffffff1a"/><text x="77" y="285" text-anchor="middle">Partners</text>
+  </g>
+  <!-- GraphQL gateway -->
+  <rect x="180" y="120" width="150" height="160" rx="16" fill="url(#gw-ac)" opacity=".16" stroke="#38bdf8"/>
+  <text x="255" y="172" font-family="sans-serif" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">GraphQL</text>
+  <text x="255" y="192" font-family="sans-serif" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">Gateway</text>
+  <text x="255" y="216" font-family="monospace" font-size="9" fill="#a9c7e8" text-anchor="middle">Go · auth · rate-limit</text>
+  <text x="255" y="232" font-family="monospace" font-size="9" fill="#a9c7e8" text-anchor="middle">per-field authz</text>
+  <!-- region badges -->
+  <rect x="180" y="92" width="70" height="20" rx="10" fill="#34d39922"/><text x="215" y="106" font-family="monospace" font-size="9" fill="#34d399" text-anchor="middle">eu-west</text>
+  <rect x="260" y="92" width="70" height="20" rx="10" fill="#34d39922"/><text x="295" y="106" font-family="monospace" font-size="9" fill="#34d399" text-anchor="middle">us-east</text>
+  <!-- subgraph services -->
+  <g font-family="sans-serif" font-size="11" font-weight="600" fill="#fff">
+    <rect x="430" y="70" width="150" height="44" rx="11" fill="#ffffff0a" stroke="#818cf855"/><text x="505" y="92" text-anchor="middle">Accounts</text><text x="505" y="106" font-family="monospace" font-size="8" font-weight="400" fill="#76839f" text-anchor="middle">subgraph · Spring</text>
+    <rect x="430" y="128" width="150" height="44" rx="11" fill="#ffffff0a" stroke="#818cf855"/><text x="505" y="150" text-anchor="middle">Catalog</text><text x="505" y="164" font-family="monospace" font-size="8" font-weight="400" fill="#76839f" text-anchor="middle">subgraph · Node</text>
+    <rect x="430" y="186" width="150" height="44" rx="11" fill="#ffffff0a" stroke="#818cf855"/><text x="505" y="208" text-anchor="middle">Orders</text><text x="505" y="222" font-family="monospace" font-size="8" font-weight="400" fill="#76839f" text-anchor="middle">subgraph · Go</text>
+    <rect x="430" y="244" width="150" height="44" rx="11" fill="#ffffff0a" stroke="#818cf855"/><text x="505" y="266" text-anchor="middle">Pricing</text><text x="505" y="280" font-family="monospace" font-size="8" font-weight="400" fill="#76839f" text-anchor="middle">subgraph · Go</text>
+  </g>
+  <!-- arrows clients -> gateway -->
+  <g stroke="#4a7fd0" stroke-width="2" fill="none" marker-end="url(#gw-ar)">
+    <path d="M120 100 L176 150"/><path d="M120 190 L176 190"/><path d="M120 280 L176 240"/>
+    <path d="M330 150 L426 92"/><path d="M330 175 L426 150"/><path d="M330 205 L426 208"/><path d="M330 235 L426 266"/>
+  </g>
+  <!-- composed schema bar -->
+  <rect x="620" y="70" width="156" height="218" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="698" y="96" font-family="sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Composed schema</text>
+  <g font-family="monospace" font-size="9" fill="#9fb0d0">
+    <text x="636" y="124">type Query {</text><text x="646" y="142">account(id): Account</text><text x="646" y="160">catalog: [Product]</text><text x="646" y="178">orders: [Order]</text><text x="636" y="196">}</text>
+  </g>
+  <rect x="636" y="212" width="124" height="22" rx="11" fill="#34d39922"/><text x="698" y="227" font-family="monospace" font-size="9" fill="#34d399" text-anchor="middle">✓ composition ok</text>
+  <rect x="636" y="240" width="124" height="22" rx="11" fill="#fbbf2422"/><text x="698" y="255" font-family="monospace" font-size="9" fill="#fbbf24" text-anchor="middle">0 breaking changes</text>
+  <!-- footer metrics -->
+  <rect x="34" y="320" width="742" height="150" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <g font-family="sans-serif">
+    <text x="54" y="352" font-size="11" fill="#76839f">Active-active routing · latency-based failover</text>
+    <rect x="54" y="364" width="220" height="8" rx="4" fill="#ffffff14"/><rect x="54" y="364" width="150" height="8" rx="4" fill="url(#gw-ac)"/>
+    <text x="54" y="402" font-size="11" fill="#76839f">Persisted queries · response cache</text>
+    <rect x="54" y="414" width="220" height="8" rx="4" fill="#ffffff14"/><rect x="54" y="414" width="186" height="8" rx="4" fill="url(#gw-ac)"/>
+    <rect x="320" y="344" width="140" height="100" rx="12" fill="#070912"/><text x="390" y="372" font-size="11" fill="#76839f" text-anchor="middle">p99 edge</text><text x="390" y="408" font-size="26" font-weight="700" fill="#fff" text-anchor="middle">31ms</text>
+    <rect x="476" y="344" width="140" height="100" rx="12" fill="#070912"/><text x="546" y="372" font-size="11" fill="#76839f" text-anchor="middle">services</text><text x="546" y="408" font-size="26" font-weight="700" fill="#fff" text-anchor="middle">12+</text>
+    <rect x="632" y="344" width="124" height="100" rx="12" fill="#070912"/><text x="694" y="372" font-size="11" fill="#76839f" text-anchor="middle">regions</text><text x="694" y="408" font-size="26" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+  </g>
+</svg>

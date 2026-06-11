@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Real-time chat widget and admin UI">
+  <defs>
+    <linearGradient id="cw-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101424"/><stop offset="1" stop-color="#0a0c16"/></linearGradient>
+    <linearGradient id="cw-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#cw-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#191e33"/><rect x="0" y="24" width="800" height="16" fill="#191e33"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#0a0c16"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#7a82a6" text-anchor="middle">chat.ramis.me/admin</text>
+  <!-- admin: conversations list -->
+  <rect x="24" y="56" width="220" height="428" rx="12" fill="#ffffff08"/>
+  <text x="40" y="84" font-family="sans-serif" font-size="14" font-weight="700" fill="#fff">Conversations</text>
+  <g font-family="sans-serif">
+    <rect x="32" y="98" width="204" height="50" rx="10" fill="url(#cw-ac)" opacity=".18"/><circle cx="56" cy="123" r="14" fill="#818cf8"/><text x="80" y="119" font-size="12" fill="#e7e9fb">Priya M.</text><text x="80" y="135" font-size="10" fill="#7a82a6">where is my order?</text><circle cx="224" cy="112" r="7" fill="#ff4d6d"/><text x="224" y="116" font-size="8" fill="#fff" text-anchor="middle">2</text>
+    <circle cx="56" cy="179" r="14" fill="#22d3ee"/><text x="80" y="175" font-size="12" fill="#cdd1ec">Jordan K.</text><text x="80" y="191" font-size="10" fill="#7a82a6">thanks!</text>
+    <circle cx="56" cy="231" r="14" fill="#34d399"/><text x="80" y="227" font-size="12" fill="#cdd1ec">Sam R.</text><text x="80" y="243" font-size="10" fill="#7a82a6">can I reschedule…</text>
+    <circle cx="56" cy="283" r="14" fill="#fbbf24"/><text x="80" y="279" font-size="12" fill="#cdd1ec">Lee T.</text><text x="80" y="295" font-size="10" fill="#7a82a6">payment failed</text>
+  </g>
+  <!-- conversation thread -->
+  <rect x="256" y="56" width="340" height="428" rx="12" fill="#ffffff05"/>
+  <text x="276" y="86" font-family="sans-serif" font-size="14" font-weight="700" fill="#fff">Priya M.</text><circle cx="370" cy="81" r="5" fill="#34d399"/><text x="382" y="85" font-family="sans-serif" font-size="10" fill="#34d399">online</text>
+  <rect x="276" y="104" width="200" height="36" rx="14" fill="#ffffff12"/><rect x="290" y="118" width="160" height="8" rx="4" fill="#cdd1ec"/>
+  <rect x="376" y="152" width="200" height="36" rx="14" fill="url(#cw-ac)" opacity=".85"/><rect x="392" y="166" width="168" height="8" rx="4" fill="#0a0c16"/>
+  <rect x="276" y="200" width="170" height="36" rx="14" fill="#ffffff12"/><rect x="290" y="214" width="130" height="8" rx="4" fill="#cdd1ec"/>
+  <rect x="376" y="248" width="200" height="50" rx="14" fill="url(#cw-ac)" opacity=".85"/><rect x="392" y="262" width="168" height="8" rx="4" fill="#0a0c16"/><rect x="392" y="278" width="120" height="8" rx="4" fill="#0a0c1699"/>
+  <!-- typing -->
+  <g><circle cx="290" cy="324" r="4" fill="#7a82a6"/><circle cx="304" cy="324" r="4" fill="#7a82a6"/><circle cx="318" cy="324" r="4" fill="#7a82a6"/></g>
+  <rect x="276" y="436" width="220" height="34" rx="17" fill="#0a0c16" stroke="#ffffff1a"/><text x="292" y="457" font-family="sans-serif" font-size="11" fill="#7a82a6">Type a reply…</text>
+  <circle cx="558" cy="453" r="17" fill="url(#cw-ac)"/><text x="558" y="458" font-family="sans-serif" font-size="14" fill="#0a0c16" text-anchor="middle">➤</text>
+  <!-- right: embed widget + stats -->
+  <rect x="608" y="56" width="168" height="140" rx="12" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="624" y="82" font-family="sans-serif" font-size="11" font-weight="700" fill="#fff">Live now</text>
+  <text x="624" y="120" font-family="sans-serif" font-size="28" font-weight="700" fill="#fff">6,842</text><text x="624" y="138" font-family="sans-serif" font-size="10" fill="#7a82a6">concurrent users</text>
+  <rect x="624" y="152" width="136" height="6" rx="3" fill="#ffffff14"/><rect x="624" y="152" width="104" height="6" rx="3" fill="url(#cw-ac)"/>
+  <text x="624" y="180" font-family="monospace" font-size="10" fill="#34d399">▲ sub-100ms paint</text>
+  <!-- embeddable widget mock -->
+  <rect x="608" y="212" width="168" height="272" rx="16" fill="#0e1120" stroke="#818cf855"/>
+  <rect x="608" y="212" width="168" height="44" rx="16" fill="url(#cw-ac)"/><rect x="608" y="240" width="168" height="16" fill="url(#cw-ac)"/><text x="628" y="240" font-family="sans-serif" font-size="12" font-weight="700" fill="#0a0c16">Need help?</text>
+  <rect x="624" y="276" width="120" height="30" rx="12" fill="#ffffff12"/><rect x="636" y="288" width="90" height="7" rx="3" fill="#cdd1ec"/>
+  <rect x="664" y="316" width="96" height="30" rx="12" fill="url(#cw-ac)" opacity=".7"/><rect x="676" y="328" width="72" height="7" rx="3" fill="#0a0c16"/>
+  <rect x="624" y="356" width="110" height="30" rx="12" fill="#ffffff12"/><rect x="636" y="368" width="84" height="7" rx="3" fill="#cdd1ec"/>
+  <rect x="624" y="442" width="138" height="28" rx="14" fill="#0a0c16" stroke="#ffffff1a"/><text x="638" y="460" font-family="sans-serif" font-size="10" fill="#7a82a6">Message…</text>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="E-commerce storefront UI">
+  <defs>
+    <linearGradient id="ec-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1224"/><stop offset="1" stop-color="#100a18"/></linearGradient>
+    <linearGradient id="ec-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f472b6"/><stop offset="1" stop-color="#fbbf24"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#ec-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#251930"/><rect x="0" y="24" width="800" height="16" fill="#251930"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#100a18"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#9a8aa6" text-anchor="middle">shop.ramis.me</text>
+  <!-- nav -->
+  <text x="24" y="78" font-family="sans-serif" font-size="18" font-weight="700" fill="#fff">Lumen<tspan fill="#f472b6">.</tspan></text>
+  <g font-family="sans-serif" font-size="12" fill="#b9a9c6"><text x="120" y="78">New</text><text x="180" y="78">Women</text><text x="252" y="78">Men</text><text x="312" y="78">Sale</text></g>
+  <rect x="560" y="60" width="160" height="28" rx="14" fill="#100a18" stroke="#ffffff1a"/><text x="576" y="79" font-family="sans-serif" font-size="11" fill="#9a8aa6">Search…</text>
+  <circle cx="752" cy="74" r="14" fill="#ffffff10"/><text x="752" y="79" font-family="sans-serif" font-size="13" fill="#f472b6" text-anchor="middle">⛒</text>
+  <!-- hero banner -->
+  <rect x="24" y="100" width="500" height="160" rx="16" fill="url(#ec-ac)" opacity=".9"/>
+  <text x="52" y="156" font-family="sans-serif" font-size="28" font-weight="700" fill="#1a1224">Summer drop</text>
+  <text x="52" y="188" font-family="sans-serif" font-size="13" fill="#3a1f33">Up to 40% off the new collection</text>
+  <rect x="52" y="206" width="120" height="36" rx="18" fill="#1a1224"/><text x="112" y="229" font-family="sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Shop now</text>
+  <!-- cart summary -->
+  <rect x="536" y="100" width="240" height="160" rx="16" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="556" y="126" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Your bag · 3</text>
+  <g font-family="sans-serif" font-size="11" fill="#cdbed8">
+    <rect x="556" y="138" width="30" height="30" rx="7" fill="#f472b633"/><text x="596" y="150">Linen shirt</text><text x="756" y="150" text-anchor="end" fill="#fff">£48</text>
+    <rect x="556" y="176" width="30" height="30" rx="7" fill="#fbbf2433"/><text x="596" y="188">Canvas tote</text><text x="756" y="188" text-anchor="end" fill="#fff">£24</text>
+    <line x1="556" y1="214" x2="756" y2="214" stroke="#ffffff14"/>
+    <text x="556" y="234" fill="#9a8aa6">Total</text><text x="756" y="234" text-anchor="end" font-size="14" font-weight="700" fill="#fff">£120</text>
+  </g>
+  <rect x="556" y="244" width="0" height="0"/>
+  <!-- product grid -->
+  <g>
+    <rect x="24" y="280" width="178" height="200" rx="14" fill="#ffffff0a" stroke="#ffffff14"/><rect x="24" y="280" width="178" height="120" rx="14" fill="#f472b622"/><circle cx="113" cy="338" r="34" fill="#f472b644"/><rect x="40" y="416" width="120" height="10" rx="5" fill="#d9cae2"/><text x="40" y="452" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">£48</text><rect x="150" y="436" width="36" height="24" rx="12" fill="url(#ec-ac)"/>
+    <rect x="214" y="280" width="178" height="200" rx="14" fill="#ffffff0a" stroke="#ffffff14"/><rect x="214" y="280" width="178" height="120" rx="14" fill="#fbbf2422"/><circle cx="303" cy="338" r="34" fill="#fbbf2444"/><rect x="230" y="416" width="120" height="10" rx="5" fill="#d9cae2"/><text x="230" y="452" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">£24</text><rect x="340" y="436" width="36" height="24" rx="12" fill="url(#ec-ac)"/>
+    <rect x="404" y="280" width="178" height="200" rx="14" fill="#ffffff0a" stroke="#ffffff14"/><rect x="404" y="280" width="178" height="120" rx="14" fill="#c084fc22"/><circle cx="493" cy="338" r="34" fill="#c084fc44"/><rect x="420" y="416" width="120" height="10" rx="5" fill="#d9cae2"/><text x="420" y="452" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">£72</text><rect x="530" y="436" width="36" height="24" rx="12" fill="url(#ec-ac)"/>
+    <rect x="594" y="280" width="182" height="200" rx="14" fill="#ffffff0a" stroke="#ffffff14"/><rect x="594" y="280" width="182" height="120" rx="14" fill="#34d39922"/><circle cx="685" cy="338" r="34" fill="#34d39944"/><rect x="610" y="416" width="120" height="10" rx="5" fill="#d9cae2"/><text x="610" y="452" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">£36</text><rect x="724" y="436" width="36" height="24" rx="12" fill="url(#ec-ac)"/>
+  </g>
+</svg>

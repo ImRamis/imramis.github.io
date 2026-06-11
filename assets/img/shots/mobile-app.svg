@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Mobile app UI screens">
+  <defs>
+    <linearGradient id="mb-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#102218"/><stop offset="1" stop-color="#08130d"/></linearGradient>
+    <linearGradient id="mb-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+    <linearGradient id="mb-map" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#173a2a"/><stop offset="1" stop-color="#0c2018"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#mb-bg)"/>
+  <!-- phone 1: map / matching -->
+  <g transform="translate(150 40)">
+    <rect x="0" y="0" width="220" height="420" rx="34" fill="#0a1812" stroke="#34d39955" stroke-width="2"/>
+    <rect x="78" y="14" width="64" height="14" rx="7" fill="#06100b"/>
+    <rect x="14" y="40" width="192" height="240" rx="20" fill="url(#mb-map)"/>
+    <path d="M30 250 Q90 150 120 120 T196 70" fill="none" stroke="url(#mb-ac)" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round"/>
+    <circle cx="30" cy="250" r="8" fill="#34d399"/><circle cx="196" cy="70" r="9" fill="#22d3ee"/>
+    <circle cx="120" cy="120" r="14" fill="#34d399" opacity=".25"/><circle cx="120" cy="120" r="6" fill="#34d399"/>
+    <rect x="14" y="294" width="192" height="112" rx="18" fill="#ffffff0c"/>
+    <circle cx="42" cy="324" r="16" fill="#22d3ee" opacity=".4"/><rect x="68" y="314" width="100" height="10" rx="5" fill="#d6efe4"/><rect x="68" y="332" width="64" height="8" rx="4" fill="#5f8a78"/>
+    <rect x="14" y="356" width="192" height="36" rx="18" fill="url(#mb-ac)"/><text x="110" y="380" font-family="sans-serif" font-size="13" font-weight="700" fill="#06100b" text-anchor="middle">Match a ride</text>
+  </g>
+  <!-- phone 2: chat / schedule -->
+  <g transform="translate(430 40)">
+    <rect x="0" y="0" width="220" height="420" rx="34" fill="#0a1812" stroke="#22d3ee55" stroke-width="2"/>
+    <rect x="78" y="14" width="64" height="14" rx="7" fill="#06100b"/>
+    <text x="22" y="58" font-family="sans-serif" font-size="15" font-weight="700" fill="#fff">Trip chat</text>
+    <rect x="14" y="74" width="140" height="34" rx="14" fill="#ffffff12"/><rect x="26" y="86" width="100" height="9" rx="4" fill="#cfeede"/>
+    <rect x="66" y="120" width="140" height="34" rx="14" fill="url(#mb-ac)" opacity=".85"/><rect x="80" y="132" width="110" height="9" rx="4" fill="#06251c"/>
+    <rect x="14" y="166" width="120" height="34" rx="14" fill="#ffffff12"/><rect x="26" y="178" width="84" height="9" rx="4" fill="#cfeede"/>
+    <text x="22" y="240" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Schedule</text>
+    <g font-family="sans-serif" font-size="10" fill="#86b8a6">
+      <rect x="14" y="252" width="44" height="44" rx="10" fill="#ffffff0c"/><text x="36" y="270" text-anchor="middle">Mon</text><text x="36" y="288" font-size="14" fill="#34d399" text-anchor="middle">07</text>
+      <rect x="62" y="252" width="44" height="44" rx="10" fill="url(#mb-ac)" opacity=".3"/><text x="84" y="270" text-anchor="middle">Tue</text><text x="84" y="288" font-size="14" fill="#fff" text-anchor="middle">08</text>
+      <rect x="110" y="252" width="44" height="44" rx="10" fill="#ffffff0c"/><text x="132" y="270" text-anchor="middle">Wed</text><text x="132" y="288" font-size="14" fill="#34d399" text-anchor="middle">09</text>
+      <rect x="158" y="252" width="44" height="44" rx="10" fill="#ffffff0c"/><text x="180" y="270" text-anchor="middle">Thu</text><text x="180" y="288" font-size="14" fill="#34d399" text-anchor="middle">10</text>
+    </g>
+    <rect x="14" y="356" width="192" height="36" rx="18" fill="none" stroke="#22d3ee" stroke-width="1.5"/><text x="110" y="380" font-family="sans-serif" font-size="13" fill="#22d3ee" text-anchor="middle">Confirm seat</text>
+  </g>
+  <text x="400" y="488" font-family="monospace" font-size="11" fill="#5f8a78" text-anchor="middle">React Native · iOS + Android · ~10k downloads</text>
+</svg>

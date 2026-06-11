@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Fintech wallet UI">
+  <defs>
+    <linearGradient id="fw-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c1226"/><stop offset="1" stop-color="#070a18"/></linearGradient>
+    <linearGradient id="fw-card" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+    <linearGradient id="fw-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#38bdf8"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#fw-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#121a36"/><rect x="0" y="24" width="800" height="16" fill="#121a36"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#070a18"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#7b87ac" text-anchor="middle">wallet.ramis.me</text>
+  <text x="24" y="80" font-family="sans-serif" font-size="18" font-weight="700" fill="#fff">Good morning, Ramis</text>
+  <!-- balance card -->
+  <rect x="24" y="100" width="300" height="170" rx="18" fill="url(#fw-card)"/>
+  <text x="46" y="134" font-family="sans-serif" font-size="12" fill="#e8ecff">Total balance</text>
+  <text x="46" y="172" font-family="sans-serif" font-size="34" font-weight="700" fill="#fff">£24,860.40</text>
+  <text x="46" y="196" font-family="sans-serif" font-size="11" fill="#dfe6ff">+£1,204 this month</text>
+  <text x="46" y="250" font-family="monospace" font-size="15" fill="#fff" letter-spacing="3">5412 •••• •••• 8842</text>
+  <circle cx="288" cy="240" r="14" fill="#ffffff66"/><circle cx="304" cy="240" r="14" fill="#ffffff33"/>
+  <!-- quick actions -->
+  <g font-family="sans-serif" font-size="11" fill="#cdd6f4">
+    <rect x="340" y="100" width="100" height="80" rx="14" fill="#ffffff0c"/><circle cx="390" cy="132" r="14" fill="url(#fw-ac)" opacity=".4"/><text x="390" y="166" text-anchor="middle">Send</text>
+    <rect x="450" y="100" width="100" height="80" rx="14" fill="#ffffff0c"/><circle cx="500" cy="132" r="14" fill="url(#fw-ac)" opacity=".4"/><text x="500" y="166" text-anchor="middle">Request</text>
+    <rect x="560" y="100" width="100" height="80" rx="14" fill="#ffffff0c"/><circle cx="610" cy="132" r="14" fill="url(#fw-ac)" opacity=".4"/><text x="610" y="166" text-anchor="middle">Top up</text>
+    <rect x="670" y="100" width="106" height="80" rx="14" fill="#ffffff0c"/><circle cx="723" cy="132" r="14" fill="url(#fw-ac)" opacity=".4"/><text x="723" y="166" text-anchor="middle">Cards</text>
+  </g>
+  <!-- spend chart -->
+  <rect x="340" y="194" width="436" height="76" rx="14" fill="#ffffff0a"/>
+  <text x="358" y="218" font-family="sans-serif" font-size="11" fill="#7b87ac">Spending</text>
+  <polyline points="358,256 408,242 458,250 508,228 558,238 608,214 658,230 708,206 760,222" fill="none" stroke="url(#fw-ac)" stroke-width="3"/>
+  <!-- transactions -->
+  <rect x="24" y="290" width="752" height="194" rx="16" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="44" y="318" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Recent activity</text>
+  <g font-family="sans-serif" font-size="12">
+    <circle cx="56" cy="346" r="13" fill="#34d39933"/><text x="56" y="350" font-size="11" fill="#34d399" text-anchor="middle">↓</text><text x="84" y="343" fill="#e4e9f7">Salary · Sorvox</text><text x="84" y="359" font-size="10" fill="#7b87ac">Today 09:02</text><text x="756" y="350" fill="#34d399" text-anchor="end">+£3,400.00</text>
+    <circle cx="56" cy="388" r="13" fill="#818cf833"/><text x="56" y="392" font-size="11" fill="#818cf8" text-anchor="middle">↑</text><text x="84" y="385" fill="#e4e9f7">Cloud bill · AWS</text><text x="84" y="401" font-size="10" fill="#7b87ac">Yesterday</text><text x="756" y="392" fill="#cdd6f4" text-anchor="end">−£212.40</text>
+    <circle cx="56" cy="430" r="13" fill="#818cf833"/><text x="56" y="434" font-size="11" fill="#818cf8" text-anchor="middle">↑</text><text x="84" y="427" fill="#e4e9f7">Groceries</text><text x="84" y="443" font-size="10" fill="#7b87ac">Mon</text><text x="756" y="434" fill="#cdd6f4" text-anchor="end">−£48.10</text>
+    <line x1="44" y1="408" x2="756" y2="408" stroke="#ffffff10"/><line x1="44" y1="366" x2="756" y2="366" stroke="#ffffff10"/>
+  </g>
+</svg>

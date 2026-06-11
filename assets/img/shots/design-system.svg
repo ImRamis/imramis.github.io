@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Design system component library UI">
+  <defs>
+    <linearGradient id="ds-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b1430"/><stop offset="1" stop-color="#0e0a1c"/></linearGradient>
+    <linearGradient id="ds-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fb7185"/><stop offset="1" stop-color="#fbbf24"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#ds-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#221a3a"/><rect x="0" y="24" width="800" height="16" fill="#221a3a"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#0e0a1c"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#8b8198" text-anchor="middle">ds.ramis.me</text>
+  <!-- sidebar -->
+  <rect x="16" y="56" width="150" height="428" rx="12" fill="#ffffff0a"/>
+  <text x="32" y="86" font-family="sans-serif" font-size="15" font-weight="700" fill="#fff">Components</text>
+  <g font-family="sans-serif" font-size="11" fill="#b3aac4">
+    <rect x="24" y="100" width="134" height="26" rx="7" fill="url(#ds-ac)" opacity=".22"/><text x="36" y="117">Buttons</text>
+    <text x="36" y="147">Inputs</text><text x="36" y="173">Toasts</text><text x="36" y="199">Modals</text>
+    <text x="36" y="225">Tables</text><text x="36" y="251">Tabs</text><text x="36" y="277">Tokens</text><text x="36" y="303">Charts</text>
+  </g>
+  <!-- canvas -->
+  <text x="186" y="84" font-family="sans-serif" font-size="18" font-weight="700" fill="#fff">Buttons</text>
+  <rect x="186" y="100" width="120" height="40" rx="20" fill="url(#ds-ac)"/><text x="246" y="125" font-family="sans-serif" font-size="13" font-weight="700" fill="#1b1430" text-anchor="middle">Primary</text>
+  <rect x="318" y="100" width="120" height="40" rx="20" fill="none" stroke="#fb7185" stroke-width="1.5"/><text x="378" y="125" font-family="sans-serif" font-size="13" fill="#fb7185" text-anchor="middle">Ghost</text>
+  <rect x="450" y="100" width="120" height="40" rx="20" fill="#ffffff14"/><text x="510" y="125" font-family="sans-serif" font-size="13" fill="#cfc8dd" text-anchor="middle">Subtle</text>
+  <!-- color tokens -->
+  <text x="186" y="178" font-family="sans-serif" font-size="14" font-weight="700" fill="#fff">Color tokens</text>
+  <g>
+    <rect x="186" y="190" width="56" height="56" rx="12" fill="#fb7185"/><rect x="250" y="190" width="56" height="56" rx="12" fill="#fbbf24"/>
+    <rect x="314" y="190" width="56" height="56" rx="12" fill="#34d399"/><rect x="378" y="190" width="56" height="56" rx="12" fill="#6ee7ff"/>
+    <rect x="442" y="190" width="56" height="56" rx="12" fill="#818cf8"/><rect x="506" y="190" width="56" height="56" rx="12" fill="#c084fc"/>
+  </g>
+  <!-- cards row -->
+  <rect x="186" y="266" width="180" height="120" rx="12" fill="#ffffff0a" stroke="#ffffff1a"/>
+  <rect x="202" y="282" width="40" height="40" rx="10" fill="url(#ds-ac)" opacity=".3"/><rect x="202" y="334" width="120" height="9" rx="4" fill="#cfc8dd"/><rect x="202" y="352" width="90" height="8" rx="4" fill="#6b6480"/>
+  <rect x="382" y="266" width="180" height="120" rx="12" fill="#ffffff0a" stroke="#ffffff1a"/>
+  <circle cx="412" cy="306" r="20" fill="#34d399" opacity=".4"/><rect x="382" y="334" width="160" height="9" rx="4" fill="#cfc8dd"/><rect x="382" y="352" width="110" height="8" rx="4" fill="#6b6480"/>
+  <!-- toggles + inputs -->
+  <rect x="186" y="402" width="376" height="66" rx="12" fill="#ffffff0a" stroke="#ffffff1a"/>
+  <rect x="202" y="424" width="46" height="22" rx="11" fill="url(#ds-ac)"/><circle cx="237" cy="435" r="8" fill="#fff"/>
+  <rect x="262" y="424" width="46" height="22" rx="11" fill="#ffffff22"/><circle cx="273" cy="435" r="8" fill="#cfc8dd"/>
+  <rect x="330" y="420" width="216" height="30" rx="8" fill="#0e0a1c" stroke="#fb718577"/><text x="344" y="439" font-family="sans-serif" font-size="11" fill="#8b8198">name@team.com</text>
+  <!-- right panel: storybook -->
+  <rect x="582" y="56" width="202" height="428" rx="12" fill="#ffffff0a"/>
+  <text x="598" y="84" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Storybook · a11y</text>
+  <g font-family="sans-serif" font-size="11">
+    <circle cx="604" cy="112" r="5" fill="#34d399"/><text x="618" y="116" fill="#b3aac4">0 axe violations</text>
+    <circle cx="604" cy="138" r="5" fill="#34d399"/><text x="618" y="142" fill="#b3aac4">contrast AA pass</text>
+    <circle cx="604" cy="164" r="5" fill="#34d399"/><text x="618" y="168" fill="#b3aac4">focus order valid</text>
+  </g>
+  <rect x="598" y="190" width="170" height="120" rx="10" fill="#0e0a1c"/>
+  <polyline points="610,290 640,250 670,268 700,224 730,240 758,210" fill="none" stroke="url(#ds-ac)" stroke-width="3"/>
+  <rect x="598" y="326" width="170" height="42" rx="9" fill="url(#ds-ac)" opacity=".18"/><text x="612" y="352" font-family="monospace" font-size="11" fill="#fbbf24">60+ components</text>
+  <rect x="598" y="380" width="170" height="42" rx="9" fill="#ffffff0a"/><text x="612" y="406" font-family="monospace" font-size="11" fill="#b3aac4">tokens → Figma sync</text>
+</svg>

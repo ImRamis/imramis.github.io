@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Healthcare patient portal UI">
+  <defs>
+    <linearGradient id="hp-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#071a22"/><stop offset="1" stop-color="#04111a"/></linearGradient>
+    <linearGradient id="hp-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#34d399"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#hp-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#0a2730"/><rect x="0" y="24" width="800" height="16" fill="#0a2730"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <rect x="300" y="12" width="200" height="16" rx="8" fill="#04111a"/><text x="400" y="24" font-family="monospace" font-size="10" fill="#6fa3ad" text-anchor="middle">portal.ramis.me</text>
+  <text x="24" y="80" font-family="sans-serif" font-size="18" font-weight="700" fill="#fff">My health</text>
+  <!-- vitals cards -->
+  <g font-family="sans-serif">
+    <rect x="24" y="100" width="172" height="100" rx="14" fill="#ffffff0a" stroke="#ffffff14"/><text x="42" y="126" font-size="11" fill="#6fa3ad">Heart rate</text><text x="42" y="160" font-size="26" font-weight="700" fill="#fff">72<tspan font-size="12" fill="#6fa3ad"> bpm</tspan></text>
+    <polyline points="42,184 60,176 74,188 88,168 104,182 120,172 136,186 160,176" fill="none" stroke="#34d399" stroke-width="2"/>
+    <rect x="208" y="100" width="172" height="100" rx="14" fill="#ffffff0a" stroke="#ffffff14"/><text x="226" y="126" font-size="11" fill="#6fa3ad">Blood pressure</text><text x="226" y="160" font-size="26" font-weight="700" fill="#fff">118/76</text><rect x="226" y="178" width="120" height="6" rx="3" fill="#22d3ee44"/><rect x="226" y="178" width="80" height="6" rx="3" fill="url(#hp-ac)"/>
+    <rect x="392" y="100" width="172" height="100" rx="14" fill="#ffffff0a" stroke="#ffffff14"/><text x="410" y="126" font-size="11" fill="#6fa3ad">Sleep</text><text x="410" y="160" font-size="26" font-weight="700" fill="#fff">7.4<tspan font-size="12" fill="#6fa3ad"> hrs</tspan></text><g><rect x="410" y="176" width="14" height="14" rx="3" fill="#22d3ee"/><rect x="430" y="176" width="14" height="14" rx="3" fill="#22d3ee"/><rect x="450" y="176" width="14" height="14" rx="3" fill="#22d3ee99"/><rect x="470" y="176" width="14" height="14" rx="3" fill="#ffffff22"/></g>
+  </g>
+  <!-- appointments -->
+  <rect x="576" y="100" width="200" height="100" rx="14" fill="url(#hp-ac)" opacity=".14"/>
+  <text x="594" y="126" font-family="sans-serif" font-size="11" fill="#7ee3d6">Next appointment</text>
+  <text x="594" y="152" font-family="sans-serif" font-size="15" font-weight="700" fill="#fff">Dr. Hughes · 14:30</text>
+  <text x="594" y="174" font-family="sans-serif" font-size="11" fill="#aee7df">Tue 16 Jun · Video call</text>
+  <rect x="594" y="182" width="80" height="22" rx="11" fill="url(#hp-ac)"/><text x="634" y="197" font-family="sans-serif" font-size="10" font-weight="700" fill="#04111a" text-anchor="middle">Join</text>
+  <!-- chart panel -->
+  <rect x="24" y="212" width="476" height="180" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="44" y="240" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Activity · last 7 days</text>
+  <g>
+    <rect x="60" y="320" width="40" height="44" rx="6" fill="url(#hp-ac)"/><rect x="120" y="296" width="40" height="68" rx="6" fill="url(#hp-ac)"/><rect x="180" y="336" width="40" height="28" rx="6" fill="url(#hp-ac)"/><rect x="240" y="280" width="40" height="84" rx="6" fill="url(#hp-ac)"/><rect x="300" y="312" width="40" height="52" rx="6" fill="url(#hp-ac)"/><rect x="360" y="288" width="40" height="76" rx="6" fill="url(#hp-ac)"/><rect x="420" y="328" width="40" height="36" rx="6" fill="url(#hp-ac)"/>
+  </g>
+  <!-- medications -->
+  <rect x="512" y="212" width="264" height="180" rx="14" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="532" y="240" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Medications</text>
+  <g font-family="sans-serif" font-size="12" fill="#cde9e6">
+    <circle cx="540" cy="266" r="6" fill="#34d399"/><text x="556" y="270">Atorvastatin · 20mg</text><text x="756" y="270" font-size="10" fill="#6fa3ad" text-anchor="end">08:00</text>
+    <circle cx="540" cy="300" r="6" fill="#34d399"/><text x="556" y="304">Metformin · 500mg</text><text x="756" y="304" font-size="10" fill="#6fa3ad" text-anchor="end">12:00</text>
+    <circle cx="540" cy="334" r="6" fill="#fbbf24"/><text x="556" y="338">Vitamin D</text><text x="756" y="338" font-size="10" fill="#fbbf24" text-anchor="end">due</text>
+  </g>
+  <rect x="532" y="352" width="232" height="26" rx="13" fill="url(#hp-ac)" opacity=".25"/><text x="648" y="369" font-family="sans-serif" font-size="11" fill="#7ee3d6" text-anchor="middle">WCAG 2.2 AA · screen-reader ready</text>
+  <!-- footer accessibility note -->
+  <rect x="24" y="404" width="752" height="40" rx="12" fill="#ffffff08"/><text x="44" y="429" font-family="monospace" font-size="11" fill="#6fa3ad">a11y: keyboard paths · focus order · 0 contrast failures · data-table fallbacks</text>
+</svg>
