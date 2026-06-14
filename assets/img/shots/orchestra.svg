@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Multi-agent workflow run inspector UI">
+  <defs>
+    <linearGradient id="or-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#081a16"/><stop offset="1" stop-color="#050f0c"/></linearGradient>
+    <linearGradient id="or-ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+    <marker id="or-ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#2f8f7a"/></marker>
+  </defs>
+  <rect width="800" height="500" rx="16" fill="url(#or-bg)"/>
+  <rect x="0" y="0" width="800" height="40" rx="16" fill="#0e2a22"/><rect x="0" y="24" width="800" height="16" fill="#0e2a22"/>
+  <circle cx="22" cy="20" r="5" fill="#ff5f57"/><circle cx="40" cy="20" r="5" fill="#febc2e"/><circle cx="58" cy="20" r="5" fill="#28c840"/>
+  <text x="400" y="24" font-family="monospace" font-size="10" fill="#6fae9d" text-anchor="middle">orchestra.ramis.me · run #4f2a · replayable</text>
+  <!-- left rail: agent DAG -->
+  <rect x="16" y="56" width="250" height="428" rx="12" fill="#ffffff08"/>
+  <text x="34" y="82" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Run graph</text>
+  <g stroke="#2f8f7a" stroke-width="2" fill="none" marker-end="url(#or-ar)">
+    <path d="M60 112 L60 140"/><path d="M60 172 L60 200"/><path d="M60 232 L60 260"/><path d="M60 292 L60 320"/>
+  </g>
+  <g font-family="sans-serif" font-size="11">
+    <circle cx="60" cy="104" r="9" fill="#34d399"/><text x="60" y="108" font-size="9" fill="#04140f" text-anchor="middle">✓</text><text x="80" y="108" fill="#cdeee4">Plan</text>
+    <circle cx="60" cy="164" r="9" fill="#34d399"/><text x="60" y="168" font-size="9" fill="#04140f" text-anchor="middle">✓</text><text x="80" y="168" fill="#cdeee4">Tool · search_docs</text>
+    <circle cx="60" cy="224" r="9" fill="#34d399"/><text x="60" y="228" font-size="9" fill="#04140f" text-anchor="middle">✓</text><text x="80" y="228" fill="#cdeee4">Review</text>
+    <!-- running node -->
+    <circle cx="60" cy="284" r="11" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-dasharray="40 18"/><circle cx="60" cy="284" r="4" fill="#22d3ee"/><text x="80" y="282" fill="#fff" font-weight="700">Tool · write_ticket</text><text x="80" y="296" font-size="9" fill="#6fae9d">running…</text>
+    <circle cx="60" cy="344" r="9" fill="#0e2a22" stroke="#2f8f7a"/><text x="80" y="348" fill="#6fae9d">Done</text>
+  </g>
+  <rect x="34" y="380" width="216" height="30" rx="8" fill="url(#or-ac)" opacity=".16"/><text x="142" y="400" font-family="monospace" font-size="10" fill="#7fe9d4" text-anchor="middle">durable · retried 1× · replayable</text>
+  <rect x="34" y="420" width="216" height="46" rx="9" fill="#ffffff0a"/><text x="48" y="440" font-family="sans-serif" font-size="10" fill="#6fae9d">SDK</text><text x="48" y="456" font-family="monospace" font-size="10" fill="#cdeee4">orchestra.run(workflow, input)</text>
+  <!-- right panel: current step detail -->
+  <rect x="282" y="56" width="502" height="270" rx="12" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="302" y="82" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">Step · tool call</text>
+  <rect x="660" y="64" width="110" height="22" rx="11" fill="#fbbf2422"/><text x="715" y="79" font-family="monospace" font-size="9" fill="#fbbf24" text-anchor="middle">⏸ approval gate</text>
+  <rect x="302" y="96" width="466" height="120" rx="10" fill="#06120e" stroke="#ffffff12"/>
+  <g font-family="monospace" font-size="11" fill="#9fd8c9">
+    <text x="318" y="120"><tspan fill="#6fae9d">tool</tspan>  "write_ticket"</text>
+    <text x="318" y="140"><tspan fill="#6fae9d">scope</tspan> "tickets:write"  <tspan fill="#fbbf24">needs approval</tspan></text>
+    <text x="318" y="160"><tspan fill="#6fae9d">args</tspan> {</text>
+    <text x="338" y="178" fill="#cdeee4">"title": "Fix cache key collision",</text>
+    <text x="338" y="196" fill="#cdeee4">"priority": "high", "labels": ["bug"]</text>
+    <text x="318" y="206">}</text>
+  </g>
+  <rect x="302" y="228" width="226" height="34" rx="9" fill="#34d39922"/><text x="415" y="250" font-family="sans-serif" font-size="11" fill="#34d399" text-anchor="middle">✓ schema valid</text>
+  <rect x="540" y="228" width="110" height="34" rx="9" fill="url(#or-ac)"/><text x="595" y="250" font-family="sans-serif" font-size="11" font-weight="700" fill="#04140f" text-anchor="middle">Approve</text>
+  <rect x="660" y="228" width="108" height="34" rx="9" fill="#ffffff10"/><text x="714" y="250" font-family="sans-serif" font-size="11" fill="#cdeee4" text-anchor="middle">Reject</text>
+  <text x="302" y="288" font-family="sans-serif" font-size="11" fill="#6fae9d">Output preview</text>
+  <rect x="302" y="296" width="466" height="18" rx="6" fill="#ffffff0a"/><rect x="302" y="296" width="300" height="18" rx="6" fill="#34d39933"/>
+  <!-- trace timeline -->
+  <rect x="282" y="338" width="502" height="146" rx="12" fill="#ffffff0a" stroke="#ffffff14"/>
+  <text x="302" y="364" font-family="sans-serif" font-size="12" font-weight="700" fill="#fff">OpenTelemetry trace</text>
+  <g font-family="monospace" font-size="9" fill="#9fd8c9">
+    <rect x="302" y="376" width="180" height="14" rx="4" fill="#34d39955"/><text x="490" y="386">plan  120ms</text>
+    <rect x="318" y="396" width="240" height="14" rx="4" fill="#22d3ee55"/><text x="566" y="406">search_docs  310ms</text>
+    <rect x="334" y="416" width="120" height="14" rx="4" fill="#34d39955"/><text x="462" y="426">review  90ms</text>
+    <rect x="350" y="436" width="150" height="14" rx="4" fill="#fbbf2455"/><text x="508" y="446">write_ticket  awaiting…</text>
+    <line x1="302" y1="460" x2="768" y2="460" stroke="#ffffff14"/>
+    <text x="302" y="476" fill="#6fae9d">span tree · per-step latency · why-it-did-what</text>
+  </g>
+</svg>

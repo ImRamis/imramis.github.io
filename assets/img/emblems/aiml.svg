@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" role="img" aria-label="AI / ML">
+  <g stroke="#3cb8c9" stroke-width="2" opacity=".45">
+    <line x1="22" y1="34" x2="48" y2="24"/><line x1="22" y1="34" x2="48" y2="48"/><line x1="22" y1="34" x2="48" y2="72"/>
+    <line x1="22" y1="64" x2="48" y2="24"/><line x1="22" y1="64" x2="48" y2="48"/><line x1="22" y1="64" x2="48" y2="72"/>
+    <line x1="48" y1="24" x2="74" y2="48"/><line x1="48" y1="48" x2="74" y2="48"/><line x1="48" y1="72" x2="74" y2="48"/>
+  </g>
+  <g fill="#2fb389">
+    <circle cx="22" cy="34" r="5"><animate attributeName="opacity" values="1;.4;1" dur="2s" begin="0s" repeatCount="indefinite"/></circle>
+    <circle cx="22" cy="64" r="5"><animate attributeName="opacity" values="1;.4;1" dur="2s" begin=".3s" repeatCount="indefinite"/></circle>
+    <circle cx="48" cy="24" r="5" fill="#3cb8c9"><animate attributeName="opacity" values=".5;1;.5" dur="2s" begin=".5s" repeatCount="indefinite"/></circle>
+    <circle cx="48" cy="48" r="6" fill="#3cb8c9"><animate attributeName="opacity" values=".5;1;.5" dur="2s" begin=".7s" repeatCount="indefinite"/></circle>
+    <circle cx="48" cy="72" r="5" fill="#3cb8c9"><animate attributeName="opacity" values=".5;1;.5" dur="2s" begin=".9s" repeatCount="indefinite"/></circle>
+    <circle cx="74" cy="48" r="5.5"><animate attributeName="opacity" values=".5;1;.5" dur="2s" begin="1.1s" repeatCount="indefinite"/></circle>
+  </g>
+  <circle r="2.6" fill="#eafff7"><animateMotion dur="1.7s" repeatCount="indefinite" path="M22,34 L48,48 L74,48"/></circle>
+</svg>
