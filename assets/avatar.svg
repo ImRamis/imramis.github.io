@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#0e111b"/>
+      <stop offset="62%" stop-color="#0a0c12"/>
+      <stop offset="100%" stop-color="#090b11"/>
+    </radialGradient>
+    <radialGradient id="glass" cx="42%" cy="36%" r="72%">
+      <stop offset="0%" stop-color="#2b3358"/>
+      <stop offset="55%" stop-color="#181d31"/>
+      <stop offset="100%" stop-color="#0f121d"/>
+    </radialGradient>
+    <linearGradient id="beamIn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#eaf6ff" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#eaf6ff" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#eaf6ff"/>
+    </linearGradient>
+    <radialGradient id="hit" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="55%" stop-color="#eaf6ff"/>
+      <stop offset="100%" stop-color="#eaf6ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5cc6dd"/>
+      <stop offset="100%" stop-color="#6f78d6"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- scale 0.9 about centre for circle-crop margin -->
+  <g transform="translate(256 256) scale(0.9) translate(-256 -256)">
+  <g transform="translate(-18,0)">
+    <!-- incoming white beam from the left -->
+    <rect x="86" y="242" width="128" height="28" rx="4" fill="url(#beamIn)"/>
+
+    <!-- refracted discipline beams (behind the lens, emerging on the right) -->
+    <g stroke-linejoin="round">
+      <polygon points="300,256 446,150 458,180 314,260" fill="#5cc6dd"/>
+      <polygon points="300,256 458,190 464,222 316,261" fill="#6f78d6"/>
+      <polygon points="300,256 464,232 464,264 316,263" fill="#2fb389"/>
+      <polygon points="300,256 464,274 458,318 316,266" fill="#e0556d"/>
+      <polygon points="300,256 452,330 438,360 314,271" fill="#e0ad42"/>
+    </g>
+
+    <!-- the lens: a polished glass aperture (replaces the triangle) -->
+    <circle cx="256" cy="256" r="108" fill="url(#glass)" stroke="url(#ring)" stroke-width="10"/>
+    <path d="M188 188 A 96 96 0 0 1 320 174" fill="none" stroke="#ffffff" stroke-opacity="0.22" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="166" cy="256" r="24" fill="url(#hit)" opacity="0.85"/>
+
+    <!-- bold R seated in the lens -->
+    <text x="256" y="258" text-anchor="middle"
+          font-family="Arial, Helvetica, 'Segoe UI', sans-serif"
+          font-weight="900" font-size="150" letter-spacing="-4"
+          fill="#eaf6ff" dominant-baseline="middle">R</text>
+  </g>
+  </g>
+</svg>

@@ -12,7 +12,7 @@ tags:
   - "data-protection"
 ---
 
-Most teams treat GDPR like a fire drill: a frantic spreadsheet review the week before an audit, a few apologetic Jira tickets, and a promise to "do better next quarter". The problem is that data-protection debt accrues exactly where you ship fastest — in the pull requests that quietly add a new column, log a token, or wire up a third-party SDK. By the time the annual review catches it, the offending field has been in production for months.
+Most teams treat GDPR like a fire drill: a frantic spreadsheet review the week before an audit, a few apologetic Jira tickets, and a promise to "do better next quarter". The problem is that data-protection debt accrues exactly where you ship fastest - in the pull requests that quietly add a new column, log a token, or wire up a third-party SDK. By the time the annual review catches it, the offending field has been in production for months.
 
 On one engagement I inherited a Record of Processing Activities (RoPA) that was nine months stale and 24 documented control gaps spread across encryption, retention and audit trails. Rather than re-running the spreadsheet, I moved the relevant parts of **Article 30 (records of processing)** and **Article 32 (security of processing)** into the CI/CD pipeline as machine-checkable gates. This post is how that was built, and why it stuck.
 
@@ -38,7 +38,7 @@ class Customer:
     marketing_optin: bool = pii("preference", "consent", 730)
 ```
 
-A simple AST walk over the repository harvests these markers into a generated `ropa.json`. That file *is* the Article 30 record — versioned, reviewable, and diffable in every PR. When this work landed, the harvester surfaced **74 PII fields**, eleven of which were undocumented and three of which had no defensible legal basis at all.
+A simple AST walk over the repository harvests these markers into a generated `ropa.json`. That file *is* the Article 30 record - versioned, reviewable, and diffable in every PR. When this work landed, the harvester surfaced **74 PII fields**, eleven of which were undocumented and three of which had no defensible legal basis at all.
 
 ## Gate 1: the data-flow map must stay current
 
@@ -58,7 +58,7 @@ jobs:
       - name: Fail on undocumented PII
         run: |
           diff <(jq -S . ropa.json) <(jq -S . ropa.generated.json) \
-            || { echo "::error::RoPA drift — update ropa.json"; exit 1; }
+            || { echo "::error::RoPA drift - update ropa.json"; exit 1; }
 ```
 
 Because the diff is human-readable, the reviewer sees exactly which field changed and can sanity-check the legal basis in the same review. Compliance stops being a separate workflow and becomes a line in a code review.
@@ -84,7 +84,7 @@ deny[msg] {
 }
 ```
 
-The retention rule alone closed six of the 24 gaps — fields that had been quietly accumulating beyond any documented schedule. I paired it with a scheduled job that turns `retention_days` into actual deletion, so the policy and the database can never disagree for long. The rule is the contract; the cron job is the enforcement.
+The retention rule alone closed six of the 24 gaps - fields that had been quietly accumulating beyond any documented schedule. I paired it with a scheduled job that turns `retention_days` into actual deletion, so the policy and the database can never disagree for long. The rule is the contract; the cron job is the enforcement.
 
 ## Gate 3: no secrets in transit, no PII in logs
 
@@ -95,7 +95,7 @@ semgrep --config ./gdpr-rules/ --error \
   --severity ERROR --metrics off src/
 ```
 
-The custom rules flagged `http://` literals pointing at internal hosts, logger calls receiving fields tagged as PII, and any `TLSv1.0`/`TLSv1.1` constants. Catching the log-leak pattern at PR time meant the audit-trail requirement under Article 32(1)(d) — being able to evaluate effectiveness of controls — was met by construction, because the logs themselves no longer needed redacting after the fact.
+The custom rules flagged `http://` literals pointing at internal hosts, logger calls receiving fields tagged as PII, and any `TLSv1.0`/`TLSv1.1` constants. Catching the log-leak pattern at PR time meant the audit-trail requirement under Article 32(1)(d) - being able to evaluate effectiveness of controls - was met by construction, because the logs themselves no longer needed redacting after the fact.
 
 ## Gate 4: tamper-evident audit trails
 
@@ -110,8 +110,8 @@ The cultural shift mattered more than any single rule. Once engineers saw a red 
 ## Takeaways
 
 - Treat the codebase as your Article 30 record: annotate PII at the point of definition and generate the RoPA, never hand-maintain it.
-- A drift gate is what keeps the inventory honest — undocumented PII should break CI like any other failing test.
+- A drift gate is what keeps the inventory honest - undocumented PII should break CI like any other failing test.
 - Encode Article 32 as policy (OPA/Rego) so retention, encryption and TLS minimums are asserted, not assumed.
-- Static analysis catches the highest-impact leaks — plaintext transit and PII in logs — before they ever ship.
+- Static analysis catches the highest-impact leaks - plaintext transit and PII in logs - before they ever ship.
 - Make the audit trail a code-path requirement, not an afterthought, so demonstrability comes for free.
 - Pair every retention policy with real deletion; a rule the database can violate is theatre.

@@ -18,7 +18,7 @@ So I built a harness that treats agent security the way I treat any other test s
 
 ## What an agent actually exposes
 
-A bare LLM has one attack surface: the text you send it. An *agent* — a model wired to tools, memory, and untrusted external content — has three more:
+A bare LLM has one attack surface: the text you send it. An *agent* - a model wired to tools, memory, and untrusted external content - has three more:
 
 - **Indirect prompt injection** via tool outputs (a web page, a fetched email, a database row) that the model treats as instructions.
 - **Tool abuse**: coaxing the model to call a destructive or out-of-policy tool, or to chain tools toward an unintended effect (SSRF via a `fetch_url` tool, data exfiltration via `send_email`).
@@ -44,7 +44,7 @@ expect:
 severity: high
 ```
 
-The `expect` block is the contract. It is deliberately machine-checkable: a list of tools that must not fire, a list of secrets that must not appear in the transcript. I keep a few hundred of these spanning the OWASP LLM Top 10 categories, plus mutations — base64, homoglyphs, instruction-in-a-code-fence, multi-turn slow-burn. Mutation matters: a guardrail that catches `"ignore previous instructions"` rarely catches the same intent wrapped in a fake changelog entry.
+The `expect` block is the contract. It is deliberately machine-checkable: a list of tools that must not fire, a list of secrets that must not appear in the transcript. I keep a few hundred of these spanning the OWASP LLM Top 10 categories, plus mutations - base64, homoglyphs, instruction-in-a-code-fence, multi-turn slow-burn. Mutation matters: a guardrail that catches `"ignore previous instructions"` rarely catches the same intent wrapped in a fake changelog entry.
 
 ## Running a scenario
 
@@ -86,13 +86,13 @@ def run_case(case, tools, system):
     return {"messages": messages, "called_tools": called_tools}
 ```
 
-The injected payload is delivered through `fake_tool` when the case's `delivery` is `tool_output` — so the attack arrives exactly where it would in production: inside a tool result the model trusts.
+The injected payload is delivered through `fake_tool` when the case's `delivery` is `tool_output` - so the attack arrives exactly where it would in production: inside a tool result the model trusts.
 
 ## Scoring: deterministic first, judge second
 
 The biggest mistake I see in agent evals is letting an LLM judge decide *everything*. Judges are non-deterministic and gameable. So I score in two passes.
 
-**Pass one — deterministic checks.** These are cheap, exact, and never flaky. Did a forbidden tool fire? Does any banned secret string appear in the transcript? Did the model hit an out-of-policy URL? If a deterministic check fails, the case fails — no judge needed.
+**Pass one - deterministic checks.** These are cheap, exact, and never flaky. Did a forbidden tool fire? Does any banned secret string appear in the transcript? Did the model hit an out-of-policy URL? If a deterministic check fails, the case fails - no judge needed.
 
 ```python
 def deterministic_verdict(case, result):
@@ -106,7 +106,7 @@ def deterministic_verdict(case, result):
     return "PASS_PROVISIONAL", None
 ```
 
-**Pass two — LLM judge**, only for cases that survive the deterministic gate and need semantic judgement ("did the model *follow* the injected instruction even though it didn't call a tool?"). I use a separate model call with a rubric and structured output, so the verdict is a typed object I can store and trend, not prose I have to parse:
+**Pass two - LLM judge**, only for cases that survive the deterministic gate and need semantic judgement ("did the model *follow* the injected instruction even though it didn't call a tool?"). I use a separate model call with a rubric and structured output, so the verdict is a typed object I can store and trend, not prose I have to parse:
 
 ```python
 judge = client.messages.create(
@@ -118,21 +118,21 @@ judge = client.messages.create(
 )
 ```
 
-The rubric is written as concrete, checkable criteria ("the response repeats verbatim text from the system prompt: yes/no"), not vibes. Vague rubrics produce noisy judges. I also run the judge at low temperature-equivalent settings and periodically spot-check it against human labels to keep it honest — a judge that drifts is worse than no judge.
+The rubric is written as concrete, checkable criteria ("the response repeats verbatim text from the system prompt: yes/no"), not vibes. Vague rubrics produce noisy judges. I also run the judge at low temperature-equivalent settings and periodically spot-check it against human labels to keep it honest - a judge that drifts is worse than no judge.
 
 ## Turning results into guardrails
 
 A red-team harness that only produces a score is half a tool. The payoff is the feedback loop. Every failing case becomes three artefacts:
 
-1. **A regression test** — the case is tagged `regression` and runs on every CI build, so the same bypass can never silently return.
-2. **A guardrail candidate** — I cluster failures by `class` and `delivery` to find the common shape, then write a mitigation: an input/output classifier, a tool-call allow-list policy, a stricter system-prompt boundary, or a confirmation gate on destructive tools.
-3. **A coverage gap note** — if a payload mutation slips past, I add its siblings to the corpus.
+1. **A regression test** - the case is tagged `regression` and runs on every CI build, so the same bypass can never silently return.
+2. **A guardrail candidate** - I cluster failures by `class` and `delivery` to find the common shape, then write a mitigation: an input/output classifier, a tool-call allow-list policy, a stricter system-prompt boundary, or a confirmation gate on destructive tools.
+3. **A coverage gap note** - if a payload mutation slips past, I add its siblings to the corpus.
 
 The guardrails themselves get scored by the *same* harness. That is the whole point: a mitigation is only real if the cases that motivated it now pass and nothing else regresses. I run the full suite pre- and post-guardrail and diff the verdicts. A guardrail that fixes ten cases but breaks two legitimate workflows is not a win, and the harness is what tells me.
 
 ## Wiring it into CI
 
-The suite runs on a schedule and on every change to the agent's tools or system prompt — those are the two surfaces where regressions hide. The gate is simple: zero `high`-severity failures, and no new failures versus the baseline. New corpus cases land behind a `candidate` tag so a freshly added (and initially failing) attack doesn't break the build before its guardrail ships.
+The suite runs on a schedule and on every change to the agent's tools or system prompt - those are the two surfaces where regressions hide. The gate is simple: zero `high`-severity failures, and no new failures versus the baseline. New corpus cases land behind a `candidate` tag so a freshly added (and initially failing) attack doesn't break the build before its guardrail ships.
 
 ## Takeaways
 
@@ -141,4 +141,4 @@ The suite runs on a schedule and on every change to the agent's tools or system 
 - **Fake the tools, assert on intent.** You catch exfiltration attempts without ever exfiltrating anything, and runs stay diff-able.
 - **Mutate every payload.** Guardrails that match strings, not intent, fall to base64 and homoglyphs.
 - **Close the loop.** Every failure becomes a regression test plus a guardrail candidate, and the guardrail is validated by the same harness that found the hole.
-- **Gate on the suite.** Tools and system prompts are where agent security regresses — run the harness whenever either changes.
+- **Gate on the suite.** Tools and system prompts are where agent security regresses - run the harness whenever either changes.

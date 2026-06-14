@@ -1,9 +1,9 @@
 /* ============================================================
-   PRISM SELECT — immersive "choose your side" intro (Three.js, ES module)
+   PRISM SELECT - immersive "choose your side" intro (Three.js, ES module)
    A central refracting prism + four field orbs, each showing its real
    discipline EMBLEM (the SVG assets) as a textured billboard so it's
-   instantly recognisable in 3D — engineering / ai-ml / cybersecurity /
-   ui-ux — plus "everything" at the centre. Hover/keys focus a side
+   instantly recognisable in 3D - engineering / ai-ml / cybersecurity /
+   ui-ux - plus "everything" at the centre. Hover/keys focus a side
    (swell + recolour the scene); pick → fly into the site.
    Self-mounts only when #intro is open, motion is allowed and WebGL works;
    otherwise the static HTML card picker (already in the DOM) takes over.

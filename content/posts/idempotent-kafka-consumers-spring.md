@@ -3,7 +3,7 @@ title: "Event-Driven at Scale: Idempotent Apache Kafka Consumers in Spring Boot"
 date: "2025-12-30"
 track: "engineering"
 readingTime: "9 min read"
-excerpt: "Kafka gives you at-least-once delivery, which means your consumers will eventually see the same event twice. Here is how I build genuinely idempotent Spring Boot consumers — the transactional outbox, dedup keys, retry and DLQ topics, and a TestContainers harness that proves it under failure."
+excerpt: "Kafka gives you at-least-once delivery, which means your consumers will eventually see the same event twice. Here is how I build genuinely idempotent Spring Boot consumers - the transactional outbox, dedup keys, retry and DLQ topics, and a TestContainers harness that proves it under failure."
 tags:
   - "kafka"
   - "spring-boot"
@@ -13,17 +13,17 @@ tags:
   - "java"
 ---
 
-Kafka does not deliver every message exactly once, and any system that assumes it does is one rebalance away from a duplicate charge. The honest default is at-least-once: a consumer processes a record, crashes before its offset commit lands, and on restart the same record arrives again. On the Java services I ran for a payments platform — Spring Boot over Kafka, north of 50,000 financial transactions a day — "exactly-once" was never a delivery guarantee I could buy. It was a property I had to engineer into the consumer. This post is how I do that: the transactional outbox on the producer side, dedup keys and idempotent writes on the consumer side, retry and dead-letter topics for poison messages, and a TestContainers harness that proves the whole thing survives a mid-flight crash.
+Kafka does not deliver every message exactly once, and any system that assumes it does is one rebalance away from a duplicate charge. The honest default is at-least-once: a consumer processes a record, crashes before its offset commit lands, and on restart the same record arrives again. On the Java services I ran for a payments platform - Spring Boot over Kafka, north of 50,000 financial transactions a day - "exactly-once" was never a delivery guarantee I could buy. It was a property I had to engineer into the consumer. This post is how I do that: the transactional outbox on the producer side, dedup keys and idempotent writes on the consumer side, retry and dead-letter topics for poison messages, and a TestContainers harness that proves the whole thing survives a mid-flight crash.
 
 ## Why "exactly-once" is a lie you tell yourself
 
-Kafka's `read_committed` isolation and transactional producers give you exactly-once *within* the Kafka boundary — between topics, inside Kafka Streams. The moment your consumer talks to Postgres, calls a payment gateway, or pushes to another system, you are back to at-least-once for those side effects. The offset commit and the database write are two separate commits, and any two-commit operation has a window where one succeeds and the other does not.
+Kafka's `read_committed` isolation and transactional producers give you exactly-once *within* the Kafka boundary - between topics, inside Kafka Streams. The moment your consumer talks to Postgres, calls a payment gateway, or pushes to another system, you are back to at-least-once for those side effects. The offset commit and the database write are two separate commits, and any two-commit operation has a window where one succeeds and the other does not.
 
 So I stop chasing exactly-once *delivery* and engineer exactly-once *effect*. The rule: processing the same event N times must leave the system in the same state as processing it once. That is idempotency, and it is the only property that actually holds under the failures Kafka guarantees you will hit.
 
 ## The transactional outbox: stop dual-writing
 
-The first duplicate source is on the producer, not the consumer. A service that updates its database *and* publishes to Kafka in the same method is dual-writing across two systems with no shared transaction. The DB commit succeeds, the broker call times out, the service retries — and now you have either a lost event or a duplicate.
+The first duplicate source is on the producer, not the consumer. A service that updates its database *and* publishes to Kafka in the same method is dual-writing across two systems with no shared transaction. The DB commit succeeds, the broker call times out, the service retries - and now you have either a lost event or a duplicate.
 
 The outbox pattern collapses that into a single local transaction. The service writes the business change and an `outbox` row atomically; a separate relay (Debezium CDC, or a polling publisher) ships outbox rows to Kafka afterwards.
 
@@ -32,7 +32,7 @@ The outbox pattern collapses that into a single local transaction. The service w
 public void placeOrder(Order order) {
     orderRepository.save(order);
     outboxRepository.save(new OutboxEvent(
-        UUID.randomUUID(),          // event_id — the dedup key downstream
+        UUID.randomUUID(),          // event_id - the dedup key downstream
         "order.placed",
         order.getId(),
         toJson(order)
@@ -41,7 +41,7 @@ public void placeOrder(Order order) {
 }
 ```
 
-Because both writes share one JPA transaction, they commit or roll back together. The relay may still publish a row twice (it crashes after sending, before marking the row done) — but that is fine, because every event now carries a stable `event_id` the consumer can deduplicate on. The outbox converts an unsolvable distributed-transaction problem into a solvable idempotency problem.
+Because both writes share one JPA transaction, they commit or roll back together. The relay may still publish a row twice (it crashes after sending, before marking the row done) - but that is fine, because every event now carries a stable `event_id` the consumer can deduplicate on. The outbox converts an unsolvable distributed-transaction problem into a solvable idempotency problem.
 
 ## Dedup keys and idempotent writes on the consumer
 
@@ -64,7 +64,7 @@ public void onOrderPlaced(ConsumerRecord<String, OrderEvent> rec) {
 
 Two details carry the whole pattern. First, the dedup insert and the business write are in **one database transaction**, so a crash between them rolls both back and redelivery cleanly retries. Second, `insertIfAbsent` leans on a `UNIQUE` constraint and `ON CONFLICT DO NOTHING`, so concurrent consumers in the same group racing on the same id resolve at the database, not in application logic. The unique constraint is the actual guarantee; everything else is ergonomics.
 
-Where the business write is naturally idempotent — an upsert keyed by a natural id, a `SET status = 'PAID' WHERE status = 'PENDING'` — I prefer that to a dedup table, because it needs no extra state. The dedup table is for side effects that cannot be expressed as an idempotent write, like calling an external API.
+Where the business write is naturally idempotent - an upsert keyed by a natural id, a `SET status = 'PAID' WHERE status = 'PENDING'` - I prefer that to a dedup table, because it needs no extra state. The dedup table is for side effects that cannot be expressed as an idempotent write, like calling an external API.
 
 For consumer config, I commit offsets manually and only after the transaction succeeds:
 
@@ -103,7 +103,7 @@ public void onDlt(ConsumerRecord<String, byte[]> rec,
 }
 ```
 
-A failed record moves to `order.placed-retry-0`, then `-retry-1`, with exponential backoff so a flaky downstream gets breathing room, and only on exhaustion lands in `order.placed-dlt`. Because the consumer is idempotent, replaying from the DLT after a fix is safe — the dedup key absorbs anything that already partially succeeded. That safety is *why* the idempotency work pays for itself.
+A failed record moves to `order.placed-retry-0`, then `-retry-1`, with exponential backoff so a flaky downstream gets breathing room, and only on exhaustion lands in `order.placed-dlt`. Because the consumer is idempotent, replaying from the DLT after a fix is safe - the dedup key absorbs anything that already partially succeeded. That safety is *why* the idempotency work pays for itself.
 
 ## Proving it with TestContainers
 
@@ -130,7 +130,7 @@ class IdempotencyIT {
 }
 ```
 
-I run three scenarios that mirror production failures: the same `event_id` delivered twice must produce exactly one charge; killing the consumer container mid-transaction and restarting it must still produce exactly one charge; and a deliberately poisoned payload must land in the DLT without blocking the records behind it. I pair these with PACT contract tests so producer and consumer cannot drift on the event schema — a renamed `event_id` field would silently break deduplication, and that is precisely the bug TestContainers and contract testing exist to catch before it reaches production.
+I run three scenarios that mirror production failures: the same `event_id` delivered twice must produce exactly one charge; killing the consumer container mid-transaction and restarting it must still produce exactly one charge; and a deliberately poisoned payload must land in the DLT without blocking the records behind it. I pair these with PACT contract tests so producer and consumer cannot drift on the event schema - a renamed `event_id` field would silently break deduplication, and that is precisely the bug TestContainers and contract testing exist to catch before it reaches production.
 
 ## Takeaways
 

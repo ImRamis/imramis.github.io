@@ -19,7 +19,7 @@ So I rebuilt the front door around a single question: **"Choose your lens."** Th
 
 ## The actual UX problem: one site, several audiences
 
-The mistake is treating breadth as a feature to display. It is not. Breadth is context you owe the visitor *after* they have told you who they are. The five lenses I ship are concrete personas, not moods: **Offensive Security**, **AppSec / Engineering**, **Full-Stack**, **Research**, and **Everything**. Each maps to a real reader I have met — a red-team lead, an AppSec manager, a product engineering lead, an academic or post-quantum-curious reviewer, and the recruiter who genuinely wants the whole picture.
+The mistake is treating breadth as a feature to display. It is not. Breadth is context you owe the visitor *after* they have told you who they are. The five lenses I ship are concrete personas, not moods: **Offensive Security**, **AppSec / Engineering**, **Full-Stack**, **Research**, and **Everything**. Each maps to a real reader I have met - a red-team lead, an AppSec manager, a product engineering lead, an academic or post-quantum-curious reviewer, and the recruiter who genuinely wants the whole picture.
 
 The lens is not just a project filter. It changes the hero copy, reorders sections, swaps the featured project (BugTraceAI for security lenses, the post-quantum blind-signature library for research), and selects a theme. One decision, many downstream effects.
 
@@ -68,7 +68,7 @@ Sections subscribe to `lenschange` and reorder themselves; the featured-project 
 
 ## Motion design that earns its place
 
-Motion here has one job: confirm that the *content* changed, since the URL and palette shift can otherwise feel like a full reload. I use a short FLIP-style reflow on the project grid — measure positions, change order, animate the delta — capped around 240ms. The hero subtitle cross-fades rather than retyping, because a second typewriter animation on every lens switch is annoying the moment you switch twice.
+Motion here has one job: confirm that the *content* changed, since the URL and palette shift can otherwise feel like a full reload. I use a short FLIP-style reflow on the project grid - measure positions, change order, animate the delta - capped around 240ms. The hero subtitle cross-fades rather than retyping, because a second typewriter animation on every lens switch is annoying the moment you switch twice.
 
 The two heaviest effects, the particle field and the matrix rain, are decorative and persona-flavoured. They are also the first things I throttle. Decorative motion is opt-out by default for anyone who has signalled they do not want it.
 
@@ -98,14 +98,14 @@ reduce.addEventListener('change', e => {
 });
 ```
 
-The key detail is the `change` listener: a visitor who flips the OS setting mid-session gets the calm version immediately, and the matrix `setInterval` is actually cleared rather than left running invisibly. Lens switches still work with reduced motion — the grid reorders instantly, the cross-fade collapses to a hard swap. Function is preserved; only the flourish is dropped.
+The key detail is the `change` listener: a visitor who flips the OS setting mid-session gets the calm version immediately, and the matrix `setInterval` is actually cleared rather than left running invisibly. Lens switches still work with reduced motion - the grid reorders instantly, the cross-fade collapses to a hard swap. Function is preserved; only the flourish is dropped.
 
 I also keep the lens chooser fully keyboard-navigable with real `aria-pressed` buttons, and the live region announces "Showing offensive security work" so a screen-reader user gets the same orientation a sighted user gets from the palette change.
 
 ## Takeaways
 
 - Design for **named personas**, not for showing off breadth; the lens is a promise about the next thirty seconds.
-- Progressive disclosure should **reorder and emphasise**, never trap — keep "Everything" and deep links always reachable.
+- Progressive disclosure should **reorder and emphasise**, never trap - keep "Everything" and deep links always reachable.
 - Drive persona theming through **one token set** so components stay lens-agnostic and adding a lens is cheap.
 - Let motion **confirm change**, cap it tightly, and make decorative effects the first thing you cut.
 - Treat `prefers-reduced-motion` as a **hard gate with a live `change` listener**, and verify the loops actually stop.

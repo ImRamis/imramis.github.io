@@ -23,15 +23,15 @@ Rows are object references I have collected (user IDs, order IDs, document UUIDs
 
 The discipline this enforces is what catches takeover chains: you stop thinking "can I read it" and start thinking "as Bob, what can I *write* to Alice's objects."
 
-## Step 1 — Map the object space with two accounts
+## Step 1 - Map the object space with two accounts
 
 Register two accounts and drive the app through every flow with Burp's proxy capturing both. The goal is to enumerate every parameter that looks like an object handle. I tag them in Burp and export with a small extension, but the manual version is just careful sitemap review.
 
 Watch specifically for: sequential integers (trivially enumerable), UUIDs leaked in earlier responses (so authorization, not unguessability, is the only control), composite keys like `/teams/{tid}/members/{uid}`, and references hidden in request bodies or JWT-adjacent fields rather than the URL.
 
-## Step 2 — Run the matrix programmatically
+## Step 2 - Run the matrix programmatically
 
-Manual swapping does not scale past a handful of objects. I drive the matrix with a Python harness that replays each request as each identity and diffs the outcome. The key is comparing the cross-identity response against the legitimate-owner baseline, not just the status code — plenty of broken endpoints return `200` with an empty body, and plenty of well-behaved ones return `200` with a generic "no access" page.
+Manual swapping does not scale past a handful of objects. I drive the matrix with a Python harness that replays each request as each identity and diffs the outcome. The key is comparing the cross-identity response against the legitimate-owner baseline, not just the status code - plenty of broken endpoints return `200` with an empty body, and plenty of well-behaved ones return `200` with a generic "no access" page.
 
 ```python
 import requests, hashlib
@@ -43,7 +43,7 @@ IDS = {
     "anon":  {},
 }
 
-# (method, url-template, owner) — owner is who legitimately controls it
+# (method, url-template, owner) - owner is who legitimately controls it
 OBJECTS = [
     ("GET",   "https://api.target/v2/orders/{}", "alice", "8841"),
     ("PATCH", "https://api.target/v2/users/{}/email", "alice", "8841"),
@@ -69,29 +69,29 @@ for method, tpl, owner, ref in OBJECTS:
 
 Anything flagged goes back into Burp Repeater for manual confirmation. The harness is a triage filter, not the proof.
 
-## Step 3 — Promote a read into a write
+## Step 3 - Promote a read into a write
 
-A read-only IDOR on order history is Medium at best. To escalate, walk the same object through its other verbs. The pattern that has paid off most often for me: the `GET` is properly scoped but the `PUT`/`PATCH` on the same resource is not, because the team bolted authorization onto the read path and assumed writes inherited it. Always test the mutating verbs explicitly even when the read is locked down — they are separate code paths far more often than people expect.
+A read-only IDOR on order history is Medium at best. To escalate, walk the same object through its other verbs. The pattern that has paid off most often for me: the `GET` is properly scoped but the `PUT`/`PATCH` on the same resource is not, because the team bolted authorization onto the read path and assumed writes inherited it. Always test the mutating verbs explicitly even when the read is locked down - they are separate code paths far more often than people expect.
 
-## Step 4 — Chain toward takeover
+## Step 4 - Chain toward takeover
 
 This is where the matrix earns its keep. Account takeover almost never comes from one endpoint; it comes from a writable object that influences authentication. Look for cross-identity writes to:
 
-- **Email or phone fields** on another user's profile — if the reset flow trusts the stored email, you have just redirected their recovery.
+- **Email or phone fields** on another user's profile - if the reset flow trusts the stored email, you have just redirected their recovery.
 - **`PATCH /users/{id}/email`** with no re-verification, then trigger a standard password reset to the new address.
 - **OAuth or SSO linking** endpoints that bind an identity provider to a user ID taken from the request body rather than the session.
 - **Role or membership writes** that let Bob add himself to Alice's team, or escalate his own role.
 
-The strongest chains I have reported looked like this: an enumerable user ID (info-only on its own), plus an unauthenticated-relative `PATCH` to the email field (a writable BOLA), plus a reset flow that emailed a token to the attacker-controlled address. Individually, two of those three barely register. Composed, they are full takeover. Write the report as that single attack narrative — triagers reward an end-to-end proof of impact far more than three loosely related notes.
+The strongest chains I have reported looked like this: an enumerable user ID (info-only on its own), plus an unauthenticated-relative `PATCH` to the email field (a writable BOLA), plus a reset flow that emailed a token to the attacker-controlled address. Individually, two of those three barely register. Composed, they are full takeover. Write the report as that single attack narrative - triagers reward an end-to-end proof of impact far more than three loosely related notes.
 
 ## Reporting so it gets paid
 
-Lead with the impact sentence: "An authenticated user can take over any other account by changing the victim's recovery email via an unauthorised PATCH." Then give the minimal reproduction as raw HTTP, a clean two-account setup, and a single screenshot or video showing you logged into the victim. Note the root cause as object-level authorization missing on the write path — programme owners fix faster when you hand them the *why*.
+Lead with the impact sentence: "An authenticated user can take over any other account by changing the victim's recovery email via an unauthorised PATCH." Then give the minimal reproduction as raw HTTP, a clean two-account setup, and a single screenshot or video showing you logged into the victim. Note the root cause as object-level authorization missing on the write path - programme owners fix faster when you hand them the *why*.
 
 ## Takeaways
 
 - IDOR/BOLA is a three-dimensional problem (identity x object x verb); track it in a literal matrix, not in your head.
-- Always test mutating verbs separately — read scoping rarely guarantees write scoping.
+- Always test mutating verbs separately - read scoping rarely guarantees write scoping.
 - Escalation comes from chaining a writable object into the authentication flow (email, phone, SSO link, role).
 - Automate the matrix to triage; confirm everything by hand in Repeater before reporting.
 - Report the full chain as one impact narrative; that is the difference between Medium and Critical.

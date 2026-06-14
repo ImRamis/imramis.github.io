@@ -1,5 +1,5 @@
 /* ============================================================
-   VIEW FX — a per-view 3D centrepiece (Three.js, ES module).
+   VIEW FX - a per-view 3D centrepiece (Three.js, ES module).
    One morphing point-cloud that reshapes into a distinct motif for each
    view (home→orb, about→double-helix, work→cube-grid, security→shield-dome,
    experience→ascending-spiral, writing→stacked-planes, contact→radiating-rings)

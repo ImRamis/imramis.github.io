@@ -1,4 +1,4 @@
-/* Core factual data — Muhammad Ramis. Lens-rich content lives in content.js (window.CONTENT) and posts.js (window.POSTS). */
+/* Core factual data - Muhammad Ramis. Lens-rich content lives in content.js (window.CONTENT) and posts.js (window.POSTS). */
 window.DATA = {
   profile: {
     name: 'Muhammad Ramis',
@@ -19,15 +19,15 @@ window.DATA = {
     ]
   },
 
-  // Rotating roles for the typewriter — builder-forward; security appears once,
+  // Rotating roles for the typewriter - builder-forward; security appears once,
   // mid-rotation, not as the lead identity.
   roles: [
-    'Software Engineer — Java · Kafka · Go',
-    'AI / Agent Engineer — LLM systems & RAG',
+    'Software Engineer - Java · Kafka · Go',
+    'AI / Agent Engineer - LLM systems & RAG',
     'Full-Stack Product Engineer',
     'Backend & Distributed-Systems Engineer',
     'AI-Assisted Product Builder',
-    'Penetration Tester — OSCP+',
+    'Penetration Tester - OSCP+',
     'Accessible UI / UX Engineer',
     'Builder who breaks things on purpose'
   ],
@@ -39,45 +39,45 @@ window.DATA = {
       blurb: 'Event-driven Java/Spring + Kafka, .NET, Go & Node microservices and high-scale APIs (6.5M req/day).',
       rgb: '111,120,214', rgb2: '74,166,224' },
     { id: 'aiml', label: 'AI / ML Engineering', short: 'AI / ML', icon: 'fa-brain',
-      blurb: 'LLM agent systems, RAG pipelines, evaluation and ML — shipped as product features teams can trust.',
+      blurb: 'LLM agent systems, RAG pipelines, evaluation and ML - shipped as product features teams can trust.',
       rgb: '47,179,137', rgb2: '60,184,201' },
     { id: 'cybersecurity', label: 'Cybersecurity', short: 'Cybersecurity', icon: 'fa-shield-halved',
-      blurb: 'Red + blue — pen testing, exploit dev, detection engineering and a 51-finding bug-bounty record.',
+      blurb: 'Red + blue - pen testing, exploit dev, detection engineering and a 51-finding bug-bounty record.',
       rgb: '224,85,109', rgb2: '224,149,78' },
     { id: 'uiux', label: 'UI / UX Engineering', short: 'UI / UX', icon: 'fa-pen-ruler',
       blurb: 'Accessible React/TypeScript design systems, data-dense dashboards and product UX.',
       rgb: '224,106,134', rgb2: '224,173,66' }
   ],
   overviewLens: { id: 'overview', label: 'The full picture', short: 'Overview', icon: 'fa-layer-group',
-    blurb: 'Not sure where to start? See everything — engineering, AI, security and design, together.',
+    blurb: 'Not sure where to start? See everything - engineering, AI, security and design, together.',
     rgb: '92,198,221', rgb2: '130,120,217' },
 
   marquee: [
     'Java · Spring Boot', 'Apache Kafka', 'Python', 'LLM agents · RAG', 'React · TypeScript', 'Go', 'C#/.NET',
     'pgvector · LangGraph', 'AWS · Azure · GCP', 'Kubernetes', 'OpenTelemetry', 'Rust',
-    'OSCP+', 'MSc Cyber Security & AI — Distinction', 'WCAG 2.2 AA', 'PyTorch',
+    'OSCP+', 'MSc Cyber Security & AI - Distinction', 'WCAG 2.2 AA', 'PyTorch',
     '51 bug-bounty findings', 'Burp Suite', 'Semgrep · CodeQL', 'MCP · vLLM'
   ],
 
   certifications: [
     { name: 'OSCP+', full: 'Offensive Security Certified Professional+', org: 'OffSec', date: 'Apr 2025',
       icon: 'fa-shield-halved', status: 'verified', url: 'https://credentials.offsec.com/559e642d-824b-4657-bdd9-8b315e1845f7',
-      desc: 'Hands-on penetration testing certification — exploitation, AD attacks, privilege escalation and reporting. The “+” extends validity through continued education.' },
+      desc: 'Hands-on penetration testing certification - exploitation, AD attacks, privilege escalation and reporting. The “+” extends validity through continued education.' },
     { name: 'OSCP', full: 'Offensive Security Certified Professional', org: 'OffSec', date: 'Apr 2025',
       icon: 'fa-user-secret', status: 'verified', url: 'https://credentials.offsec.com/5185a463-88bf-4ad2-8546-2555585d8cc4',
       desc: 'Industry benchmark for practical offensive security: identify, exploit and document vulnerabilities across diverse systems.' },
     { name: 'OSED', full: 'Offensive Security Exploit Developer', org: 'OffSec', date: 'Exam Jul 2026',
       icon: 'fa-bug', status: 'progress',
-      desc: 'Windows user-mode exploit development — reverse engineering, bypassing mitigations and building custom exploits. Exam scheduled.' },
+      desc: 'Windows user-mode exploit development - reverse engineering, bypassing mitigations and building custom exploits. Exam scheduled.' },
     { name: 'CREST CRT / CPSA', full: 'Registered Penetration Tester / Practitioner Security Analyst', org: 'CREST', date: 'In progress',
       icon: 'fa-certificate', status: 'progress',
-      desc: 'UK-recognised offensive-security certifications — actively pursuing to align practical penetration-testing capability with the UK market.' }
+      desc: 'UK-recognised offensive-security certifications - actively pursuing to align practical penetration-testing capability with the UK market.' }
   ],
   education: [
-    { name: 'MSc Cyber Security & AI', org: 'University of Sheffield', date: '2024 – 2025', grade: 'Distinction',
+    { name: 'MSc Cyber Security & AI', org: 'University of Sheffield', date: '2024-2025', grade: 'Distinction',
       icon: 'fa-graduation-cap',
-      desc: 'Russell Group university. Dissertation: a comparative framework for post-quantum blind signature schemes — a multi-language (Python/Rust/Node.js) library over gRPC/REST with a Django analysis dashboard and reproducible benchmarks.' },
-    { name: 'BSc Computer Science', org: 'PAF-KIET, Karachi', date: '2014 – 2018', grade: 'First Class',
+      desc: 'Russell Group university. Dissertation: a comparative framework for post-quantum blind signature schemes - a multi-language (Python/Rust/Node.js) library over gRPC/REST with a Django analysis dashboard and reproducible benchmarks.' },
+    { name: 'BSc Computer Science', org: 'PAF-KIET, Karachi', date: '2014-2018', grade: 'First Class',
       icon: 'fa-university',
       desc: 'Final-year project: a full-stack React Native carpooling platform with a Laravel backend, GPS tracking, chat and admin portal (~10k downloads).' }
   ],
@@ -87,12 +87,12 @@ window.DATA = {
       role: 'Independent Security Researcher & Bug-Bounty Hunter',
       company: 'Self-directed',
       location: 'Nottingham, UK',
-      period: '2024 — Present',
+      period: '2024 - Present',
       desc: 'Full-time offensive research across public bug-bounty programs and AI/LLM security, alongside the MSc at Sheffield.',
       points: [
-        '51 accepted findings across five public programs (Bugcrowd, HackerOne, Google, YesWeHack, Intigriti) — every one found by hand: authorization bypass, IDOR/BOLA, race conditions, SSRF and sensitive-data exposure, each with a reproducible PoC. No AI tooling is used to find or submit bounties.',
+        '51 accepted findings across five public programs (Bugcrowd, HackerOne, Google, YesWeHack, Intigriti) - every one found by hand: authorization bypass, IDOR/BOLA, race conditions, SSRF and sensitive-data exposure, each with a reproducible PoC. No AI tooling is used to find or submit bounties.',
         'Built repeatable Burp + Python workflows for endpoint discovery, authorization-matrix testing and reproducible evidence capture.',
-        'Separately, as personal AI-engineering R&D, built BugTraceAI — an experiment in reliable LLM-agent systems (planning, tool-use, consensus voting, deterministic guardrails) applied to a security domain I know well; kept entirely separate from the manual bounty work.'
+        'Separately, as personal AI-engineering R&D, built BugTraceAI - an experiment in reliable LLM-agent systems (planning, tool-use, consensus voting, deterministic guardrails) applied to a security domain I know well; kept entirely separate from the manual bounty work.'
       ],
       metrics: ['51 manual findings', '5 programs', 'AI-engineering R&D'],
       tags: ['Bug Bounty', 'Burp Suite', 'Python', 'API Testing', 'LLM Agents (R&D)']
@@ -101,7 +101,7 @@ window.DATA = {
       role: 'Postgraduate Teaching Assistant',
       company: 'University of Sheffield',
       location: 'Sheffield, UK',
-      period: '2024 — 2025',
+      period: '2024-2025',
       desc: 'Supported undergraduate computer-science and security modules while completing the MSc in Cyber Security & AI.',
       points: [
         'Ran and supported lab sessions for programming and security modules, helping students debug code and grasp secure-development concepts hands-on.',
@@ -115,10 +115,10 @@ window.DATA = {
       role: 'Senior Software Engineer (Security-Focused) & Lead AppSec',
       company: 'Sorvox Groups',
       location: 'Karachi, PK',
-      period: 'Apr 2022 — Jun 2024',
+      period: 'Apr 2022 - Jun 2024',
       desc: 'Led security assessments for client web apps and APIs while building and hardening the platforms and automation behind them.',
       points: [
-        'Led comprehensive web and API security assessments with Burp Suite, Nessus and Nmap — identifying and reporting critical SQLi, XSS and RCE issues and driving an ~30% reduction in client operational vulnerabilities.',
+        'Led comprehensive web and API security assessments with Burp Suite, Nessus and Nmap - identifying and reporting critical SQLi, XSS and RCE issues and driving an ~30% reduction in client operational vulnerabilities.',
         'Engineered hardening for Linux cloud infrastructure (AWS, Docker, Kubernetes), improving availability ~25% and deploying an ELK SIEM and Suricata IDS/IPS with Ansible-automated patching toward a zero-trust design.',
         'Built Python automation for vulnerability scanning and log analysis (~20% more efficient security ops) and architected RESTful APIs secured with OAuth 2.0 / JWT.'
       ],
@@ -129,7 +129,7 @@ window.DATA = {
       role: 'IT Department Lead → Secure SDLC & Senior Engineer',
       company: 'Apricart E-Stores',
       location: 'Karachi, PK',
-      period: '2020 — 2022',
+      period: '2020-2022',
       desc: 'Progressed from senior engineer to IT department lead for a payment-handling e-commerce platform, owning security and secure delivery.',
       points: [
         'Directed a 15-member IT department with a security-first approach, sustaining 99.9% uptime; led an AWS cloud migration establishing VPC, security-group and IAM governance.',
@@ -144,7 +144,7 @@ window.DATA = {
       role: 'Full-Stack Developer (Security Integration)',
       company: 'Creative Drop DMCC',
       location: 'Karachi, PK',
-      period: 'Dec 2019 — Aug 2020',
+      period: 'Dec 2019 - Aug 2020',
       desc: 'Delivered e-commerce and CMS solutions for multiple clients with security built into the stack.',
       points: [
         'Built and shipped e-commerce and CMS solutions for multiple clients, embedding input validation, output encoding and secure authentication from the client layer down.',
@@ -158,7 +158,7 @@ window.DATA = {
       role: 'Software Engineer (Backend & Real-Time)',
       company: 'Chatcloud.co',
       location: 'Karachi, PK',
-      period: '2016 — 2018',
+      period: '2016-2018',
       desc: 'Built a scalable real-time messaging backend and secured its infrastructure end to end.',
       points: [
         'Engineered a scalable real-time messaging backend with secure API endpoints and transport-layer security, scaling to thousands of concurrent users.',
@@ -169,10 +169,10 @@ window.DATA = {
       tags: ['Backend', 'Real-Time', 'Azure', 'REST APIs']
     },
     {
-      role: 'Freelance Developer — Independent Projects',
+      role: 'Freelance Developer - Independent Projects',
       company: 'Self-employed',
       location: 'Pakistan',
-      period: '2014 — 2016',
+      period: '2014-2016',
       desc: 'Delivered web, mobile and e-commerce projects across domains, with security and payments a recurring theme.',
       points: [
         'Built diverse web, mobile and e-commerce projects for clients, implementing secure payment gateways and custom integrations.',
@@ -186,24 +186,24 @@ window.DATA = {
 
   achievements: [
     { title: 'OffSec “The Gauntlet: Echo Response”', meta: '4th globally · 2025', icon: 'fa-trophy',
-      desc: 'Placed 4th of ~9,000 competitors in OffSec’s forensic evidence-analysis challenge under time pressure — blending offensive analysis with incident reconstruction.' },
-    { title: 'ShefESH Capture The Flag — 1st place', meta: 'Sheffield Ethical Hacking · 2024–2025', icon: 'fa-flag-checkered',
+      desc: 'Placed 4th of ~9,000 competitors in OffSec’s forensic evidence-analysis challenge under time pressure - blending offensive analysis with incident reconstruction.' },
+    { title: 'ShefESH Capture The Flag - 1st place', meta: 'Sheffield Ethical Hacking · 2024-2025', icon: 'fa-flag-checkered',
       desc: 'Won the web-exploitation track at the University of Sheffield Ethical Hacking Society CTF, documenting impact and remediation alongside each exploit chain.' },
-    { title: 'ShefESH × TryHackMe — 2nd place', meta: 'Joint competition · 2024–2025', icon: 'fa-medal',
+    { title: 'ShefESH × TryHackMe - 2nd place', meta: 'Joint competition · 2024-2025', icon: 'fa-medal',
       desc: 'Runner-up in the joint University of Sheffield Ethical Hacking Society / TryHackMe competition.' },
-    { title: 'Crypto Chicks Hackathon — Winner', meta: '1st place · 2019', icon: 'fa-trophy',
+    { title: 'Crypto Chicks Hackathon - Winner', meta: '1st place · 2019', icon: 'fa-trophy',
       desc: 'Won the hackathon, taking First Position in Speed Programming and the Fastest Problem Solver award for rapid, well-architected solutions under time pressure.' },
-    { title: 'ICPC Lahore Regional — Fastest Problem Solver', meta: 'ACM-ICPC · 2017', icon: 'fa-bolt',
-      desc: 'Recognised as fastest problem solver at the ACM-ICPC Lahore regional for efficient, elegant solutions to complex algorithmic problems — strong algorithmic and data-structure foundations.' },
-    { title: 'MSc Cyber Security & AI — Distinction', meta: 'University of Sheffield · 2025', icon: 'fa-graduation-cap',
-      desc: 'Distinction at a Russell Group, world top-100 university — digital forensics, development of secure software, security mechanisms and scalable ML, plus a post-quantum blind-signature dissertation.' },
-    { title: 'OSCP+ & OSCP — OffSec', meta: 'Certified · Apr 2025', icon: 'fa-shield-halved',
+    { title: 'ICPC Lahore Regional - Fastest Problem Solver', meta: 'ACM-ICPC · 2017', icon: 'fa-bolt',
+      desc: 'Recognised as fastest problem solver at the ACM-ICPC Lahore regional for efficient, elegant solutions to complex algorithmic problems - strong algorithmic and data-structure foundations.' },
+    { title: 'MSc Cyber Security & AI - Distinction', meta: 'University of Sheffield · 2025', icon: 'fa-graduation-cap',
+      desc: 'Distinction at a Russell Group, world top-100 university - digital forensics, development of secure software, security mechanisms and scalable ML, plus a post-quantum blind-signature dissertation.' },
+    { title: 'OSCP+ & OSCP - OffSec', meta: 'Certified · Apr 2025', icon: 'fa-shield-halved',
       desc: 'Hands-on offensive-security certification (credential ID 140250238); the OSCP+ continuing-education status keeps it valid for three years.' },
     { title: '51 accepted bug-bounty findings', meta: '5 public programs', icon: 'fa-bug',
-      desc: 'Coordinated-disclosure findings across Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti — authorization, logic, race-condition and SSRF flaws, each with a reproducible PoC.' },
+      desc: 'Coordinated-disclosure findings across Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti - authorization, logic, race-condition and SSRF flaws, each with a reproducible PoC.' },
     { title: 'Employee of the Month', meta: 'Apricart E-Stores · 2021', icon: 'fa-star',
       desc: 'Recognised for security and delivery contributions while leading the IT department, sustaining 99.9% uptime.' },
-    { title: 'CTF competitor — HackTheBox & TryHackMe', meta: 'Ongoing', icon: 'fa-flag',
+    { title: 'CTF competitor - HackTheBox & TryHackMe', meta: 'Ongoing', icon: 'fa-flag',
       desc: 'Regularly competes in Capture-the-Flag events and HackTheBox/TryHackMe labs to sharpen offensive skills and explore new attack vectors.' }
   ]
 };
