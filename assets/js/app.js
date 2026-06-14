@@ -1,5 +1,5 @@
 /* ============================================================
-   Muhammad Ramis — portfolio app logic (v3 app-shell)
+   Muhammad Ramis - portfolio app logic (v3 app-shell)
    View router (no mega-scroll) · lens system · bento home
    · command palette · bug bounty · blog · interactivity
    ============================================================ */
@@ -11,7 +11,7 @@
   const POSTS = (window.POSTS || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1));
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  // Motion is a USER preference (toggle in the nav), defaulting ON — NOT driven by the OS
+  // Motion is a USER preference (toggle in the nav), defaulting ON - NOT driven by the OS
   // prefers-reduced-motion media query, because this site is an animated showcase and many
   // desktops have OS reduce-motion on. Motion-sensitive visitors can switch it off (persisted).
   let reduce = localStorage.getItem('ramis-motion') === 'off';
@@ -35,7 +35,7 @@
       { value: '10+', label: 'Years experience' },
       { value: '4', label: 'Disciplines, one operator' }
     ],
-    focusAreas: DATA.lenses.map(l => `${l.label} — ${l.blurb}`),
+    focusAreas: DATA.lenses.map(l => `${l.label} - ${l.blurb}`),
     tools: DATA.marquee.slice(0, 14),
     contributions: dedupe(CONTENT.tracks.flatMap(t => t.contributions || [])).slice(0, 6)
   };
@@ -93,7 +93,7 @@
      VIEW ROUTER
      ============================================================ */
   const VIEWS = ['home', 'about', 'work', 'security', 'experience', 'writing', 'contact'];
-  const HOME_TITLE = 'Muhammad Ramis — Software & AI Engineer · OSCP+ Penetration Tester';
+  const HOME_TITLE = 'Muhammad Ramis - Software & AI Engineer · OSCP+ Penetration Tester';
   const VIEW_TITLES = { about: 'About', work: 'Work', security: 'Security & Bug Bounty', experience: 'Experience', writing: 'Writing', contact: 'Contact' };
   let currentView = 'home';
 
@@ -121,14 +121,14 @@
     window.scrollTo(0, 0);
     revealScope(v);
     countUp(v); fillBars(v);
-    document.title = id === 'home' ? HOME_TITLE : `${VIEW_TITLES[id]} — Muhammad Ramis`;
+    document.title = id === 'home' ? HOME_TITLE : `${VIEW_TITLES[id]} - Muhammad Ramis`;
     $('#navLinks').classList.remove('open');
     $('#burger').setAttribute('aria-expanded', 'false');
     focusHeading(v);
-    announce((id === 'home' ? 'Home' : VIEW_TITLES[id]) + ' — page loaded');
+    announce((id === 'home' ? 'Home' : VIEW_TITLES[id]) + ' - page loaded');
     trackView(id === 'home' ? '/' : '/' + id, document.title);
   }
-  // Staggered entrance: reset then re-trigger CSS transitions — reliable in every browser.
+  // Staggered entrance: reset then re-trigger CSS transitions - reliable in every browser.
   function revealScope(scope) {
     if (!scope) return;
     const items = $$('.rv', scope);
@@ -228,7 +228,7 @@
         <i class="fa-solid ${l.icon}"></i><span>${l.short}</span>
       </button>`).join('');
     $$('#lensBar [data-lens-pill]').forEach(b => b.addEventListener('click', () => setLens(b.getAttribute('data-lens-pill'))));
-    $('#lensSwitchMenu').innerHTML = all.map(l => `<button class="lens-switch__opt" data-lens-opt="${l.id}" role="menuitem"><span class="dot" style="background:rgb(${l.rgb})"><i class="fa-solid ${l.icon}"></i></span><span>${l.label}<small>${l.blurb.slice(0, 38)}…</small></span></button>`).join('');
+    $('#lensSwitchMenu').innerHTML = all.map(l => `<button class="lens-switch__opt" data-lens-opt="${l.id}" role="menuitem"><span class="dot" style="background:rgb(${l.rgb})"><i class="fa-solid ${l.icon}"></i></span><span>${l.label}<small>${l.blurb.slice(0, 38)}...</small></span></button>`).join('');
     $$('#lensSwitchMenu [data-lens-opt]').forEach(b => b.addEventListener('click', () => { setLens(b.getAttribute('data-lens-opt')); $('#lensSwitch').classList.remove('open'); $('#lensSwitchBtn').setAttribute('aria-expanded', 'false'); }));
   }
   function updateLensControls(id) {
@@ -243,7 +243,7 @@
   document.addEventListener('click', () => { $('#lensSwitch').classList.remove('open'); $('#lensSwitchBtn').setAttribute('aria-expanded', 'false'); });
 
   /* ============================================================
-     HOME — typewriter, bento tiles, marquee
+     HOME - typewriter, bento tiles, marquee
      ============================================================ */
   function typeRoles() {
     const roles = (DATA.roles && DATA.roles.length ? DATA.roles : ['Penetration Tester']);
@@ -260,7 +260,7 @@
     })();
   }
 
-  const shortTitle = s => s.split(/\s+[-—–]\s+/)[0].trim();
+  const shortTitle = s => s.split(/\s+[- -  - ]\s+/)[0].trim();
   function renderFeatured(id) {
     const t = getTrack(id);
     const p = (t.projects && t.projects[0]) || PROJECTS[0];
@@ -304,7 +304,7 @@
           ['fa-layer-group', 'Java · Python · Kafka · .NET · Go'] ] }
       },
       aiml: {
-        hero: { kicker: 'AI / ML', icon: 'fa-brain', href: '#/work', num: projCount('aiml'), label: 'AI products — agents, RAG & eval', chips: ['Agents', 'RAG', 'MCP'] },
+        hero: { kicker: 'AI / ML', icon: 'fa-brain', href: '#/work', num: projCount('aiml'), label: 'AI products - agents, RAG & eval', chips: ['Agents', 'RAG', 'MCP'] },
         hi: { kicker: 'Selected AI work', icon: 'fa-arrow-up-right-from-square', href: '#/work', rows: ((byId.aiml && byId.aiml.contributions) || []).slice(0, 3).map(c => ['fa-circle-nodes', c.label]) }
       },
       uiux: {
@@ -346,7 +346,7 @@
 
   /* ---------- terminal ---------- */
   const TERMS = {
-    overview: [['whoami', 'muhammad-ramis  —  security × engineering', 'ok'], ['cat ./focus', 'cybersecurity · engineering · ai-ml · ui-ux', 'v'], ['./credentials --short', 'OSCP+ · MSc Distinction · 51 accepted findings', 'ok']],
+    overview: [['whoami', 'muhammad-ramis - security × engineering', 'ok'], ['cat ./focus', 'cybersecurity · engineering · ai-ml · ui-ux', 'v'], ['./credentials --short', 'OSCP+ · MSc Distinction · 51 accepted findings', 'ok']],
     cybersecurity: [['nmap -sV target', '22 ssh  80 http  443 https  8443 app', 'v'], ['./chain.py --ssrf', 'SSRF → 169.254.169.254 → temp IAM → AD pivot', 'warn'], ['bloodhound --shortest', 'KERBEROAST → ACL ABUSE → DOMAIN ADMIN', 'ok']],
     engineering: [['kubectl get deploy -A', 'api 6/6 · web 4/4 · worker 8/8  Ready', 'ok'], ['curl -w "%{time_total}" /health', 'p99 118ms · 6.5M req/day · zero-downtime', 'v'], ['mvn verify -Pkafka', 'JUnit + TestContainers PASS · 88% cov', 'ok']],
     aiml: [['python eval_agent.py', 'prompt-injection corpus: 0 tool-escapes', 'ok'], ['bugtraceai scan --auth', '145 findings → 43 validated exploitable', 'v'], ['mlflow runs --best', 'anomaly AUC 0.97 · FPR held < 1%', 'ok']],
@@ -405,7 +405,7 @@
     $$('.view').forEach(stagger);
   }
 
-  // The "choose your side" cards (single-sourced from DATA) — work with or without the 3D scene.
+  // The "choose your side" cards (single-sourced from DATA) - work with or without the 3D scene.
   function renderIntroCards() {
     const host = $('#introCards'); if (!host) return;
     const STAT = { engineering: '6.5M req/day', aiml: 'agents · RAG', cybersecurity: '51 findings', uiux: 'WCAG 2.2 AA' };
@@ -433,19 +433,19 @@
   /* ---------- FOCUS (about view, lens-aware) ---------- */
   function renderFocus(id) {
     const t = getTrack(id);
-    $('#focusHead').innerHTML = `<i class="fa-solid fa-crosshairs"></i> ${t.short} — focus & toolkit`;
-    $('#focusAreas').innerHTML = `<h3><i class="fa-solid fa-crosshairs"></i> What I work on <span style="color:var(--text-faint);font-weight:400;font-size:.78rem">— tap to expand</span></h3>
+    $('#focusHead').innerHTML = `<i class="fa-solid fa-crosshairs"></i> ${t.short} - focus & toolkit`;
+    $('#focusAreas').innerHTML = `<h3><i class="fa-solid fa-crosshairs"></i> What I work on <span style="color:var(--text-faint);font-weight:400;font-size:.78rem"> - tap to expand</span></h3>
       <div class="focus-tiles">${t.focusAreas.map(f => `<button class="ftile" type="button"><span class="ftile__top"><span class="ic"><i class="fa-solid ${focusIcon(f)}"></i></span><span class="ftile__lbl">${shortLabel(f)}</span><i class="fa-solid fa-chevron-down chev"></i></span><span class="ftile__full">${f}</span></button>`).join('')}</div>`;
     $$('#focusAreas .ftile').forEach(b => b.addEventListener('click', () => b.classList.toggle('open')));
     $('#focusTools').innerHTML = `<h3><i class="fa-solid fa-toolbox"></i> Tools & tech I reach for</h3><div class="tags">${t.tools.map(x => `<span class="tag">${x}</span>`).join('')}</div>`;
   }
   function shortLabel(s) {
-    let base = s.split('(')[0].replace(/\s[—-]\s.*$/, '').trim();
+    let base = s.split('(')[0].replace(/\s[ - -]\s.*$/, '').trim();
     const parts = base.split(/,| and | & /);
     let lab = parts[0].trim();
     if (lab.length < 16 && parts[1]) lab += ', ' + parts[1].trim();
     lab = lab.replace(/\s+/g, ' ');
-    if (lab.length > 40) lab = lab.slice(0, 38).replace(/[ ,]+$/, '') + '…';
+    if (lab.length > 40) lab = lab.slice(0, 38).replace(/[ ,]+$/, '') + '...';
     return lab;
   }
   function focusIcon(s) {
@@ -472,7 +472,7 @@
       const stack = p.stack || [];
       const chips = stack.slice(0, 4).map(s => `<span>${s}</span>`).join('') + (stack.length > 4 ? `<span class="more">+${stack.length - 4}</span>` : '');
       const peek = (((p.blurb || '').match(/^[\s\S]*?[.!?](\s|$)/) || [p.blurb || ''])[0]).trim();
-      return `<article class="proj rv${p.shot ? ' has-cover' : ''}" data-lenses="${p.lenses.join(' ')}" data-idx="${idx}" tabindex="0" role="button" aria-label="${p.title} — open details">
+      return `<article class="proj rv${p.shot ? ' has-cover' : ''}" data-lenses="${p.lenses.join(' ')}" data-idx="${idx}" tabindex="0" role="button" aria-label="${p.title} - open details">
         ${coverHTML(p)}
         <div class="proj__body">
           <div class="proj__top"><span class="proj__ic"><i class="fa-solid ${projIcon(p)}"></i></span><span class="proj__type">${p.type}</span>${p.shot ? '' : roleBadge(p)}</div>
@@ -568,7 +568,7 @@
         <div class="bb__prog">${programs}</div>
         <div class="bb__sev">${sev}</div>
       </div>
-      <div class="panel"><h3><i class="fa-solid fa-crosshairs"></i> Representative findings <span style="color:var(--text-faint);font-weight:400;font-size:.78rem">— tap to expand</span></h3><div class="bb__hl">${hl}</div></div>
+      <div class="panel"><h3><i class="fa-solid fa-crosshairs"></i> Representative findings <span style="color:var(--text-faint);font-weight:400;font-size:.78rem"> - tap to expand</span></h3><div class="bb__hl">${hl}</div></div>
     </div>`;
     $$('#bugBounty .bb__hlcard').forEach(b => b.addEventListener('click', () => b.classList.toggle('open')));
   }
@@ -657,10 +657,10 @@
     });
     $('#contactForm').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target;
-      const subject = encodeURIComponent(f.subject.value + ' — via ramis.me');
-      const body = encodeURIComponent(`${f.message.value}\n\n— ${f.name.value} (${f.email.value})`);
+      const subject = encodeURIComponent(f.subject.value + ' - via ramis.me');
+      const body = encodeURIComponent(`${f.message.value}\n\n - ${f.name.value} (${f.email.value})`);
       window.location.href = `mailto:${email()}?subject=${subject}&body=${body}`;
-      toast('Opening your email client…'); f.reset();
+      toast('Opening your email client...'); f.reset();
     });
   }
 
@@ -708,7 +708,7 @@
       <div class="md">${mdToHtml(post.body)}</div>
       <div style="margin-top:3rem"><a class="btn btn-ghost" href="#/writing"><i class="fa-solid fa-arrow-left"></i> Back to all posts</a></div>`;
     const a = $('#article'); a.classList.add('open'); a.setAttribute('aria-hidden', 'false'); a.scrollTop = 0; document.body.style.overflow = 'hidden';
-    document.title = `${post.title} — Muhammad Ramis`;
+    document.title = `${post.title} - Muhammad Ramis`;
     trackView('/blog/' + slug, document.title);
   }
   function closeArticle() {
@@ -746,7 +746,7 @@
       if (!allowed.includes(v)) return; // hard-focus: don't offer hidden views
       items.push({ group: 'Go to', label: v === 'home' ? 'Home' : VIEW_TITLES[v], hint: `${i + 1}`, icon: nav[v], run: () => go(v) });
     });
-    [DATA.overviewLens, ...DATA.lenses].forEach(l => items.push({ group: 'Switch lens', label: l.label, hint: l.blurb.slice(0, 60) + '…', icon: l.icon, run: () => setLens(l.id) }));
+    [DATA.overviewLens, ...DATA.lenses].forEach(l => items.push({ group: 'Switch lens', label: l.label, hint: l.blurb.slice(0, 60) + '...', icon: l.icon, run: () => setLens(l.id) }));
     items.push({ group: 'Actions', label: 'Toggle light / dark theme', icon: 'fa-circle-half-stroke', run: toggleTheme });
     items.push({ group: 'Actions', label: 'Copy email address', icon: 'fa-envelope', run: () => { navigator.clipboard && navigator.clipboard.writeText(email()); toast('Email copied to clipboard'); } });
     items.push({ group: 'Fun', label: 'Play: Packet Runner', hint: 'WebGL mini-game · opens /play in a new tab', icon: 'fa-gamepad', run: () => window.open('/play/', '_blank', 'noopener') });
@@ -759,7 +759,7 @@
     q = (q || '').trim().toLowerCase();
     cmdkItems = buildCmdkItems().filter(it => !q || (it.label + ' ' + (it.hint || '') + ' ' + it.group).toLowerCase().includes(q)).slice(0, 14);
     cmdkSel = 0;
-    if (!cmdkItems.length) { cmdkList.innerHTML = `<div class="cmdk__empty">No matches — try “work”, “lens” or a project name.</div>`; return; }
+    if (!cmdkItems.length) { cmdkList.innerHTML = `<div class="cmdk__empty">No matches - try “work”, “lens” or a project name.</div>`; return; }
     let html = '', lastGroup = null;
     cmdkItems.forEach((it, i) => {
       if (it.group !== lastGroup) { html += `<div class="cmdk__group">${it.group}</div>`; lastGroup = it.group; }
@@ -802,7 +802,7 @@
   });
 
   /* ============================================================
-     SNAKE — home easter egg: a mouse-controlled snake that eats the page
+     SNAKE - home easter egg: a mouse-controlled snake that eats the page
      ============================================================ */
   (function snakeMode() {
     const fab = $('#snakeFab'); if (!fab) return;
@@ -812,7 +812,7 @@
     const onMove = e => { mouse.x = e.clientX; mouse.y = e.clientY; };
     const resize = () => { if (cv) { cv.width = innerWidth; cv.height = innerHeight; } };
 
-    const SPEED = 5;     // px/frame — a calm crawl toward the cursor, not a whip
+    const SPEED = 5;     // px/frame - a calm crawl toward the cursor, not a whip
     const SPACING = 8;   // gap between body segments
     const HEAD_R = 13;
 
@@ -948,7 +948,7 @@
     window.addEventListener('pointermove', e => { root.style.setProperty('--mx', e.clientX + 'px'); root.style.setProperty('--my', e.clientY + 'px'); }, { passive: true });
   }
 
-  /* ---------- interactive 3D (WebGL) background — rotating particle orb ---------- */
+  /* ---------- interactive 3D (WebGL) background - rotating particle orb ---------- */
   (function initFx() {
     const cv = document.getElementById('bgFx');
     if (!cv || reduce) return;

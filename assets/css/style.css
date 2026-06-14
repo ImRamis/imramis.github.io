@@ -1,6 +1,6 @@
 /* =====================================================================
-   Muhammad Ramis — Portfolio (v3 app-shell)
-   Design system: lens-themed, glassmorphic, view-routed — no mega-scroll.
+   Muhammad Ramis - Portfolio (v3 app-shell)
+   Design system: lens-themed, glassmorphic, view-routed - no mega-scroll.
    Zero-build static CSS.
    ===================================================================== */
 
@@ -138,7 +138,7 @@ kbd {
 @keyframes drift { to { transform: translate3d(6vw, 5vh, 0) scale(1.18) rotate(40deg); } }
 
 .bg-fx { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; }
-/* per-view morphing 3D centrepiece (viewfx.js) — kept subtle so foreground content stays the focus */
+/* per-view morphing 3D centrepiece (viewfx.js) - kept subtle so foreground content stays the focus */
 .view-fx { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .4; }
 
 /* Cursor spotlight */
@@ -277,9 +277,9 @@ kbd {
 .view { display: none; flex: 1; padding: clamp(1.6rem, 4vh, 3rem) 0 3.4rem; }
 .view.is-active { display: block; }
 
-/* Staggered entrance — transition-based; JS (revealScope) toggles .in with per-item delay.
+/* Staggered entrance - transition-based; JS (revealScope) toggles .in with per-item delay.
    Scoped to .js so content is fully visible if JavaScript never runs. */
-/* Keyframe animations (not transitions) — reliably re-trigger in Firefox/Safari/Chrome
+/* Keyframe animations (not transitions) - reliably re-trigger in Firefox/Safari/Chrome
    when restarted via reflow in revealScope(). */
 .js .rv { opacity: 0; }
 .js .rv.in { animation: rvRise .62s var(--ease-out) both; }
@@ -305,7 +305,7 @@ kbd {
 .block-label i { color: var(--accent); }
 
 /* =====================================================================
-   HOME — identity + bento
+   HOME - identity + bento
    ===================================================================== */
 .home {
   min-height: calc(100svh - var(--nav-h) - 3rem);
@@ -493,7 +493,7 @@ a.tile:hover .tile__go { transform: translateX(4px); color: var(--accent); }
 .ftile.open .ftile__full { max-height: 160px; opacity: 1; margin-top: .55rem; }
 
 /* =====================================================================
-   WORK — projects
+   WORK - projects
    ===================================================================== */
 .filters { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.6rem; }
 .filter { display: inline-flex; align-items: center; gap: .45rem; padding: .55rem 1rem; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-dim); font-size: .86rem; font-weight: 600; transition: .3s var(--ease); }
@@ -589,7 +589,7 @@ a.tile:hover .tile__go { transform: translateX(4px); color: var(--accent); }
 .modal__metrics i { color: #34d399; margin-top: .3rem; font-size: .8rem; }
 
 /* =====================================================================
-   SECURITY — bug bounty
+   SECURITY - bug bounty
    ===================================================================== */
 .bb { display: grid; grid-template-columns: 1.05fr .95fr; gap: 1.4rem; }
 @media (max-width: 880px) { .bb { grid-template-columns: 1fr; } }
@@ -624,7 +624,7 @@ a.tile:hover .tile__go { transform: translateX(4px); color: var(--accent); }
 .bb__hlcard.open .bb__hlblurb { max-height: 180px; opacity: 1; margin-top: .55rem; }
 
 /* =====================================================================
-   EXPERIENCE — timeline, certs, awards
+   EXPERIENCE - timeline, certs, awards
    ===================================================================== */
 .timeline { position: relative; margin-top: .4rem; }
 .timeline::before { content: ""; position: absolute; left: 16px; top: 6px; bottom: 6px; width: 2px; background: linear-gradient(var(--accent), var(--accent-2), transparent); }
@@ -689,7 +689,7 @@ a.tile:hover .tile__go { transform: translateX(4px); color: var(--accent); }
 .ach__meta { font-family: var(--font-mono); font-size: .72rem; color: var(--text-faint); margin-top: .4rem; }
 
 /* =====================================================================
-   WRITING — blog
+   WRITING - blog
    ===================================================================== */
 .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.2rem; }
 .post {
@@ -827,7 +827,7 @@ body.snake-on { overflow: hidden; cursor: crosshair; }
 body.snake-on .marquee__track { animation-play-state: paused !important; }
 
 /* =====================================================================
-   IMMERSIVE INTRO — "choose your side" (PRISM SELECT)
+   IMMERSIVE INTRO - "choose your side" (PRISM SELECT)
    ===================================================================== */
 body.intro-open { overflow: hidden; }
 body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; }
@@ -846,7 +846,7 @@ body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; 
 }
 .intro--3d .intro__ui { justify-content: flex-end; padding: 1.4rem 1.4rem clamp(1.6rem, 5vh, 3rem); }
 
-/* skip — first-class, always visible */
+/* skip - first-class, always visible */
 .intro__skip {
   position: fixed; top: 1.1rem; right: 1.2rem; z-index: 3; pointer-events: auto;
   display: inline-flex; align-items: center; gap: .5rem; padding: .55rem 1.1rem; border-radius: 999px;
@@ -857,14 +857,14 @@ body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; 
 .intro__skip i { font-size: .78rem; transition: transform .25s; }
 .intro__skip:hover i { transform: translateX(3px); }
 
-/* heading — in the centred flat stack by default; pinned to the top only in 3D mode */
+/* heading - in the centred flat stack by default; pinned to the top only in 3D mode */
 .intro__head { width: min(100%, 660px); text-align: center; z-index: 2; pointer-events: none; padding: 0 1rem; }
 .intro--3d .intro__head { position: absolute; top: clamp(3.2rem, 9vh, 6rem); left: 50%; transform: translateX(-50%); }
 .intro__eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .26em; text-transform: uppercase; color: var(--text-faint); }
 .intro__title { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.3rem, 7vw, 4rem); line-height: 1; letter-spacing: -.02em; margin-top: .5rem; }
 .intro__sub { color: var(--text-dim); margin-top: .7rem; font-size: 1.02rem; }
 
-/* the side cards (flat / poster layout by default — also the no-WebGL + reduced-motion picker) */
+/* the side cards (flat / poster layout by default - also the no-WebGL + reduced-motion picker) */
 .intro__cards { display: grid; grid-template-columns: repeat(2, minmax(0, 250px)); gap: .9rem; pointer-events: auto; }
 .intro-card {
   --c: var(--lc, var(--accent)); --c-rgb: var(--lc-rgb, var(--accent-rgb));
@@ -912,7 +912,7 @@ body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; 
 .modal__note { display: flex; gap: .6rem; align-items: flex-start; margin: 0 0 1.2rem; padding: .75rem .9rem; border-radius: var(--radius-sm); background: rgba(var(--accent-rgb), .08); border: 1px solid rgba(var(--accent-rgb), .25); color: var(--text-dim); font-size: .85rem; line-height: 1.5; }
 .modal__note i { color: var(--accent); margin-top: .18rem; }
 
-/* Opaque card backing — content sits clearly above the animated 3D background
+/* Opaque card backing - content sits clearly above the animated 3D background
    (overrides the faint --surface fill on the main card surfaces). */
 .tile, .proj, .panel, .post, .cert, .ach, .tl-card, .form,
 .stat, .phi, .ftile, .bb__sevchip, .bb__hlcard {
@@ -920,7 +920,7 @@ body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; 
 }
 
 /* ---------- Reduced motion ----------
-   Driven by an explicit USER toggle (html[data-motion="off"]), NOT the OS media query —
+   Driven by an explicit USER toggle (html[data-motion="off"]), NOT the OS media query - 
    so the animated showcase plays by default even when a desktop has OS reduce-motion on.
    Motion-sensitive visitors flip the nav toggle (persisted); content stays fully visible. */
 html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after {

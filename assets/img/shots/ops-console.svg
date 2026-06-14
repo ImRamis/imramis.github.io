@@ -13,7 +13,7 @@
   <g fill="#857c98"><rect x="34" y="120" width="24" height="6" rx="3"/><rect x="34" y="138" width="24" height="6" rx="3"/><rect x="34" y="156" width="24" height="6" rx="3"/></g>
   <!-- header -->
   <text x="92" y="80" font-family="sans-serif" font-size="18" font-weight="700" fill="#fff">Orders &amp; fulfilment</text>
-  <rect x="600" y="62" width="184" height="30" rx="8" fill="#0c0a16" stroke="#ffffff1a"/><text x="616" y="82" font-family="sans-serif" font-size="11" fill="#857c98">Search order #…</text>
+  <rect x="600" y="62" width="184" height="30" rx="8" fill="#0c0a16" stroke="#ffffff1a"/><text x="616" y="82" font-family="sans-serif" font-size="11" fill="#857c98">Search order #...</text>
   <!-- KPI strip -->
   <g font-family="sans-serif">
     <rect x="92" y="104" width="160" height="64" rx="11" fill="#ffffff0a"/><text x="108" y="128" font-size="10" fill="#857c98">Open orders</text><text x="108" y="154" font-size="20" font-weight="700" fill="#fff">1,284</text>

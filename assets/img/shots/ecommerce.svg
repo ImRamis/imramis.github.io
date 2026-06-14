@@ -10,7 +10,7 @@
   <!-- nav -->
   <text x="24" y="78" font-family="sans-serif" font-size="18" font-weight="700" fill="#fff">Lumen<tspan fill="#f472b6">.</tspan></text>
   <g font-family="sans-serif" font-size="12" fill="#b9a9c6"><text x="120" y="78">New</text><text x="180" y="78">Women</text><text x="252" y="78">Men</text><text x="312" y="78">Sale</text></g>
-  <rect x="560" y="60" width="160" height="28" rx="14" fill="#100a18" stroke="#ffffff1a"/><text x="576" y="79" font-family="sans-serif" font-size="11" fill="#9a8aa6">Search…</text>
+  <rect x="560" y="60" width="160" height="28" rx="14" fill="#100a18" stroke="#ffffff1a"/><text x="576" y="79" font-family="sans-serif" font-size="11" fill="#9a8aa6">Search...</text>
   <circle cx="752" cy="74" r="14" fill="#ffffff10"/><text x="752" y="79" font-family="sans-serif" font-size="13" fill="#f472b6" text-anchor="middle">⛒</text>
   <!-- hero banner -->
   <rect x="24" y="100" width="500" height="160" rx="16" fill="url(#ec-ac)" opacity=".9"/>

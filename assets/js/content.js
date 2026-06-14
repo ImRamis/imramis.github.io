@@ -232,7 +232,7 @@ window.CONTENT = {
       "short": "Engineering",
       "icon": "code",
       "tagline": "Event-driven Java backends and full-stack platforms built to scale, stay up, and ship securely.",
-      "summary": "I am a software engineer with 10+ years building backend and full-stack platforms, with deep Java at the core: Spring Boot, Spring Data JPA/Hibernate and Apache Kafka event-driven services running 50K+ daily financial transactions, designed 12-factor and tested hard with JUnit 5, Mockito, TestContainers and PACT. Around that Java core I ship polyglot — C#/.NET Core microservices, Node, Go, Rust and PHP/Laravel — on EKS/AKS with Helm, Terraform and CI/CD. I have run e-commerce APIs at 6.5M requests a day and Java services at 800K+ daily requests and 99.8% availability, and I bring a security engineer's instinct so the platforms I build are as hard to break as they are to outgrow.",
+      "summary": "I am a software engineer with 10+ years building backend and full-stack platforms, with deep Java at the core: Spring Boot, Spring Data JPA/Hibernate and Apache Kafka event-driven services running 50K+ daily financial transactions, designed 12-factor and tested hard with JUnit 5, Mockito, TestContainers and PACT. Around that Java core I ship polyglot - C#/.NET Core microservices, Node, Go, Rust and PHP/Laravel - on EKS/AKS with Helm, Terraform and CI/CD. I have run e-commerce APIs at 6.5M requests a day and Java services at 800K+ daily requests and 99.8% availability, and I bring a security engineer's instinct so the platforms I build are as hard to break as they are to outgrow.",
       "stats": [
         {
           "value": "10+ yrs",
@@ -290,7 +290,7 @@ window.CONTENT = {
           "type": "Java backend platform",
           "shot": "architecture",
           "role": "Lead engineer",
-          "blurb": "Designed and led a Spring Boot 3 payments and ledger backend built around Apache Kafka and Kafka Streams, processing 50K+ daily financial transactions with exactly-once semantics and an idempotent outbox pattern. Domain services use Spring Data JPA and Hibernate over PostgreSQL, are packaged 12-factor and deployed on AWS EKS via Helm. A full test pyramid — JUnit 5, Mockito, TestContainers for real Kafka and Postgres, plus PACT contract tests between producers and consumers — held coverage at 88% and helped cut production incidents by 65%.",
+          "blurb": "Designed and led a Spring Boot 3 payments and ledger backend built around Apache Kafka and Kafka Streams, processing 50K+ daily financial transactions with exactly-once semantics and an idempotent outbox pattern. Domain services use Spring Data JPA and Hibernate over PostgreSQL, are packaged 12-factor and deployed on AWS EKS via Helm. A full test pyramid - JUnit 5, Mockito, TestContainers for real Kafka and Postgres, plus PACT contract tests between producers and consumers - held coverage at 88% and helped cut production incidents by 65%.",
           "stack": [
             "Java 21",
             "Spring Boot 3",
@@ -552,7 +552,7 @@ window.CONTENT = {
           "title": "Feature-Flag & Experimentation Service",
           "type": "Developer platform",
           "role": "Creator",
-          "blurb": "A self-hosted feature-flag and A/B experimentation service with a low-latency Go evaluation engine, streaming flag updates over SSE so changes propagate to clients in under a second without redeploys. It supports percentage rollouts, targeting rules, kill switches and sticky bucketing, with a typed SDK for Java, Node and React. An audit log records who flipped what and when, and a guarded-rollout mode auto-reverts a flag if error rates spike — turning risky releases into routine, observable ones.",
+          "blurb": "A self-hosted feature-flag and A/B experimentation service with a low-latency Go evaluation engine, streaming flag updates over SSE so changes propagate to clients in under a second without redeploys. It supports percentage rollouts, targeting rules, kill switches and sticky bucketing, with a typed SDK for Java, Node and React. An audit log records who flipped what and when, and a guarded-rollout mode auto-reverts a flag if error rates spike - turning risky releases into routine, observable ones.",
           "stack": [
             "Go",
             "TypeScript SDK",
@@ -641,8 +641,8 @@ window.CONTENT = {
       "label": "AI / ML Engineering",
       "short": "AI / ML",
       "icon": "brain",
-      "tagline": "I build LLM agent systems, RAG pipelines and ML — and ship them as product features teams can trust, with the evals and guardrails to back it up.",
-      "summary": "I build applied AI/ML as real product features, not demos: LLM agent systems with planning and tool-use, retrieval-augmented generation with citation grounding, and the evaluation harnesses and deterministic guardrails that make non-deterministic models safe to ship. I care about the hard engineering around models — durable agent workflows, typed tool registries, observability, cost control and regression-gated evals — backed by an MSc in Cyber Security & AI (Distinction). I also red-team AI systems when the product needs it, but the throughline is shipping trustworthy AI, not just experimenting with it.",
+      "tagline": "I build LLM agent systems, RAG pipelines and ML - and ship them as product features teams can trust, with the evals and guardrails to back it up.",
+      "summary": "I build applied AI/ML as real product features, not demos: LLM agent systems with planning and tool-use, retrieval-augmented generation with citation grounding, and the evaluation harnesses and deterministic guardrails that make non-deterministic models safe to ship. I care about the hard engineering around models - durable agent workflows, typed tool registries, observability, cost control and regression-gated evals - backed by an MSc in Cyber Security & AI (Distinction). I also red-team AI systems when the product needs it, but the throughline is shipping trustworthy AI, not just experimenting with it.",
       "stats": [
         {
           "value": "Agents",
@@ -669,9 +669,9 @@ window.CONTENT = {
         "Vector search and embedding pipelines (pgvector, FAISS, Qdrant) with incremental re-indexing",
         "Offline evaluation harnesses and LLM-as-judge scoring with recall@k / faithfulness regression gating in CI",
         "Deterministic guardrails around generative steps: schema-validated structured output, refusal-on-low-context and cost/latency control",
-        "AI-assisted product engineering — shipping agentic and RAG features into real apps with typed SDKs and streaming UIs",
+        "AI-assisted product engineering - shipping agentic and RAG features into real apps with typed SDKs and streaming UIs",
         "MLOps and serving: experiment tracking, fine-tuning (LoRA/PEFT) and self-hosted open-weight models (vLLM, Ollama)",
-        "LLM security evaluation & red-teaming (prompt injection, jailbreaks, unsafe tool-use) — applied when a product needs it"
+        "LLM security evaluation & red-teaming (prompt injection, jailbreaks, unsafe tool-use) - applied when a product needs it"
       ],
       "tools": [
         "Python",
@@ -697,7 +697,7 @@ window.CONTENT = {
       ],
       "projects": [
         {
-          "title": "Orchestra — Multi-Agent Workflow Engine for Product Teams",
+          "title": "Orchestra - Multi-Agent Workflow Engine for Product Teams",
           "type": "Agentic development platform",
           "shot": "orchestra",
           "role": "Creator",
@@ -731,11 +731,11 @@ window.CONTENT = {
           }
         },
         {
-          "title": "Lexica — Grounded RAG Engine for Product Knowledge",
+          "title": "Lexica - Grounded RAG Engine for Product Knowledge",
           "type": "RAG product / retrieval platform",
           "shot": "lexica",
           "role": "Creator",
-          "blurb": "A production retrieval-augmented-generation service that turns scattered product docs, tickets and changelogs into a fast, trustworthy in-app answer experience. It runs a hybrid retrieval stack — dense embeddings in pgvector fused with BM25, a cross-encoder re-ranker and semantic chunking — so answers stay grounded with inline citations and refuse to guess when context is thin. An offline evaluation harness tracks recall@k, faithfulness and answer latency on a labelled golden set and gates deploys on regression, while incremental re-indexing keeps the corpus fresh without full rebuilds. A streaming API and a typed React widget make it a drop-in 'ask your docs' feature for any product.",
+          "blurb": "A production retrieval-augmented-generation service that turns scattered product docs, tickets and changelogs into a fast, trustworthy in-app answer experience. It runs a hybrid retrieval stack - dense embeddings in pgvector fused with BM25, a cross-encoder re-ranker and semantic chunking - so answers stay grounded with inline citations and refuse to guess when context is thin. An offline evaluation harness tracks recall@k, faithfulness and answer latency on a labelled golden set and gates deploys on regression, while incremental re-indexing keeps the corpus fresh without full rebuilds. A streaming API and a typed React widget make it a drop-in 'ask your docs' feature for any product.",
           "stack": [
             "Python",
             "FastAPI",
@@ -765,10 +765,10 @@ window.CONTENT = {
           }
         },
         {
-          "title": "BugTraceAI — Agentic AI Engineering R&D Platform",
+          "title": "BugTraceAI - Agentic AI Engineering R&D Platform",
           "type": "Personal AI-engineering project · agent orchestration",
-          "note": "Personal AI-engineering R&D — an experiment in building reliable agent systems. Entirely separate from my bug-bounty work: all 51 accepted findings were discovered manually, by hand. I don't use BugTraceAI (or any LLM) to find or submit bounties.",
-          "blurb": "A self-hosted product build where I push agentic engineering to its limits: specialist LLM agents driving a six-phase pipeline (discovery, analysis, consolidation, exploitation, validation, reporting) with structured tool-calling into Go fuzzers and Playwright browser checks, plus consensus voting and circuit breakers that suppress hallucinated output before it reaches a human. It's my R&D sandbox for the hard parts of building agent systems — planning, deterministic guardrails around generative steps, cost control and getting trustworthy, reproducible results out of non-deterministic models — applied to a security-testing domain I know well. The public demo run produced 145 candidate findings with 43 surviving validation, each carrying reproduction steps rather than raw model output.",
+          "note": "Personal AI-engineering R&D - an experiment in building reliable agent systems. Entirely separate from my bug-bounty work: all 51 accepted findings were discovered manually, by hand. I don't use BugTraceAI (or any LLM) to find or submit bounties.",
+          "blurb": "A self-hosted product build where I push agentic engineering to its limits: specialist LLM agents driving a six-phase pipeline (discovery, analysis, consolidation, exploitation, validation, reporting) with structured tool-calling into Go fuzzers and Playwright browser checks, plus consensus voting and circuit breakers that suppress hallucinated output before it reaches a human. It's my R&D sandbox for the hard parts of building agent systems - planning, deterministic guardrails around generative steps, cost control and getting trustworthy, reproducible results out of non-deterministic models - applied to a security-testing domain I know well. The public demo run produced 145 candidate findings with 43 surviving validation, each carrying reproduction steps rather than raw model output.",
           "stack": [
             "Python",
             "FastAPI",
@@ -827,9 +827,9 @@ window.CONTENT = {
           }
         },
         {
-          "title": "RedTeamLab — LLM Security Evaluation & Red-Teaming Harness",
+          "title": "RedTeamLab - LLM Security Evaluation & Red-Teaming Harness",
           "type": "LLM security evaluation",
-          "blurb": "An automated red-teaming harness that stress-tests LLM applications the way I'd attack any other target. It runs a versioned corpus of 600+ adversarial probes — direct and indirect prompt injection, jailbreaks, tool-invocation abuse, and training-data leakage — against any model or agent behind a uniform adapter, then scores defences with an LLM-as-judge plus deterministic detectors. Results land in a dashboard with an attack-success-rate trendline, so teams can gate releases on whether guardrails actually held. Built on the AI/LLM offensive research from my MSc and bug-bounty work.",
+          "blurb": "An automated red-teaming harness that stress-tests LLM applications the way I'd attack any other target. It runs a versioned corpus of 600+ adversarial probes - direct and indirect prompt injection, jailbreaks, tool-invocation abuse, and training-data leakage - against any model or agent behind a uniform adapter, then scores defences with an LLM-as-judge plus deterministic detectors. Results land in a dashboard with an attack-success-rate trendline, so teams can gate releases on whether guardrails actually held. Built on the AI/LLM offensive research from my MSc and bug-bounty work.",
           "stack": [
             "Python",
             "PyTorch",
@@ -858,9 +858,9 @@ window.CONTENT = {
           }
         },
         {
-          "title": "SentinelRAG — Grounded Retrieval Assistant for Security Knowledge",
+          "title": "SentinelRAG - Grounded Retrieval Assistant for Security Knowledge",
           "type": "RAG system",
-          "blurb": "A production RAG assistant over a large corpus of vulnerability reports, pentest notes and remediation guidance. I built a hybrid retrieval stack — dense embeddings in Qdrant fused with BM25, a cross-encoder re-ranker, and semantic chunking — so answers stay grounded with inline citations and refuse when context is thin. A retrieval-evaluation suite tracks recall@k and faithfulness on a labelled golden set, and an injection-aware ingestion guard strips adversarial instructions from untrusted documents. It turned scattered tribal knowledge into a queryable, auditable assistant.",
+          "blurb": "A production RAG assistant over a large corpus of vulnerability reports, pentest notes and remediation guidance. I built a hybrid retrieval stack - dense embeddings in Qdrant fused with BM25, a cross-encoder re-ranker, and semantic chunking - so answers stay grounded with inline citations and refuse when context is thin. A retrieval-evaluation suite tracks recall@k and faithfulness on a labelled golden set, and an injection-aware ingestion guard strips adversarial instructions from untrusted documents. It turned scattered tribal knowledge into a queryable, auditable assistant.",
           "stack": [
             "Python",
             "FastAPI",
@@ -889,9 +889,9 @@ window.CONTENT = {
           }
         },
         {
-          "title": "TelemetryGuard — ML Anomaly Detection for Security Telemetry",
+          "title": "TelemetryGuard - ML Anomaly Detection for Security Telemetry",
           "type": "ML anomaly detection",
-          "blurb": "An unsupervised anomaly-detection pipeline over authentication, API and network telemetry, built to catch the abuse patterns I exploit by hand — credential stuffing, BOLA probing and slow-burn data exfiltration. It combines Isolation Forest and an autoencoder on engineered behavioural features with entity baselining, and scores events in near-real-time off a streaming feature store. Detections are explained with the top contributing features so analysts get a lead, not just a number, and the thresholds are tuned against a precision/recall curve rather than guesswork. It surfaced anomalous access patterns that signature rules missed.",
+          "blurb": "An unsupervised anomaly-detection pipeline over authentication, API and network telemetry, built to catch the abuse patterns I exploit by hand - credential stuffing, BOLA probing and slow-burn data exfiltration. It combines Isolation Forest and an autoencoder on engineered behavioural features with entity baselining, and scores events in near-real-time off a streaming feature store. Detections are explained with the top contributing features so analysts get a lead, not just a number, and the thresholds are tuned against a precision/recall curve rather than guesswork. It surfaced anomalous access patterns that signature rules missed.",
           "stack": [
             "Python",
             "PyTorch",
@@ -919,7 +919,7 @@ window.CONTENT = {
           }
         },
         {
-          "title": "ModelForge — MLOps Pipeline for Reproducible Model Delivery",
+          "title": "ModelForge - MLOps Pipeline for Reproducible Model Delivery",
           "type": "MLOps platform",
           "blurb": "The MLOps backbone behind my AI projects: a reproducible pipeline that versions data, code and parameters, tracks every experiment in MLflow, and promotes models through a registry with staging gates. Training and evaluation run as containerised jobs on Kubernetes, evaluation metrics block promotion on regression, and a fine-tuning path with LoRA/PEFT adapts open-weight models cost-effectively before vLLM serving. Drift and quality are monitored in production with automated rollback, so a bad model never quietly ships. It's the difference between a demo notebook and a system you can trust on call.",
           "stack": [
@@ -952,9 +952,9 @@ window.CONTENT = {
       ],
       "contributions": [
         {
-          "label": "BugTraceAI — agentic AI engineering R&D (demo)",
+          "label": "BugTraceAI - agentic AI engineering R&D (demo)",
           "url": "https://bugtrace.ramis.me",
-          "note": "Personal R&D into reliable LLM-agent systems (planning, tool-use, consensus voting, guardrails). Separate from my manual bug-bounty work — no AI is used to find or submit bounties."
+          "note": "Personal R&D into reliable LLM-agent systems (planning, tool-use, consensus voting, guardrails). Separate from my manual bug-bounty work - no AI is used to find or submit bounties."
         },
         {
           "label": "LLM red-teaming harness write-up",
@@ -967,7 +967,7 @@ window.CONTENT = {
           "note": "Hybrid retrieval, cross-encoder re-ranking and injection-aware ingestion for citation-grounded answers that refuse when context is thin."
         },
         {
-          "label": "MSc Cyber Security & AI — Distinction",
+          "label": "MSc Cyber Security & AI - Distinction",
           "url": "https://ramis.me/blog/post-quantum-blind-signature-framework",
           "note": "Distinction at the University of Sheffield; dissertation built a multi-language benchmarking framework with adversarial evaluation at its core."
         }
@@ -978,7 +978,7 @@ window.CONTENT = {
       "label": "UI / UX Engineering",
       "short": "UI / UX",
       "icon": "pen-ruler",
-      "tagline": "Accessible, fast, design-system-driven interfaces — from Figma tokens to shipped product.",
+      "tagline": "Accessible, fast, design-system-driven interfaces - from Figma tokens to shipped product.",
       "summary": "I build product front-ends that are quick, accessible and maintainable: React, React Native and Next.js apps, typed component libraries, and data-dense dashboards that operators actually enjoy using. I treat accessibility as engineering rather than garnish, shipping WCAG 2.2 AA flows with semantic markup, keyboard-first interactions and CI-gated axe checks. Years on the offensive side mean I also wire front-ends that fail safely and never leak more than they should.",
       "stats": [
         {
@@ -1003,7 +1003,7 @@ window.CONTENT = {
         "React Native cross-platform mobile UI with offline-tolerant, motion-aware flows",
         "Design systems, design tokens and reusable component libraries on Radix/headless primitives",
         "Data-dense dashboards, admin journeys and live operator consoles",
-        "WCAG 2.2 AA accessibility engineering — semantic HTML, ARIA, focus management, keyboard paths",
+        "WCAG 2.2 AA accessibility engineering - semantic HTML, ARIA, focus management, keyboard paths",
         "Motion design and micro-interactions that confirm state and respect prefers-reduced-motion",
         "Design-to-code handoff: Figma tokens, Storybook docs and visual-regression contracts",
         "Drupal/Twig theming and headless/decoupled front-ends",
@@ -1036,7 +1036,7 @@ window.CONTENT = {
           "type": "Design system",
           "shot": "design-system",
           "role": "Lead engineer",
-          "blurb": "A typed React + TypeScript component library and token pipeline that unified the look of Sorvox client products and internal AppSec tooling. I built 60+ accessible primitives — forms, tables, modals, toasts, a command palette and a charting kit — on Radix behaviours, with design tokens synced from Figma via Style Dictionary, documented in Storybook and accessibility-regression-tested in CI. It cut new-screen build time sharply and gave engineers a guard-railed way to ship consistent, WCAG-compliant UI.",
+          "blurb": "A typed React + TypeScript component library and token pipeline that unified the look of Sorvox client products and internal AppSec tooling. I built 60+ accessible primitives - forms, tables, modals, toasts, a command palette and a charting kit - on Radix behaviours, with design tokens synced from Figma via Style Dictionary, documented in Storybook and accessibility-regression-tested in CI. It cut new-screen build time sharply and gave engineers a guard-railed way to ship consistent, WCAG-compliant UI.",
           "stack": [
             "React",
             "TypeScript",
@@ -1070,8 +1070,8 @@ window.CONTENT = {
           "type": "Dashboard / data UX",
           "shot": "bugtrace-dashboard",
           "role": "Creator",
-          "note": "The front-end for BugTraceAI, my personal AI-engineering R&D platform — separate from my (manual) bug-bounty work.",
-          "blurb": "The React front-end for BugTraceAI, my personal AI-engineering R&D platform for reliable LLM-agent systems. It turns a noisy six-phase agent pipeline into a calm operator experience: live run progress streamed over SSE, a triage queue spanning 14 classes, consensus-vote indicators and per-item evidence views with reproduction steps. The demo run surfaces 145 candidates with 43 validated, so the UI had to make confidence and validation state legible at a glance without overwhelming the reviewer — a data-UX problem in making non-deterministic agent output trustworthy to read.",
+          "note": "The front-end for BugTraceAI, my personal AI-engineering R&D platform - separate from my (manual) bug-bounty work.",
+          "blurb": "The React front-end for BugTraceAI, my personal AI-engineering R&D platform for reliable LLM-agent systems. It turns a noisy six-phase agent pipeline into a calm operator experience: live run progress streamed over SSE, a triage queue spanning 14 classes, consensus-vote indicators and per-item evidence views with reproduction steps. The demo run surfaces 145 candidates with 43 validated, so the UI had to make confidence and validation state legible at a glance without overwhelming the reviewer - a data-UX problem in making non-deterministic agent output trustworthy to read.",
           "stack": [
             "React",
             "TypeScript",
@@ -1099,11 +1099,11 @@ window.CONTENT = {
           }
         },
         {
-          "title": "Apricart Operations Console — Orders, Fulfilment & Live Ops",
+          "title": "Apricart Operations Console - Orders, Fulfilment & Live Ops",
           "type": "Admin / operator UX",
           "shot": "ops-console",
           "role": "Contributor",
-          "blurb": "A React + TypeScript admin console for the Apricart e-commerce and payments platform, giving operators a single pane over orders, fulfilment, refunds and live delivery tracking on top of backend services handling 800K+ daily requests. I designed the data-dense journeys around real warehouse and support workflows — bulk actions, optimistic status updates, audit trails and role-scoped views — and tuned the heaviest tables and maps so they stayed responsive at peak retail load. Accessibility and clear destructive-action affordances were treated as first-class, since operators live in this UI all day.",
+          "blurb": "A React + TypeScript admin console for the Apricart e-commerce and payments platform, giving operators a single pane over orders, fulfilment, refunds and live delivery tracking on top of backend services handling 800K+ daily requests. I designed the data-dense journeys around real warehouse and support workflows - bulk actions, optimistic status updates, audit trails and role-scoped views - and tuned the heaviest tables and maps so they stayed responsive at peak retail load. Accessibility and clear destructive-action affordances were treated as first-class, since operators live in this UI all day.",
           "stack": [
             "React",
             "TypeScript",
@@ -1135,7 +1135,7 @@ window.CONTENT = {
           "type": "Real-time product UI",
           "shot": "chat-widget",
           "role": "Contributor",
-          "blurb": "The customer-facing chat widget and Angular admin console for Chatcloud's real-time messaging SaaS. The embeddable widget was themeable per tenant, fully keyboard-navigable, and tuned to render smoothly at 5K-8K concurrent users with sub-100ms message paint. The admin console gave operators live conversation views, user management and analytics without drowning them in data. I focused on resilient WebSocket UI states — reconnect, backoff and optimistic sends that never lie to the user.",
+          "blurb": "The customer-facing chat widget and Angular admin console for Chatcloud's real-time messaging SaaS. The embeddable widget was themeable per tenant, fully keyboard-navigable, and tuned to render smoothly at 5K-8K concurrent users with sub-100ms message paint. The admin console gave operators live conversation views, user management and analytics without drowning them in data. I focused on resilient WebSocket UI states - reconnect, backoff and optimistic sends that never lie to the user.",
           "stack": [
             "Angular",
             "TypeScript",
@@ -1163,11 +1163,11 @@ window.CONTENT = {
           }
         },
         {
-          "title": "Carpool Mobile App — React Native Rider & Driver Experience",
+          "title": "Carpool Mobile App - React Native Rider & Driver Experience",
           "type": "Mobile UI",
           "shot": "mobile-app",
           "role": "Creator",
-          "blurb": "The cross-platform rider and driver experience for a React Native carpooling platform (Laravel backend) that reached around 10K downloads. I designed and built the map-first journey: live GPS matching, in-app chat, ride scheduling and an admin moderation view. The work leaned hard on mobile UX fundamentals — thumb-reachable controls, motion that communicates state, haptics, and offline-tolerant flows for patchy connections — and shipped to both iOS and Android from a single codebase.",
+          "blurb": "The cross-platform rider and driver experience for a React Native carpooling platform (Laravel backend) that reached around 10K downloads. I designed and built the map-first journey: live GPS matching, in-app chat, ride scheduling and an admin moderation view. The work leaned hard on mobile UX fundamentals - thumb-reachable controls, motion that communicates state, haptics, and offline-tolerant flows for patchy connections - and shipped to both iOS and Android from a single codebase.",
           "stack": [
             "React Native",
             "TypeScript",
@@ -1199,7 +1199,7 @@ window.CONTENT = {
           "type": "Research data UI",
           "shot": "data-viz",
           "role": "Creator",
-          "blurb": "A Next.js analysis dashboard built for my Sheffield MSc distinction dissertation comparing post-quantum blind signature schemes. It visualises reproducible performance and security benchmarks across a multi-language library (Python/Rust/Node.js) behind gRPC/REST APIs, letting reviewers compare key sizes, signing latency and verification cost interactively. The interface prioritised clear, accessible data presentation — every chart ships with a data-table fallback — so the comparative framework could be read and reproduced by non-specialists.",
+          "blurb": "A Next.js analysis dashboard built for my Sheffield MSc distinction dissertation comparing post-quantum blind signature schemes. It visualises reproducible performance and security benchmarks across a multi-language library (Python/Rust/Node.js) behind gRPC/REST APIs, letting reviewers compare key sizes, signing latency and verification cost interactively. The interface prioritised clear, accessible data presentation - every chart ships with a data-table fallback - so the comparative framework could be read and reproduced by non-specialists.",
           "stack": [
             "Next.js",
             "TypeScript",
@@ -1227,11 +1227,11 @@ window.CONTENT = {
           }
         },
         {
-          "title": "Lumen — Fintech Wallet App",
+          "title": "Lumen - Fintech Wallet App",
           "type": "Product UI / fintech",
           "shot": "fintech-wallet",
           "role": "Creator",
-          "blurb": "A consumer wallet experience covering balances, transfers, cards and spending insights, built in React Native with a shared design-token core so iOS, Android and web feel identical. I designed the money-movement flows for trust and clarity — confirmation states that never lie, optimistic transfers with safe rollback, biometric gates, and a spending breakdown that turns raw transactions into a story. Every screen ships WCAG 2.2 AA: large tap targets, dynamic-type support, reduced-motion variants and full screen-reader labelling for amounts and statuses.",
+          "blurb": "A consumer wallet experience covering balances, transfers, cards and spending insights, built in React Native with a shared design-token core so iOS, Android and web feel identical. I designed the money-movement flows for trust and clarity - confirmation states that never lie, optimistic transfers with safe rollback, biometric gates, and a spending breakdown that turns raw transactions into a story. Every screen ships WCAG 2.2 AA: large tap targets, dynamic-type support, reduced-motion variants and full screen-reader labelling for amounts and statuses.",
           "stack": [
             "React Native",
             "TypeScript",
@@ -1259,11 +1259,11 @@ window.CONTENT = {
           }
         },
         {
-          "title": "Aperture — SaaS Marketing Site & Brand System",
+          "title": "Aperture - SaaS Marketing Site & Brand System",
           "type": "Marketing UI / brand",
           "shot": "saas-landing",
           "role": "Creator",
-          "blurb": "A high-converting marketing site and brand system for a developer-tools SaaS, built on Next.js App Router with MDX-driven content so marketing can ship pages without engineering. I designed the visual language — type scale, motion grammar and a gradient-led component kit — then engineered it for Core Web Vitals: streamed RSC, image optimisation and a strict bundle budget kept it at 99+ Lighthouse across the board. Scroll-linked motion and a live product preview respect prefers-reduced-motion and degrade gracefully without JavaScript.",
+          "blurb": "A high-converting marketing site and brand system for a developer-tools SaaS, built on Next.js App Router with MDX-driven content so marketing can ship pages without engineering. I designed the visual language - type scale, motion grammar and a gradient-led component kit - then engineered it for Core Web Vitals: streamed RSC, image optimisation and a strict bundle budget kept it at 99+ Lighthouse across the board. Scroll-linked motion and a live product preview respect prefers-reduced-motion and degrade gracefully without JavaScript.",
           "stack": [
             "Next.js",
             "TypeScript",
@@ -1274,7 +1274,7 @@ window.CONTENT = {
           ],
           "metrics": [
             "99+ Lighthouse across perf, a11y and SEO",
-            "MDX content model — marketing ships pages solo",
+            "MDX content model - marketing ships pages solo",
             "Scroll-linked motion that respects reduced-motion",
             "Streamed RSC with a strict bundle budget"
           ],
@@ -1291,7 +1291,7 @@ window.CONTENT = {
           }
         },
         {
-          "title": "Caretrack — Patient Portal & Telehealth UI",
+          "title": "Caretrack - Patient Portal & Telehealth UI",
           "type": "Healthcare product UX",
           "shot": "health-portal",
           "role": "Lead engineer",
@@ -1323,11 +1323,11 @@ window.CONTENT = {
           }
         },
         {
-          "title": "Lumen Storefront — Headless Commerce Redesign",
+          "title": "Lumen Storefront - Headless Commerce Redesign",
           "type": "E-commerce product UI",
           "shot": "ecommerce",
           "role": "Creator",
-          "blurb": "A headless storefront redesign focused on the moments that move revenue: fast product discovery, a frictionless bag, and a checkout that feels instant. Built on Next.js over a commerce API, it uses optimistic cart updates, skeleton-free streamed product grids, and persistent mini-cart state across the journey. I rebuilt the design system around a flexible product-card and filter kit, tuned Largest Contentful Paint on image-heavy pages, and made the entire purchase path keyboard- and screen-reader-complete — accessibility that also happens to lift conversion.",
+          "blurb": "A headless storefront redesign focused on the moments that move revenue: fast product discovery, a frictionless bag, and a checkout that feels instant. Built on Next.js over a commerce API, it uses optimistic cart updates, skeleton-free streamed product grids, and persistent mini-cart state across the journey. I rebuilt the design system around a flexible product-card and filter kit, tuned Largest Contentful Paint on image-heavy pages, and made the entire purchase path keyboard- and screen-reader-complete - accessibility that also happens to lift conversion.",
           "stack": [
             "Next.js",
             "TypeScript",
@@ -1383,22 +1383,22 @@ window.CONTENT = {
     "heroTaglines": [
       "Software & AI Engineer",
       "Java · Kafka · Distributed Systems",
-      "AI / Agent Engineer — LLM systems & RAG",
+      "AI / Agent Engineer - LLM systems & RAG",
       "Full-Stack Product Engineer",
-      "Penetration Tester — OSCP+",
+      "Penetration Tester - OSCP+",
       "Accessible UI / UX Engineer"
     ],
-    "elevator": "Software engineer with 10+ years building event-driven Java/Kafka backends, .NET microservices, AI/LLM products and accessible React front-ends — and an OSCP+ penetration tester who breaks systems to build sturdier ones. Engineering, AI/ML, security and UX, treated as one craft.",
-    "about": "I am a **software engineer** with 10+ years shipping production systems end to end — and a penetration tester who uses an attacker's eye to make them harder to break. Based in Nottingham, open to UK roles and relocation, I move comfortably across four disciplines and treat them as one craft rather than four hats. I design **event-driven Java backends** (Spring Boot 3, Kafka + Kafka Streams) that have carried 50K+ daily financial transactions, scaled e-commerce APIs to **6.5M requests a day**, and built real-time messaging for thousands of concurrent users. I build **AI/ML products** — LLM agent systems, RAG pipelines and evaluation harnesses — and I ship **accessible React/TypeScript** front-ends to WCAG 2.2 AA. Security runs through all of it because that's how I was trained, not because it's the headline.\n\nOn the **engineering** side I work in Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka, with disciplined TDD/BDD (JUnit 5, Mockito, TestContainers, PACT), 88% coverage and a 65% drop in production incidents, plus C#/.NET Core (Polly, AKS, OpenTelemetry, 99.99% uptime), Node, Go, Rust and PHP/Laravel on EKS/AKS. In **AI/ML** I build agentic systems and retrieval pipelines as product features — orchestration, tool-use, RAG with citation grounding and evaluation gating — backed by an **MSc in Cyber Security & AI from the University of Sheffield (Distinction)**. In **UI/UX** I ship typed design systems, data-dense dashboards and mobile apps where accessibility is an engineering constraint, not a coat of paint.\n\nThe **security** practice is the sharp edge of the same engineer. I hold **OSCP+** and **OSCP** (Apr 2025), with the **OSED** exploit-development exam scheduled for mid-2026, and I have **51 accepted findings across 5 public bug-bounty programmes** — every one found by hand, with a reproducible PoC. Living on both sides means my code anticipates the attack and my findings ship as fixes a team can actually merge. I'd rather build the thing and prove it holds than argue about it in the abstract.",
+    "elevator": "Software engineer with 10+ years building event-driven Java/Kafka backends, .NET microservices, AI/LLM products and accessible React front-ends - and an OSCP+ penetration tester who breaks systems to build sturdier ones. Engineering, AI/ML, security and UX, treated as one craft.",
+    "about": "I am a **software engineer** with 10+ years shipping production systems end to end - and a penetration tester who uses an attacker's eye to make them harder to break. Based in Nottingham, open to UK roles and relocation, I move comfortably across four disciplines and treat them as one craft rather than four hats. I design **event-driven Java backends** (Spring Boot 3, Kafka + Kafka Streams) that have carried 50K+ daily financial transactions, scaled e-commerce APIs to **6.5M requests a day**, and built real-time messaging for thousands of concurrent users. I build **AI/ML products** - LLM agent systems, RAG pipelines and evaluation harnesses - and I ship **accessible React/TypeScript** front-ends to WCAG 2.2 AA. Security runs through all of it because that's how I was trained, not because it's the headline.\n\nOn the **engineering** side I work in Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka, with disciplined TDD/BDD (JUnit 5, Mockito, TestContainers, PACT), 88% coverage and a 65% drop in production incidents, plus C#/.NET Core (Polly, AKS, OpenTelemetry, 99.99% uptime), Node, Go, Rust and PHP/Laravel on EKS/AKS. In **AI/ML** I build agentic systems and retrieval pipelines as product features - orchestration, tool-use, RAG with citation grounding and evaluation gating - backed by an **MSc in Cyber Security & AI from the University of Sheffield (Distinction)**. In **UI/UX** I ship typed design systems, data-dense dashboards and mobile apps where accessibility is an engineering constraint, not a coat of paint.\n\nThe **security** practice is the sharp edge of the same engineer. I hold **OSCP+** and **OSCP** (Apr 2025), with the **OSED** exploit-development exam scheduled for mid-2026, and I have **51 accepted findings across 5 public bug-bounty programmes** - every one found by hand, with a reproducible PoC. Living on both sides means my code anticipates the attack and my findings ship as fixes a team can actually merge. I'd rather build the thing and prove it holds than argue about it in the abstract.",
     "philosophy": [
       {
         "title": "Builder's discipline, attacker's eye",
-        "text": "I build like an engineer and test like an adversary. Living on both sides means my systems anticipate the attack and my findings ship as fixes a team can merge — maintainable Spring Boot, .NET, Go or TypeScript, not vague advice.",
+        "text": "I build like an engineer and test like an adversary. Living on both sides means my systems anticipate the attack and my findings ship as fixes a team can merge - maintainable Spring Boot, .NET, Go or TypeScript, not vague advice.",
         "icon": "screwdriver-wrench"
       },
       {
         "title": "Ship it, then prove it holds",
-        "text": "I'd rather build the thing and prove it stands up than argue in the abstract — load-tested Kafka throughput, evaluation-gated AI, OSCP+ proofs and reproducible PoCs over confident hand-waving.",
+        "text": "I'd rather build the thing and prove it stands up than argue in the abstract - load-tested Kafka throughput, evaluation-gated AI, OSCP+ proofs and reproducible PoCs over confident hand-waving.",
         "icon": "vial-circle-check"
       },
       {
@@ -1425,7 +1425,7 @@ window.CONTENT = {
       {
         "name": "HackerOne",
         "findings": "2 Critical, 10 High, 3 Medium",
-        "note": "Largest qualitative footprint — authentication and business-logic bypasses, IDOR/BOLA chains and race conditions across SaaS and API surfaces."
+        "note": "Largest qualitative footprint - authentication and business-logic bypasses, IDOR/BOLA chains and race conditions across SaaS and API surfaces."
       },
       {
         "name": "Google Bug Hunters",
@@ -1435,7 +1435,7 @@ window.CONTENT = {
       {
         "name": "YesWeHack",
         "findings": "4 Critical, 12 High, 5 Medium",
-        "note": "Highest volume — 21 accepted findings spanning IDOR/BOLA, SSRF, logic flaws and AI/LLM abuse (prompt injection, unsafe tool invocation)."
+        "note": "Highest volume - 21 accepted findings spanning IDOR/BOLA, SSRF, logic flaws and AI/LLM abuse (prompt injection, unsafe tool invocation)."
       },
       {
         "name": "Intigriti",
