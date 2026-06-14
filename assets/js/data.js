@@ -46,7 +46,7 @@ window.DATA = {
       rgb: '224,85,109', rgb2: '224,149,78' },
     { id: 'uiux', label: 'UI / UX Engineering', short: 'UI / UX', icon: 'fa-pen-ruler',
       blurb: 'Accessible React/TypeScript design systems, data-dense dashboards and product UX.',
-      rgb: '224,106,134', rgb2: '224,173,66' }
+      rgb: '176,105,224', rgb2: '224,112,176' }
   ],
   overviewLens: { id: 'overview', label: 'The full picture', short: 'Overview', icon: 'fa-layer-group',
     blurb: 'Not sure where to start? See everything - engineering, AI, security and design, together.',

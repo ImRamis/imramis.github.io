@@ -609,7 +609,7 @@
 
   /* ---------- BLOG (writing view) ---------- */
   const lensName = id => (DATA.lenses.find(l => l.id === id) || { short: id === 'research' ? 'Research' : 'Overview' }).short;
-  const TRACK_RGB = { cybersecurity: '224,85,109', engineering: '111,120,214', aiml: '47,179,137', uiux: '224,106,134', research: '47,179,137' };
+  const TRACK_RGB = { cybersecurity: '224,85,109', engineering: '111,120,214', aiml: '47,179,137', uiux: '176,105,224', research: '47,179,137' };
   const trackRgb = t => TRACK_RGB[t] || '92,198,221';
   function renderBlogFilters() {
     const filters = [{ id: 'all', label: 'All' }, ...DATA.lenses.map(l => ({ id: l.id, label: l.short })), { id: 'research', label: 'Research' }];
