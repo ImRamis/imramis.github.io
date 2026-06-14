@@ -49,7 +49,17 @@
 
   <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
   <link rel="dns-prefetch" href="https://www.clarity.ms" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20" />
+  <style id="pl-style">
+    #preloader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#10131d,#0a0c12 60%,#090b11);transition:opacity .55s ease,visibility .55s ease}
+    #preloader.pl--done{opacity:0;visibility:hidden;pointer-events:none}
+    #preloader .pl__wrap{position:relative;width:96px;height:96px;display:grid;place-items:center}
+    #preloader .pl__ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 90deg,#5cc6dd,#6f78d6,#8278d9,#5cc6dd);-webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 7px),#000 calc(100% - 6px));mask:radial-gradient(farthest-side,#0000 calc(100% - 7px),#000 calc(100% - 6px));animation:pl-spin 1.1s linear infinite}
+    #preloader .pl__r{font:800 34px/1 'Segoe UI',Arial,Helvetica,sans-serif;color:#eaf6ff;letter-spacing:-1px}
+    #preloader .pl__name{position:absolute;top:108px;font:600 10px/1 ui-monospace,'JetBrains Mono',monospace;letter-spacing:4px;color:#5b6478;white-space:nowrap}
+    @keyframes pl-spin{to{transform:rotate(360deg)}}
+    @media (prefers-reduced-motion:reduce){#preloader .pl__ring{animation:none}}
+  </style>
+  <link rel="stylesheet" href="assets/css/style.css?v=21" />
 
   <script type="application/ld+json">
   {
@@ -66,6 +76,24 @@
   </script>
 </head>
 <body>
+
+  <div id="preloader" aria-hidden="true">
+    <div class="pl__wrap">
+      <div class="pl__ring"></div>
+      <span class="pl__r">R</span>
+      <span class="pl__name">RAMIS.ME</span>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var p = document.getElementById('preloader'); if (!p) return;
+      var t0 = Date.now();
+      function hide() { p.classList.add('pl--done'); setTimeout(function () { if (p && p.parentNode) p.remove(); }, 650); }
+      function go() { setTimeout(hide, Math.max(0, 500 - (Date.now() - t0))); }
+      if (document.readyState === 'complete') go(); else window.addEventListener('load', go);
+      setTimeout(hide, 6000);
+    })();
+  </script>
 
   <a class="skip-link" href="#stage">Skip to content</a>
   <div id="srAnnounce" class="sr-only" role="status" aria-live="polite"></div>
@@ -366,10 +394,10 @@
   <!-- Home easter egg: release a mouse-controlled snake that eats the page -->
   <button class="snake-fab" id="snakeFab" type="button" aria-label="Release the snake - it eats the page" title="Release the snake 🐍">🐍</button>
 
-  <script src="assets/js/content.js?v=20"></script>
-  <script src="assets/js/posts.js?v=20"></script>
-  <script src="assets/js/data.js?v=20"></script>
-  <script src="assets/js/app.js?v=20"></script>
+  <script src="assets/js/content.js?v=21"></script>
+  <script src="assets/js/posts.js?v=21"></script>
+  <script src="assets/js/data.js?v=21"></script>
+  <script src="assets/js/app.js?v=21"></script>
 
   <!-- Three.js layers. Load after app.js so window.RamisEnter/__ramis + data-route/-lens exist.
        viewfx = per-view morphing 3D centrepiece; intro = the "choose your side" gateway.
@@ -377,8 +405,8 @@
   <script type="importmap">
   { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
   </script>
-  <script type="module" src="assets/js/viewfx.js?v=20"></script>
-  <script type="module" src="assets/js/intro.js?v=20"></script>
+  <script type="module" src="assets/js/viewfx.js?v=21"></script>
+  <script type="module" src="assets/js/intro.js?v=21"></script>
 
   <!-- Google Analytics (GA4) - loaded after page load, IP anonymised -->
   <script>

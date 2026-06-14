@@ -68,7 +68,7 @@
 [data-lens="cybersecurity"] { --accent: #e0556d; --accent-2: #e0954e; --accent-rgb: 224,85,109; --accent-2-rgb: 224,149,78; }
 [data-lens="engineering"]   { --accent: #6f78d6; --accent-2: #4aa6e0; --accent-rgb: 111,120,214; --accent-2-rgb: 74,166,224; }
 [data-lens="aiml"]          { --accent: #2fb389; --accent-2: #3cb8c9; --accent-rgb: 47,179,137; --accent-2-rgb: 60,184,201; }
-[data-lens="uiux"]          { --accent: #e06a86; --accent-2: #e0ad42; --accent-rgb: 224,106,134; --accent-2-rgb: 224,173,66; }
+[data-lens="uiux"]          { --accent: #b069e0; --accent-2: #e070b0; --accent-rgb: 176,105,224; --accent-2-rgb: 224,112,176; }
 [data-lens="research"]      { --accent: #2fb389; --accent-2: #3cb8c9; --accent-rgb: 47,179,137; --accent-2-rgb: 60,184,201; }
 
 /* ---------- Reset ---------- */
