@@ -7,11 +7,12 @@
   <meta name="theme-color" content="#07080d" />
 
   <!-- Security headers (GitHub Pages can't set real headers; enforced via meta) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://www.google-analytics.com https://*.clarity.ms; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.clarity.ms; frame-src https://www.clarity.ms; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://www.google-analytics.com https://*.clarity.ms; connect-src 'self' https://unpkg.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.clarity.ms; frame-src https://www.clarity.ms; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <noscript><style>#intro{display:none!important}</style></noscript>
 
-  <title>Muhammad Ramis — Penetration Tester & Security-Minded Engineer</title>
-  <meta name="description" content="Muhammad Ramis — OSCP+ penetration tester and software engineer. Offensive security, defensive engineering, cloud-native development and accessible UI/UX. 51 bug-bounty findings, MSc Cyber Security & AI (Distinction)." />
+  <title>Muhammad Ramis — Software & AI Engineer · OSCP+ Penetration Tester</title>
+  <meta name="description" content="Muhammad Ramis — software & AI engineer (Java/Kafka, LLM agents, RAG, React) and OSCP+ penetration tester. 10+ years building production systems. MSc Cyber Security & AI (Distinction), 51 bug-bounty findings." />
   <meta name="author" content="Muhammad Ramis" />
   <link rel="canonical" href="https://ramis.me/" />
 
@@ -19,15 +20,15 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://ramis.me/" />
   <meta property="og:site_name" content="Muhammad Ramis" />
-  <meta property="og:title" content="Muhammad Ramis — Penetration Tester & Security-Minded Engineer" />
-  <meta property="og:description" content="Offensive security, defensive engineering, cloud-native development and accessible UI/UX — choose your lens." />
+  <meta property="og:title" content="Muhammad Ramis — Software & AI Engineer · OSCP+ Penetration Tester" />
+  <meta property="og:description" content="Event-driven Java/Kafka backends, AI/LLM products, accessible React UIs — and OSCP+ offensive security. Engineering, AI, security and UX as one craft." />
   <meta property="og:image" content="https://ramis.me/assets/og.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="Muhammad Ramis — OSCP+ penetration tester and engineer. 51 bug-bounty findings, MSc Distinction, 10+ years." />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Muhammad Ramis — Penetration Tester & Security-Minded Engineer" />
-  <meta name="twitter:description" content="Offensive security, defensive engineering, cloud-native development and accessible UI/UX — choose your lens." />
+  <meta name="twitter:title" content="Muhammad Ramis — Software & AI Engineer · OSCP+ Penetration Tester" />
+  <meta name="twitter:description" content="Event-driven Java/Kafka backends, AI/LLM products, accessible React UIs — and OSCP+ offensive security. Engineering, AI, security and UX as one craft." />
   <meta name="twitter:image" content="https://ramis.me/assets/og.png" />
 
   <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
@@ -45,14 +46,14 @@
 
   <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
   <link rel="dns-prefetch" href="https://www.clarity.ms" />
-  <link rel="stylesheet" href="assets/css/style.css?v=13" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Muhammad Ramis",
-    "jobTitle": "Penetration Tester & Software Engineer",
+    "jobTitle": "Software & AI Engineer · Penetration Tester",
     "url": "https://ramis.me",
     "email": "hello@ramis.me",
     "address": { "@type": "PostalAddress", "addressLocality": "Nottingham", "addressCountry": "GB" },
@@ -76,6 +77,24 @@
         <a href="https://github.com/imRamis" rel="noopener">GitHub</a>.</p>
     </div>
   </noscript>
+
+  <!-- ============ IMMERSIVE INTRO — choose your side (PRISM SELECT) ============ -->
+  <div id="intro" class="intro" aria-hidden="false" role="dialog" aria-label="Choose your side">
+    <canvas id="introCanvas" class="intro__canvas" aria-hidden="true"></canvas>
+    <div class="intro__ui">
+      <button class="intro__skip" id="introSkip" type="button" aria-label="Skip intro and view the full portfolio">Skip intro <i class="fa-solid fa-arrow-right"></i></button>
+      <div class="intro__head">
+        <span class="intro__eyebrow">ramis.me</span>
+        <h1 class="intro__title">Choose your <span class="grad">side</span></h1>
+        <p class="intro__sub">Four disciplines, one builder — or see everything.</p>
+      </div>
+      <div class="intro__cards" id="introCards"><!-- side cards injected from DATA --></div>
+      <div class="intro__foot">
+        <span class="intro__focus" id="introFocusLabel">Software Engineering</span>
+        <span class="intro__keys"><kbd>hover</kbd> or <kbd>←</kbd><kbd>→</kbd> focus · <kbd>↵</kbd> fly in · <kbd>esc</kbd> skip</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Animated, interactive background -->
   <div class="bg-layer" aria-hidden="true">
@@ -113,6 +132,7 @@
           </button>
           <div class="lens-switch__menu" id="lensSwitchMenu" role="menu"><!-- options injected --></div>
         </div>
+        <button class="icon-btn" id="motionToggle" aria-label="Reduce motion" aria-pressed="true"><i class="fa-solid fa-pause"></i></button>
         <button class="icon-btn" id="themeToggle" aria-label="Toggle light/dark theme"><i class="fa-solid fa-moon"></i></button>
         <button class="nav__burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
@@ -143,20 +163,8 @@
         </div>
 
         <div class="bento" id="bento">
-          <a class="tile tile--findings rv" href="#/security" aria-label="51 bug-bounty findings — see security work">
-            <div class="tile__top"><span class="tile__kicker"><i class="fa-solid fa-bug"></i> Bug bounty</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
-            <div class="tile__big"><b data-count="51">51</b><span>accepted findings<br>across 5 programs</span></div>
-            <div class="tile__sev" id="tileSev"></div>
-          </a>
-
-          <a class="tile tile--cred rv" href="#/experience" data-exp-tab="credentials" aria-label="Credentials">
-            <div class="tile__top"><span class="tile__kicker"><i class="fa-solid fa-certificate"></i> Credentials</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
-            <div class="tile__rows">
-              <span class="tile__row"><i class="fa-solid fa-shield-halved"></i> OSCP+ · OffSec verified</span>
-              <span class="tile__row"><i class="fa-solid fa-graduation-cap"></i> MSc Distinction · Sheffield</span>
-              <span class="tile__row"><i class="fa-solid fa-trophy"></i> 4th of ~9,000 · OffSec Gauntlet</span>
-            </div>
-          </a>
+          <a class="tile tile--hero rv" id="tileHero" href="#/work" aria-label="Headline metric"></a>
+          <a class="tile tile--hi rv" id="tileHighlights" href="#/experience" aria-label="Highlights"></a>
 
           <div class="tile tile--term rv" aria-hidden="true">
             <div class="terminal">
@@ -185,7 +193,7 @@
 
           <a class="tile tile--contact rv" href="#/contact" aria-label="Contact">
             <div class="tile__top"><span class="tile__kicker"><i class="fa-solid fa-paper-plane"></i> Contact</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
-            <strong class="tile__title">Let's build something secure</strong>
+            <strong class="tile__title">Let's build something great</strong>
             <span class="tile__label">Open to UK roles · relocation friendly</span>
           </a>
         </div>
@@ -355,10 +363,19 @@
   <!-- Home easter egg: release a mouse-controlled snake that eats the page -->
   <button class="snake-fab" id="snakeFab" type="button" aria-label="Release the snake — it eats the page" title="Release the snake 🐍">🐍</button>
 
-  <script src="assets/js/content.js?v=13"></script>
-  <script src="assets/js/posts.js?v=13"></script>
-  <script src="assets/js/data.js?v=13"></script>
-  <script src="assets/js/app.js?v=13"></script>
+  <script src="assets/js/content.js?v=20"></script>
+  <script src="assets/js/posts.js?v=20"></script>
+  <script src="assets/js/data.js?v=20"></script>
+  <script src="assets/js/app.js?v=20"></script>
+
+  <!-- Three.js layers. Load after app.js so window.RamisEnter/__ramis + data-route/-lens exist.
+       viewfx = per-view morphing 3D centrepiece; intro = the "choose your side" gateway.
+       Both self-mount only when motion is on and WebGL is available. -->
+  <script type="importmap">
+  { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+  </script>
+  <script type="module" src="assets/js/viewfx.js?v=20"></script>
+  <script type="module" src="assets/js/intro.js?v=20"></script>
 
   <!-- Google Analytics (GA4) — loaded after page load, IP anonymised -->
   <script>

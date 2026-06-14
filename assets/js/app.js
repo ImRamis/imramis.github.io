@@ -11,9 +11,13 @@
   const POSTS = (window.POSTS || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1));
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Motion is a USER preference (toggle in the nav), defaulting ON — NOT driven by the OS
+  // prefers-reduced-motion media query, because this site is an animated showcase and many
+  // desktops have OS reduce-motion on. Motion-sensitive visitors can switch it off (persisted).
+  let reduce = localStorage.getItem('ramis-motion') === 'off';
   const root = document.documentElement;
   root.classList.add('js'); // enables JS-only entrance animations (content still shows if JS fails)
+  root.setAttribute('data-motion', reduce ? 'off' : 'on');
 
   const byId = {};
   CONTENT.tracks.forEach(t => (byId[t.id] = t));
@@ -80,16 +84,35 @@
   }
   $('#themeToggle').addEventListener('click', toggleTheme);
 
+  /* ---------- motion preference (animations on/off) ---------- */
+  function syncMotion() { const b = $('#motionToggle'); if (b) { b.innerHTML = `<i class="fa-solid fa-${reduce ? 'play' : 'pause'}"></i>`; b.setAttribute('aria-pressed', String(!reduce)); b.setAttribute('data-tooltip', reduce ? 'Enable animations' : 'Reduce motion'); b.setAttribute('aria-label', reduce ? 'Enable animations' : 'Reduce motion'); } }
+  function toggleMotion() { reduce = !reduce; localStorage.setItem('ramis-motion', reduce ? 'off' : 'on'); root.setAttribute('data-motion', reduce ? 'off' : 'on'); syncMotion(); location.reload(); }
+  const motionBtn = $('#motionToggle'); if (motionBtn) { syncMotion(); motionBtn.addEventListener('click', toggleMotion); }
+
   /* ============================================================
      VIEW ROUTER
      ============================================================ */
   const VIEWS = ['home', 'about', 'work', 'security', 'experience', 'writing', 'contact'];
-  const HOME_TITLE = 'Muhammad Ramis — Penetration Tester & Security-Minded Engineer';
+  const HOME_TITLE = 'Muhammad Ramis — Software & AI Engineer · OSCP+ Penetration Tester';
   const VIEW_TITLES = { about: 'About', work: 'Work', security: 'Security & Bug Bounty', experience: 'Experience', writing: 'Writing', contact: 'Contact' };
   let currentView = 'home';
 
+  // A "side" (chosen at the intro) maps to a lens + the nav views it exposes under HARD FOCUS.
+  // Home/About/Contact are lens-aware shells (always shown); Work/Security/Experience/Writing are field content.
+  // Only Cybersecurity (and Everything) expose the Security/bug-bounty view.
+  const SIDES = {
+    everything:    { lens: 'overview',      views: VIEWS },
+    engineering:   { lens: 'engineering',   views: ['home', 'about', 'work', 'experience', 'writing', 'contact'] },
+    aiml:          { lens: 'aiml',          views: ['home', 'about', 'work', 'experience', 'writing', 'contact'] },
+    cybersecurity: { lens: 'cybersecurity', views: ['home', 'about', 'work', 'security', 'experience', 'writing', 'contact'] },
+    uiux:          { lens: 'uiux',          views: ['home', 'about', 'work', 'experience', 'writing', 'contact'] }
+  };
+  const sideForLens = lensId => Object.keys(SIDES).find(k => SIDES[k].lens === lensId) || 'everything';
+  const lensViews = lensId => SIDES[sideForLens(lensId)].views;
+
   function showView(id) {
     if (!VIEWS.includes(id)) id = 'home';
+    if (id !== 'home' && !lensViews(currentLens).includes(id)) id = 'home'; // hard-focus: hidden views redirect home
     currentView = id;
     root.setAttribute('data-route', id);
     const v = $(`.view[data-view="${id}"]`);
@@ -151,31 +174,41 @@
      LENS STATE
      ============================================================ */
   let currentLens = 'overview';
+  let handoffInFlight = false; // true while the intro is flying into the site (suppresses entry theatrics)
   function setLens(id, opts = {}) {
     currentLens = id;
     root.setAttribute('data-lens', id);
+    root.setAttribute('data-side', sideForLens(id));
     const t = getTrack(id);
     typeInto($('#homeSub'), t.tagline);
     renderFeatured(id);
+    renderBentoLens(id);
     renderFocus(id);
     renderContributions(id);
     renderTerminal(id);
     updateLensControls(id);
     updateNavForLens(id);
     setProjectFilter(id === 'overview' ? 'all' : id);
+    renderBlog(id === 'overview' ? 'all' : id); // hard-focus: Writing filtered to the field
+    syncBlogFilterPill(id === 'overview' ? 'all' : id);
     $('#aboutSummary').textContent = t.tagline;
     $('#footLens').textContent = t.short;
     if (!opts.silent) flashLens();
   }
+  function syncBlogFilterPill(id) {
+    $$('#blogFilters .filter').forEach(b => b.classList.toggle('active', b.getAttribute('data-blogfilter') === id));
+  }
 
-  // The Security view (bug bounty) is only relevant to the Overview & Cybersecurity lenses —
-  // hide its nav tab for the other lenses, and bounce away if we're sitting on it.
-  const SECURITY_LENSES = ['overview', 'cybersecurity'];
+  // HARD FOCUS: trim the nav to the views the active lens exposes (generalised from the old
+  // security-only rule). Home is always reachable; bounce off a now-hidden view.
   function updateNavForLens(id) {
-    const showSec = SECURITY_LENSES.includes(id);
-    const link = $('[data-tab-link="security"]');
-    if (link) link.classList.toggle('nav-hidden', !showSec);
-    if (!showSec && currentView === 'security') go('home');
+    const allowed = new Set(lensViews(id));
+    VIEWS.forEach(v => {
+      if (v === 'home') return;
+      const link = $(`[data-tab-link="${v}"]`);
+      if (link) link.classList.toggle('nav-hidden', !allowed.has(v));
+    });
+    if (!allowed.has(currentView) && currentView !== 'home') go('home');
   }
   function flashLens() { if (reduce) return; const f = $('#lensFlash'); f.classList.remove('run'); void f.offsetWidth; f.classList.add('run'); }
 
@@ -215,7 +248,7 @@
   function typeRoles() {
     const roles = (DATA.roles && DATA.roles.length ? DATA.roles : ['Penetration Tester']);
     const eln = $('#roleType');
-    if (reduce) { eln.textContent = 'Red + Blue security · engineer · AI/ML · UX'; return; }
+    if (reduce) { eln.textContent = 'Software & AI engineer · security · UX'; return; }
     let ri = 0, ci = 0, del = false;
     (function tick() {
       const w = roles[ri];
@@ -238,15 +271,6 @@
   }
 
   function renderBento() {
-    const bb = CONTENT.bugBounty;
-    if (bb) {
-      $('.tile--findings .tile__big b').setAttribute('data-count', bb.totalAccepted);
-      $('.tile--findings .tile__big b').textContent = bb.totalAccepted;
-      $('#tileSev').innerHTML = bb.severity.map(s => {
-        const cls = /crit/i.test(s.label) ? 'crit' : /high/i.test(s.label) ? 'high' : /med/i.test(s.label) ? 'med' : 'low';
-        return `<span class="sevdot ${cls}">${s.count} ${s.label}</span>`;
-      }).join('');
-    }
     const post = POSTS[0];
     if (post) {
       $('#tilePost').setAttribute('href', '#/blog/' + post.slug);
@@ -254,11 +278,70 @@
         <strong class="tile__title">${post.title}</strong>
         <span class="tile__label">${fmtDate(post.date)} · ${post.readingTime}</span>`;
     } else { $('#tilePost').style.display = 'none'; }
-    // credentials tile → experience view, credentials tab
-    $$('[data-exp-tab]').forEach(el => el.addEventListener('click', () => setTimeout(() => setExpTab(el.getAttribute('data-exp-tab')), 50)));
+    // highlights tile may carry a data-exp-tab → open that Experience tab when clicked
+    const hi = $('#tileHighlights');
+    if (hi) hi.addEventListener('click', () => { const t = hi.getAttribute('data-exp-tab'); if (t) setTimeout(() => setExpTab(t), 60); });
     $$('.bento .tile').forEach(attachTilt);
     const items = DATA.marquee.map(m => `<span>${m}</span>`).join('');
     $('#marquee').innerHTML = items + items;
+  }
+
+  // The two headline bento tiles are LENS-AWARE: engineering → projects + impact,
+  // AI/ML → AI products + selected work, UI/UX → designs, cybersecurity → findings + credentials.
+  const projCount = id => (byId[id] && byId[id].projects ? byId[id].projects.length : 0);
+  function bentoConfig(id) {
+    const sev = (CONTENT.bugBounty && CONTENT.bugBounty.severity) || [];
+    const cred = { kicker: 'Credentials', icon: 'fa-certificate', href: '#/experience', expTab: 'credentials', rows: [
+      ['fa-shield-halved', 'OSCP+ · OffSec verified'],
+      ['fa-graduation-cap', 'MSc Distinction · Sheffield'],
+      ['fa-trophy', '4th of ~9,000 · OffSec Gauntlet'] ] };
+    const C = {
+      engineering: {
+        hero: { kicker: 'Engineering', icon: 'fa-code', href: '#/work', num: '30+', label: 'production systems shipped over 10+ years', chips: ['6.5M req/day', '88% coverage', '99.8% uptime'] },
+        hi: { kicker: 'Engineering impact', icon: 'fa-server', href: '#/experience', rows: [
+          ['fa-bolt', '6.5M requests/day · 50K+ daily txns'],
+          ['fa-vial-circle-check', '88% coverage · −65% incidents'],
+          ['fa-layer-group', 'Java · Python · Kafka · .NET · Go'] ] }
+      },
+      aiml: {
+        hero: { kicker: 'AI / ML', icon: 'fa-brain', href: '#/work', num: projCount('aiml'), label: 'AI products — agents, RAG & eval', chips: ['Agents', 'RAG', 'MCP'] },
+        hi: { kicker: 'Selected AI work', icon: 'fa-arrow-up-right-from-square', href: '#/work', rows: ((byId.aiml && byId.aiml.contributions) || []).slice(0, 3).map(c => ['fa-circle-nodes', c.label]) }
+      },
+      uiux: {
+        hero: { kicker: 'UI / UX', icon: 'fa-pen-ruler', href: '#/work', num: projCount('uiux'), label: 'product UIs & design systems', chips: ['WCAG 2.2 AA', '60+ components', '98 Lighthouse'] },
+        hi: { kicker: 'Design highlights', icon: 'fa-swatchbook', href: '#/work', rows: [
+          ['fa-cubes', 'Typed design systems & tokens'],
+          ['fa-table-columns', 'Data-dense dashboards & mobile'],
+          ['fa-universal-access', 'Accessibility as an engineering constraint'] ] }
+      },
+      cybersecurity: {
+        hero: { kicker: 'Bug bounty', icon: 'fa-bug', href: '#/security', num: (CONTENT.bugBounty ? CONTENT.bugBounty.totalAccepted : 51), label: 'accepted findings across 5 programs', sev: sev },
+        hi: cred
+      },
+      overview: {
+        hero: { kicker: 'Across four disciplines', icon: 'fa-layer-group', href: '#/work', num: PROJECTS.length, label: 'projects across eng, AI, security & UX', chips: ['10+ yrs', 'OSCP+', 'MSc Dist.'] },
+        hi: cred
+      }
+    };
+    return C[id] || C.overview;
+  }
+  function renderBentoLens(id) {
+    const cfg = bentoConfig(id), hero = $('#tileHero'), hi = $('#tileHighlights');
+    if (hero) {
+      hero.setAttribute('href', cfg.hero.href);
+      const extra = cfg.hero.sev
+        ? `<div class="tile__sev">${cfg.hero.sev.map(s => { const cl = /crit/i.test(s.label) ? 'crit' : /high/i.test(s.label) ? 'high' : /med/i.test(s.label) ? 'med' : 'low'; return `<span class="sevdot ${cl}">${s.count} ${s.label}</span>`; }).join('')}</div>`
+        : `<div class="tile__chips">${(cfg.hero.chips || []).map(c => `<span class="tilechip">${c}</span>`).join('')}</div>`;
+      hero.innerHTML = `<div class="tile__top"><span class="tile__kicker"><i class="fa-solid ${cfg.hero.icon}"></i> ${cfg.hero.kicker}</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
+        <div class="tile__big"><b data-count="${cfg.hero.num}">${cfg.hero.num}</b><span>${cfg.hero.label}</span></div>${extra}`;
+    }
+    if (hi) {
+      hi.setAttribute('href', cfg.hi.href);
+      if (cfg.hi.expTab) hi.setAttribute('data-exp-tab', cfg.hi.expTab); else hi.removeAttribute('data-exp-tab');
+      hi.innerHTML = `<div class="tile__top"><span class="tile__kicker"><i class="fa-solid ${cfg.hi.icon}"></i> ${cfg.hi.kicker}</span><i class="fa-solid fa-arrow-right tile__go"></i></div>
+        <div class="tile__rows">${cfg.hi.rows.map(r => `<span class="tile__row"><i class="fa-solid ${r[0]}"></i> ${r[1]}</span>`).join('')}</div>`;
+    }
+    countUp($('#view-home'));
   }
 
   /* ---------- terminal ---------- */
@@ -317,8 +400,34 @@
     renderContact();
     renderLensControls();
     renderBento();
+    renderIntroCards();
     typeRoles();
     $$('.view').forEach(stagger);
+  }
+
+  // The "choose your side" cards (single-sourced from DATA) — work with or without the 3D scene.
+  function renderIntroCards() {
+    const host = $('#introCards'); if (!host) return;
+    const STAT = { engineering: '6.5M req/day', aiml: 'agents · RAG', cybersecurity: '51 findings', uiux: 'WCAG 2.2 AA' };
+    const emblem = id => `<span class="intro-card__ic intro-card__ic--emblem"><img class="intro-card__emblem" src="assets/img/emblems/${id}.svg" alt="" width="64" height="64" loading="lazy"></span>`;
+    const card = (l, side) => `<button class="intro-card" data-side="${side}" type="button" style="--lc:rgb(${l.rgb});--lc-rgb:${l.rgb};--lc2:rgb(${l.rgb2})">
+        ${emblem(l.id)}
+        <span class="intro-card__label">${l.short}</span>
+        <span class="intro-card__blurb">${l.blurb}</span>
+        <span class="intro-card__stat">${STAT[side] || ''}</span>
+      </button>`;
+    host.innerHTML = DATA.lenses.map(l => card(l, l.id)).join('') +
+      `<button class="intro-card intro-card--all" data-side="everything" type="button" style="--lc:rgb(${DATA.overviewLens.rgb});--lc-rgb:${DATA.overviewLens.rgb};--lc2:rgb(${DATA.overviewLens.rgb2})">
+        ${emblem('everything')}
+        <span class="intro-card__label">Explore everything</span>
+        <span class="intro-card__blurb">Not sure where to start? See all four disciplines together.</span>
+        <span class="intro-card__stat">full portfolio <i class="fa-solid fa-arrow-right"></i></span>
+      </button>` +
+      `<button class="intro-card intro-card--contact" data-side="everything" data-go="contact" type="button">
+        <span class="intro-card__ic"><i class="fa-solid fa-paper-plane"></i></span>
+        <span class="intro-card__label">Get in touch</span>
+        <span class="intro-card__blurb">Just here to reach out? Jump straight to contact.</span>
+      </button>`;
   }
 
   /* ---------- FOCUS (about view, lens-aware) ---------- */
@@ -395,6 +504,7 @@
       <span class="modal__type">${p.type} · ${p.lenses.map(l => lensMeta(l).short).join(' · ')}${p.shot ? '' : (roleLine ? ' · ' + p.role : '')}</span>
       <h3 class="modal__title">${p.title}</h3>
       <p class="modal__blurb">${p.blurb}</p>
+      ${p.note ? `<p class="modal__note"><i class="fa-solid fa-circle-info"></i> ${p.note}</p>` : ''}
       <div class="modal__metrics">${(p.metrics || []).map(m => `<div><i class="fa-solid fa-check"></i><span>${m}</span></div>`).join('')}</div>
       <div class="proj__stack" style="margin-bottom:1.3rem">${(p.stack || []).map(s => `<span>${s}</span>`).join('')}</div>
       <div class="proj__links">${links}</div>`;
@@ -499,8 +609,8 @@
 
   /* ---------- BLOG (writing view) ---------- */
   const lensName = id => (DATA.lenses.find(l => l.id === id) || { short: id === 'research' ? 'Research' : 'Overview' }).short;
-  const TRACK_RGB = { cybersecurity: '255,77,109', engineering: '129,140,248', aiml: '52,211,153', uiux: '251,113,133', research: '52,211,153' };
-  const trackRgb = t => TRACK_RGB[t] || '110,231,255';
+  const TRACK_RGB = { cybersecurity: '224,85,109', engineering: '111,120,214', aiml: '47,179,137', uiux: '224,106,134', research: '47,179,137' };
+  const trackRgb = t => TRACK_RGB[t] || '92,198,221';
   function renderBlogFilters() {
     const filters = [{ id: 'all', label: 'All' }, ...DATA.lenses.map(l => ({ id: l.id, label: l.short })), { id: 'research', label: 'Research' }];
     $('#blogFilters').innerHTML = filters.map((f, i) => `<button class="filter${i === 0 ? ' active' : ''}" data-blogfilter="${f.id}">${f.label}</button>`).join('');
@@ -631,8 +741,9 @@
   function buildCmdkItems() {
     const items = [];
     const nav = { home: 'fa-house', about: 'fa-user', work: 'fa-folder-open', security: 'fa-bug', experience: 'fa-briefcase', writing: 'fa-feather', contact: 'fa-paper-plane' };
+    const allowed = lensViews(currentLens);
     VIEWS.forEach((v, i) => {
-      if (v === 'security' && !SECURITY_LENSES.includes(currentLens)) return; // hidden for non-security lenses
+      if (!allowed.includes(v)) return; // hard-focus: don't offer hidden views
       items.push({ group: 'Go to', label: v === 'home' ? 'Home' : VIEW_TITLES[v], hint: `${i + 1}`, icon: nav[v], run: () => go(v) });
     });
     [DATA.overviewLens, ...DATA.lenses].forEach(l => items.push({ group: 'Switch lens', label: l.label, hint: l.blurb.slice(0, 60) + '…', icon: l.icon, run: () => setLens(l.id) }));
@@ -685,7 +796,7 @@
     if (e.key === 'Escape') { closeCmdk(); closeProjectModal(); if ($('#article').classList.contains('open')) location.hash = '#/writing'; return; }
     const typing = /^(input|textarea|select)$/i.test((e.target.tagName || '')) || e.target.isContentEditable;
     if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
-    if (cmdk.classList.contains('open') || $('#article').classList.contains('open') || $('#projModal').classList.contains('open') || document.body.classList.contains('snake-on')) return;
+    if (cmdk.classList.contains('open') || $('#article').classList.contains('open') || $('#projModal').classList.contains('open') || document.body.classList.contains('snake-on') || document.body.classList.contains('intro-open')) return;
     const n = parseInt(e.key, 10);
     if (n >= 1 && n <= VIEWS.length) go(VIEWS[n - 1]);
   });
@@ -840,8 +951,11 @@
   /* ---------- interactive 3D (WebGL) background — rotating particle orb ---------- */
   (function initFx() {
     const cv = document.getElementById('bgFx');
-    if (!cv) return;
-    if (!initWebGL(cv) && !reduce) init2D(cv); // graceful fallback to 2D constellation
+    if (!cv || reduce) return;
+    // viewfx.js owns the 3D background (per-view morphing point-cloud) when WebGL is available;
+    // here we only add the lightweight 2D constellation as a no-WebGL ambient fallback.
+    let glOk = false; try { glOk = !!document.createElement('canvas').getContext('webgl'); } catch (e) {}
+    if (!glOk) init2D(cv);
   })();
 
   function accentVec() {
@@ -1004,13 +1118,63 @@
      INIT
      ============================================================ */
   renderStatic();
-  // Shareable lens deep link: /?lens=cybersecurity
-  const qLens = new URLSearchParams(location.search).get('lens');
-  setLens(qLens && (qLens === 'overview' || byId[qLens]) ? qLens : 'overview', { silent: true });
-  handleRoute();
 
-  // Safety net: if any reveal animation never fired (edge-case browser), never leave
-  // content stuck hidden — force the active view's items visible after a moment.
+  /* ---------- entry: immersive "choose your side" intro, with deep-link bypass ---------- */
+  const params = new URLSearchParams(location.search);
+  const qLens = params.get('lens');
+  const qSide = params.get('side');
+  let effLens = null;                                   // a lens forced by a shared link
+  if (qSide && SIDES[qSide]) effLens = SIDES[qSide].lens;
+  else if (qLens && (qLens === 'overview' || byId[qLens])) effLens = qLens;
+  const hash = location.hash;
+  const hasDeepView = /^#\/(about|work|security|experience|writing|contact)\/?$/.test(hash) || /^#\/blog\//.test(hash);
+
+  setLens(effLens || 'overview', { silent: true });     // pre-theme/-trim the site behind the overlay
+
+  const intro = $('#intro');
+  let entered = false;
+  function finishEnter() {
+    if (entered) return; entered = true; handoffInFlight = false;
+    if (intro) { intro.classList.add('is-gone'); intro.setAttribute('aria-hidden', 'true'); setTimeout(() => { intro.style.display = 'none'; }, 460); }
+    document.body.classList.remove('intro-open');
+    handleRoute();
+  }
+  // Commit a chosen side: theme + hard-focus, optionally fly the 3D intro in, then reveal.
+  function enterSite(sideKey, opts) {
+    opts = opts || {};
+    const side = SIDES[sideKey] ? sideKey : 'everything';
+    if (opts.go) location.hash = '#/' + opts.go;   // so handleRoute (in finishEnter) lands on this view
+    handoffInFlight = true;
+    setLens(SIDES[side].lens, { silent: true });
+    const fly = !opts.instant && !reduce && window.RamisIntro && window.RamisIntro.active;
+    if (fly) { try { window.RamisIntro.flyOut(side, () => { flashLens(); finishEnter(); }); } catch (e) { finishEnter(); } }
+    else { if (!reduce && !opts.instant) flashLens(); finishEnter(); }
+  }
+  window.RamisEnter = enterSite;                         // bridge: the 3D intro module calls this on pick
+  window.__ramis = { lenses: [DATA.overviewLens, ...DATA.lenses], reduce };
+
+  if (intro) {
+    $$('#intro [data-side]').forEach(btn => {
+      const side = btn.getAttribute('data-side');
+      const goTo = btn.getAttribute('data-go');
+      btn.addEventListener('click', () => enterSite(side, goTo ? { instant: true, go: goTo } : {}));
+      btn.addEventListener('pointerenter', () => { try { window.RamisIntro && window.RamisIntro.focus && window.RamisIntro.focus(side); } catch (e) {} });
+    });
+    const skip = $('#introSkip'); if (skip) skip.addEventListener('click', () => enterSite('everything', { instant: true }));
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !entered && document.body.classList.contains('intro-open')) enterSite('everything', { instant: true }); });
+
+  if (effLens || hasDeepView) {                          // shared/deep link → bypass the intro entirely
+    if (intro) { intro.style.display = 'none'; intro.setAttribute('aria-hidden', 'true'); }
+    document.body.classList.remove('intro-open');
+    entered = true;
+    handleRoute();
+  } else {                                               // cold visit to root → show the intro (intro.js self-mounts the 3D)
+    document.body.classList.add('intro-open');
+    if (intro) intro.setAttribute('aria-hidden', 'false');
+  }
+
+  // Safety net: never leave revealable content stuck hidden on an edge-case browser.
   setTimeout(() => $$('.view.is-active .rv:not(.in)').forEach(el => el.classList.add('in')), 1500);
 
 })();

@@ -60,37 +60,6 @@ window.CONTENT = {
       ],
       "projects": [
         {
-          "title": "BugTraceAI - Self-Hosted AI Security Scanning Platform",
-          "type": "AI offensive + AppSec automation",
-          "blurb": "A self-hosted platform that runs a six-phase pipeline (discovery, analysis, consolidation, exploitation, validation, reporting) driven by specialist LLM agents across 14 vulnerability classes. It pairs Go fuzzers and Playwright browser checks with LLM-guided payload mutation, then uses consensus voting and circuit breakers to suppress noise and surface only validated, reproducible findings rather than raw scanner output. The public demo run produced 145 findings with 43 independently validated as exploitable.",
-          "stack": [
-            "Python",
-            "FastAPI",
-            "Go",
-            "Playwright",
-            "React",
-            "PostgreSQL",
-            "LLM agents"
-          ],
-          "metrics": [
-            "145 findings, 43 validated on public demo",
-            "14 vulnerability classes covered by specialist agents",
-            "6-phase pipeline with consensus voting",
-            "Circuit breakers + authenticated scanning cut false positives"
-          ],
-          "tags": [
-            "AI/LLM",
-            "automation",
-            "web",
-            "DAST"
-          ],
-          "links": {
-            "repo": "https://github.com/imRamis/bugtrace-ai",
-            "demo": "https://bugtrace.ramis.me",
-            "writeup": "https://ramis.me/blog/bugtraceai-six-phase-pipeline"
-          }
-        },
-        {
           "title": "51 Accepted Bug Bounty Findings Across 5 Programs",
           "type": "Bug bounty portfolio",
           "blurb": "Sustained coordinated disclosure across Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti, totalling 51 accepted findings. The bulk are authorization and logic flaws (IDOR/BOLA, broken function-level authorization, race conditions and SSRF chains) alongside emerging AI/LLM abuse cases such as prompt injection and unsafe tool invocation. Every submission shipped with a reproducible PoC and a clear impact narrative to accelerate triage and remediation.",
@@ -251,11 +220,6 @@ window.CONTENT = {
           "note": "Won the web exploitation track at the University of Sheffield CTF."
         },
         {
-          "label": "BugTraceAI public demo",
-          "url": "https://bugtrace.ramis.me",
-          "note": "Self-hosted AI scanning platform; live demo with 145 findings and 43 validated issues across 14 vulnerability classes."
-        },
-        {
           "label": "HackerOne disclosure profile",
           "url": "https://hackerone.com/reports/XXXXXXX",
           "note": "Representative coordinated disclosures from the 51-finding portfolio."
@@ -309,6 +273,7 @@ window.CONTENT = {
         "TestContainers / PACT",
         "C#/.NET Core",
         "Node.js / Express",
+        "Python",
         "Go",
         "Rust",
         "PHP/Laravel",
@@ -676,20 +641,20 @@ window.CONTENT = {
       "label": "AI / ML Engineering",
       "short": "AI / ML",
       "icon": "brain",
-      "tagline": "I build LLM agents, RAG systems and ML pipelines — then red-team them until they hold.",
-      "summary": "I build applied AI/ML systems end to end: LLM agents and RAG pipelines, retrieval and embedding search, anomaly detection over security telemetry, and the MLOps that keeps it all reproducible in production. My MSc in Cyber Security and AI plus years on the offensive side mean I treat models as attack surface — I evaluate, red-team and guardrail every system I ship. The throughline is signal over noise: BugTraceAI's agentic scanner, LLM triage that cut review effort 61%, and evaluation harnesses that stop a model regressing silently.",
+      "tagline": "I build LLM agent systems, RAG pipelines and ML — and ship them as product features teams can trust, with the evals and guardrails to back it up.",
+      "summary": "I build applied AI/ML as real product features, not demos: LLM agent systems with planning and tool-use, retrieval-augmented generation with citation grounding, and the evaluation harnesses and deterministic guardrails that make non-deterministic models safe to ship. I care about the hard engineering around models — durable agent workflows, typed tool registries, observability, cost control and regression-gated evals — backed by an MSc in Cyber Security & AI (Distinction). I also red-team AI systems when the product needs it, but the throughline is shipping trustworthy AI, not just experimenting with it.",
       "stats": [
         {
-          "value": "61%",
-          "label": "Triage effort cut by LLM"
+          "value": "Agents",
+          "label": "orchestration + tool-use"
         },
         {
-          "value": "8,400/wk",
-          "label": "Findings classified by agents"
+          "value": "RAG",
+          "label": "grounded retrieval + eval"
         },
         {
-          "value": "14",
-          "label": "Vuln classes by LLM agents"
+          "value": "MCP",
+          "label": "typed tools for agents"
         },
         {
           "value": "MSc",
@@ -697,42 +662,113 @@ window.CONTENT = {
         }
       ],
       "focusAreas": [
-        "LLM agent systems and tool-use orchestration (planning, function calling, consensus voting)",
-        "Retrieval-augmented generation (RAG) with hybrid search, re-ranking and citation grounding",
-        "Embeddings and vector search (pgvector, FAISS, Qdrant) with chunking and retrieval evaluation",
-        "LLM security evaluation and red-teaming (prompt injection, jailbreaks, unsafe tool invocation, data leakage)",
-        "ML anomaly detection over security telemetry and high-volume event streams",
-        "Model evaluation harnesses, LLM-as-judge scoring and regression gating in CI",
-        "MLOps: experiment tracking, model registry, reproducible training and deployment (MLflow, Docker, Kubernetes)",
-        "Fine-tuning and adaptation (LoRA/PEFT) plus self-hosted open-weight model serving",
-        "Prompt engineering, structured output and deterministic guardrails around generative steps",
-        "Inference optimisation and cost control (caching, batching, quantisation, vLLM serving)"
+        "Building LLM agent systems as product features: planning, tool-use orchestration and human-in-the-loop approval gates",
+        "Durable, replayable agent workflows with deterministic retries and step-level observability (OpenTelemetry traces)",
+        "Typed tool/function registries and Model Context Protocol (MCP) servers that expose internal APIs to agents under permission scopes",
+        "Retrieval-augmented generation (RAG): hybrid dense + BM25 retrieval, cross-encoder re-ranking, semantic chunking and citation grounding",
+        "Vector search and embedding pipelines (pgvector, FAISS, Qdrant) with incremental re-indexing",
+        "Offline evaluation harnesses and LLM-as-judge scoring with recall@k / faithfulness regression gating in CI",
+        "Deterministic guardrails around generative steps: schema-validated structured output, refusal-on-low-context and cost/latency control",
+        "AI-assisted product engineering — shipping agentic and RAG features into real apps with typed SDKs and streaming UIs",
+        "MLOps and serving: experiment tracking, fine-tuning (LoRA/PEFT) and self-hosted open-weight models (vLLM, Ollama)",
+        "LLM security evaluation & red-teaming (prompt injection, jailbreaks, unsafe tool-use) — applied when a product needs it"
       ],
       "tools": [
         "Python",
-        "PyTorch",
+        "TypeScript",
         "FastAPI",
+        "Node.js",
+        "LangGraph",
         "LangChain",
-        "LLM Agents",
+        "Model Context Protocol (MCP)",
+        "PyTorch",
         "Hugging Face Transformers",
-        "scikit-learn",
-        "MLflow",
+        "Sentence-Transformers",
+        "Cross-encoder re-rankers",
         "pgvector",
         "FAISS",
         "Qdrant",
         "vLLM",
         "Ollama",
-        "Playwright",
+        "OpenTelemetry",
         "PostgreSQL",
-        "Docker",
-        "Kubernetes",
-        "Go"
+        "Redis",
+        "React"
       ],
       "projects": [
         {
-          "title": "BugTraceAI — Agentic AI Security Scanning Platform",
-          "type": "LLM agent system",
-          "blurb": "A self-hosted security platform where specialist LLM agents drive a six-phase pipeline (discovery, analysis, consolidation, exploitation, validation, reporting) across 14 vulnerability classes. I designed the agent orchestration: structured tool calling into Go fuzzers and Playwright browser checks, LLM-guided payload mutation, then consensus voting and circuit breakers to suppress hallucinated findings before they reach a human. The public demo run produced 145 findings with 43 independently validated as exploitable, each carrying reproduction steps rather than raw model output.",
+          "title": "Orchestra — Multi-Agent Workflow Engine for Product Teams",
+          "type": "Agentic development platform",
+          "shot": "orchestra",
+          "role": "Creator",
+          "blurb": "A self-hosted engine for building and running production LLM agent workflows as a product feature, not a demo. Workflows are defined as typed graphs of planning, tool-use and review steps with a durable state machine, so long-running agent runs survive restarts, retry deterministically and can be replayed step-by-step for debugging. A typed tool registry exposes internal APIs to agents behind permission scopes and human-in-the-loop approval gates, structured outputs are schema-validated, and every run emits OpenTelemetry traces so teams can see exactly why an agent did what it did. It ships with a TypeScript SDK and a React run-inspector, and was built to make 'add an AI agent to our product' a safe, observable, reviewable engineering task.",
+          "stack": [
+            "TypeScript",
+            "Node.js",
+            "LangGraph",
+            "Model Context Protocol (MCP)",
+            "PostgreSQL",
+            "Redis",
+            "OpenTelemetry",
+            "React"
+          ],
+          "metrics": [
+            "Durable, replayable agent runs survive restarts and retry deterministically",
+            "Typed tool registry with permission scopes and human-approval gates",
+            "Per-step OpenTelemetry traces for full agent observability",
+            "Schema-validated structured outputs with deterministic guardrails"
+          ],
+          "tags": [
+            "agents",
+            "orchestration",
+            "developer-platform",
+            "ai-engineering"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/orchestra-agents",
+            "demo": "https://orchestra.ramis.me",
+            "writeup": "https://ramis.me/#/blog/building-a-multi-agent-workflow-engine"
+          }
+        },
+        {
+          "title": "Lexica — Grounded RAG Engine for Product Knowledge",
+          "type": "RAG product / retrieval platform",
+          "shot": "lexica",
+          "role": "Creator",
+          "blurb": "A production retrieval-augmented-generation service that turns scattered product docs, tickets and changelogs into a fast, trustworthy in-app answer experience. It runs a hybrid retrieval stack — dense embeddings in pgvector fused with BM25, a cross-encoder re-ranker and semantic chunking — so answers stay grounded with inline citations and refuse to guess when context is thin. An offline evaluation harness tracks recall@k, faithfulness and answer latency on a labelled golden set and gates deploys on regression, while incremental re-indexing keeps the corpus fresh without full rebuilds. A streaming API and a typed React widget make it a drop-in 'ask your docs' feature for any product.",
+          "stack": [
+            "Python",
+            "FastAPI",
+            "pgvector",
+            "PostgreSQL",
+            "Sentence-Transformers",
+            "Cross-encoder re-ranker",
+            "Redis",
+            "React"
+          ],
+          "metrics": [
+            "Hybrid dense + BM25 retrieval with cross-encoder re-ranking",
+            "Citation-grounded answers that refuse on low context",
+            "recall@k and faithfulness gated in CI on a golden set",
+            "Incremental re-indexing keeps the corpus fresh without full rebuilds"
+          ],
+          "tags": [
+            "RAG",
+            "vector-search",
+            "retrieval-eval",
+            "ai-engineering"
+          ],
+          "links": {
+            "repo": "https://github.com/imRamis/lexica-rag",
+            "demo": "https://lexica.ramis.me",
+            "writeup": "https://ramis.me/#/blog/building-a-grounded-rag-engine"
+          }
+        },
+        {
+          "title": "BugTraceAI — Agentic AI Engineering R&D Platform",
+          "type": "Personal AI-engineering project · agent orchestration",
+          "note": "Personal AI-engineering R&D — an experiment in building reliable agent systems. Entirely separate from my bug-bounty work: all 51 accepted findings were discovered manually, by hand. I don't use BugTraceAI (or any LLM) to find or submit bounties.",
+          "blurb": "A self-hosted product build where I push agentic engineering to its limits: specialist LLM agents driving a six-phase pipeline (discovery, analysis, consolidation, exploitation, validation, reporting) with structured tool-calling into Go fuzzers and Playwright browser checks, plus consensus voting and circuit breakers that suppress hallucinated output before it reaches a human. It's my R&D sandbox for the hard parts of building agent systems — planning, deterministic guardrails around generative steps, cost control and getting trustworthy, reproducible results out of non-deterministic models — applied to a security-testing domain I know well. The public demo run produced 145 candidate findings with 43 surviving validation, each carrying reproduction steps rather than raw model output.",
           "stack": [
             "Python",
             "FastAPI",
@@ -916,9 +952,9 @@ window.CONTENT = {
       ],
       "contributions": [
         {
-          "label": "BugTraceAI public demo — agentic AI scanner",
+          "label": "BugTraceAI — agentic AI engineering R&D (demo)",
           "url": "https://bugtrace.ramis.me",
-          "note": "Live demo of the LLM-agent pipeline: 145 findings with 43 validated across 14 vulnerability classes, with consensus voting and circuit breakers in action."
+          "note": "Personal R&D into reliable LLM-agent systems (planning, tool-use, consensus voting, guardrails). Separate from my manual bug-bounty work — no AI is used to find or submit bounties."
         },
         {
           "label": "LLM red-teaming harness write-up",
@@ -1030,11 +1066,12 @@ window.CONTENT = {
           }
         },
         {
-          "title": "BugTraceAI Findings Dashboard",
+          "title": "BugTraceAI Run Inspector (R&D UI)",
           "type": "Dashboard / data UX",
           "shot": "bugtrace-dashboard",
           "role": "Creator",
-          "blurb": "The React front-end for BugTraceAI, my self-hosted AI security scanning platform. It turns a noisy six-phase pipeline into a calm operator experience: live scan progress streamed over SSE, a triage queue spanning 14 vulnerability classes, consensus-vote indicators and per-finding evidence views with reproduction steps. The public demo surfaces 145 findings with 43 validated, so the UI had to make severity, confidence and validation state legible at a glance without overwhelming the reviewer.",
+          "note": "The front-end for BugTraceAI, my personal AI-engineering R&D platform — separate from my (manual) bug-bounty work.",
+          "blurb": "The React front-end for BugTraceAI, my personal AI-engineering R&D platform for reliable LLM-agent systems. It turns a noisy six-phase agent pipeline into a calm operator experience: live run progress streamed over SSE, a triage queue spanning 14 classes, consensus-vote indicators and per-item evidence views with reproduction steps. The demo run surfaces 145 candidates with 43 validated, so the UI had to make confidence and validation state legible at a glance without overwhelming the reviewer — a data-UX problem in making non-deterministic agent output trustworthy to read.",
           "stack": [
             "React",
             "TypeScript",
@@ -1344,39 +1381,38 @@ window.CONTENT = {
   ],
   "overview": {
     "heroTaglines": [
-      "Penetration Tester & Red Teamer",
-      "Senior Java / Kafka Backend Engineer",
-      "AI & LLM Security Researcher",
-      "Exploit Developer — OSED in progress",
-      "Application & API Security Engineer",
-      "Indie Game Developer & Tools Programmer",
-      "Accessibility-Minded UI/UX Engineer"
+      "Software & AI Engineer",
+      "Java · Kafka · Distributed Systems",
+      "AI / Agent Engineer — LLM systems & RAG",
+      "Full-Stack Product Engineer",
+      "Penetration Tester — OSCP+",
+      "Accessible UI / UX Engineer"
     ],
-    "elevator": "OSCP+ penetration tester and software engineer who breaks systems, then builds the secure, scalable, accessible ones that replace them — across security, Java/Kafka backends, AI, games and design.",
-    "about": "I am a penetration tester and software engineer with 10+ years of hybrid experience, based in Nottingham and open to UK roles and relocation. I sit deliberately on both sides of the table: I find the authorization bypasses, IDORs, race conditions, SSRF and AI/LLM abuse paths that break real systems, and then I ship the well-engineered code that closes them. That dual lens is the whole point. Having designed event-driven Java services on Kafka, secured e-commerce APIs at 6.5M requests per day, and built real-time messaging for thousands of concurrent users, I know exactly where the bodies are buried in production software — which makes my offensive work sharper and my fixes genuinely actionable rather than theoretical.\n\nOn the **offensive** side I hold **OSCP+** and **OSCP** (both Apr 2025), with the **OSED** exploit-development exam scheduled for mid-2026, and I have **51 accepted findings across 5 public bug-bounty programmes** on Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti, spanning Critical, High and Medium severity. As an **engineer** I work as a Senior Java Backend Engineer in Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka + Kafka Streams — driving event-driven systems through 50K+ daily financial transactions on AWS EKS, with rigorous TDD/BDD (JUnit 5, Mockito, TestContainers, PACT, Cucumber), 88% coverage and a 65% drop in production incidents. I am equally at home in C#/.NET Core microservices (Polly, AKS, OpenTelemetry, 99.99% uptime), plus Node, Go, Rust and PHP/Laravel.\n\nThe **AI/ML**, **game** and **design** range rounds it out. I completed an **MSc in Cyber Security & AI at the University of Sheffield with Distinction**, and my flagship build **BugTraceAI** is a self-hosted AI security-scanning platform — a six-phase pipeline of specialist agents across 14 vulnerability classes, combining Go fuzzers, Playwright browser checks, LLM-guided payload mutation and consensus voting. I build **games** as a way to sharpen systems thinking — deterministic simulation loops, custom ECS tooling and procedural generation that double as fertile ground for fuzzing and exploitation research. And I care, perhaps unfashionably, about the people who actually use software: I build to **WCAG 2.2 AA** with semantic HTML and ARIA, and treat clear UX and accessibility as part of security, not an afterthought.",
+    "elevator": "Software engineer with 10+ years building event-driven Java/Kafka backends, .NET microservices, AI/LLM products and accessible React front-ends — and an OSCP+ penetration tester who breaks systems to build sturdier ones. Engineering, AI/ML, security and UX, treated as one craft.",
+    "about": "I am a **software engineer** with 10+ years shipping production systems end to end — and a penetration tester who uses an attacker's eye to make them harder to break. Based in Nottingham, open to UK roles and relocation, I move comfortably across four disciplines and treat them as one craft rather than four hats. I design **event-driven Java backends** (Spring Boot 3, Kafka + Kafka Streams) that have carried 50K+ daily financial transactions, scaled e-commerce APIs to **6.5M requests a day**, and built real-time messaging for thousands of concurrent users. I build **AI/ML products** — LLM agent systems, RAG pipelines and evaluation harnesses — and I ship **accessible React/TypeScript** front-ends to WCAG 2.2 AA. Security runs through all of it because that's how I was trained, not because it's the headline.\n\nOn the **engineering** side I work in Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka, with disciplined TDD/BDD (JUnit 5, Mockito, TestContainers, PACT), 88% coverage and a 65% drop in production incidents, plus C#/.NET Core (Polly, AKS, OpenTelemetry, 99.99% uptime), Node, Go, Rust and PHP/Laravel on EKS/AKS. In **AI/ML** I build agentic systems and retrieval pipelines as product features — orchestration, tool-use, RAG with citation grounding and evaluation gating — backed by an **MSc in Cyber Security & AI from the University of Sheffield (Distinction)**. In **UI/UX** I ship typed design systems, data-dense dashboards and mobile apps where accessibility is an engineering constraint, not a coat of paint.\n\nThe **security** practice is the sharp edge of the same engineer. I hold **OSCP+** and **OSCP** (Apr 2025), with the **OSED** exploit-development exam scheduled for mid-2026, and I have **51 accepted findings across 5 public bug-bounty programmes** — every one found by hand, with a reproducible PoC. Living on both sides means my code anticipates the attack and my findings ship as fixes a team can actually merge. I'd rather build the thing and prove it holds than argue about it in the abstract.",
     "philosophy": [
       {
-        "title": "Attacker's mindset, builder's discipline",
-        "text": "I test like an adversary and fix like an engineer. Living on both sides means my findings ship with working exploits and my remediations ship as maintainable Spring Boot, .NET or Go code — not vague advice.",
-        "icon": "user-secret"
+        "title": "Builder's discipline, attacker's eye",
+        "text": "I build like an engineer and test like an adversary. Living on both sides means my systems anticipate the attack and my findings ship as fixes a team can merge — maintainable Spring Boot, .NET, Go or TypeScript, not vague advice.",
+        "icon": "screwdriver-wrench"
       },
       {
-        "title": "Depth over checklist",
-        "text": "Scanners catch the obvious; I chase authorization logic, BOLA/IDOR, race conditions, SSRF and AI/LLM abuse paths that automated tools miss. Every report proves real-world impact with a clear path to exploitation.",
-        "icon": "magnifying-glass-chart"
-      },
-      {
-        "title": "Evidence and reproducibility",
-        "text": "From OSCP+ proofs to Kafka throughput benchmarks and BugTraceAI's consensus-validated findings, I document so others can reproduce. Clear write-ups and validated proofs of concept over confident hand-waving.",
+        "title": "Ship it, then prove it holds",
+        "text": "I'd rather build the thing and prove it stands up than argue in the abstract — load-tested Kafka throughput, evaluation-gated AI, OSCP+ proofs and reproducible PoCs over confident hand-waving.",
         "icon": "vial-circle-check"
       },
       {
+        "title": "Depth over checklist",
+        "text": "Whether it is a distributed-systems edge case, an agent that hallucinates under load, or an authorization flaw scanners miss, I chase the hard part automated tools skip and prove the real-world impact.",
+        "icon": "magnifying-glass-chart"
+      },
+      {
         "title": "Build for the human in the loop",
-        "text": "Secure, fast software still has to be usable. Whether it is a game feel or an API or an accessible UI, I sweat the experience and build to WCAG 2.2 AA, because UX clarity is part of a system's real-world security posture.",
+        "text": "Fast, correct software still has to be usable. From an API to an AI feature to an accessible UI, I sweat the experience and build to WCAG 2.2 AA, because clarity is part of a system's real quality.",
         "icon": "universal-access"
       }
     ],
-    "seoDescription": "Muhammad Ramis: OSCP+ penetration tester & engineer. Security, Java/Kafka, .NET, AI/ML, game dev & UX. MSc Cyber Security & AI (Distinction), 51 bug-bounty finds."
+    "seoDescription": "Software & AI engineer (Java/Kafka, LLM agents, RAG, React) and OSCP+ pentester. MSc Cyber Security & AI (Distinction). 10+ years building production systems."
   },
   "bugBounty": {
     "totalAccepted": 51,

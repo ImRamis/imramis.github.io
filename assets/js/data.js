@@ -3,7 +3,7 @@ window.DATA = {
   profile: {
     name: 'Muhammad Ramis',
     initials: 'MR',
-    headline: 'Penetration Tester & Security-Minded Engineer',
+    headline: 'Software & AI Engineer · OSCP+ Penetration Tester',
     location: 'Nottingham, United Kingdom',
     availability: 'Open to UK roles · relocation',
     // Public-facing address (Cloudflare Email Routing forwards hello@ramis.me to the
@@ -19,45 +19,44 @@ window.DATA = {
     ]
   },
 
-  // Rotating roles for the gateway typewriter — lead with the full duality,
-  // then rotate through facets (red / blue / purple + every discipline).
+  // Rotating roles for the typewriter — builder-forward; security appears once,
+  // mid-rotation, not as the lead identity.
   roles: [
-    'Red + Blue = Purple Teamer',
-    'Offensive  &  Defensive Security',
-    'Penetration Tester × Software Engineer',
-    'Exploit Developer  ·  OSED next',
-    'Detection & Security Engineer',
-    'Bug Bounty Hunter  ·  51 findings',
-    'Java · .NET · Kafka Backend Engineer',
-    'AI / LLM Security Researcher',
+    'Software Engineer — Java · Kafka · Go',
+    'AI / Agent Engineer — LLM systems & RAG',
+    'Full-Stack Product Engineer',
+    'Backend & Distributed-Systems Engineer',
+    'AI-Assisted Product Builder',
+    'Penetration Tester — OSCP+',
     'Accessible UI / UX Engineer',
-    'Builder & Breaker'
+    'Builder who breaks things on purpose'
   ],
 
-  // Gateway / switcher metadata. Rich content per id comes from window.CONTENT.tracks
+  // Lens / side metadata (builder fields first: engineering → ai/ml → cybersecurity → uiux).
+  // Accent RGBs are tied to each id, not to position. Rich content per id comes from window.CONTENT.tracks
   lenses: [
+    { id: 'engineering', label: 'Software Engineering', short: 'Engineering', icon: 'fa-code',
+      blurb: 'Event-driven Java/Spring + Kafka, .NET, Go & Node microservices and high-scale APIs (6.5M req/day).',
+      rgb: '111,120,214', rgb2: '74,166,224' },
+    { id: 'aiml', label: 'AI / ML Engineering', short: 'AI / ML', icon: 'fa-brain',
+      blurb: 'LLM agent systems, RAG pipelines, evaluation and ML — shipped as product features teams can trust.',
+      rgb: '47,179,137', rgb2: '60,184,201' },
     { id: 'cybersecurity', label: 'Cybersecurity', short: 'Cybersecurity', icon: 'fa-shield-halved',
       blurb: 'Red + blue — pen testing, exploit dev, detection engineering and a 51-finding bug-bounty record.',
-      rgb: '255,77,109', rgb2: '255,154,61' },
-    { id: 'engineering', label: 'Software Engineering', short: 'Engineering', icon: 'fa-code',
-      blurb: 'Java/Spring + Kafka, .NET, Go & Node microservices and high-scale APIs (6.5M req/day).',
-      rgb: '129,140,248', rgb2: '56,189,248' },
-    { id: 'aiml', label: 'AI / ML Engineering', short: 'AI / ML', icon: 'fa-brain',
-      blurb: 'LLM security, AI agents, ML for security telemetry and applied research.',
-      rgb: '52,211,153', rgb2: '34,211,238' },
+      rgb: '224,85,109', rgb2: '224,149,78' },
     { id: 'uiux', label: 'UI / UX Engineering', short: 'UI / UX', icon: 'fa-pen-ruler',
-      blurb: 'Accessible React/TypeScript design systems, dashboards and product UX.',
-      rgb: '251,113,133', rgb2: '251,191,36' }
+      blurb: 'Accessible React/TypeScript design systems, data-dense dashboards and product UX.',
+      rgb: '224,106,134', rgb2: '224,173,66' }
   ],
   overviewLens: { id: 'overview', label: 'The full picture', short: 'Overview', icon: 'fa-layer-group',
-    blurb: 'Not sure where to start? See everything — security, engineering, AI, games and design together.',
-    rgb: '110,231,255', rgb2: '139,123,255' },
+    blurb: 'Not sure where to start? See everything — engineering, AI, security and design, together.',
+    rgb: '92,198,221', rgb2: '130,120,217' },
 
   marquee: [
-    'OSCP+', 'OSED (scheduled)', 'MSc Cyber Security & AI — Distinction', '51 bug-bounty findings',
-    'Burp Suite', 'Ghidra', 'Active Directory', 'Java · Spring Boot', 'Apache Kafka', 'C#/.NET', 'Go', 'Rust',
-    'AWS · Azure · GCP', 'Kubernetes', 'PyTorch · LLM agents', 'React · TypeScript', 'WCAG 2.2 AA',
-    'Semgrep · CodeQL', 'OWASP · MITRE ATT&CK', 'BugTraceAI'
+    'Java · Spring Boot', 'Apache Kafka', 'Python', 'LLM agents · RAG', 'React · TypeScript', 'Go', 'C#/.NET',
+    'pgvector · LangGraph', 'AWS · Azure · GCP', 'Kubernetes', 'OpenTelemetry', 'Rust',
+    'OSCP+', 'MSc Cyber Security & AI — Distinction', 'WCAG 2.2 AA', 'PyTorch',
+    '51 bug-bounty findings', 'Burp Suite', 'Semgrep · CodeQL', 'MCP · vLLM'
   ],
 
   certifications: [
@@ -91,12 +90,12 @@ window.DATA = {
       period: '2024 — Present',
       desc: 'Full-time offensive research across public bug-bounty programs and AI/LLM security, alongside the MSc at Sheffield.',
       points: [
-        'Exploit-tested public web apps and APIs for authorization bypass, IDOR/BOLA, race conditions, SSRF and sensitive-data exposure — 51 accepted findings across five programs (Bugcrowd, HackerOne, Google, YesWeHack, Intigriti).',
+        '51 accepted findings across five public programs (Bugcrowd, HackerOne, Google, YesWeHack, Intigriti) — every one found by hand: authorization bypass, IDOR/BOLA, race conditions, SSRF and sensitive-data exposure, each with a reproducible PoC. No AI tooling is used to find or submit bounties.',
         'Built repeatable Burp + Python workflows for endpoint discovery, authorization-matrix testing and reproducible evidence capture.',
-        'Researched AI/LLM abuse: prompt injection, unsafe tool invocation and model data leakage across agent trust boundaries; shipped BugTraceAI, a self-hosted AI security scanner.'
+        'Separately, as personal AI-engineering R&D, built BugTraceAI — an experiment in reliable LLM-agent systems (planning, tool-use, consensus voting, deterministic guardrails) applied to a security domain I know well; kept entirely separate from the manual bounty work.'
       ],
-      metrics: ['51 accepted findings', '5 programs', 'AI / LLM research'],
-      tags: ['Bug Bounty', 'Burp Suite', 'Python', 'API Testing', 'AI/LLM Security']
+      metrics: ['51 manual findings', '5 programs', 'AI-engineering R&D'],
+      tags: ['Bug Bounty', 'Burp Suite', 'Python', 'API Testing', 'LLM Agents (R&D)']
     },
     {
       role: 'Postgraduate Teaching Assistant',
