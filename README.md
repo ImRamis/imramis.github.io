@@ -12,7 +12,7 @@ record into one place.
   copy, rotating roles (red / blue / purple), focus areas, toolkit, default
   project filter and an animated terminal all adapt. Switch lenses anytime from
   the nav.
-- **Bug-bounty showcase:** 51 accepted findings across five programs with a
+- **Bug-bounty showcase:** 51 accepted findings across several public and private programs with a
   severity breakdown and representative (sanitised) write-ups.
 - **Blog + CMS:** posts are Markdown in `content/posts/`, editable in a browser
   via Decap CMS at `/admin`; CI compiles them to the live site. Hash-routed

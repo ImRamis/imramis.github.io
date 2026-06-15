@@ -27,7 +27,7 @@ The lens is not just a project filter. It changes the hero copy, reorders sectio
 
 The temptation with a chooser is to gate everything behind it. That punishes the recruiter and anyone arriving from a deep link. My rule: the lens reorders and emphasises, it never *hides the exit*. "Everything" is always one click away, every section still exists in the DOM, and the URL carries the choice (`ramis.me/?lens=offensive`) so a shared link lands pre-filtered.
 
-Disclosure happens in three tiers: headline claim, then expandable evidence, then the external proof. A bug-bounty card shows "51 accepted findings across 5 programmes", expands to the per-platform breakdown (YesWeHack: 4 Critical / 12 High / 5 Medium, and so on), and only then links out to a write-up at `https://ramis.me/blog/bola-chain-saas`. Nobody is forced through all three, but the path is there for the reader who wants depth.
+Disclosure happens in three tiers: headline claim, then expandable evidence, then the external proof. A bug-bounty card shows "51 accepted findings across several public and private programmes", expands to the per-platform breakdown (YesWeHack: 4 Critical / 12 High / 5 Medium, and so on), and only then links out to a write-up at `https://ramis.me/blog/bola-chain-saas`. Nobody is forced through all three, but the path is there for the reader who wants depth.
 
 ## Theming per persona with one set of tokens
 
