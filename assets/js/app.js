@@ -315,7 +315,7 @@
           ['fa-universal-access', 'Accessibility as an engineering constraint'] ] }
       },
       cybersecurity: {
-        hero: { kicker: 'Bug bounty', icon: 'fa-bug', href: '#/security', num: (CONTENT.bugBounty ? CONTENT.bugBounty.totalAccepted : 51), label: 'accepted findings across 5 programs', sev: sev },
+        hero: { kicker: 'Bug bounty', icon: 'fa-bug', href: '#/security', num: (CONTENT.bugBounty ? CONTENT.bugBounty.totalAccepted : 51), label: 'accepted findings, public & private', sev: sev },
         hi: cred
       },
       overview: {

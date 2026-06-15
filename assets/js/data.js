@@ -88,13 +88,13 @@ window.DATA = {
       company: 'Self-directed',
       location: 'Nottingham, UK',
       period: '2024 - Present',
-      desc: 'Full-time offensive research across public bug-bounty programs and AI/LLM security, alongside the MSc at Sheffield.',
+      desc: 'Full-time offensive research across public and private bug-bounty programs and AI/LLM security, alongside the MSc at Sheffield.',
       points: [
-        '51 accepted findings across five public programs (Bugcrowd, HackerOne, Google, YesWeHack, Intigriti) - every one found by hand: authorization bypass, IDOR/BOLA, race conditions, SSRF and sensitive-data exposure, each with a reproducible PoC. No AI tooling is used to find or submit bounties.',
+        '51 accepted findings across several public and private programs - every one found by hand: authorization bypass, IDOR/BOLA, race conditions, SSRF and sensitive-data exposure, each with a reproducible PoC. No AI tooling is used to find or submit bounties.',
         'Built repeatable Burp + Python workflows for endpoint discovery, authorization-matrix testing and reproducible evidence capture.',
         'Separately, as personal AI-engineering R&D, built BugTraceAI - an experiment in reliable LLM-agent systems (planning, tool-use, consensus voting, deterministic guardrails) applied to a security domain I know well; kept entirely separate from the manual bounty work.'
       ],
-      metrics: ['51 manual findings', '5 programs', 'AI-engineering R&D'],
+      metrics: ['51 manual findings', 'public + private programs', 'AI-engineering R&D'],
       tags: ['Bug Bounty', 'Burp Suite', 'Python', 'API Testing', 'LLM Agents (R&D)']
     },
     {
@@ -199,8 +199,8 @@ window.DATA = {
       desc: 'Distinction at a Russell Group, world top-100 university - digital forensics, development of secure software, security mechanisms and scalable ML, plus a post-quantum blind-signature dissertation.' },
     { title: 'OSCP+ & OSCP - OffSec', meta: 'Certified · Apr 2025', icon: 'fa-shield-halved',
       desc: 'Hands-on offensive-security certification (credential ID 140250238); the OSCP+ continuing-education status keeps it valid for three years.' },
-    { title: '51 accepted bug-bounty findings', meta: '5 public programs', icon: 'fa-bug',
-      desc: 'Coordinated-disclosure findings across Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti - authorization, logic, race-condition and SSRF flaws, each with a reproducible PoC.' },
+    { title: '51 accepted bug-bounty findings', meta: 'public & private programs', icon: 'fa-bug',
+      desc: 'Coordinated-disclosure findings across several public and private programs - authorization, logic, race-condition and SSRF flaws, each with a reproducible PoC.' },
     { title: 'Employee of the Month', meta: 'Apricart E-Stores · 2021', icon: 'fa-star',
       desc: 'Recognised for security and delivery contributions while leading the IT department, sustaining 99.9% uptime.' },
     { title: 'CTF competitor - HackTheBox & TryHackMe', meta: 'Ongoing', icon: 'fa-flag',

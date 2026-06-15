@@ -7,7 +7,7 @@ window.CONTENT = {
       "short": "Cybersecurity",
       "icon": "shield-halved",
       "tagline": "Red and blue in one operator: I break web, API, AD, cloud and LLM systems, then build the detection that stops them.",
-      "summary": "I am an OSCP+ penetration tester and security engineer with 10+ years spanning both sides of the wire and 51 accepted bug bounty findings across five public programs. I find authorization, logic, race-condition and SSRF flaws by hand, develop exploits at the binary level, and lead AI/LLM offensive research, then turn that attacker knowledge into detection engineering, SAST/DAST automation, LLM-assisted triage and hardened zero-trust infrastructure. Thinking like an attacker is exactly what lets me ship defences that make breaking in expensive.",
+      "summary": "I am an OSCP+ penetration tester and security engineer with 10+ years spanning both sides of the wire and 51 accepted bug bounty findings across several public and private programs. I find authorization, logic, race-condition and SSRF flaws by hand, develop exploits at the binary level, and lead AI/LLM offensive research, then turn that attacker knowledge into detection engineering, SAST/DAST automation, LLM-assisted triage and hardened zero-trust infrastructure. Thinking like an attacker is exactly what lets me ship defences that make breaking in expensive.",
       "stats": [
         {
           "value": "51",
@@ -19,7 +19,7 @@ window.CONTENT = {
         },
         {
           "value": "4th",
-          "label": "OffSec Gauntlet (global)"
+          "label": "OffSec Gauntlet 2025"
         },
         {
           "value": "61%",
@@ -60,9 +60,9 @@ window.CONTENT = {
       ],
       "projects": [
         {
-          "title": "51 Accepted Bug Bounty Findings Across 5 Programs",
+          "title": "51 Accepted Bug-Bounty Findings Across Public & Private Programs",
           "type": "Bug bounty portfolio",
-          "blurb": "Sustained coordinated disclosure across Bugcrowd, HackerOne, Google Bug Hunters, YesWeHack and Intigriti, totalling 51 accepted findings. The bulk are authorization and logic flaws (IDOR/BOLA, broken function-level authorization, race conditions and SSRF chains) alongside emerging AI/LLM abuse cases such as prompt injection and unsafe tool invocation. Every submission shipped with a reproducible PoC and a clear impact narrative to accelerate triage and remediation.",
+          "blurb": "Sustained coordinated disclosure across several public and private programs, totalling 51 accepted findings. The bulk are authorization and logic flaws (IDOR/BOLA, broken function-level authorization, race conditions and SSRF chains) alongside emerging AI/LLM abuse cases such as prompt injection and unsafe tool invocation. Every submission shipped with a reproducible PoC and a clear impact narrative to accelerate triage and remediation.",
           "stack": [
             "Burp Suite Pro",
             "Python",
@@ -73,7 +73,7 @@ window.CONTENT = {
           "metrics": [
             "8 Critical + 41 High/Medium accepted",
             "2 P2/S2 in Google Bug Hunters",
-            "Findings across HackerOne, Bugcrowd, YesWeHack, Intigriti",
+            "Across public and private programs",
             "Focus: IDOR/BOLA, race conditions, SSRF, LLM abuse"
           ],
           "tags": [
@@ -210,7 +210,7 @@ window.CONTENT = {
       ],
       "contributions": [
         {
-          "label": "OffSec The Gauntlet: Echo Response - 4th globally",
+          "label": "OffSec The Gauntlet: Echo Response - 4th globally · 2025",
           "url": "https://ramis.me/blog/offsec-gauntlet-echo-response",
           "note": "Placed 4th of ~9,000 competitors in the 2025 forensics challenge, blending offensive analysis with incident reconstruction."
         },
@@ -1389,7 +1389,7 @@ window.CONTENT = {
       "Accessible UI / UX Engineer"
     ],
     "elevator": "Software engineer with 10+ years building event-driven Java/Kafka backends, .NET microservices, AI/LLM products and accessible React front-ends - and an OSCP+ penetration tester who breaks systems to build sturdier ones. Engineering, AI/ML, security and UX, treated as one craft.",
-    "about": "I am a **software engineer** with 10+ years shipping production systems end to end - and a penetration tester who uses an attacker's eye to make them harder to break. Based in Nottingham, open to UK roles and relocation, I move comfortably across four disciplines and treat them as one craft rather than four hats. I design **event-driven Java backends** (Spring Boot 3, Kafka + Kafka Streams) that have carried 50K+ daily financial transactions, scaled e-commerce APIs to **6.5M requests a day**, and built real-time messaging for thousands of concurrent users. I build **AI/ML products** - LLM agent systems, RAG pipelines and evaluation harnesses - and I ship **accessible React/TypeScript** front-ends to WCAG 2.2 AA. Security runs through all of it because that's how I was trained, not because it's the headline.\n\nOn the **engineering** side I work in Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka, with disciplined TDD/BDD (JUnit 5, Mockito, TestContainers, PACT), 88% coverage and a 65% drop in production incidents, plus C#/.NET Core (Polly, AKS, OpenTelemetry, 99.99% uptime), Node, Go, Rust and PHP/Laravel on EKS/AKS. In **AI/ML** I build agentic systems and retrieval pipelines as product features - orchestration, tool-use, RAG with citation grounding and evaluation gating - backed by an **MSc in Cyber Security & AI from the University of Sheffield (Distinction)**. In **UI/UX** I ship typed design systems, data-dense dashboards and mobile apps where accessibility is an engineering constraint, not a coat of paint.\n\nThe **security** practice is the sharp edge of the same engineer. I hold **OSCP+** and **OSCP** (Apr 2025), with the **OSED** exploit-development exam scheduled for mid-2026, and I have **51 accepted findings across 5 public bug-bounty programmes** - every one found by hand, with a reproducible PoC. Living on both sides means my code anticipates the attack and my findings ship as fixes a team can actually merge. I'd rather build the thing and prove it holds than argue about it in the abstract.",
+    "about": "I am a **software engineer** with 10+ years shipping production systems end to end - and a penetration tester who uses an attacker's eye to make them harder to break. Based in Nottingham, open to UK roles and relocation, I move comfortably across four disciplines and treat them as one craft rather than four hats. I design **event-driven Java backends** (Spring Boot 3, Kafka + Kafka Streams) that have carried 50K+ daily financial transactions, scaled e-commerce APIs to **6.5M requests a day**, and built real-time messaging for thousands of concurrent users. I build **AI/ML products** - LLM agent systems, RAG pipelines and evaluation harnesses - and I ship **accessible React/TypeScript** front-ends to WCAG 2.2 AA. Security runs through all of it because that's how I was trained, not because it's the headline.\n\nOn the **engineering** side I work in Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka, with disciplined TDD/BDD (JUnit 5, Mockito, TestContainers, PACT), 88% coverage and a 65% drop in production incidents, plus C#/.NET Core (Polly, AKS, OpenTelemetry, 99.99% uptime), Node, Go, Rust and PHP/Laravel on EKS/AKS. In **AI/ML** I build agentic systems and retrieval pipelines as product features - orchestration, tool-use, RAG with citation grounding and evaluation gating - backed by an **MSc in Cyber Security & AI from the University of Sheffield (Distinction)**. In **UI/UX** I ship typed design systems, data-dense dashboards and mobile apps where accessibility is an engineering constraint, not a coat of paint.\n\nThe **security** practice is the sharp edge of the same engineer. I hold **OSCP+** and **OSCP** (Apr 2025), with the **OSED** exploit-development exam scheduled for mid-2026, and I have **51 accepted findings across several public and private bug-bounty programmes** - every one found by hand, with a reproducible PoC. Living on both sides means my code anticipates the attack and my findings ship as fixes a team can actually merge. I'd rather build the thing and prove it holds than argue about it in the abstract.",
     "philosophy": [
       {
         "title": "Builder's discipline, attacker's eye",
