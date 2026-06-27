@@ -416,18 +416,21 @@
         <span class="intro-card__blurb">${l.blurb}</span>
         <span class="intro-card__stat">${STAT[side] || ''}</span>
       </button>`;
-    host.innerHTML = DATA.lenses.map(l => card(l, l.id)).join('') +
-      `<button class="intro-card intro-card--all" data-side="everything" type="button" style="--lc:rgb(${DATA.overviewLens.rgb});--lc-rgb:${DATA.overviewLens.rgb};--lc2:rgb(${DATA.overviewLens.rgb2})">
+    const allCard = `<button class="intro-card intro-card--all intro-card--primary" data-side="everything" type="button" style="--lc:rgb(${DATA.overviewLens.rgb});--lc-rgb:${DATA.overviewLens.rgb};--lc2:rgb(${DATA.overviewLens.rgb2})">
         ${emblem('everything')}
-        <span class="intro-card__label">Explore everything</span>
-        <span class="intro-card__blurb">Not sure where to start? See all four disciplines together.</span>
-        <span class="intro-card__stat">full portfolio <i class="fa-solid fa-arrow-right"></i></span>
-      </button>` +
-      `<button class="intro-card intro-card--contact" data-side="everything" data-go="contact" type="button">
+        <span class="intro-card__label">View the full portfolio</span>
+        <span class="intro-card__blurb">New here, or not sure where to look? See everything in one place.</span>
+        <span class="intro-card__stat">recommended <i class="fa-solid fa-arrow-right"></i></span>
+      </button>`;
+    const contactCard = `<button class="intro-card intro-card--contact" data-side="everything" data-go="contact" type="button">
         <span class="intro-card__ic"><i class="fa-solid fa-paper-plane"></i></span>
         <span class="intro-card__label">Get in touch</span>
         <span class="intro-card__blurb">Just here to reach out? Jump straight to contact.</span>
       </button>`;
+    host.innerHTML = allCard +
+      `<p class="intro__pick">or jump straight to a specialism</p>` +
+      DATA.lenses.map(l => card(l, l.id)).join('') +
+      contactCard;
   }
 
   /* ---------- FOCUS (about view, lens-aware) ---------- */
