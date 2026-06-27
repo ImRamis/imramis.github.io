@@ -424,8 +424,8 @@
       </button>`;
     const contactCard = `<button class="intro-card intro-card--contact" data-side="everything" data-go="contact" type="button">
         <span class="intro-card__ic"><i class="fa-solid fa-paper-plane"></i></span>
-        <span class="intro-card__label">Get in touch</span>
-        <span class="intro-card__blurb">Just here to reach out? Jump straight to contact.</span>
+        <span class="intro-card__label">Work with me</span>
+        <span class="intro-card__blurb">Hire, contract or consult - jump straight to contact.</span>
       </button>`;
     host.innerHTML = allCard +
       `<p class="intro__pick">or jump straight to a specialism</p>` +
