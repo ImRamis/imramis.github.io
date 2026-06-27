@@ -896,6 +896,16 @@ body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; 
 .intro-card:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
 .intro-card::after { content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity .3s; pointer-events: none; background: radial-gradient(90% 70% at 50% 120%, rgba(var(--c-rgb), .22), transparent 60%); }
 .intro-card:hover::after, .intro-card.is-focus::after { opacity: 1; }
+/* Prominent primary "view everything" CTA + specialism grouping (clear wayfinding) */
+.intro-card--primary { background: linear-gradient(105deg, rgba(var(--c-rgb), .22), rgba(var(--c-rgb), .07)); border-color: rgba(var(--c-rgb), .6); }
+.intro-card--primary .intro-card__label { font-size: 1.18rem; }
+.intro__pick { grid-column: 1 / -1; text-align: center; color: var(--text-faint); font-family: var(--font-mono); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; margin: .25rem 0 -.05rem; }
+.intro--3d .intro-card.intro-card--primary { flex: 0 0 100%; justify-content: center; padding: .85rem 1.6rem; border-radius: 999px; background: linear-gradient(100deg, #5cc6dd, #8278d9); border-color: transparent; box-shadow: 0 16px 38px -14px rgba(92, 198, 221, .6); }
+.intro--3d .intro-card--primary .intro-card__label { color: #07080d; font-weight: 800; font-size: 1.02rem; }
+.intro--3d .intro-card--primary .intro-card__stat { display: inline-flex; color: #07080d; opacity: .8; }
+.intro--3d .intro-card--primary .intro-card__ic--emblem { display: none; }
+.intro--3d .intro__pick { flex: 0 0 100%; margin: .4rem 0 .1rem; }
+.intro--3d .intro-card--contact { flex: 0 0 100%; justify-content: center; }
 
 /* foot */
 .intro__foot { display: flex; flex-direction: column; align-items: center; gap: .45rem; pointer-events: none; }
