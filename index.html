@@ -59,7 +59,7 @@
     @keyframes pl-spin{to{transform:rotate(360deg)}}
     @media (prefers-reduced-motion:reduce){#preloader .pl__ring{animation:none}}
   </style>
-  <link rel="stylesheet" href="assets/css/style.css?v=22" />
+  <link rel="stylesheet" href="assets/css/style.css?v=23" />
 
   <script type="application/ld+json">
   {
@@ -327,17 +327,32 @@
       <div class="wrap">
         <div class="vhead rv">
           <span class="eyebrow">Contact</span>
-          <h2 class="view-title">Let's build something <span class="grad">secure</span></h2>
-          <p class="view-sub">Open to penetration testing, security engineering and senior engineering roles in the UK. Say hello.</p>
+          <h2 class="view-title">Let's build something <span class="grad">together</span></h2>
+          <p class="view-sub">Available for consultancy, contract and freelance projects across security, engineering, AI and UX, and open to hire for senior / staff roles in the UK. Tell me about your project and I'll get back to you.</p>
         </div>
         <div class="contact-grid">
           <div class="rv" id="contactInfo"></div>
           <form class="form glass rv" id="contactForm" style="padding:1.6rem">
-            <input type="text" name="name" placeholder="Your name" required autocomplete="name" />
-            <input type="email" name="email" placeholder="Your email" required autocomplete="email" />
-            <input type="text" name="subject" placeholder="Subject" required />
-            <textarea name="message" placeholder="Your message" required></textarea>
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send message</button>
+            <div class="form-row">
+              <input type="text" name="name" placeholder="Name *" required autocomplete="name" />
+              <input type="email" name="email" placeholder="Email *" required autocomplete="email" />
+            </div>
+            <div class="form-row">
+              <input type="tel" name="phone" placeholder="Phone (optional)" autocomplete="tel" />
+              <input type="text" name="company" placeholder="Company (optional)" autocomplete="organization" />
+            </div>
+            <select name="topic" required aria-label="What do you need?">
+              <option value="" disabled selected>What do you need? *</option>
+              <option>Penetration testing / security assessment</option>
+              <option>Application security / secure code review</option>
+              <option>AI / LLM engineering (agents, RAG)</option>
+              <option>Full-stack / web or product build</option>
+              <option>Consultancy / advisory</option>
+              <option>Contract or full-time role</option>
+              <option>Something else</option>
+            </select>
+            <textarea name="message" placeholder="Tell me about the project, scope and timeline *" required></textarea>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send inquiry</button>
           </form>
         </div>
       </div>
@@ -394,10 +409,10 @@
   <!-- Home easter egg: release a mouse-controlled snake that eats the page -->
   <button class="snake-fab" id="snakeFab" type="button" aria-label="Release the snake - it eats the page" title="Release the snake 🐍">🐍</button>
 
-  <script src="assets/js/content.js?v=22"></script>
-  <script src="assets/js/posts.js?v=22"></script>
-  <script src="assets/js/data.js?v=22"></script>
-  <script src="assets/js/app.js?v=22"></script>
+  <script src="assets/js/content.js?v=23"></script>
+  <script src="assets/js/posts.js?v=23"></script>
+  <script src="assets/js/data.js?v=23"></script>
+  <script src="assets/js/app.js?v=23"></script>
 
   <!-- Three.js layers. Load after app.js so window.RamisEnter/__ramis + data-route/-lens exist.
        viewfx = per-view morphing 3D centrepiece; intro = the "choose your side" gateway.
@@ -405,8 +420,8 @@
   <script type="importmap">
   { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
   </script>
-  <script type="module" src="assets/js/viewfx.js?v=22"></script>
-  <script type="module" src="assets/js/intro.js?v=22"></script>
+  <script type="module" src="assets/js/viewfx.js?v=23"></script>
+  <script type="module" src="assets/js/intro.js?v=23"></script>
 
   <!-- Google Analytics (GA4) - loaded after page load, IP anonymised -->
   <script>
