@@ -65,6 +65,15 @@ Additional accepted findings come from private, invite-only programs under NDA. 
 - ICPC Lahore Regional - Fastest Problem Solver, 2017.
 - Employee of the Month - Apricart, 2021.
 
+## Services / consultancy
+
+Available for project-based, retainer or fractional engagements (remote, hybrid or on-site in the UK):
+- Security testing & assessment - web, API, cloud and Active Directory penetration testing (OSCP+), with reproducible proofs of concept and fix-focused reports.
+- Application security & secure SDLC - secure code review, threat modelling, and SAST/DAST automation built into CI/CD.
+- AI / LLM engineering - building agentic systems, RAG pipelines, evaluation and guardrail harnesses, plus red-teaming LLM agents for safety.
+- Backend & platform engineering - event-driven Java/Kafka and .NET microservices built to scale, stay up and ship securely.
+Start with a short call. Contact: hello@ramis.me.
+
 ## Writing
 
 Security write-ups and engineering deep-dives at https://ramis.me/#/writing, including: cache-poisoning to account takeover, red-teaming LLM agents (a test harness), idempotent Kafka consumers in Spring, ML anomaly detection on auth logs, GDPR controls in CI/CD, IDOR to account takeover, post-quantum blind signatures, accessibility as a security control, LLM-assisted vulnerability triage, and .NET microservices at 99.99% uptime.

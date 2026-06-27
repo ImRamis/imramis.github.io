@@ -63,7 +63,7 @@
     @keyframes pl-spin{to{transform:rotate(360deg)}}
     @media (prefers-reduced-motion:reduce){#preloader .pl__ring{animation:none}}
   </style>
-  <link rel="stylesheet" href="assets/css/style.css?v=25" />
+  <link rel="stylesheet" href="assets/css/style.css?v=26" />
 
   <script type="application/ld+json">
   {
@@ -356,6 +356,32 @@
           <h2 class="view-title">Let's build something <span class="grad">together</span></h2>
           <p class="view-sub">Available for consultancy, contract and freelance projects across security, engineering, AI and UX, and open to hire for senior / staff roles in the UK. Tell me about your project and I'll get back to you.</p>
         </div>
+        <div class="services rv">
+          <h3 class="services__title">How I can help</h3>
+          <div class="services__grid">
+            <div class="svc">
+              <span class="svc__ic"><i class="fa-solid fa-user-secret"></i></span>
+              <h4>Security testing &amp; assessment</h4>
+              <p>Web, API, cloud and Active Directory penetration testing (OSCP+), with reproducible PoCs and fix-focused reports.</p>
+            </div>
+            <div class="svc">
+              <span class="svc__ic"><i class="fa-solid fa-shield-halved"></i></span>
+              <h4>AppSec &amp; secure SDLC</h4>
+              <p>Secure code review, threat modelling and SAST/DAST automation built into your CI/CD pipeline.</p>
+            </div>
+            <div class="svc">
+              <span class="svc__ic"><i class="fa-solid fa-robot"></i></span>
+              <h4>AI / LLM engineering</h4>
+              <p>Agentic systems, RAG pipelines, evals and guardrails, plus red-teaming LLM agents for safety.</p>
+            </div>
+            <div class="svc">
+              <span class="svc__ic"><i class="fa-solid fa-diagram-project"></i></span>
+              <h4>Backend &amp; platform</h4>
+              <p>Event-driven Java/Kafka and .NET services built to scale, stay up and ship securely.</p>
+            </div>
+          </div>
+          <p class="services__note"><i class="fa-solid fa-circle-info"></i> Project-based, retainer or fractional. Remote, hybrid or on-site in the UK. A quick call is the best place to start.</p>
+        </div>
         <div class="contact-grid">
           <div class="rv" id="contactInfo"></div>
           <form class="form glass rv" id="contactForm" style="padding:1.6rem">
@@ -435,10 +461,10 @@
   <!-- Home easter egg: release a mouse-controlled snake that eats the page -->
   <button class="snake-fab" id="snakeFab" type="button" aria-label="Release the snake - it eats the page" title="Release the snake 🐍">🐍</button>
 
-  <script src="assets/js/content.js?v=25"></script>
-  <script src="assets/js/posts.js?v=25"></script>
-  <script src="assets/js/data.js?v=25"></script>
-  <script src="assets/js/app.js?v=25"></script>
+  <script src="assets/js/content.js?v=26"></script>
+  <script src="assets/js/posts.js?v=26"></script>
+  <script src="assets/js/data.js?v=26"></script>
+  <script src="assets/js/app.js?v=26"></script>
 
   <!-- Three.js layers. Load after app.js so window.RamisEnter/__ramis + data-route/-lens exist.
        viewfx = per-view morphing 3D centrepiece; intro = the "choose your side" gateway.
@@ -446,8 +472,8 @@
   <script type="importmap">
   { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
   </script>
-  <script type="module" src="assets/js/viewfx.js?v=25"></script>
-  <script type="module" src="assets/js/intro.js?v=25"></script>
+  <script type="module" src="assets/js/viewfx.js?v=26"></script>
+  <script type="module" src="assets/js/intro.js?v=26"></script>
 
   <!-- Google Analytics (GA4) - loaded after page load, IP anonymised -->
   <script>
