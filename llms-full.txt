@@ -1,0 +1,78 @@
+# Muhammad Ramis - Full Portfolio (plain text for language models)
+
+Source: https://ramis.me. Contact: hello@ramis.me. Location: Nottingham, United Kingdom.
+Identity: Software & AI Engineer and OSCP+ Penetration Tester. 10+ years building production systems.
+Availability: consultancy, contract and freelance projects, and open to hire for senior/staff roles in the UK.
+
+## About
+
+Software and AI engineer with 10+ years shipping production systems end to end, and a penetration tester who uses an attacker's eye to make them harder to break. Based in Nottingham, open to UK roles and relocation, Ramis moves across four disciplines and treats them as one craft rather than four hats.
+
+He designs event-driven Java backends (Spring Boot 3, Kafka and Kafka Streams) that have carried 50,000+ daily financial transactions, scaled e-commerce APIs to 6.5M requests a day, and built real-time messaging for thousands of concurrent users. He builds AI/ML products - LLM agent systems, RAG pipelines and evaluation harnesses - and ships accessible React/TypeScript front-ends to WCAG 2.2 AA. Security runs through all of it because that is how he was trained, not because it is the headline.
+
+## Disciplines
+
+### Software Engineering
+30+ production systems over a decade. Spring Boot 2.x/3.x with Spring Data JPA, Hibernate and Apache Kafka; disciplined TDD/BDD (JUnit 5, Mockito, TestContainers, PACT), ~88% coverage and a 65% drop in production incidents. C#/.NET Core (Polly, AKS, OpenTelemetry, 99.99% uptime). Node.js, Go, Rust and PHP/Laravel on EKS/AKS. Cloud and DevOps across AWS, GCP and Azure with Docker, Kubernetes, Terraform, CI/CD and full observability (logs, metrics, traces).
+
+### AI / ML
+Agentic systems and retrieval pipelines built as product features: orchestration, tool-use, RAG with citation grounding, and evaluation gating. LLM agent systems, guardrails and evals. Applied AI R&D including BugTraceAI, an experiment in reliable LLM-agent systems (planning, tool-use, consensus voting, deterministic guardrails) applied to a security domain. Backed by an MSc in Cyber Security & AI from the University of Sheffield (Distinction). Important: all bug-bounty findings are discovered manually by hand; no AI tooling is used to find or submit bounties.
+
+### Cybersecurity
+Red and blue in one operator: breaks web, API, Active Directory, cloud and LLM systems, then builds the detection that stops them. OSCP and OSCP+ certified (Apr 2025); OSED exploit-development exam scheduled for 2026. OffSec "The Gauntlet: Echo Response" 2025: placed 4th of ~9,000 competitors. 51 manually-validated, accepted bug-bounty findings across several public and private programs - authorization bypass, IDOR/BOLA, race conditions, SSRF chains, sensitive-data exposure and emerging AI/LLM abuse (prompt injection, unsafe tool invocation), each with a reproducible proof of concept.
+
+### UI / UX Engineering
+Accessible, fast, design-system-driven interfaces from Figma tokens to shipped product. Typed design systems, data-dense dashboards and mobile apps where accessibility (WCAG 2.2 AA) is an engineering constraint, not a coat of paint.
+
+## Experience
+
+- Independent Security Researcher and Bug-Bounty Hunter - Self-directed - 2024-Present, Nottingham, UK. Full-time offensive research across public and private bug-bounty programs and AI/LLM security, alongside the MSc at Sheffield. 51 accepted findings, every one found by hand. Built repeatable Burp + Python workflows for endpoint discovery, authorization-matrix testing and reproducible evidence capture. Separately, built BugTraceAI as personal AI-engineering R&D.
+- Postgraduate Teaching Assistant - University of Sheffield - 2024-2025, Sheffield, UK. Supported undergraduate computer-science and security modules while completing the MSc in Cyber Security & AI.
+- Senior Software Engineer (Security-Focused) and Lead AppSec - Sorvox - Apr 2022-Jun 2024. Senior engineering and application-security leadership.
+- IT Department Lead / Secure SDLC and Senior Engineer - Apricart - 2020-2022. Led the IT department; sustained 99.9% uptime; Employee of the Month 2021.
+- Full-Stack Developer (Security Integration) - Creative Drop DMCC - 2019-2020.
+- Software Engineer (Backend and Real-Time) - Chatcloud - 2016-2018.
+- Freelance Developer - Independent Projects - 2014-2016.
+
+## Selected projects
+
+- Orchestra - an agentic workflow engine (planning, tool-use, consensus, guardrails).
+- Lexica - a retrieval-augmented generation (RAG) platform with citation grounding and evaluation gating.
+- Event-Driven Payments Platform (Spring Boot + Kafka) - idempotent consumers, exactly-once semantics, 50K+ daily transactions.
+- BugTraceAI - personal AI-engineering R&D platform exploring reliable LLM-agent systems in a security domain. Not used to find or submit bounties.
+- Plus full-stack platforms, .NET microservices, real-time messaging, dashboards and design systems across 10+ years.
+
+## Bug bounty
+
+51 accepted, manually-validated findings across several public and private programs. Public-program breakdown:
+- Bugcrowd: 5 High/Critical (broken access control, SSRF on public web targets).
+- HackerOne: 2 Critical, 10 High, 3 Medium (authentication and business-logic bypasses, IDOR/BOLA chains, race conditions across SaaS and API surfaces).
+- Google Bug Hunters: 2 P2/S2 (sensitive-data exposure and authorization weaknesses).
+- YesWeHack: 4 Critical, 12 High, 5 Medium (IDOR/BOLA, SSRF, logic flaws, AI/LLM abuse).
+- Intigriti: 8 High (authorization bypass and IDOR on multi-tenant boundaries).
+Additional accepted findings come from private, invite-only programs under NDA. Severity totals: 8 Critical, 35 High, 8 Medium.
+
+## Credentials and awards
+
+- OSCP+ and OSCP - OffSec, certified Apr 2025 (OSCP+ continuing-education status keeps it valid for three years).
+- OSED (exploit development) - exam scheduled 2026.
+- MSc Cyber Security & AI - Distinction, University of Sheffield, 2025.
+- BSc Computer Science - PAF-KIET.
+- OffSec "The Gauntlet: Echo Response" - 4th globally of ~9,000, 2025.
+- ShefESH Capture The Flag - 1st place (web exploitation), 2024-2025.
+- ShefESH x TryHackMe - 2nd place, 2024-2025.
+- Crypto Chicks Hackathon - Winner (1st), 2019.
+- ICPC Lahore Regional - Fastest Problem Solver, 2017.
+- Employee of the Month - Apricart, 2021.
+
+## Writing
+
+Security write-ups and engineering deep-dives at https://ramis.me/#/writing, including: cache-poisoning to account takeover, red-teaming LLM agents (a test harness), idempotent Kafka consumers in Spring, ML anomaly detection on auth logs, GDPR controls in CI/CD, IDOR to account takeover, post-quantum blind signatures, accessibility as a security control, LLM-assisted vulnerability triage, and .NET microservices at 99.99% uptime.
+
+## Contact
+
+- Email: hello@ramis.me
+- LinkedIn: https://linkedin.com/in/imramis
+- GitHub: https://github.com/ImRamis
+- TryHackMe: https://tryhackme.com/p/mriramis
+- Available for consultancy, contract and freelance work, and open to senior/staff roles in the UK.

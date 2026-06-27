@@ -15,6 +15,10 @@
   <meta name="description" content="Muhammad Ramis - software & AI engineer (Java/Kafka, LLM agents, RAG, React) and OSCP+ penetration tester. 10+ years building production systems. MSc Cyber Security & AI (Distinction), 51 bug-bounty findings." />
   <meta name="author" content="Muhammad Ramis" />
   <link rel="canonical" href="https://ramis.me/" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="keywords" content="Muhammad Ramis, software engineer, AI engineer, LLM agents, RAG, Java, Kafka, penetration tester, OSCP, OSCP+, application security, bug bounty, React, UI/UX, Nottingham, UK, consultancy, contract" />
+  <link rel="alternate" type="text/markdown" title="llms.txt (LLM-friendly summary)" href="/llms.txt" />
+  <link rel="alternate" type="text/markdown" title="llms-full.txt (full content for LLMs)" href="/llms-full.txt" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -59,19 +63,32 @@
     @keyframes pl-spin{to{transform:rotate(360deg)}}
     @media (prefers-reduced-motion:reduce){#preloader .pl__ring{animation:none}}
   </style>
-  <link rel="stylesheet" href="assets/css/style.css?v=24" />
+  <link rel="stylesheet" href="assets/css/style.css?v=25" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Muhammad Ramis",
-    "jobTitle": "Software & AI Engineer · Penetration Tester",
+    "alternateName": "Ramis",
+    "jobTitle": "Software & AI Engineer and OSCP+ Penetration Tester",
+    "description": "Software and AI engineer (Java/Kafka, LLM agents, RAG, React) and OSCP+ penetration tester with 10+ years shipping production systems. MSc Cyber Security & AI (Distinction). 51 manually-validated bug-bounty findings across public and private programs.",
     "url": "https://ramis.me",
+    "image": "https://ramis.me/assets/avatar.png",
     "email": "hello@ramis.me",
     "address": { "@type": "PostalAddress", "addressLocality": "Nottingham", "addressCountry": "GB" },
-    "alumniOf": { "@type": "EducationalOrganization", "name": "University of Sheffield" },
-    "sameAs": ["https://linkedin.com/in/imramis", "https://github.com/imRamis", "https://tryhackme.com/p/mriramis"]
+    "alumniOf": [
+      { "@type": "CollegeOrUniversity", "name": "University of Sheffield" },
+      { "@type": "CollegeOrUniversity", "name": "PAF-KIET" }
+    ],
+    "knowsAbout": ["Software Engineering", "Java", "Spring Boot", "Apache Kafka", "Microservices", ".NET", "Go", "Python", "Artificial Intelligence", "LLM agents", "Retrieval-Augmented Generation", "Cybersecurity", "Penetration Testing", "Application Security", "Bug Bounty", "React", "TypeScript", "UI/UX", "Accessibility", "AWS", "Kubernetes"],
+    "hasCredential": [
+      { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification", "name": "OSCP+ - OffSec Certified Professional" },
+      { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification", "name": "OSCP - OffSec Certified Professional" },
+      { "@type": "EducationalOccupationalCredential", "credentialCategory": "degree", "name": "MSc Cyber Security and AI (Distinction)" }
+    ],
+    "seeks": { "@type": "Demand", "name": "Consultancy, contract, freelance and senior/staff engineering and security roles" },
+    "sameAs": ["https://linkedin.com/in/imramis", "https://github.com/ImRamis", "https://tryhackme.com/p/mriramis", "https://stackoverflow.com/users/16912003/ramis"]
   }
   </script>
 </head>
@@ -100,12 +117,21 @@
 
   <noscript>
     <div class="noscript-fallback">
-      <h1>Muhammad Ramis - Penetration Tester &amp; Security-Minded Engineer</h1>
-      <p>OSCP+ penetration tester and software engineer based in Nottingham, UK, with 10+ years across offensive security and software engineering. 51 accepted bug-bounty findings across several public and private programs, MSc Cyber Security &amp; AI (Distinction, University of Sheffield).</p>
-      <p>Disciplines: offensive &amp; defensive security · Java/Spring/Kafka backends · AI/LLM security &amp; ML · accessible UI/UX engineering.</p>
-      <p>This site is interactive and needs JavaScript. Reach me at <a href="mailto:hello@ramis.me">hello@ramis.me</a> or via
+      <h1>Muhammad Ramis - Software &amp; AI Engineer and OSCP+ Penetration Tester</h1>
+      <p>Software and AI engineer with 10+ years shipping production systems, and an OSCP+ penetration tester. I build across four disciplines treated as one craft: software engineering, AI/ML, cybersecurity and accessible UI/UX. Based in Nottingham, UK. Available for consultancy, contract and freelance work, and open to hire for senior/staff roles.</p>
+      <h2>What I do</h2>
+      <ul>
+        <li><strong>Engineering:</strong> event-driven Java/Spring Boot/Kafka backends (50K+ daily financial transactions; e-commerce APIs at 6.5M requests/day), .NET microservices (99.99% uptime), Go, Node.js, Rust and PHP/Laravel; AWS/GCP/Azure, Docker, Kubernetes, Terraform.</li>
+        <li><strong>AI / ML:</strong> LLM agent systems, retrieval-augmented generation (RAG), evaluation and guardrail harnesses, and applied AI R&amp;D.</li>
+        <li><strong>Cybersecurity:</strong> OSCP and OSCP+, OffSec Gauntlet 2025 (4th of ~9,000), 51 manually-validated bug-bounty findings across several public and private programs (IDOR/BOLA, SSRF, race conditions, authorization bypass, LLM abuse).</li>
+        <li><strong>UI / UX:</strong> accessible (WCAG 2.2 AA), design-system-driven React/TypeScript front-ends.</li>
+      </ul>
+      <p>MSc Cyber Security &amp; AI (Distinction, University of Sheffield, 2025).</p>
+      <p>Contact: <a href="mailto:hello@ramis.me">hello@ramis.me</a> ·
         <a href="https://linkedin.com/in/imramis" rel="noopener">LinkedIn</a> ·
-        <a href="https://github.com/imRamis" rel="noopener">GitHub</a>.</p>
+        <a href="https://github.com/ImRamis" rel="noopener">GitHub</a>.
+        Machine-readable summary: <a href="/llms.txt">/llms.txt</a> and <a href="/llms-full.txt">/llms-full.txt</a>.</p>
+      <p>This site is interactive and works best with JavaScript enabled.</p>
     </div>
   </noscript>
 
@@ -409,10 +435,10 @@
   <!-- Home easter egg: release a mouse-controlled snake that eats the page -->
   <button class="snake-fab" id="snakeFab" type="button" aria-label="Release the snake - it eats the page" title="Release the snake 🐍">🐍</button>
 
-  <script src="assets/js/content.js?v=24"></script>
-  <script src="assets/js/posts.js?v=24"></script>
-  <script src="assets/js/data.js?v=24"></script>
-  <script src="assets/js/app.js?v=24"></script>
+  <script src="assets/js/content.js?v=25"></script>
+  <script src="assets/js/posts.js?v=25"></script>
+  <script src="assets/js/data.js?v=25"></script>
+  <script src="assets/js/app.js?v=25"></script>
 
   <!-- Three.js layers. Load after app.js so window.RamisEnter/__ramis + data-route/-lens exist.
        viewfx = per-view morphing 3D centrepiece; intro = the "choose your side" gateway.
@@ -420,8 +446,8 @@
   <script type="importmap">
   { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
   </script>
-  <script type="module" src="assets/js/viewfx.js?v=24"></script>
-  <script type="module" src="assets/js/intro.js?v=24"></script>
+  <script type="module" src="assets/js/viewfx.js?v=25"></script>
+  <script type="module" src="assets/js/intro.js?v=25"></script>
 
   <!-- Google Analytics (GA4) - loaded after page load, IP anonymised -->
   <script>

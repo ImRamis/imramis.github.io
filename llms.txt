@@ -1,0 +1,31 @@
+# Muhammad Ramis - Software & AI Engineer and OSCP+ Penetration Tester
+
+> Muhammad Ramis is a software and AI engineer with 10+ years shipping production systems, and an OSCP+ penetration tester. He builds across four disciplines treated as one craft: software engineering (event-driven Java/Spring/Kafka, .NET, Go), AI/ML (LLM agent systems, RAG, evaluation harnesses), cybersecurity (offensive and defensive; 51 accepted bug-bounty findings across several public and private programs), and accessible UI/UX engineering. Based in Nottingham, UK. Available for consultancy, contract and freelance work, and open to senior/staff roles.
+
+Portfolio: https://ramis.me. Public contact: hello@ramis.me. The site is an interactive JavaScript app; this file and /llms-full.txt provide the full content in plain text for language models and agents.
+
+## Profile
+
+- [Portfolio home](https://ramis.me): Lens-driven portfolio spanning engineering, AI/ML, security and UI/UX.
+- [Full content for LLMs](https://ramis.me/llms-full.txt): Complete plain-text portfolio (about, experience, projects, bug bounty, writing, contact).
+- Identity: Software & AI Engineer and OSCP+ Penetration Tester. 10+ years building production systems.
+- Education: MSc Cyber Security and AI, Distinction, University of Sheffield (2025). BSc Computer Science, PAF-KIET.
+- Location: Nottingham, United Kingdom. Right to work in the UK.
+
+## What he does
+
+- Engineering: 30+ production systems over a decade. Event-driven Java/Spring Boot/Kafka backends (50K+ daily financial transactions; e-commerce APIs scaled to 6.5M requests/day), .NET microservices (99.99% uptime), plus Go, Node.js, Rust and PHP/Laravel. AWS/GCP/Azure, Docker, Kubernetes, Terraform, CI/CD and observability. Disciplined TDD/BDD.
+- AI / ML: LLM agent systems, retrieval-augmented generation (RAG) with citation grounding, evaluation and guardrail harnesses, and applied AI R&D (BugTraceAI). Note: all bug-bounty findings are discovered manually; no AI tooling is used to find or submit bounties.
+- Cybersecurity: OSCP and OSCP+ certified; OffSec "The Gauntlet: Echo Response" 2025 (4th of ~9,000). 51 manually-validated bug-bounty findings across several public and private programs - IDOR/BOLA, SSRF chains, race conditions, authorization bypass, sensitive-data exposure and LLM abuse, each with a reproducible proof of concept. OSED exploit-development exam scheduled for 2026.
+- UI / UX: design-system-driven, accessible (WCAG 2.2 AA) React/TypeScript front-ends; data-dense dashboards and mobile apps.
+
+## Writing
+
+- [Blog](https://ramis.me/#/writing): Security write-ups and engineering deep-dives, including cache-poisoning to account takeover, red-teaming LLM agents, idempotent Kafka consumers, ML anomaly detection on auth logs, and post-quantum blind signatures.
+
+## Contact and availability
+
+- Email: hello@ramis.me
+- LinkedIn: https://linkedin.com/in/imramis
+- GitHub: https://github.com/ImRamis
+- Available for consultancy, contract and freelance projects across security, engineering, AI and UX, and open to hire for senior/staff roles in the UK.
