@@ -19,6 +19,14 @@ Portfolio: https://ramis.me. Public contact: hello@ramis.me. The site is an inte
 - Cybersecurity: OSCP and OSCP+ certified; OffSec "The Gauntlet: Echo Response" 2025 (4th of ~9,000). 51 manually-validated bug-bounty findings across several public and private programs - IDOR/BOLA, SSRF chains, race conditions, authorization bypass, sensitive-data exposure and LLM abuse, each with a reproducible proof of concept. OSED exploit-development exam scheduled for 2026.
 - UI / UX: design-system-driven, accessible (WCAG 2.2 AA) React/TypeScript front-ends; data-dense dashboards and mobile apps.
 
+## Services / consultancy
+
+Available for project-based, retainer or fractional engagements (remote, hybrid or on-site in the UK):
+- Security testing & assessment - web, API, cloud and Active Directory penetration testing (OSCP+), reproducible PoCs and fix-focused reports.
+- Application security & secure SDLC - secure code review, threat modelling, SAST/DAST automation in CI/CD.
+- AI / LLM engineering - agentic systems, RAG pipelines, evals and guardrails, plus red-teaming LLM agents.
+- Backend & platform engineering - event-driven Java/Kafka and .NET services built to scale and ship securely.
+
 ## Writing
 
 - [Blog](https://ramis.me/#/writing): Security write-ups and engineering deep-dives, including cache-poisoning to account takeover, red-teaming LLM agents, idempotent Kafka consumers, ML anomaly detection on auth logs, and post-quantum blind signatures.
