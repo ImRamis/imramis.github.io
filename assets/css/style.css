@@ -747,6 +747,13 @@ a.tile:hover .tile__go { transform: translateX(4px); color: var(--accent); }
 .form input, .form textarea { width: 100%; padding: .9rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; transition: border-color .25s, box-shadow .25s; }
 .form input:focus, .form textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .18); }
 .form textarea { resize: vertical; min-height: 130px; }
+.form select { width: 100%; padding: .9rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer; transition: border-color .25s, box-shadow .25s; }
+.form select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .18); }
+.form select option { color: var(--text); background: var(--surface-solid, #0e111b); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+@media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+.contact-avail { display: inline-flex; align-items: center; gap: .55rem; padding: .5rem .9rem 0.5rem .8rem; margin-bottom: 1.1rem; border-radius: 999px; border: 1px solid rgba(var(--accent-rgb), .4); background: rgba(var(--accent-rgb), .1); color: var(--text); font-size: .82rem; font-weight: 600; }
+.contact-avail i { color: var(--accent); }
 
 /* =====================================================================
    FOOTER

@@ -647,6 +647,7 @@
   function renderContact() {
     const p = DATA.profile;
     $('#contactInfo').innerHTML = `
+      <div class="contact-avail"><i class="fa-solid fa-circle-check"></i> Available for consultancy &amp; contract work, and open to hire</div>
       <button class="contact-line reveal-email" id="revealEmail" type="button"><i class="fa-solid fa-envelope"></i><span><small>Email</small><span class="masked">click to reveal</span></span></button>
       <div class="contact-line"><i class="fa-solid fa-location-dot"></i><span><small>Based in</small>${p.location}</span></div>
       <div class="contact-line"><i class="fa-solid fa-briefcase"></i><span><small>Status</small>${p.availability}</span></div>
@@ -657,9 +658,17 @@
     });
     $('#contactForm').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target;
-      const subject = encodeURIComponent(f.subject.value + ' - via ramis.me');
-      const body = encodeURIComponent(`${f.message.value}\n\n - ${f.name.value} (${f.email.value})`);
-      window.location.href = `mailto:${email()}?subject=${subject}&body=${body}`;
+      const topic = f.topic.value || 'Project inquiry';
+      const subject = encodeURIComponent(`${topic} - inquiry via ramis.me`);
+      const lines = [
+        f.message.value, '',
+        `Name: ${f.name.value}`,
+        `Email: ${f.email.value}`,
+        f.phone.value ? `Phone: ${f.phone.value}` : '',
+        f.company.value ? `Company: ${f.company.value}` : '',
+        `Looking for: ${topic}`
+      ].filter(Boolean);
+      window.location.href = `mailto:${email()}?subject=${subject}&body=${encodeURIComponent(lines.join('\n'))}`;
       toast('Opening your email client...'); f.reset();
     });
   }
