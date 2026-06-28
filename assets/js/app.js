@@ -160,7 +160,7 @@
   function handleRoute() {
     const h = location.hash;
     const blog = h.match(/^#\/blog\/(.+)$/);
-    if (blog) { if (currentView !== 'writing') showView('writing'); openArticle(decodeURIComponent(blog[1])); return; }
+    if (blog) { location.replace('/blog/' + decodeURIComponent(blog[1]) + '/'); return; }  // posts live as static pages
     closeArticle();
     const m = h.match(/^#\/([a-z]+)\/?$/);
     const v = m ? m[1] : (LEGACY[h.replace('#', '')] || 'home');
@@ -273,7 +273,7 @@
   function renderBento() {
     const post = POSTS[0];
     if (post) {
-      $('#tilePost').setAttribute('href', '#/blog/' + post.slug);
+      $('#tilePost').setAttribute('href', '/blog/' + post.slug + '/');
       $('#tilePostBody').innerHTML = `
         <strong class="tile__title">${post.title}</strong>
         <span class="tile__label">${fmtDate(post.date)} · ${post.readingTime}</span>`;
@@ -409,7 +409,7 @@
   function renderIntroCards() {
     const host = $('#introCards'); if (!host) return;
     const STAT = { engineering: '6.5M req/day', aiml: 'agents · RAG', cybersecurity: '51 findings', uiux: 'WCAG 2.2 AA' };
-    const emblem = id => `<span class="intro-card__ic intro-card__ic--emblem"><img class="intro-card__emblem" src="assets/img/emblems/${id}.svg" alt="" width="64" height="64" loading="lazy"></span>`;
+    const emblem = id => `<span class="intro-card__ic intro-card__ic--emblem"><img class="intro-card__emblem" src="assets/img/emblems/${id}.svg" alt="" width="64" height="64" decoding="async"></span>`;
     const card = (l, side) => `<button class="intro-card" data-side="${side}" type="button" style="--lc:rgb(${l.rgb});--lc-rgb:${l.rgb};--lc2:rgb(${l.rgb2})">
         ${emblem(l.id)}
         <span class="intro-card__label">${l.short}</span>
@@ -631,7 +631,7 @@
       <div class="post__tags">${(p.tags || []).slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('')}</div>
       <span class="post__more">Read article <i class="fa-solid fa-arrow-right"></i></span></article>`).join('') || `<p style="color:var(--text-dim)">No posts in this category yet.</p>`;
     const posts2 = $$('#blogGrid .post');
-    posts2.forEach(c => c.addEventListener('click', () => { location.hash = '#/blog/' + c.getAttribute('data-slug'); }));
+    posts2.forEach(c => c.addEventListener('click', () => { location.href = '/blog/' + c.getAttribute('data-slug') + '/'; }));
     if (posts2.length) void posts2[0].offsetWidth; // reflow → restart keyframe animation
     posts2.forEach((c, i) => { c.style.animationDelay = reduce ? '0ms' : (Math.min(i, 8) * 45) + 'ms'; c.classList.add('in'); });
     const more = $('#blogMore');
@@ -763,7 +763,7 @@
     items.push({ group: 'Actions', label: 'Copy email address', icon: 'fa-envelope', run: () => { navigator.clipboard && navigator.clipboard.writeText(email()); toast('Email copied to clipboard'); } });
     items.push({ group: 'Fun', label: 'Play: Packet Runner', hint: 'WebGL mini-game · opens /play in a new tab', icon: 'fa-gamepad', run: () => window.open('/play/', '_blank', 'noopener') });
     PROJECTS.forEach((p, idx) => items.push({ group: 'Projects', label: shortTitle(p.title), hint: p.type, icon: projIcon(p), run: () => { go('work'); setTimeout(() => openProjectModal(idx), 120); } }));
-    POSTS.forEach(p => items.push({ group: 'Writing', label: p.title, hint: `${fmtDate(p.date)} · ${p.readingTime}`, icon: 'fa-feather', run: () => { location.hash = '#/blog/' + p.slug; } }));
+    POSTS.forEach(p => items.push({ group: 'Writing', label: p.title, hint: `${fmtDate(p.date)} · ${p.readingTime}`, icon: 'fa-feather', run: () => { location.href = '/blog/' + p.slug + '/'; } }));
     return items;
   }
 
