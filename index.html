@@ -489,9 +489,15 @@
       if (!cap) return;
       var intro = document.getElementById('intro');
       if (intro) intro.classList.add('intro--3d');  /* set the pill layout up front so there is no late reflow (CLS) */
-      ['assets/js/viewfx.js?v=27', 'assets/js/intro.js?v=27'].forEach(function (src) {
-        var s = document.createElement('script'); s.type = 'module'; s.src = src; document.body.appendChild(s);
-      });
+      var go3d = function () {
+        ['assets/js/viewfx.js?v=27', 'assets/js/intro.js?v=27'].forEach(function (src) {
+          var s = document.createElement('script'); s.type = 'module'; s.src = src; document.body.appendChild(s);
+        });
+      };
+      /* load the heavy 3D only once the main thread is idle, so Three.js parse and init
+         stay out of the interactive window (keeps TBT/TTI clean; the prism just fades in) */
+      if ('requestIdleCallback' in window) requestIdleCallback(go3d, { timeout: 2500 });
+      else window.addEventListener('load', function () { setTimeout(go3d, 300); });
     } catch (e) {}
   })();
   </script>
