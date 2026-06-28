@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Writing - security &amp; engineering deep-dives · Muhammad Ramis</title>
+<meta name="description" content="Security write-ups and engineering deep-dives by Muhammad Ramis, OSCP+ penetration tester and software &amp; AI engineer: bug bounty, LLM security, Kafka, ML and more." />
+<link rel="canonical" href="https://ramis.me/blog/" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Writing · Muhammad Ramis" />
+<meta property="og:description" content="Security write-ups and engineering deep-dives by Muhammad Ramis." />
+<meta property="og:url" content="https://ramis.me/blog/" />
+<meta property="og:image" content="https://ramis.me/assets/og.png" />
+<meta name="theme-color" content="#0a0c12" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/css/style.css?v=27" />
+<style>
+  body{background:#0a0c12;color:#cdd3e0;}
+  .bp-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:820px;margin:0 auto;padding:1.4rem 1.2rem;}
+  .bp-nav a{color:var(--text-dim);font-weight:600;}
+  .bp-nav a:hover{color:var(--accent);}
+  .bp-brand{font-family:var(--font-display);font-weight:700;color:var(--text);}
+  .bp{width:min(100% - 2.4rem,760px);margin:1.2rem auto 5rem;}
+  .bp__track{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);}
+  .bp h1{font-family:var(--font-display);font-size:clamp(1.8rem,4.5vw,2.7rem);line-height:1.1;letter-spacing:-.02em;margin:.6rem 0 .8rem;color:var(--text);}
+  .bp__meta{font-family:var(--font-mono);font-size:.8rem;color:var(--text-faint);margin-bottom:2.2rem;display:flex;flex-wrap:wrap;gap:.6rem;}
+  .bp__cta{margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--border);color:var(--text-dim);font-size:.95rem;}
+  .bp__cta .btnrow{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1rem;}
+  .bp__cta a.primary{background:linear-gradient(100deg,#5cc6dd,#8278d9);color:#07080d;font-weight:700;padding:.7rem 1.3rem;border-radius:999px;}
+  .bp__cta a.ghost{border:1px solid var(--border-strong);color:var(--text);padding:.7rem 1.3rem;border-radius:999px;}
+  .bi{list-style:none;padding:0;margin:1.5rem 0;display:grid;gap:.7rem;}
+  .bi a{display:block;padding:1.1rem 1.2rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);transition:border-color .25s,transform .25s;}
+  .bi a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .bi__t{display:block;font-family:var(--font-display);font-weight:600;color:var(--text);}
+  .bi__m{display:block;font-family:var(--font-mono);font-size:.72rem;color:var(--text-faint);margin-top:.3rem;}
+</style>
+</head>
+<body>
+<header class="bp-nav">
+  <a class="bp-brand" href="/">Ramis<span style="color:var(--accent)">.</span></a>
+  <a href="/">Portfolio</a>
+</header>
+<main class="bp">
+  <p class="bp__track">Writing</p>
+  <h1>Security &amp; engineering deep-dives</h1>
+  <p class="bp__meta">14 articles on bug bounty, LLM security, distributed systems and ML.</p>
+  <ul class="bi">
+<li><a href="/blog/cache-poisoning-account-takeover/"><span class="bi__t">From Self-XSS to Account Takeover: Chaining Web Cache Poisoning on a Public Bug-Bounty Target</span><span class="bi__m">cybersecurity · 2026-04-02 · 8 min read</span></a></li>
+<li><a href="/blog/red-teaming-llm-agents-harness/"><span class="bi__t">A Repeatable Red-Team Harness for LLM Agents: From Corpora to Guardrails</span><span class="bi__m">aiml · 2026-03-28 · 8 min read</span></a></li>
+<li><a href="/blog/payments-race-condition-double-spend/"><span class="bi__t">Spending a Voucher Twice in 40ms: A TOCTOU Race Condition in a Payments Flow</span><span class="bi__m">cybersecurity · 2026-03-19 · 8 min read</span></a></li>
+<li><a href="/blog/choose-your-lens-portfolio-ux/"><span class="bi__t">Choose Your Lens: Designing a Portfolio for a Multi-Disciplinary Career</span><span class="bi__m">uiux · 2026-03-04 · 8 min read</span></a></li>
+<li><a href="/blog/ml-anomaly-detection-auth-logs/"><span class="bi__t">An ML Anomaly Detector for Auth Logs That a SOC Actually Trusts</span><span class="bi__m">aiml · 2026-02-23 · 8 min read</span></a></li>
+<li><a href="/blog/prompt-injection-agentic-workflows/"><span class="bi__t">Breaking Tool Trust Boundaries in Agentic Multi-LLM Workflows</span><span class="bi__m">cybersecurity · 2026-02-09 · 9 min read</span></a></li>
+<li><a href="/blog/building-bugtraceai/"><span class="bi__t">Building BugTraceAI: A 6-Phase Autonomous Security Scanning Pipeline</span><span class="bi__m">engineering · 2026-01-26 · 9 min read</span></a></li>
+<li><a href="/blog/idempotent-kafka-consumers-spring/"><span class="bi__t">Event-Driven at Scale: Idempotent Apache Kafka Consumers in Spring Boot</span><span class="bi__m">engineering · 2025-12-30 · 9 min read</span></a></li>
+<li><a href="/blog/gdpr-controls-in-cicd/"><span class="bi__t">Closing 24 GDPR Control Gaps by Wiring Article 30/32 into CI/CD</span><span class="bi__m">cybersecurity · 2025-12-15 · 8 min read</span></a></li>
+<li><a href="/blog/idor-to-account-takeover/"><span class="bi__t">From IDOR to Full Account Takeover: A Repeatable Authorization-Matrix Workflow</span><span class="bi__m">cybersecurity · 2025-11-18 · 8 min read</span></a></li>
+<li><a href="/blog/post-quantum-blind-signatures/"><span class="bi__t">Benchmarking Post-Quantum Blind Signatures: Lessons From My MSc Dissertation</span><span class="bi__m">research · 2025-11-02 · 9 min read</span></a></li>
+<li><a href="/blog/accessibility-as-a-security-control/"><span class="bi__t">Accessibility Is a Security Control: WCAG 2.2 AA in High-Stakes Dashboards</span><span class="bi__m">uiux · 2025-10-12 · 7 min read</span></a></li>
+<li><a href="/blog/llm-assisted-vuln-triage/"><span class="bi__t">Cutting Scanner Alert Fatigue 61% With an Embeddings-Based LLM Triage Layer</span><span class="bi__m">cybersecurity · 2025-09-30 · 9 min read</span></a></li>
+<li><a href="/blog/dotnet-microservices-9999-uptime/"><span class="bi__t">Engineering a .NET Core Microservices Estate for 99.99% Uptime</span><span class="bi__m">engineering · 2025-08-21 · 9 min read</span></a></li>
+  </ul>
+</main>
+</body>
+</html>

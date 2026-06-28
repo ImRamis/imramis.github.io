@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Closing 24 GDPR Control Gaps by Wiring Article 30/32 into CI/CD · Muhammad Ramis</title>
+<meta name="description" content="How I turned GDPR Articles 30 and 32 from a quarterly spreadsheet exercise into automated pipeline gates, closing 24 control gaps and mapping 74 PII fields before they ever reached production." />
+<meta name="author" content="Muhammad Ramis" />
+<link rel="canonical" href="https://ramis.me/blog/gdpr-controls-in-cicd/" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<meta name="keywords" content="gdpr, ci-cd, appsec, compliance-as-code, data-protection" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Closing 24 GDPR Control Gaps by Wiring Article 30/32 into CI/CD" />
+<meta property="og:description" content="How I turned GDPR Articles 30 and 32 from a quarterly spreadsheet exercise into automated pipeline gates, closing 24 control gaps and mapping 74 PII fields before they ever reached production." />
+<meta property="og:url" content="https://ramis.me/blog/gdpr-controls-in-cicd/" />
+<meta property="og:site_name" content="Muhammad Ramis" />
+<meta property="og:image" content="https://ramis.me/assets/og.png" />
+<meta property="article:published_time" content="2025-12-15" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Closing 24 GDPR Control Gaps by Wiring Article 30/32 into CI/CD" />
+<meta name="twitter:description" content="How I turned GDPR Articles 30 and 32 from a quarterly spreadsheet exercise into automated pipeline gates, closing 24 control gaps and mapping 74 PII fields before they ever reached production." />
+<meta name="twitter:image" content="https://ramis.me/assets/og.png" />
+<meta name="theme-color" content="#0a0c12" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/css/style.css?v=27" />
+<style>
+  body{background:#0a0c12;color:#cdd3e0;}
+  .bp-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:820px;margin:0 auto;padding:1.4rem 1.2rem;}
+  .bp-nav a{color:var(--text-dim);font-weight:600;}
+  .bp-nav a:hover{color:var(--accent);}
+  .bp-brand{font-family:var(--font-display);font-weight:700;color:var(--text);}
+  .bp{width:min(100% - 2.4rem,760px);margin:1.2rem auto 5rem;}
+  .bp__track{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);}
+  .bp h1{font-family:var(--font-display);font-size:clamp(1.8rem,4.5vw,2.7rem);line-height:1.1;letter-spacing:-.02em;margin:.6rem 0 .8rem;color:var(--text);}
+  .bp__meta{font-family:var(--font-mono);font-size:.8rem;color:var(--text-faint);margin-bottom:2.2rem;display:flex;flex-wrap:wrap;gap:.6rem;}
+  .bp__cta{margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--border);color:var(--text-dim);font-size:.95rem;}
+  .bp__cta .btnrow{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1rem;}
+  .bp__cta a.primary{background:linear-gradient(100deg,#5cc6dd,#8278d9);color:#07080d;font-weight:700;padding:.7rem 1.3rem;border-radius:999px;}
+  .bp__cta a.ghost{border:1px solid var(--border-strong);color:var(--text);padding:.7rem 1.3rem;border-radius:999px;}
+  .bi{list-style:none;padding:0;margin:1.5rem 0;display:grid;gap:.7rem;}
+  .bi a{display:block;padding:1.1rem 1.2rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);transition:border-color .25s,transform .25s;}
+  .bi a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .bi__t{display:block;font-family:var(--font-display);font-weight:600;color:var(--text);}
+  .bi__m{display:block;font-family:var(--font-mono);font-size:.72rem;color:var(--text-faint);margin-top:.3rem;}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Closing 24 GDPR Control Gaps by Wiring Article 30/32 into CI/CD","description":"How I turned GDPR Articles 30 and 32 from a quarterly spreadsheet exercise into automated pipeline gates, closing 24 control gaps and mapping 74 PII fields before they ever reached production.","datePublished":"2025-12-15","dateModified":"2025-12-15","author":{"@type":"Person","name":"Muhammad Ramis","url":"https://ramis.me"},"publisher":{"@type":"Person","name":"Muhammad Ramis"},"mainEntityOfPage":"https://ramis.me/blog/gdpr-controls-in-cicd/","url":"https://ramis.me/blog/gdpr-controls-in-cicd/","image":"https://ramis.me/assets/og.png","keywords":"gdpr, ci-cd, appsec, compliance-as-code, data-protection"}</script>
+</head>
+<body>
+<header class="bp-nav">
+  <a class="bp-brand" href="/">Ramis<span style="color:var(--accent)">.</span></a>
+  <a href="/blog/">All writing</a>
+</header>
+<main class="bp">
+  <p class="bp__track">cybersecurity</p>
+  <h1>Closing 24 GDPR Control Gaps by Wiring Article 30/32 into CI/CD</h1>
+  <p class="bp__meta"><span>2025-12-15</span><span>·</span><span>8 min read</span></p>
+  <article class="md">
+<p>Most teams treat GDPR like a fire drill: a frantic spreadsheet review the week before an audit, a few apologetic Jira tickets, and a promise to "do better next quarter". The problem is that data-protection debt accrues exactly where you ship fastest - in the pull requests that quietly add a new column, log a token, or wire up a third-party SDK. By the time the annual review catches it, the offending field has been in production for months.</p>
+<p>On one engagement I inherited a Record of Processing Activities (RoPA) that was nine months stale and 24 documented control gaps spread across encryption, retention and audit trails. Rather than re-running the spreadsheet, I moved the relevant parts of <strong>Article 30 (records of processing)</strong> and <strong>Article 32 (security of processing)</strong> into the CI/CD pipeline as machine-checkable gates. This post is how that was built, and why it stuck.</p>
+<h2>The two articles, reframed as checks</h2>
+<p>Article 30 is fundamentally an inventory problem: what personal data do you process, where does it flow, and on what legal basis. Article 32 is a controls problem: is that data encrypted in transit and at rest, is access logged, and can you demonstrate it. Neither needs to be a narrative document if you treat the codebase as the source of truth.</p>
+<p>The trick is annotating data at the point of definition. I tagged every model field that touches personal data with a structured marker so the inventory could be generated, not hand-maintained.</p>
+<pre><code># models/customer.py
+from dataclasses import dataclass, field
+
+def pii(category: str, basis: str, retention_days: int):
+    return field(metadata={"pii": True, "category": category,
+                           "legal_basis": basis, "retention_days": retention_days})
+
+@dataclass
+class Customer:
+    email: str        = pii("contact", "contract", 1095)
+    full_name: str    = pii("identity", "contract", 1095)
+    ip_address: str   = pii("technical", "legitimate_interest", 90)
+    marketing_optin: bool = pii("preference", "consent", 730)</code></pre>
+<p>A simple AST walk over the repository harvests these markers into a generated <code>ropa.json</code>. That file <em>is</em> the Article 30 record - versioned, reviewable, and diffable in every PR. When this work landed, the harvester surfaced <strong>74 PII fields</strong>, eleven of which were undocumented and three of which had no defensible legal basis at all.</p>
+<h2>Gate 1: the data-flow map must stay current</h2>
+<p>The first gate fails the build if the generated RoPA drifts from the committed one. This is what stops the inventory going stale, because adding a PII field without documenting it now breaks CI.</p>
+<pre><code># .github/workflows/gdpr-gates.yml
+name: gdpr-controls
+on: [pull_request]
+jobs:
+  ropa-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate RoPA from source
+        run: python tools/harvest_ropa.py --out ropa.generated.json
+      - name: Fail on undocumented PII
+        run: |
+          diff &lt;(jq -S . ropa.json) &lt;(jq -S . ropa.generated.json) \
+            || { echo "::error::RoPA drift - update ropa.json"; exit 1; }</code></pre>
+<p>Because the diff is human-readable, the reviewer sees exactly which field changed and can sanity-check the legal basis in the same review. Compliance stops being a separate workflow and becomes a line in a code review.</p>
+<h2>Gate 2: encryption and retention as policy</h2>
+<p>Article 32 cares about <em>how</em> the data is protected, so the second gate is a policy engine that reads the RoPA and asserts controls. I used Open Policy Agent because the rules are declarative and easy for non-engineers to read.</p>
+<pre><code>package gdpr.article32
+
+deny[msg] {
+    field := input.fields[_]
+    field.retention_days &gt; 1095
+    msg := sprintf("%s retained %d days exceeds 3y cap", [field.name, field.retention_days])
+}
+
+deny[msg] {
+    field := input.fields[_]
+    field.category == "identity"
+    not field.encrypted_at_rest
+    msg := sprintf("identity field %s not encrypted at rest", [field.name])
+}</code></pre>
+<p>The retention rule alone closed six of the 24 gaps - fields that had been quietly accumulating beyond any documented schedule. I paired it with a scheduled job that turns <code>retention_days</code> into actual deletion, so the policy and the database can never disagree for long. The rule is the contract; the cron job is the enforcement.</p>
+<h2>Gate 3: no secrets in transit, no PII in logs</h2>
+<p>Two of the nastiest gaps were a payment service talking to an internal API over plain HTTP, and an access log writing raw email addresses. Both are detectable statically. I added a Semgrep ruleset to the same pipeline:</p>
+<pre><code>semgrep --config ./gdpr-rules/ --error \
+  --severity ERROR --metrics off src/</code></pre>
+<p>The custom rules flagged <code>http://</code> literals pointing at internal hosts, logger calls receiving fields tagged as PII, and any <code>TLSv1.0</code>/<code>TLSv1.1</code> constants. Catching the log-leak pattern at PR time meant the audit-trail requirement under Article 32(1)(d) - being able to evaluate effectiveness of controls - was met by construction, because the logs themselves no longer needed redacting after the fact.</p>
+<h2>Gate 4: tamper-evident audit trails</h2>
+<p>Demonstrability is half of Article 32. I required every service handling personal data to emit structured access events to an append-only sink, and added a contract test that fails if a handler reads a PII field without emitting a corresponding <code>data_access</code> event. It is a coverage check, not a runtime one, but it forces the audit trail to exist in the code path rather than being bolted on.</p>
+<h2>What actually closed the 24 gaps</h2>
+<p>The breakdown was roughly: 6 retention overruns, 5 encryption-at-rest gaps, 4 in-transit weaknesses, 3 missing legal bases, 3 PII-in-logs issues, and 3 audit-trail blind spots. None required heroics. They required moving the check left so it ran on every merge instead of once a year.</p>
+<p>The cultural shift mattered more than any single rule. Once engineers saw a red X on a PR explaining <em>which</em> field violated <em>which</em> article, the conversation moved from "is this compliant" to "here's the one-line fix". Compliance became a property of the build, not a project.</p>
+<h2>Takeaways</h2>
+<ul><li>Treat the codebase as your Article 30 record: annotate PII at the point of definition and generate the RoPA, never hand-maintain it.</li><li>A drift gate is what keeps the inventory honest - undocumented PII should break CI like any other failing test.</li><li>Encode Article 32 as policy (OPA/Rego) so retention, encryption and TLS minimums are asserted, not assumed.</li><li>Static analysis catches the highest-impact leaks - plaintext transit and PII in logs - before they ever ship.</li><li>Make the audit trail a code-path requirement, not an afterthought, so demonstrability comes for free.</li><li>Pair every retention policy with real deletion; a rule the database can violate is theatre.</li></ul>
+
+  </article>
+  <div class="bp__cta">
+    <p>Written by <strong>Muhammad Ramis</strong>, a software &amp; AI engineer and OSCP+ penetration tester based in Nottingham, UK. Available for consultancy, contract and senior/staff roles.</p>
+    <div class="btnrow">
+      <a class="primary" href="/">View the full portfolio</a>
+      <a class="ghost" href="mailto:hello@ramis.me">Get in touch</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

