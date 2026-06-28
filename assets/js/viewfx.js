@@ -33,7 +33,7 @@ import * as THREE from 'three';
   // soft round sprite for points
   function radial() { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, '#fff'); gr.addColorStop(.3, 'rgba(255,255,255,.75)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); }
 
-  const N = 1600;
+  const N = 1000;
   const cur = new Float32Array(N * 3), tgt = new Float32Array(N * 3);
   for (let i = 0; i < N * 3; i++) cur[i] = (Math.random() - .5) * 9;
   const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(cur.slice(), 3));
