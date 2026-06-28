@@ -334,7 +334,7 @@ kbd {
 .home__sub { color: var(--text-dim); font-size: 1.02rem; margin-top: .9rem; max-width: 520px; min-height: 3.2em; }
 
 /* Lens segmented control */
-.lens-bar { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.3rem; }
+.lens-bar { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.3rem; min-height: 42px; }
 .lens-pill {
   --c: var(--lc, var(--accent)); --c-rgb: var(--lc-rgb, var(--accent-rgb));
   display: inline-flex; align-items: center; gap: .5rem;
@@ -848,6 +848,7 @@ body.snake-on .marquee__track { animation-play-state: paused !important; }
    IMMERSIVE INTRO - "choose your side" (PRISM SELECT)
    ===================================================================== */
 body.intro-open { overflow: hidden; }
+body.intro-open .stage { display: none; }  /* don't lay out the views while the intro fully covers them (avoids off-screen CLS) */
 body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; }
 .intro {
   position: fixed; inset: 0; z-index: 250; overflow: hidden auto;
@@ -884,6 +885,7 @@ body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; 
 
 /* the side cards (flat / poster layout by default - also the no-WebGL + reduced-motion picker) */
 .intro__cards { display: grid; grid-template-columns: repeat(2, minmax(0, 250px)); gap: .9rem; pointer-events: auto; }
+.intro:not(.intro--3d) .intro__cards { min-height: 460px; }  /* reserve space so card injection does not re-centre the layout (CLS) */
 .intro-card {
   --c: var(--lc, var(--accent)); --c-rgb: var(--lc-rgb, var(--accent-rgb));
   display: flex; flex-direction: column; gap: .35rem; text-align: left; position: relative; overflow: hidden;
@@ -933,6 +935,7 @@ body.intro-open .snake-fab, body.intro-open .to-top { display: none !important; 
 
 @media (max-width: 560px) {
   .intro__cards { grid-template-columns: 1fr; max-width: 320px; }
+  .intro:not(.intro--3d) .intro__cards { min-height: 560px; }
   .intro--3d .intro__cards { gap: .45rem; }
 }
 
