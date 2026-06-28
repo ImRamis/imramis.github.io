@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spending a Voucher Twice in 40ms: A TOCTOU Race Condition in a Payments Flow · Muhammad Ramis</title>
+<meta name="description" content="How I turned a single-use £25 voucher into £75 of credit by firing three redemption requests inside a 40ms window. A practical walk-through of detecting a TOCTOU double-spend with Burp Turbo Intruder, proving impact without theft, and the row-lock plus idempotency-key fix that closes it." />
+<meta name="author" content="Muhammad Ramis" />
+<link rel="canonical" href="https://ramis.me/blog/payments-race-condition-double-spend/" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<meta name="keywords" content="race-condition, toctou, payments, turbo-intruder, idempotency, bug-bounty" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Spending a Voucher Twice in 40ms: A TOCTOU Race Condition in a Payments Flow" />
+<meta property="og:description" content="How I turned a single-use £25 voucher into £75 of credit by firing three redemption requests inside a 40ms window. A practical walk-through of detecting a TOCTOU double-spend with Burp Turbo Intruder, proving impact without theft, and the row-lock plus idempotency-key fix that closes it." />
+<meta property="og:url" content="https://ramis.me/blog/payments-race-condition-double-spend/" />
+<meta property="og:site_name" content="Muhammad Ramis" />
+<meta property="og:image" content="https://ramis.me/assets/og.png" />
+<meta property="article:published_time" content="2026-03-19" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Spending a Voucher Twice in 40ms: A TOCTOU Race Condition in a Payments Flow" />
+<meta name="twitter:description" content="How I turned a single-use £25 voucher into £75 of credit by firing three redemption requests inside a 40ms window. A practical walk-through of detecting a TOCTOU double-spend with Burp Turbo Intruder, proving impact without theft, and the row-lock plus idempotency-key fix that closes it." />
+<meta name="twitter:image" content="https://ramis.me/assets/og.png" />
+<meta name="theme-color" content="#0a0c12" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/css/style.css?v=27" />
+<style>
+  body{background:#0a0c12;color:#cdd3e0;}
+  .bp-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:820px;margin:0 auto;padding:1.4rem 1.2rem;}
+  .bp-nav a{color:var(--text-dim);font-weight:600;}
+  .bp-nav a:hover{color:var(--accent);}
+  .bp-brand{font-family:var(--font-display);font-weight:700;color:var(--text);}
+  .bp{width:min(100% - 2.4rem,760px);margin:1.2rem auto 5rem;}
+  .bp__track{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);}
+  .bp h1{font-family:var(--font-display);font-size:clamp(1.8rem,4.5vw,2.7rem);line-height:1.1;letter-spacing:-.02em;margin:.6rem 0 .8rem;color:var(--text);}
+  .bp__meta{font-family:var(--font-mono);font-size:.8rem;color:var(--text-faint);margin-bottom:2.2rem;display:flex;flex-wrap:wrap;gap:.6rem;}
+  .bp__cta{margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--border);color:var(--text-dim);font-size:.95rem;}
+  .bp__cta .btnrow{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1rem;}
+  .bp__cta a.primary{background:linear-gradient(100deg,#5cc6dd,#8278d9);color:#07080d;font-weight:700;padding:.7rem 1.3rem;border-radius:999px;}
+  .bp__cta a.ghost{border:1px solid var(--border-strong);color:var(--text);padding:.7rem 1.3rem;border-radius:999px;}
+  .bi{list-style:none;padding:0;margin:1.5rem 0;display:grid;gap:.7rem;}
+  .bi a{display:block;padding:1.1rem 1.2rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);transition:border-color .25s,transform .25s;}
+  .bi a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .bi__t{display:block;font-family:var(--font-display);font-weight:600;color:var(--text);}
+  .bi__m{display:block;font-family:var(--font-mono);font-size:.72rem;color:var(--text-faint);margin-top:.3rem;}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Spending a Voucher Twice in 40ms: A TOCTOU Race Condition in a Payments Flow","description":"How I turned a single-use £25 voucher into £75 of credit by firing three redemption requests inside a 40ms window. A practical walk-through of detecting a TOCTOU double-spend with Burp Turbo Intruder, proving impact without theft, and the row-lock plus idempotency-key fix that closes it.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Person","name":"Muhammad Ramis","url":"https://ramis.me"},"publisher":{"@type":"Person","name":"Muhammad Ramis"},"mainEntityOfPage":"https://ramis.me/blog/payments-race-condition-double-spend/","url":"https://ramis.me/blog/payments-race-condition-double-spend/","image":"https://ramis.me/assets/og.png","keywords":"race-condition, toctou, payments, turbo-intruder, idempotency, bug-bounty"}</script>
+</head>
+<body>
+<header class="bp-nav">
+  <a class="bp-brand" href="/">Ramis<span style="color:var(--accent)">.</span></a>
+  <a href="/blog/">All writing</a>
+</header>
+<main class="bp">
+  <p class="bp__track">cybersecurity</p>
+  <h1>Spending a Voucher Twice in 40ms: A TOCTOU Race Condition in a Payments Flow</h1>
+  <p class="bp__meta"><span>2026-03-19</span><span>·</span><span>8 min read</span></p>
+  <article class="md">
+<p>A single-use voucher is a promise: redeem it once, the balance drops to zero, done. The interesting question for an attacker is not <em>can I redeem it</em> but <em>what happens if I redeem it three times before the database has finished telling itself I redeemed it once</em>. On one programme I worked, the answer was that a £25 voucher became £75 of account credit, applied in a single burst of requests roughly 40 milliseconds wide. This is the anatomy of that bug: a textbook time-of-check to time-of-use (TOCTOU) race, why it survives normal testing, how I detected it with Turbo Intruder, how I proved impact without actually stealing money, and the two-line-of-intent fix that kills it.</p>
+<h2>The check and the use are two different moments</h2>
+<p>Most redemption code reads like this in pseudo-form, and it looks perfectly safe until you stare at the gap:</p>
+<pre><code>def redeem(voucher_code, account_id):
+    v = db.query("SELECT balance, status FROM vouchers WHERE code = %s", voucher_code)
+    if v.status != "ACTIVE" or v.balance &lt;= 0:          # &lt;-- TIME OF CHECK
+        raise Rejected("voucher not redeemable")
+
+    apply_credit(account_id, v.balance)                  # the gap
+    db.execute("UPDATE vouchers SET status='REDEEMED', balance=0 "
+               "WHERE code = %s", voucher_code)          # &lt;-- TIME OF USE</code></pre>
+<p>The check (is this voucher still ACTIVE?) and the use (mark it REDEEMED) are separated by application logic and at least one network hop to the database. Under a single sequential user that gap is invisible. But if several requests reach the <code>SELECT</code> line <em>before any of them reaches the <code>UPDATE</code></em>, every one of them sees <code>status = ACTIVE</code>, every one passes the check, and every one calls <code>apply_credit</code>. The final <code>UPDATE</code> runs N times but only the first transition matters; the credit, however, has already been applied N times. There is no row lock and no idempotency guard, so the database happily lets concurrent transactions read the same stale state.</p>
+<p>The reason this slips through QA, manual pentests, and even most automated scanners is that they are sequential by nature. You click redeem, you see one credit, the voucher greys out, and the flow looks airtight. The bug only exists in the time dimension, and you have to attack it with concurrency.</p>
+<h2>Detecting it with Turbo Intruder</h2>
+<p>Single-packet attacks are the right tool here. The goal is to make the server process all redemption requests in the same instant, eliminating jitter from the network so the requests genuinely overlap inside the vulnerable window. Burp's Turbo Intruder, with its last-byte synchronisation gate, does exactly this. I captured the legitimate <code>POST /api/v1/vouchers/redeem</code> request and dropped it into this harness:</p>
+<pre><code>def queueRequests(target, wordlists):
+    engine = RequestEngine(endpoint=target.endpoint,
+                           concurrentConnections=30,
+                           engine=Engine.BURP2)
+    # Queue 30 identical redemption requests, hold the final byte back
+    for i in range(30):
+        engine.queue(target.req, gate='race1')
+    # Release all of them at once -&gt; requests land within ~1-2ms of each other
+    engine.openGate('race1')
+
+def handleResponse(req, interception):
+    table.add(req)</code></pre>
+<p>The <code>gate</code> parameter is the whole trick: each request is sent up to its final byte, then parked. <code>openGate</code> releases the held bytes for all 30 connections simultaneously, so the server sees a synchronised flood. On a modern stack the HTTP/2 single-packet variant tightens the spread to well under a millisecond, which is what let me reliably hit a 40ms server-side window.</p>
+<p>What I watched for in the results table:</p>
+<ul><li>More than one <code>200 OK</code> with a success body for a voucher that should be redeemable once.</li><li>The account balance afterwards being a multiple of the voucher value rather than equal to it.</li><li>The voucher row still ending up <code>REDEEMED</code> (the bug does not corrupt the voucher state; it over-applies the credit, which is what makes it sneaky).</li></ul>
+<p>First run: three of the thirty requests succeeded before the row flipped to <code>REDEEMED</code>. Account credit went from £0 to £75 on a £25 voucher. Replaying confirmed it was deterministic enough to be a real, reportable issue rather than a one-off fluke.</p>
+<h2>Proving impact without committing fraud</h2>
+<p>This is the part responsible disclosure lives or dies on. You must demonstrate financial impact without actually extracting value, and you must leave an audit trail that protects you. My approach:</p>
+<ol><li>Use only my own test accounts and my own legitimately issued vouchers. No third-party objects ever entered the test.</li><li>Cap the concurrency to the minimum that reproduces the effect (I found three successes with bursts of ten, not hundreds).</li><li>Document the <em>before</em> and <em>after</em> balance with timestamps and the raw Turbo Intruder results table, then immediately raise a support ticket to have the over-credited balance voided rather than spending it.</li><li>Quantify reach, not just the proof: a £25 voucher yielding 3x is a 200% loss multiplier; scaled across a promo campaign of, say, 50,000 vouchers, that is a six-figure exposure. That sentence is what moves a report from Medium to High.</li></ol>
+<p>I packaged this as an accepted submission with a short screen recording of the synchronised burst and the resulting balance. Framing it around loss multiplier and campaign blast radius, rather than "I got free money", is what got it triaged as High rather than dismissed as a self-inflicted edge case.</p>
+<h2>Remediation: make the use atomic</h2>
+<p>There are two complementary fixes, and a serious payments flow should have both.</p>
+<p><strong>Row-level locking</strong> collapses the check and the use into one atomic step. Inside a transaction, select the voucher <code>FOR UPDATE</code> so concurrent transactions block instead of reading stale state:</p>
+<pre><code>BEGIN;
+SELECT balance FROM vouchers WHERE code = $1 AND status = 'ACTIVE' FOR UPDATE;
+-- second concurrent txn now WAITS here until the first COMMITs
+UPDATE vouchers SET status='REDEEMED', balance=0 WHERE code = $1;
+COMMIT;</code></pre>
+<p>The losing transactions wake up after the commit, re-read <code>status = 'REDEEMED'</code>, and fail the check cleanly. Better still, make the state transition itself the guard with a conditional update and check the affected row count: <code>UPDATE vouchers SET status='REDEEMED' WHERE code=$1 AND status='ACTIVE'</code> returns 1 for exactly one winner and 0 for everyone else.</p>
+<p><strong>Idempotency keys</strong> defend the credit-application side and the wider API. Require a client-supplied <code>Idempotency-Key</code> header, persist it with a unique constraint, and return the stored result on replay. Now even a retried or duplicated request applies the credit at most once, regardless of timing.</p>
+<h2>Takeaways</h2>
+<ul><li>TOCTOU bugs live in the gap between a check and a write; if that gap crosses a network hop without a lock, it is racing.</li><li>Sequential testing will never find them. Turbo Intruder's gate, or HTTP/2 single-packet, is the detection primitive.</li><li>Prove impact with your own assets, cap concurrency, void the gains, and report in terms of loss multiplier and blast radius.</li><li>Fix with both <code>SELECT ... FOR UPDATE</code> (or a conditional <code>UPDATE</code> checking row count) and idempotency keys. Either alone is fragile; together they make the operation genuinely once-only.</li></ul>
+
+  </article>
+  <div class="bp__cta">
+    <p>Written by <strong>Muhammad Ramis</strong>, a software &amp; AI engineer and OSCP+ penetration tester based in Nottingham, UK. Available for consultancy, contract and senior/staff roles.</p>
+    <div class="btnrow">
+      <a class="primary" href="/">View the full portfolio</a>
+      <a class="ghost" href="mailto:hello@ramis.me">Get in touch</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

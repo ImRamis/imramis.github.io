@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>An ML Anomaly Detector for Auth Logs That a SOC Actually Trusts · Muhammad Ramis</title>
+<meta name="description" content="A practical walkthrough of building an unsupervised anomaly detector for authentication logs - feature engineering that survives contact with reality, isolation forest versus autoencoder, taming false positives, and giving analysts an explanation they can act on." />
+<meta name="author" content="Muhammad Ramis" />
+<link rel="canonical" href="https://ramis.me/blog/ml-anomaly-detection-auth-logs/" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<meta name="keywords" content="anomaly-detection, machine-learning, soc, authentication, explainability" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="An ML Anomaly Detector for Auth Logs That a SOC Actually Trusts" />
+<meta property="og:description" content="A practical walkthrough of building an unsupervised anomaly detector for authentication logs - feature engineering that survives contact with reality, isolation forest versus autoencoder, taming false positives, and giving analysts an explanation they can act on." />
+<meta property="og:url" content="https://ramis.me/blog/ml-anomaly-detection-auth-logs/" />
+<meta property="og:site_name" content="Muhammad Ramis" />
+<meta property="og:image" content="https://ramis.me/assets/og.png" />
+<meta property="article:published_time" content="2026-02-23" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="An ML Anomaly Detector for Auth Logs That a SOC Actually Trusts" />
+<meta name="twitter:description" content="A practical walkthrough of building an unsupervised anomaly detector for authentication logs - feature engineering that survives contact with reality, isolation forest versus autoencoder, taming false positives, and giving analysts an explanation they can act on." />
+<meta name="twitter:image" content="https://ramis.me/assets/og.png" />
+<meta name="theme-color" content="#0a0c12" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/css/style.css?v=27" />
+<style>
+  body{background:#0a0c12;color:#cdd3e0;}
+  .bp-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:820px;margin:0 auto;padding:1.4rem 1.2rem;}
+  .bp-nav a{color:var(--text-dim);font-weight:600;}
+  .bp-nav a:hover{color:var(--accent);}
+  .bp-brand{font-family:var(--font-display);font-weight:700;color:var(--text);}
+  .bp{width:min(100% - 2.4rem,760px);margin:1.2rem auto 5rem;}
+  .bp__track{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);}
+  .bp h1{font-family:var(--font-display);font-size:clamp(1.8rem,4.5vw,2.7rem);line-height:1.1;letter-spacing:-.02em;margin:.6rem 0 .8rem;color:var(--text);}
+  .bp__meta{font-family:var(--font-mono);font-size:.8rem;color:var(--text-faint);margin-bottom:2.2rem;display:flex;flex-wrap:wrap;gap:.6rem;}
+  .bp__cta{margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--border);color:var(--text-dim);font-size:.95rem;}
+  .bp__cta .btnrow{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1rem;}
+  .bp__cta a.primary{background:linear-gradient(100deg,#5cc6dd,#8278d9);color:#07080d;font-weight:700;padding:.7rem 1.3rem;border-radius:999px;}
+  .bp__cta a.ghost{border:1px solid var(--border-strong);color:var(--text);padding:.7rem 1.3rem;border-radius:999px;}
+  .bi{list-style:none;padding:0;margin:1.5rem 0;display:grid;gap:.7rem;}
+  .bi a{display:block;padding:1.1rem 1.2rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);transition:border-color .25s,transform .25s;}
+  .bi a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .bi__t{display:block;font-family:var(--font-display);font-weight:600;color:var(--text);}
+  .bi__m{display:block;font-family:var(--font-mono);font-size:.72rem;color:var(--text-faint);margin-top:.3rem;}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"An ML Anomaly Detector for Auth Logs That a SOC Actually Trusts","description":"A practical walkthrough of building an unsupervised anomaly detector for authentication logs - feature engineering that survives contact with reality, isolation forest versus autoencoder, taming false positives, and giving analysts an explanation they can act on.","datePublished":"2026-02-23","dateModified":"2026-02-23","author":{"@type":"Person","name":"Muhammad Ramis","url":"https://ramis.me"},"publisher":{"@type":"Person","name":"Muhammad Ramis"},"mainEntityOfPage":"https://ramis.me/blog/ml-anomaly-detection-auth-logs/","url":"https://ramis.me/blog/ml-anomaly-detection-auth-logs/","image":"https://ramis.me/assets/og.png","keywords":"anomaly-detection, machine-learning, soc, authentication, explainability"}</script>
+</head>
+<body>
+<header class="bp-nav">
+  <a class="bp-brand" href="/">Ramis<span style="color:var(--accent)">.</span></a>
+  <a href="/blog/">All writing</a>
+</header>
+<main class="bp">
+  <p class="bp__track">aiml</p>
+  <h1>An ML Anomaly Detector for Auth Logs That a SOC Actually Trusts</h1>
+  <p class="bp__meta"><span>2026-02-23</span><span>·</span><span>8 min read</span></p>
+  <article class="md">
+<p>Most ML detection projects die the same way: the model flags 400 "anomalies" a night, the SOC triages the first dozen, finds them all benign, and quietly mutes the feed. The model was never wrong about the maths - it was wrong about the operating context. When I built an anomaly detector over authentication logs, my single hardest constraint was not AUC. It was earning an analyst's trust on day three, when the novelty has worn off and every false positive is a personal insult.</p>
+<p>This post is how I got there: the features that mattered, why I shipped an isolation forest before an autoencoder, how I held false positives to something a human can absorb, and the explainability layer that made the difference between "ignore" and "investigate".</p>
+<h2>Why authentication logs, and why unsupervised</h2>
+<p>Auth logs are a sweet spot. They are high volume, structurally consistent (user, source IP, timestamp, result, user agent, geo), and the interesting events - credential stuffing, impossible travel, low-and-slow brute force, a service account suddenly logging in from a workstation - are genuinely rare. Rare and unlabelled is exactly where unsupervised anomaly detection belongs. You almost never have clean labels for "compromised login", and by the time you do, the technique has moved on.</p>
+<p>So the framing is: model what <em>normal</em> looks like per entity, and score deviation. No attack signatures, no chasing yesterday's IOCs.</p>
+<h2>Feature engineering is 80% of the result</h2>
+<p>The model is almost an afterthought next to the features. Raw log lines are useless; the signal lives in <em>behavioural context</em> relative to an entity's own baseline. I engineer features per (user, hour-bucket) window:</p>
+<ul><li><strong>Velocity</strong>: failed logins in the last 1/5/60 minutes; distinct source IPs per user per hour.</li><li><strong>Novelty</strong>: is this ASN/country/user-agent new for <em>this</em> user in the trailing 30 days? (boolean + days-since-first-seen)</li><li><strong>Temporal</strong>: hour-of-day and day-of-week encoded as sine/cosine pairs so 23:00 and 00:00 are neighbours, not opposites.</li><li><strong>Impossible travel</strong>: great-circle distance / time-delta between consecutive successful logins, capped at a sane max speed.</li><li><strong>Entity rarity</strong>: smoothed frequency of the source IP and ASN across the whole population.</li></ul>
+<p>Two rules saved me. First, compute baselines on a <strong>trailing window that excludes the event being scored</strong> - otherwise the anomaly contaminates its own baseline and the score collapses. Second, log-scale every count feature; raw counts give the model a heavy tail it will obsess over.</p>
+<pre><code>import numpy as np
+
+def encode_cyclical(series, period):
+    radians = 2 * np.pi * series / period
+    return np.sin(radians), np.cos(radians)
+
+def build_features(df):
+    df["fail_1m"]  = rolling_count(df, "result", "fail", "1min")
+    df["fail_5m"]  = rolling_count(df, "result", "fail", "5min")
+    df["distinct_ip_1h"] = rolling_nunique(df, "src_ip", "1h")
+    df["new_country"]    = is_new_for_user(df, "country", window="30d")
+    df["days_since_asn"] = days_since_first_seen(df, "asn")
+    df["travel_kmh"]     = impossible_travel_speed(df)
+    df["hour_sin"], df["hour_cos"] = encode_cyclical(df["hour"], 24)
+    count_cols = ["fail_1m", "fail_5m", "distinct_ip_1h", "travel_kmh"]
+    df[count_cols] = np.log1p(df[count_cols].clip(lower=0))
+    return df</code></pre>
+<h2>Isolation forest vs autoencoder</h2>
+<p>I prototyped both. The honest summary:</p>
+<p><strong>Isolation forest</strong> isolates points by random axis-aligned splits; anomalies need fewer splits to isolate. It is fast, needs almost no tuning, handles mixed-scale features gracefully, and - critically - its path-length contribution per feature is <em>directly attributable</em>. It shipped first.</p>
+<p><strong>Autoencoder</strong> (a small dense net, 32-16-8-16-32) reconstructs normal behaviour and flags high reconstruction error. It captured non-linear feature <em>interactions</em> the forest missed - e.g. "new country is fine, and 02:00 is fine, but new country <em>at</em> 02:00 <em>with</em> a fresh user-agent is not". The cost: it needs more data per entity, a GPU is nice, retraining discipline is mandatory, and explaining it is harder.</p>
+<p>My decision: <strong>isolation forest as the workhorse, autoencoder as a second-opinion ensemble</strong> on the forest's borderline band. A login is escalated only if both score it anomalous, which crushed the false-positive rate on its own. I validated this offline against a held-out set of confirmed account-takeover incidents and red-team logins; the ensemble recovered the autoencoder's interaction sensitivity without inheriting its noisier tail. This is the same consensus-voting pattern I lean on in my BugTraceAI scanner - independent detectors agreeing is a far stronger signal than one detector shouting.</p>
+<h2>Controlling false positives so the feed survives</h2>
+<p>Raw anomaly scores are not alerts. The pipeline between them is where trust is won or lost:</p>
+<ol><li><strong>Per-entity thresholds, not a global one.</strong> A service account's "normal" is tighter than a sales rep's. I set the contamination threshold from each entity's own score distribution (a high percentile of its trailing scores), not one number for the org.</li><li><strong>Score, don't gate, then rank.</strong> Everything gets a 0-100 risk score. Analysts see a ranked queue, not a binary firehose. The top 20 each morning is a contract they can keep.</li><li><strong>Suppression rules for known-benign anomalies.</strong> VPN egress ranges, the quarterly travelling-exec pattern, CI runners. These are <em>legitimately</em> anomalous and <em>legitimately</em> boring; they get allow-listed with an expiry so the list does not rot.</li><li><strong>Analyst feedback loop.</strong> Every dismissal writes back a label. Weekly, I use that to recalibrate thresholds and surface features that correlate with "dismissed". This LLM-assisted triage style cut duplicate review effort by 61% on a separate scanner stream I run.</li></ol>
+<p>The metric I report to the SOC is not precision in the abstract - it is <strong>alerts per analyst per shift</strong> and <strong>percentage of escalations that became a ticket</strong>. Those are the numbers that decide whether the feed stays on.</p>
+<h2>Explainability: the part that actually earns trust</h2>
+<p>An anomaly score of 0.97 tells an analyst nothing. So every alert ships with a plain-language reason derived from per-feature attribution. For the isolation forest I compute each feature's contribution to the short path length; for the ensemble I reconcile that with the autoencoder's per-feature reconstruction error. The output reads like:</p>
+<blockquote><p>Score 91/100. Drivers: login from a <strong>new country</strong> (Brazil; first-ever for this user), <strong>new ASN</strong>, at <strong>02:14 local</strong> (user normally active 08:00-18:00), following <strong>6 failed attempts in 4 minutes</strong>. Travel speed since prior login: <strong>impossible (1,900 km/h)</strong>.</p>
+</blockquote>
+<p>That sentence is the product. It lets an analyst confirm or dismiss in seconds, and it teaches them what the model weighs - which is how a team graduates from suspicion to trust.</p>
+<h2>Takeaways</h2>
+<ul><li>Spend your time on entity-relative behavioural features; the model is the easy part.</li><li>Compute baselines on a window that excludes the scored event, and log-scale counts.</li><li>Isolation forest first for speed and attribution; add an autoencoder as an ensemble second opinion for interaction effects.</li><li>Rank by risk score, set per-entity thresholds, and treat analyst dismissals as labels.</li><li>Ship a plain-language reason with every alert - explainability is the trust mechanism, not a nice-to-have.</li><li>Measure alerts-per-shift and escalation-to-ticket rate, not just AUC.</li></ul>
+
+  </article>
+  <div class="bp__cta">
+    <p>Written by <strong>Muhammad Ramis</strong>, a software &amp; AI engineer and OSCP+ penetration tester based in Nottingham, UK. Available for consultancy, contract and senior/staff roles.</p>
+    <div class="btnrow">
+      <a class="primary" href="/">View the full portfolio</a>
+      <a class="ghost" href="mailto:hello@ramis.me">Get in touch</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

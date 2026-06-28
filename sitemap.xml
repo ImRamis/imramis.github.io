@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://ramis.me/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://ramis.me/blog/cache-poisoning-account-takeover</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/red-teaming-llm-agents-harness</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/payments-race-condition-double-spend</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/choose-your-lens-portfolio-ux</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/ml-anomaly-detection-auth-logs</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/prompt-injection-agentic-workflows</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/building-bugtraceai</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/idempotent-kafka-consumers-spring</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/gdpr-controls-in-cicd</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/idor-to-account-takeover</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/post-quantum-blind-signatures</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/accessibility-as-a-security-control</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/llm-assisted-vuln-triage</loc><priority>0.7</priority></url>
-  <url><loc>https://ramis.me/blog/dotnet-microservices-9999-uptime</loc><priority>0.7</priority></url>
+  <url><loc>https://ramis.me/</loc><changefreq>weekly</changefreq><priority>1.0</priority><lastmod>2026-06-28</lastmod></url>
+  <url><loc>https://ramis.me/blog/</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2026-06-28</lastmod></url>
+  <url><loc>https://ramis.me/blog/cache-poisoning-account-takeover/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-04-02</lastmod></url>
+  <url><loc>https://ramis.me/blog/red-teaming-llm-agents-harness/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-03-28</lastmod></url>
+  <url><loc>https://ramis.me/blog/payments-race-condition-double-spend/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-03-19</lastmod></url>
+  <url><loc>https://ramis.me/blog/choose-your-lens-portfolio-ux/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-03-04</lastmod></url>
+  <url><loc>https://ramis.me/blog/ml-anomaly-detection-auth-logs/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-02-23</lastmod></url>
+  <url><loc>https://ramis.me/blog/prompt-injection-agentic-workflows/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-02-09</lastmod></url>
+  <url><loc>https://ramis.me/blog/building-bugtraceai/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-01-26</lastmod></url>
+  <url><loc>https://ramis.me/blog/idempotent-kafka-consumers-spring/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2025-12-30</lastmod></url>
+  <url><loc>https://ramis.me/blog/gdpr-controls-in-cicd/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2025-12-15</lastmod></url>
+  <url><loc>https://ramis.me/blog/idor-to-account-takeover/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2025-11-18</lastmod></url>
+  <url><loc>https://ramis.me/blog/post-quantum-blind-signatures/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2025-11-02</lastmod></url>
+  <url><loc>https://ramis.me/blog/accessibility-as-a-security-control/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2025-10-12</lastmod></url>
+  <url><loc>https://ramis.me/blog/llm-assisted-vuln-triage/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2025-09-30</lastmod></url>
+  <url><loc>https://ramis.me/blog/dotnet-microservices-9999-uptime/</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2025-08-21</lastmod></url>
 </urlset>
