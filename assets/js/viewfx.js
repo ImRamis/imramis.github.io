@@ -75,9 +75,12 @@ import * as THREE from 'three';
   const mouse = { x: 0, y: 0 };
   addEventListener('pointermove', e => { mouse.x = e.clientX / innerWidth - .5; mouse.y = e.clientY / innerHeight - .5; }, { passive: true });
 
-  let raf, t0 = performance.now();
+  let raf, lastDraw = performance.now();
+  const FRAME_MS = 1000 / 30;                 // throttle the ambient cloud to ~30fps (about half the main-thread cost)
   function frame(now) {
-    const dt = Math.min((now - t0) / 1000, .05); t0 = now;
+    raf = requestAnimationFrame(frame);
+    if (now - lastDraw < FRAME_MS) return;
+    const dt = Math.min((now - lastDraw) / 1000, .05); lastDraw = now;
     const p = geo.attributes.position.array;
     for (let i = 0; i < N * 3; i++) { cur[i] += (tgt[i] - cur[i]) * Math.min(1, dt * 2.4); p[i] = cur[i]; }
     geo.attributes.position.needsUpdate = true;
@@ -92,8 +95,7 @@ import * as THREE from 'three';
     points.rotation.x = mouse.y * 0.25; lines.rotation.x = points.rotation.x;
     mat.color.lerp(targetColor, Math.min(1, dt * 3)); lines.material.color.copy(mat.color);
     renderer.render(scene, camera);
-    raf = requestAnimationFrame(frame);
   }
-  document.addEventListener('visibilitychange', () => { if (document.hidden) cancelAnimationFrame(raf); else { t0 = performance.now(); raf = requestAnimationFrame(frame); } });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) cancelAnimationFrame(raf); else { lastDraw = performance.now(); raf = requestAnimationFrame(frame); } });
   raf = requestAnimationFrame(frame);
 })();

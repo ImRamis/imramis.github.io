@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#07080d" />
 
   <!-- Security headers (GitHub Pages can't set real headers; enforced via meta) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://www.google-analytics.com https://*.clarity.ms; connect-src 'self' https://unpkg.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.clarity.ms; frame-src https://www.clarity.ms; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com https://*.clarity.ms https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://www.google-analytics.com https://*.clarity.ms https://c.bing.com; connect-src 'self' https://unpkg.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.clarity.ms https://cloudflareinsights.com; frame-src https://www.clarity.ms; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <noscript><style>#intro{display:none!important}</style></noscript>
 
@@ -48,8 +48,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <!-- Icons -->
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" /></noscript>
 
   <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
   <link rel="dns-prefetch" href="https://www.clarity.ms" />
@@ -63,7 +63,7 @@
     @keyframes pl-spin{to{transform:rotate(360deg)}}
     @media (prefers-reduced-motion:reduce){#preloader .pl__ring{animation:none}}
   </style>
-  <link rel="stylesheet" href="assets/css/style.css?v=26" />
+  <link rel="stylesheet" href="assets/css/style.css?v=27" />
 
   <script type="application/ld+json">
   {
@@ -183,7 +183,7 @@
           <i class="fa-solid fa-magnifying-glass"></i><span>Search</span><kbd>⌘K</kbd>
         </button>
         <div class="lens-switch" id="lensSwitch">
-          <button class="lens-switch__btn" id="lensSwitchBtn" aria-haspopup="true" aria-expanded="false">
+          <button class="lens-switch__btn" id="lensSwitchBtn" aria-haspopup="true" aria-expanded="false" aria-label="Switch discipline lens">
             <span class="swatch"></span><span class="lstxt" id="lensSwitchLabel">Overview</span>
             <i class="fa-solid fa-chevron-down" style="font-size:.7rem"></i>
           </button>
@@ -461,10 +461,10 @@
   <!-- Home easter egg: release a mouse-controlled snake that eats the page -->
   <button class="snake-fab" id="snakeFab" type="button" aria-label="Release the snake - it eats the page" title="Release the snake 🐍">🐍</button>
 
-  <script src="assets/js/content.js?v=26"></script>
-  <script src="assets/js/posts.js?v=26"></script>
-  <script src="assets/js/data.js?v=26"></script>
-  <script src="assets/js/app.js?v=26"></script>
+  <script defer src="assets/js/content.js?v=27"></script>
+  <script defer src="assets/js/posts.js?v=27"></script>
+  <script defer src="assets/js/data.js?v=27"></script>
+  <script defer src="assets/js/app.js?v=27"></script>
 
   <!-- Three.js layers. Load after app.js so window.RamisEnter/__ramis + data-route/-lens exist.
        viewfx = per-view morphing 3D centrepiece; intro = the "choose your side" gateway.
@@ -472,8 +472,27 @@
   <script type="importmap">
   { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
   </script>
-  <script type="module" src="assets/js/viewfx.js?v=26"></script>
-  <script type="module" src="assets/js/intro.js?v=26"></script>
+  <script>
+  /* Load the heavy 3D (Three.js + intro + viewfx) only on capable desktops.
+     Mobile, low-power, save-data and reduced-motion get the lightweight static
+     intro and 2D background - a large win for mobile performance and CLS. */
+  (function () {
+    try {
+      var cap = window.matchMedia
+        && matchMedia('(min-width: 900px)').matches
+        && (navigator.hardwareConcurrency || 8) >= 4
+        && (navigator.deviceMemory || 8) >= 4
+        && !(navigator.connection && navigator.connection.saveData)
+        && localStorage.getItem('ramis-motion') !== 'off';  /* motion is a user toggle, not the OS reduced-motion query (by design) */
+      if (!cap) return;
+      var intro = document.getElementById('intro');
+      if (intro) intro.classList.add('intro--3d');  /* set the pill layout up front so there is no late reflow (CLS) */
+      ['assets/js/viewfx.js?v=27', 'assets/js/intro.js?v=27'].forEach(function (src) {
+        var s = document.createElement('script'); s.type = 'module'; s.src = src; document.body.appendChild(s);
+      });
+    } catch (e) {}
+  })();
+  </script>
 
   <!-- Google Analytics (GA4) - loaded after page load, IP anonymised -->
   <script>
