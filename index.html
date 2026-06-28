@@ -64,7 +64,7 @@
     @keyframes pl-spin{to{transform:rotate(360deg)}}
     @media (prefers-reduced-motion:reduce){#preloader .pl__ring{animation:none}}
   </style>
-  <link rel="stylesheet" href="assets/css/style.css?v=28" />
+  <link rel="stylesheet" href="assets/css/style.css?v=29" />
 
   <script type="application/ld+json">
   {
@@ -463,10 +463,10 @@
   <!-- Home easter egg: release a mouse-controlled snake that eats the page -->
   <button class="snake-fab" id="snakeFab" type="button" aria-label="Release the snake - it eats the page" title="Release the snake 🐍">🐍</button>
 
-  <script defer src="assets/js/content.js?v=28"></script>
-  <script defer src="assets/js/posts.js?v=28"></script>
-  <script defer src="assets/js/data.js?v=28"></script>
-  <script defer src="assets/js/app.js?v=28"></script>
+  <script defer src="assets/js/content.js?v=29"></script>
+  <script defer src="assets/js/posts.js?v=29"></script>
+  <script defer src="assets/js/data.js?v=29"></script>
+  <script defer src="assets/js/app.js?v=29"></script>
 
   <!-- Three.js layers. Load after app.js so window.RamisEnter/__ramis + data-route/-lens exist.
        viewfx = per-view morphing 3D centrepiece; intro = the "choose your side" gateway.
@@ -490,7 +490,7 @@
       var intro = document.getElementById('intro');
       if (intro) intro.classList.add('intro--3d');  /* set the pill layout up front so there is no late reflow (CLS) */
       var go3d = function () {
-        ['assets/js/viewfx.js?v=28', 'assets/js/intro.js?v=28'].forEach(function (src) {
+        ['assets/js/viewfx.js?v=29', 'assets/js/intro.js?v=29'].forEach(function (src) {
           var s = document.createElement('script'); s.type = 'module'; s.src = src; document.body.appendChild(s);
         });
       };

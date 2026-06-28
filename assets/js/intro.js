@@ -118,7 +118,9 @@ import * as THREE from 'three';
   }
 
   let raf, last = performance.now(), t = 0;
+  const FRAME_MS = 1000 / 30;                          // cap at ~30fps; ambient motion is slow, so this halves CPU with no visible change
   function frame(now) {
+    if (now - last < FRAME_MS) { raf = requestAnimationFrame(frame); return; }
     const dt = Math.min((now - last) / 1000, .05); last = now; t += dt;
     cur.x += (target.x - cur.x) * .05; cur.y += (target.y - cur.y) * .05;
     // centre prism: gentle spin of the emblem + halo + bob

@@ -66,25 +66,29 @@ import * as THREE from 'three';
   const accentRGB = () => (getComputedStyle(root).getPropertyValue('--accent-rgb').trim() || '92,198,221');
   let targetColor = new THREE.Color(`rgb(${accentRGB()})`);
   const obs = new MutationObserver(ms => ms.forEach(m => {
-    if (m.attributeName === 'data-route') shapeFor(root.getAttribute('data-route') || 'home');
-    else if (m.attributeName === 'data-lens') targetColor = new THREE.Color(`rgb(${accentRGB()})`);
-    else if (m.attributeName === 'data-motion' && root.getAttribute('data-motion') === 'off') { cancelAnimationFrame(raf); cv.style.display = 'none'; }
+    if (m.attributeName === 'data-route') { shapeFor(root.getAttribute('data-route') || 'home'); wake(); }
+    else if (m.attributeName === 'data-lens') { targetColor = new THREE.Color(`rgb(${accentRGB()})`); wake(); }
+    else if (m.attributeName === 'data-motion' && root.getAttribute('data-motion') === 'off') { stop(); cv.style.display = 'none'; }
   }));
   obs.observe(root, { attributes: true });
 
   const mouse = { x: 0, y: 0 };
-  addEventListener('pointermove', e => { mouse.x = e.clientX / innerWidth - .5; mouse.y = e.clientY / innerHeight - .5; }, { passive: true });
+  addEventListener('pointermove', e => { mouse.x = e.clientX / innerWidth - .5; mouse.y = e.clientY / innerHeight - .5; wake(); }, { passive: true });
 
-  let raf, lastDraw = performance.now();
-  const FRAME_MS = 1000 / 30;                 // throttle the ambient cloud to ~30fps (about half the main-thread cost)
+  // Animate on demand: run while morphing / reacting, then idle (stop the rAF) once settled.
+  // This frees the main thread when nothing is changing, which keeps TBT/TTI healthy.
+  let raf = 0, running = false, lastDraw = 0, activeUntil = 0;
+  const FRAME_MS = 1000 / 30;            // cap at ~30fps
+  const GRACE = 1400;                    // keep animating this long after any change, then settle
+  function wake() { activeUntil = performance.now() + GRACE; if (running) return; running = true; lastDraw = performance.now(); raf = requestAnimationFrame(frame); }
+  function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
   function frame(now) {
-    raf = requestAnimationFrame(frame);
-    if (now - lastDraw < FRAME_MS) return;
+    if (now - lastDraw < FRAME_MS) { raf = requestAnimationFrame(frame); return; }
     const dt = Math.min((now - lastDraw) / 1000, .05); lastDraw = now;
     const p = geo.attributes.position.array;
-    for (let i = 0; i < N * 3; i++) { cur[i] += (tgt[i] - cur[i]) * Math.min(1, dt * 2.4); p[i] = cur[i]; }
+    let maxd = 0;
+    for (let i = 0; i < N * 3; i++) { const d = tgt[i] - cur[i]; cur[i] += d * Math.min(1, dt * 2.4); p[i] = cur[i]; const a = d < 0 ? -d : d; if (a > maxd) maxd = a; }
     geo.attributes.position.needsUpdate = true;
-    // constellation lines connect consecutive points that ended up near each other
     const lp = lgeo.attributes.position.array;
     for (let k = 0; k < LN; k++) { const i = (k * 17) % N, j = (i + 1) % N; for (let c = 0; c < 3; c++) { lp[k * 6 + c] = cur[i * 3 + c]; lp[k * 6 + 3 + c] = cur[j * 3 + c]; } }
     lgeo.attributes.position.needsUpdate = true;
@@ -95,7 +99,10 @@ import * as THREE from 'three';
     points.rotation.x = mouse.y * 0.25; lines.rotation.x = points.rotation.x;
     mat.color.lerp(targetColor, Math.min(1, dt * 3)); lines.material.color.copy(mat.color);
     renderer.render(scene, camera);
+    const settled = Math.abs(tx - points.position.x) < 0.002 && Math.abs(ty - points.position.y) < 0.002;
+    if (now > activeUntil && maxd < 0.01 && settled) { stop(); return; }   // nothing changing -> idle
+    raf = requestAnimationFrame(frame);
   }
-  document.addEventListener('visibilitychange', () => { if (document.hidden) cancelAnimationFrame(raf); else { lastDraw = performance.now(); raf = requestAnimationFrame(frame); } });
-  raf = requestAnimationFrame(frame);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else wake(); });
+  wake();
 })();
