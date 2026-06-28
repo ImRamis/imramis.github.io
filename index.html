@@ -45,7 +45,8 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
 
   <!-- Icons -->
   <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'" />
@@ -107,8 +108,9 @@
       var t0 = Date.now();
       function hide() { p.classList.add('pl--done'); setTimeout(function () { if (p && p.parentNode) p.remove(); }, 650); }
       function go() { setTimeout(hide, Math.max(0, 500 - (Date.now() - t0))); }
-      if (document.readyState === 'complete') go(); else window.addEventListener('load', go);
-      setTimeout(hide, 6000);
+      // reveal as soon as the content is built (DOMContentLoaded), not on full load
+      if (document.readyState !== 'loading') go(); else document.addEventListener('DOMContentLoaded', go);
+      setTimeout(hide, 5000);
     })();
   </script>
 
